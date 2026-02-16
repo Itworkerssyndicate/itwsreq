@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة المتقدمة</title>
+    <title>لوحة الإدارة - نظام الشكاوى</title>
     <link rel="stylesheet" href="style.css">
     <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
@@ -13,7 +13,7 @@
             <button class="nav-item active" onclick="loadView('all', this)">كل الطلبات</button>
             <button class="nav-item" onclick="loadView('شكوى', this)">الشكاوى</button>
             <button class="nav-item" onclick="loadView('اقتراح', this)">المقترحات</button>
-            <button class="nav-item" onclick="showSettings()">الإعدادات</button>
+            <button class="nav-item" onclick="showSettings()">⚙️ الإعدادات</button>
         </nav>
         <button class="logout-btn" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
     </aside>
@@ -21,29 +21,19 @@
     <main class="admin-content">
         <header class="content-header">
             <h2 id="view-title">سجل البيانات</h2>
-            <button class="submit-btn svc-styled" style="width:auto; padding:8px 20px;" onclick="printTableData()">طباعة الجدول الحالي</button>
+            <button class="main-btn svc-styled" style="width:auto; padding:5px 20px;" onclick="printTableData()">🖨️ طباعة الجدول المفلتر</button>
         </header>
 
         <div class="filter-bar">
             <input type="text" id="f-name" placeholder="بحث بالاسم..." oninput="filterTable()">
             <input type="text" id="f-nid" placeholder="الرقم القومي..." oninput="filterTable()">
-            <select id="f-type" onchange="filterTable()">
-                <option value="">كل الأنواع</option>
-                <option value="شكوى">شكاوى</option>
-                <option value="اقتراح">مقترحات</option>
-            </select>
-            <select id="f-status" onchange="filterTable()">
-                <option value="">كل الحالات</option>
-                <option value="تم الاستلام">تم الاستلام</option>
-                <option value="تم الحل والإغلاق">مغلق</option>
-            </select>
+            <select id="f-type" onchange="filterTable()"><option value="">كل الأنواع</option><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+            <select id="f-status" onchange="filterTable()"><option value="">كل الحالات</option><option value="تم الاستلام">تم الاستلام</option><option value="تم الحل والإغلاق">مغلق</option></select>
         </div>
 
         <div class="table-container">
             <table id="mainTable">
-                <thead>
-                    <tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إدارة</th></tr>
-                </thead>
+                <thead><tr><th>التاريخ والوقت</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إدارة</th></tr></thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
