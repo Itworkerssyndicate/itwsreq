@@ -3,56 +3,75 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const role = sessionStorage.getItem("role");
 
-function loadData(type) {
+if(!role) window.location.href = "index.html";
+
+function loadData(type, btn) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    btn.classList.add('active');
     document.getElementById('content-box').style.display='block';
     document.getElementById('settings-box').style.display='none';
+
     db.collection("Requests").where("type","==",type).onSnapshot(snap => {
         let h = "";
         snap.forEach(doc => {
             const d = doc.data();
-            h += `<tr><td>${d.refId}</td><td>${d.name}</td><td>${d.gov}</td><td>${d.status}</td>
-            <td>
-                <button class="btn-view" onclick="openCard('${doc.id}','${type}')">إدارة</button>
-                <button class="btn-del" onclick="deleteDoc('${doc.id}')">حذف</button>
-            </td></tr>`;
+            h += `<tr>
+                <td>${d.refId}</td>
+                <td>${d.name}</td>
+                <td>${d.gov}</td>
+                <td><b style="color:var(--primary)">${d.status}</b></td>
+                <td>
+                    <button class="btn-view" onclick="openCard('${doc.id}')">إدارة</button>
+                    ${role==='super' ? `<button class="btn-del" onclick="deleteDoc('${doc.id}')">حذف</button>` : ''}
+                </td>
+            </tr>`;
         });
         document.getElementById('tbody').innerHTML = h;
     });
 }
 
-async function openCard(id, type) {
+async function openCard(id) {
     const doc = await db.collection("Requests").doc(id).get();
     const d = doc.data();
-    
-    // إنشاء قسم التتبع للظهور في الكارت
-    let trackingHtml = `<div id="admin-timeline"></div>`;
 
     const { value: form } = await Swal.fire({
-        title: 'تفاصيل الطلب',
-        width: '700px',
+        title: 'إدارة الطلب والطباعة',
+        width: '750px',
+        background: '#0f172a',
+        color: '#fff',
         html: `
-            <div id="print-area" style="text-align:right; font-size:0.9rem; border:1px solid #ccc; padding:15px; color:#fff;">
-                <p><b>الاسم:</b> ${d.name} | <b>التليفون:</b> ${d.phone}</p>
+            <div id="p-card" style="text-align:right; border:1px solid #334155; padding:20px; border-radius:10px;">
+                <h3 style="color:var(--primary); text-align:center;">بيانات الطلب الرقمي</h3>
+                <p><b>الرقم المرجعي:</b> ${d.refId}</p>
+                <p><b>اسم العضو:</b> ${d.name}</p>
+                <p><b>الرقم القومي:</b> ${d.nationalId} | <b>التليفون:</b> ${d.phone}</p>
                 <p><b>المحافظة:</b> ${d.gov} | <b>المهنة:</b> ${d.job}</p>
                 <p><b>العنوان:</b> ${d.address}</p>
-                <hr>
-                <p><b>الموضوع:</b> ${d.details}</p>
-                ${trackingHtml}
+                <hr style="border-color:#334155">
+                <p><b>الموضوع:</b><br>${d.details}</p>
             </div>
-            <button onclick="printCard()" class="main-btn" style="background:#10b981; padding:5px; font-size:0.8rem;">طباعة الكارت</button>
-            <input id="sw-stage" class="swal2-input" placeholder="اسم المرحلة الحالية">
-            <textarea id="sw-comm" class="swal2-textarea" placeholder="تعليق الإغلاق"></textarea>
+            <button class="main-btn" style="margin-top:10px; background:#10b981;" onclick="printDiv('p-card')">طباعة هذا الكارت</button>
+            <input id="sw-stage" class="swal2-input" style="color:#000" placeholder="اسم المرحلة (مثلاً: جاري المراجعة)">
+            <textarea id="sw-comm" class="swal2-textarea" style="color:#000" placeholder="اكتب تعليقك هنا"></textarea>
         `,
-        didOpen: () => { renderTimeline(d, 'admin-timeline'); }, // استدعاء التتبع من app.js
-        showCancelButton: true, confirmButtonText: 'تحديث', cancelButtonText: 'تم (إغلاق)'
+        showCancelButton: true,
+        confirmButtonText: 'تحديث الحالة',
+        cancelButtonText: 'إغلاق (تم المعالجة)'
     });
 
     if(form) {
         const s = document.getElementById('sw-stage').value;
         const c = document.getElementById('sw-comm').value;
-        await db.collection("Requests").doc(id).update({ status: s, tracking: firebase.firestore.FieldValue.arrayUnion({stage: s, comment: c, date: new Date().toLocaleString('ar-EG')}) });
+        if(!s) return;
+        await db.collection("Requests").doc(id).update({
+            status: s,
+            tracking: firebase.firestore.FieldValue.arrayUnion({stage: s, comment: c, date: new Date().toLocaleString('ar-EG')})
+        });
     } else if (Swal.dismissReason === 'cancel') {
-        await db.collection("Requests").doc(id).update({ status: "تم", tracking: firebase.firestore.FieldValue.arrayUnion({stage: "تم", comment: "تمت المعالجة", date: new Date().toLocaleString('ar-EG')}) });
+        await db.collection("Requests").doc(id).update({
+            status: "تم",
+            tracking: firebase.firestore.FieldValue.arrayUnion({stage: "تم", comment: "تمت معالجة الطلب بالكامل", date: new Date().toLocaleString('ar-EG')})
+        });
     }
 }
 
@@ -60,28 +79,26 @@ async function deleteDoc(id) {
     const { value: p } = await Swal.fire({ title: 'كلمة سر الحذف', input: 'password' });
     if(p === '11111@') {
         await db.collection("Requests").doc(id).delete();
-        Swal.fire("تم الحذف","","success");
-    } else Swal.fire("خطأ","كلمة السر خاطئة","error");
+        Swal.fire("تم الحذف بنجاح");
+    } else if(p) {
+        Swal.fire("خطأ", "كلمة السر غير صحيحة", "error");
+    }
 }
 
-function printCard() {
-    const content = document.getElementById('print-area').innerHTML;
-    const win = window.open('', '', 'height=700,width=900');
-    win.document.write(`<html><body style="font-family:Cairo; direction:rtl;">${content}</body></html>`);
+function printDiv(divId) {
+    const content = document.getElementById(divId).innerHTML;
+    const win = window.open('', '', 'height=600,width=800');
+    win.document.write(`<html><head><title>طباعة</title><style>body{direction:rtl; font-family:Cairo; padding:20px;}</style></head><body>${content}</body></html>`);
     win.print();
     win.close();
 }
 
-function showSettings() { /* نفس كود الإعدادات السابق */ }
-async function saveSettings() { /* نفس كود الحفظ السابق */ }
-
-// ربط دالة renderTimeline لتعمل في الإدارة
-function renderTimeline(data, targetId) {
-    const allStages = data.tracking.map(t => t.stage);
-    const html = `<div class="timeline" style="margin:20px 0;">
-        ${allStages.map(s => `<div class="step active" style="width:25px; height:25px;"><div class="step-label" style="top:30px; font-size:0.6rem;">${s}</div></div>`).join('')}
-    </div>`;
-    document.getElementById(targetId).innerHTML = html;
+function showSettings(btn) {
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('content-box').style.display='none';
+    document.getElementById('settings-box').style.display='block';
 }
 
-loadData('complaint');
+// تحميل افتراضي
+loadData('complaint', document.querySelector('.nav-link'));
