@@ -1,35 +1,76 @@
-<div id="tab-submit" class="tab-content active">
-    <div class="input-grid">
-        <div class="full-width">
-            <select id="u-member-type" onchange="toggleMemberFields()">
-                <option value="عضو">عضو نقابة (لديه رقم عضوية)</option>
-                <option value="غير عضو">مواطن (غير عضو)</option>
-            </select>
-        </div>
-        
-        <input type="text" id="u-name" class="full-width" placeholder="الاسم الرباعي كما هو بالبطاقة">
-        
-        <input type="number" id="u-m-id" placeholder="رقم العضوية">
-        <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
-        
-        <input type="number" id="u-phone" placeholder="رقم الهاتف">
-        <input type="text" id="u-job" placeholder="المهنة">
-        
-        <select id="u-gov">
-            <option value="" disabled selected>اختر المحافظة</option>
-            <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
-        </select>
-        
-        <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
-        
-        <div class="full-width">
-            <select id="u-type">
-                <option value="شكوى">تقديم شكوى</option>
-                <option value="اقتراح">تقديم اقتراح</option>
-            </select>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة الخدمات الرقمية</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <div class="container main-layout">
+        <header class="main-header">
+            <div class="logo-wrap">
+                <img id="main-logo" src="" alt="Logo">
+            </div>
+            <div class="pres-container">
+                <span class="label">النقيب العام</span>
+                <h2 id="pres-display" class="pres-name">...</h2>
+            </div>
+            <button class="svc-link-btn" id="svc-link">موقع خدمات النقابة</button>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" id="t-submit" onclick="showTab('submit')">تقديم طلب</button>
+            <button class="tab-btn" id="t-track" onclick="showTab('track')">استعلام</button>
+            <button class="tab-btn lock" onclick="showTab('login')">قفل</button>
         </div>
 
-        <textarea id="u-details" class="full-width" rows="4" placeholder="اكتب تفاصيل طلبك بوضوح هنا..."></textarea>
+        <div id="tab-submit" class="tab-content active">
+            <div class="form-grid">
+                <div class="full-row">
+                    <select id="u-member-type" onchange="toggleMemberFields()">
+                        <option value="عضو">عضو نقابة</option>
+                        <option value="غير عضو">غير عضو (مواطن)</option>
+                    </select>
+                </div>
+                <input type="text" id="u-name" class="full-row" placeholder="الاسم الرباعي الكامل">
+                <input type="number" id="u-m-id" placeholder="رقم العضوية">
+                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
+                <input type="number" id="u-phone" placeholder="رقم الهاتف">
+                <input type="text" id="u-job" placeholder="المهنة">
+                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
+                <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
+                <div class="full-row">
+                    <select id="u-type">
+                        <option value="شكوى">شكوى</option>
+                        <option value="اقتراح">اقتراح</option>
+                    </select>
+                </div>
+                <textarea id="u-details" class="full-row" placeholder="تفاصيل الطلب..."></textarea>
+            </div>
+            <button class="action-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
+        </div>
+
+        <div id="tab-track" class="tab-content" style="display:none;">
+            <div class="search-wrap">
+                <input type="number" id="s-nid" placeholder="الرقم القومي">
+                <input type="text" id="s-ref" placeholder="رقم الطلب">
+                <button class="action-btn" onclick="searchRequest()">ابدأ البحث</button>
+            </div>
+            <div id="track-res"></div>
+        </div>
+
+        <div id="tab-login" class="tab-content" style="display:none;">
+            <input type="text" id="adm-u" placeholder="اليوزر">
+            <input type="password" id="adm-p" placeholder="الباسورد">
+            <button class="action-btn" onclick="loginAdmin()">دخول الإدارة</button>
+        </div>
     </div>
-    <button class="submit-btn" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
-</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+</body>
+</html>
