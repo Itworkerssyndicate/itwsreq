@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة نقابة تكنولوجيا المعلومات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -11,60 +12,70 @@
 <body>
     <div class="container">
         <div class="header-section">
-            <a id="services-link" href="#" target="_blank"><i class="fas fa-external-link-alt"></i> موقع الخدمات</a>
             <img id="union-logo" src="">
-            <h2 id="union-name">...</h2>
+            <h2 id="union-name">جاري التحميل...</h2>
             <div class="pres-box">
                 <span class="pres-label">النقيب العام</span>
                 <span id="president-name">...</span>
             </div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 15px;">
-            <button onclick="switchTab('submit')" class="main-btn" id="btn-submit" style="margin:0; flex:1; background:var(--primary); color:black;">تقديم طلب</button>
-            <button onclick="switchTab('track')" class="main-btn" id="btn-track" style="margin:0; flex:1; background:transparent;">الاستعلام</button>
-            <button onclick="switchTab('login')" class="main-btn" id="btn-login" style="margin:0; flex:1; background:transparent;">الإدارة</button>
+        <div class="tabs-nav">
+            <button onclick="switchTab('submit', this)" class="tab-btn active">تقديم طلب</button>
+            <button onclick="switchTab('track', this)" class="tab-btn">الاستعلام عن طلب</button>
+            <button onclick="switchTab('login', this)" class="tab-btn">لوحة الإدارة</button>
         </div>
 
-        <div id="view-submit">
-            <div class="grid">
-                <div><label>الاسم الرباعي *</label><input type="text" id="u-name"></div>
-                <div><label>الرقم القومي (14 رقم) *</label><input type="number" id="u-nid"></div>
+        <div id="view-submit" class="tab-content">
+            <div class="input-grid">
+                <div class="form-group"><label>الاسم الرباعي *</label><input type="text" id="u-name" placeholder="أدخل اسمك الكامل"></div>
+                <div class="form-group"><label>الرقم القومي *</label><input type="number" id="u-nid" placeholder="14 رقم"></div>
             </div>
-            <div class="grid">
-                <div><label>رقم التليفون *</label><input type="number" id="u-phone"></div>
-                <div><label>المحافظة *</label><select id="u-gov"><option value="">اختر..</option><option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option></select></div>
+            <div class="input-grid">
+                <div class="form-group"><label>رقم التليفون *</label><input type="number" id="u-phone" placeholder="01xxxxxxxxx"></div>
+                <div class="form-group">
+                    <label>المحافظة *</label>
+                    <select id="u-gov">
+                        <option value="">اختر محافظة</option>
+                        <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
+                        </select>
+                </div>
             </div>
-            <div class="grid">
-                <div><label>المهنة الحالية *</label><input type="text" id="u-job"></div>
-                <div><label>نوع الطلب *</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
+            <div class="input-grid">
+                <div class="form-group"><label>المهنة *</label><input type="text" id="u-job"></div>
+                <div class="form-group"><label>نوع الطلب *</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
             </div>
-            <label>العنوان بالتفصيل *</label><input type="text" id="u-address">
-            <label>الموضوع *</label><textarea id="u-details" rows="3"></textarea>
-            <button class="main-btn" onclick="submitRequest()">إرسال الطلب</button>
+            <div class="form-group"><label>العنوان بالتفصيل *</label><input type="text" id="u-address"></div>
+            <div class="form-group"><label>تفاصيل الموضوع *</label><textarea id="u-details" rows="4"></textarea></div>
+            <button class="main-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
         </div>
 
-        <div id="view-track" style="display:none;">
-            <div class="grid"><select id="s-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select><input type="number" id="s-nid" placeholder="الرقم القومي"></div>
-            <input type="text" id="s-ref" placeholder="رقم الطلب (مثال: ITW-1234-2026)" style="margin-top:10px;">
-            <button class="main-btn" onclick="searchRequest()">بدء البحث</button>
-            <div id="track-res"></div>
+        <div id="view-track" class="tab-content" style="display:none;">
+            <div class="input-grid">
+                <div class="form-group"><label>نوع الطلب</label><select id="s-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
+                <div class="form-group"><label>الرقم القومي</label><input type="number" id="s-nid"></div>
+            </div>
+            <div class="form-group"><label>رقم الطلب المرجعي</label><input type="text" id="s-ref" placeholder="مثال: ITW-1234-2026"></div>
+            <button class="main-btn" style="background:#10b981;" onclick="searchRequest()">بدء عملية البحث</button>
+            <div id="track-res" style="margin-top:30px;"></div>
         </div>
 
-        <div id="view-login" style="display:none;">
-            <label>اسم المستخدم</label><input type="text" id="adm-u">
-            <label>كلمة السر</label><input type="password" id="adm-p">
-            <button class="main-btn" onclick="loginAdmin()">دخول</button>
+        <div id="view-login" class="tab-content" style="display:none;">
+            <div class="form-group"><label>اسم المستخدم</label><input type="text" id="adm-u"></div>
+            <div class="form-group"><label>كلمة السر</label><input type="password" id="adm-p"></div>
+            <button class="main-btn" onclick="loginAdmin()">تسجيل الدخول</button>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
     <script>
-        function switchTab(v){
-            ['submit','track','login'].forEach(x=>{
-                document.getElementById('view-'+x).style.display=(x==v?'block':'none');
-            });
+        function switchTab(v, btn) {
+            document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('view-' + v).style.display = 'block';
+            btn.classList.add('active');
         }
     </script>
 </body>
