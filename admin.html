@@ -2,160 +2,41 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة إدارة نقابة تكنولوجيا المعلومات</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <title>لوحة التحكم</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <style>
-        /* تنسيقات إضافية خاصة بلوحة الإدارة فقط */
-        body { display: flex; background: #050b18; }
-        
-        .sidebar { 
-            width: 260px; 
-            background: #111827; 
-            height: 100vh; 
-            padding: 20px; 
-            position: fixed; 
-            border-left: 1px solid #374151;
-            z-index: 1000;
-        }
-
-        .main-content { 
-            margin-right: 260px; 
-            padding: 40px; 
-            width: calc(100% - 260px); 
-            min-height: 100vh;
-        }
-
-        .nav-item { 
-            padding: 15px; 
-            margin-bottom: 8px; 
-            cursor: pointer; 
-            border-radius: 12px; 
-            color: #94a3b8; 
-            transition: 0.3s; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px;
-            font-weight: 500;
-        }
-
-        .nav-item:hover { background: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
-        .nav-item.active { background: #0ea5e9; color: white; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3); }
-
-        table { 
-            width: 100%; 
-            border-collapse: separate; 
-            border-spacing: 0 10px; 
-            margin-top: 20px; 
-        }
-
-        th { 
-            background: #1f2937; 
-            color: #0ea5e9; 
-            padding: 15px; 
-            font-size: 0.9rem; 
-            text-align: center;
-            border-bottom: 2px solid #374151;
-        }
-
-        td { 
-            background: #111827; 
-            padding: 15px; 
-            text-align: center; 
-            color: #e5e7eb;
-            border-top: 1px solid #1f2937;
-            border-bottom: 1px solid #1f2937;
-        }
-
-        td:first-child { border-radius: 0 12px 12px 0; border-right: 1px solid #1f2937; }
-        td:last-child { border-radius: 12px 0 0 12px; border-left: 1px solid #1f2937; }
-
-        .btn-view { background: #0ea5e9; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-family: 'Cairo'; transition: 0.3s; }
-        .btn-view:hover { background: #0284c7; transform: translateY(-2px); }
-
-        .btn-del { background: #ef4444; color: white; border: none; padding: 8px; border-radius: 8px; cursor: pointer; margin-right: 5px; transition: 0.3s; }
-        .btn-del:hover { background: #dc2626; transform: scale(1.1); }
-
-        #settings-box input { margin-bottom: 20px; background: #1f2937; }
-    </style>
 </head>
-<body>
-
+<body style="display:flex;">
     <div class="sidebar">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <i class="fas fa-user-shield" style="font-size: 3rem; color: #0ea5e9;"></i>
-            <h3 style="color: white; margin-top: 10px;">لوحة التحكم</h3>
-        </div>
-        
-        <div id="nav-complaint" class="nav-item active" onclick="loadData('complaint')">
-            <i class="fas fa-file-medical"></i> إدارة الشكاوى
-        </div>
-        
-        <div id="nav-suggestion" class="nav-item" onclick="loadData('suggestion')">
-            <i class="fas fa-lightbulb"></i> المقترحات الواردة
-        </div>
-        
-        <div id="nav-settings" class="nav-item" onclick="showSettings()">
-            <i class="fas fa-sliders-h"></i> إعدادات الهوية
-        </div>
-
-        <div class="nav-item" style="color:#ef4444; margin-top:100px; border: 1px solid #ef4444;" onclick="location.href='index.html'">
-            <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
-        </div>
+        <h3>الإدارة الرقمية</h3>
+        <div class="nav-item active" onclick="loadData('complaint')">الشكاوى</div>
+        <div class="nav-item" onclick="loadData('suggestion')">المقترحات</div>
+        <div class="nav-item" onclick="showSettings()">الإعدادات</div>
+        <button onclick="window.print()" class="main-btn" style="background:#6366f1;">طباعة التقرير العام</button>
+        <div class="nav-item" style="color:red; margin-top:20px;" onclick="location.href='index.html'">خروج</div>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" style="margin-right:260px; padding:30px; width:100%;">
         <div id="content-box">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 id="view-title" style="margin:0;">إدارة الشكاوى</h2>
-                <div style="font-size: 0.8rem; color: #94a3b8;">تحديث تلقائي <i class="fas fa-sync fa-spin"></i></div>
-            </div>
-            
+            <h2 id="view-title">إدارة الشكاوى</h2>
             <table>
-                <thead>
-                    <tr>
-                        <th>الرقم المرجعي</th>
-                        <th>اسم العضو</th>
-                        <th>المحافظة</th>
-                        <th>الحالة الحالية</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="tbody">
-                    </tbody>
+                <thead><tr><th>الرقم</th><th>الاسم</th><th>المحافظة</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <tbody id="tbody"></tbody>
             </table>
         </div>
-
-        <div id="settings-box" style="display:none; max-width: 700px; background: #111827; padding: 40px; border-radius: 20px; border: 1px solid #374151;">
-            <h2 style="color: #0ea5e9; margin-bottom: 30px;"><i class="fas fa-cog"></i> إعدادات واجهة المستخدم</h2>
-            
-            <label>اسم النقابة الموضح في الهيدر</label>
-            <input type="text" id="set-name" placeholder="مثلاً: نقابة تكنولوجيا المعلومات">
-            
-            <label>اسم النقيب العام</label>
-            <input type="text" id="set-pres" placeholder="ادخل الاسم الكامل">
-            
-            <label>رابط اللوجو (يفضل بصيغة PNG شفافة)</label>
-            <input type="text" id="set-logo" placeholder="https://example.com/logo.png">
-            
-            <label>رابط موقع الخدمات (الزر العلوي)</label>
-            <input type="text" id="set-url" placeholder="https://services.union.com">
-            
-            <button class="main-btn" onclick="saveSettings()" style="margin-top: 20px;">حفظ كافة التغييرات</button>
+        <div id="settings-box" style="display:none;">
+            <h2>الإعدادات</h2>
+            <label>الاسم</label><input type="text" id="set-name">
+            <label>النقيب</label><input type="text" id="set-pres">
+            <label>اللوجو</label><input type="text" id="set-logo">
+            <label>الخدمات</label><input type="text" id="set-url">
+            <button class="main-btn" onclick="saveSettings()">حفظ</button>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    
     <script src="admin_logic.js"></script>
-
 </body>
 </html>
