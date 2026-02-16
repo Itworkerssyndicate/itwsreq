@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الخدمات</title>
+    <title>بوابة الخدمات الرقمية</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body>
+<body oncontextmenu="return false;">
     <div id="download-card" style="background:#fff; color:#000; padding:30px; text-align:center; position:fixed; left:-9999px; width:400px; border:3px solid #00d2ff;">
         <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
         <h2>وصل استلام رسمي</h2>
@@ -34,10 +33,8 @@
             <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
             <input type="text" id="u-job" placeholder="المهنة">
             <input type="number" id="u-phone" placeholder="رقم الهاتف">
-            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option></select>
-            <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
-            <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-            <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب"></textarea>
+            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
+            <textarea id="u-details" placeholder="تفاصيل الطلب"></textarea>
             <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال وحفظ الوصل</button>
         </div>
 
@@ -59,6 +56,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="app.js"></script>
     <script>function showTab(t){['submit','track','login'].forEach(x=>document.getElementById('tab-'+x).style.display=(x==t?'block':'none'));}</script>
 </body>
