@@ -2,7 +2,6 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة نقابة تكنولوجيا المعلومات</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -11,14 +10,14 @@
     <div class="container">
         <div style="text-align: center;">
             <img id="union-logo" src="">
-            <h1 id="union-name" style="margin-bottom: 10px;">...</h1>
-            <p id="president-name" style="color:var(--primary); font-weight:bold;"></p>
+            <h2 id="union-name">...</h2>
+            <p id="president-name" style="color:#00d2ff;"></p>
         </div>
 
-        <div style="display:flex; gap:10px; margin:30px 0; background:rgba(0,0,0,0.2); padding:10px; border-radius:15px;">
-            <button class="main-btn" onclick="showTab('submit')" style="flex:1;">تقديم طلب</button>
-            <button class="main-btn" onclick="showTab('track')" style="flex:1; background:#1e293b;">الاستعلام</button>
-            <button class="main-btn" onclick="showTab('login')" style="flex:1; background:#1e293b;">الإدارة</button>
+        <div style="display:flex; gap:10px; margin:25px 0;">
+            <button class="main-btn" onclick="showTab('submit')">تقديم طلب</button>
+            <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">الاستعلام</button>
+            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b;">الإدارة</button>
         </div>
 
         <div id="tab-submit">
@@ -28,7 +27,24 @@
             </div>
             <div class="input-grid">
                 <div class="form-group"><label>التليفون</label><input type="number" id="u-phone"></div>
-                <div class="form-group"><label>المحافظة</label><select id="u-gov"><option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option></select></div>
+                <div class="form-group">
+                    <label>المحافظة</label>
+                    <select id="u-gov">
+                        <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
+                        <option value="الدقهلية">الدقهلية</option><option value="البحر الأحمر">البحر الأحمر</option><option value="البحيرة">البحيرة</option>
+                        <option value="الفيوم">الفيوم</option><option value="الغربية">الغربية</option><option value="الإسماعيلية">الإسماعيلية</option>
+                        <option value="المنوفية">المنوفية</option><option value="المنيا">المنيا</option><option value="القليوبية">القليوبية</option>
+                        <option value="الوادي الجديد">الوادي الجديد</option><option value="السويس">السويس</option><option value="الشرقية">الشرقية</option>
+                        <option value="سوهاج">سوهاج</option><option value="جنوب سيناء">جنوب سيناء</option><option value="شمال سيناء">شمال سيناء</option>
+                        <option value="قنا">قنا</option><option value="كفر الشيخ">كفر الشيخ</option><option value="مطروح">مطروح</option>
+                        <option value="الأقصر">الأقصر</option><option value="أسوان">أسوان</option><option value="أسيوط">أسيوط</option>
+                        <option value="بني سويف">بني سويف</option><option value="بورسعيد">بورسعيد</option><option value="دمياط">دمياط</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-grid">
+                <div class="form-group"><label>المهنة</label><input type="text" id="u-job"></div>
+                <div class="form-group"><label>نوع الطلب</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
             </div>
             <div class="form-group"><label>العنوان</label><input type="text" id="u-address"></div>
             <div class="form-group"><label>التفاصيل</label><textarea id="u-details" rows="3"></textarea></div>
@@ -36,29 +52,21 @@
         </div>
 
         <div id="tab-track" style="display:none;">
-            <div class="input-grid">
-                <input type="number" id="s-nid" placeholder="الرقم القومي">
-                <input type="text" id="s-ref" placeholder="رقم الطلب المرجعي">
-            </div>
-            <button class="main-btn" onclick="searchRequest()">بحث الآن</button>
-            <div id="track-res" style="margin-top:20px;"></div>
+            <input type="text" id="s-ref" placeholder="رقم الطلب (ITW-xxxx-2026)" style="margin-bottom:15px;">
+            <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
+            <div id="track-res"></div>
         </div>
 
         <div id="tab-login" style="display:none;">
-            <input type="text" id="adm-u" placeholder="اسم المستخدم" style="margin-bottom:15px;">
+            <input type="text" id="adm-u" placeholder="اسم المستخدم" style="margin-bottom:10px;">
             <input type="password" id="adm-p" placeholder="كلمة السر">
-            <button class="main-btn" onclick="loginAdmin()" style="margin-top:15px;">دخول</button>
+            <button class="main-btn" onclick="loginAdmin()" style="margin-top:10px;">دخول</button>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
-    <script>
-        function showTab(t){
-            ['submit','track','login'].forEach(x => document.getElementById('tab-'+x).style.display = (x==t?'block':'none'));
-        }
-    </script>
+    <script>function showTab(t){['submit','track','login'].forEach(x=>document.getElementById('tab-'+x).style.display=(x==t?'block':'none'));}</script>
 </body>
 </html>
