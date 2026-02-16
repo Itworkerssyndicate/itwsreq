@@ -1,47 +1,50 @@
-// إعدادات الفايربيز الخاصة بك
-const firebaseConfig = {
-  apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
-  authDomain: "itwsreq.firebaseapp.com",
-  projectId: "itwsreq",
-  storageBucket: "itwsreq.firebasestorage.app",
-  messagingSenderId: "417900842360",
-  appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
-  measurementId: "G-P3YQFRSBMM"
-};
+// وظيفة إرسال الطلب
+async function submitRequest() {
+    const name = document.getElementById("user-fullname").value;
+    const nId = document.getElementById("user-nationalid").value;
+    const type = document.getElementById("request-type").value;
+    const details = document.getElementById("request-details").value;
+    const isMember = document.getElementById("is-member").value;
+    const memberId = document.getElementById("membership-id").value;
+    const gov = document.getElementById("user-gov").value;
+    const job = document.getElementById("user-job").value;
 
-// تشغيل الفايربيز
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+    if (!name || nId.length !== 14 || !details) {
+        alert("برجاء التأكد من إدخال كافة البيانات بشكل صحيح (الرقم القومي 14 رقم)");
+        return;
+    }
 
-// 1. سحب إعدادات النقابة فور تحميل الصفحة
-window.onload = function() {
-    db.collection("SystemSettings").doc("mainConfig").get().then((doc) => {
-        if (doc.exists) {
-            const data = doc.data();
-            document.getElementById("union-name").innerText = data.unionName;
-            // لو في رابط لوجو في الداتا بيز نغيره هنا
-            if(data.logoURL) document.getElementById("union-logo").src = data.logoURL;
+    const year = new Date().getFullYear();
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    // توليد المعرف: الشكوى (COM) والاقتراح (SUG)
+    const prefix = (type === "complaint") ? "COM" : "SUG";
+    const refId = `${prefix}-${randomNum}-${year}`;
+
+    try {
+        await db.collection("Requests").add({
+            fullName: name,
+            nationalId: nId,
+            type: type,
+            details: details,
+            isMember: isMember,
+            membershipId: (isMember === "yes") ? memberId : "N/A",
+            governorate: gov,
+            job: job,
+            refId: refId,
+            status: "تم الاستلام", // الحالة الابتدائية
+            tracking: [{stage: "تم الاستلام", comment: "تم استلام طلبكم بنجاح وجاري المراجعة", date: new Date().toLocaleString()}],
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // رسالة النجاح المخصصة
+        if(type === "complaint") {
+            alert(`شكراً لك، تم تسجيل شكواك برقم: ${refId}\nسيتم دراسة الشكوى والرد عليكم قريباً.`);
+        } else {
+            alert(`شكراً لاقتراحكم، تم تسجيله برقم: ${refId}\nنقابتنا تكبر بمقترحاتكم.`);
         }
-    }).catch((error) => {
-        console.log("Error getting document:", error);
-    });
-};
-
-// 2. وظيفة تسجيل دخول الأدمن
-function login() {
-    const user = document.getElementById("admin-user").value;
-    const pass = document.getElementById("admin-pass").value;
-    const errorMsg = document.getElementById("login-error");
-
-    // البيانات اللي انت حددتها
-    const adminUsername = "مدير";
-    const adminPassword = "itws@manager@2026@";
-
-    if (user === adminUsername && pass === adminPassword) {
-        alert("أهلاً بك يا سيادة المدير");
-        // هنا هننقل الأدمن لصفحة التحكم (هنعملها الخطوة الجاية)
-        // window.location.href = "admin_dashboard.html"; 
-    } else {
-        errorMsg.innerText = "اسم المستخدم أو كلمة السر خطأ!";
+        location.reload(); // إعادة تحميل الصفحة
+    } catch (error) {
+        console.error("Error: ", error);
+        alert("حدث خطأ أثناء الإرسال، حاول مرة أخرى.");
     }
 }
