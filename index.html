@@ -1,0 +1,40 @@
+<div id="user-form-container" class="container">
+    <div class="form-box">
+        <h2 class="form-title">تقديم طلب جديد</h2>
+        
+        <div class="input-group">
+            <input type="text" id="user-fullname" placeholder="الاسم الرباعي" required>
+            <input type="number" id="user-nationalid" placeholder="الرقم القومي (14 رقم)" required>
+        </div>
+
+        <div class="input-group">
+            <select id="user-gov">
+                <option value="">اختر المحافظة</option>
+                <option value="القاهرة">القاهرة</option>
+                <option value="الإسكندرية">الإسكندرية</option>
+                </select>
+            <input type="text" id="user-job" placeholder="المهنة الحالية">
+        </div>
+
+        <div class="membership-section">
+            <label>هل أنت عضو بالنقابة؟</label>
+            <select id="is-member" onchange="toggleMembershipField()">
+                <option value="no">لا</option>
+                <option value="yes">نعم</option>
+            </select>
+            <input type="text" id="membership-id" placeholder="أدخل رقم العضوية" style="display:none;">
+        </div>
+
+        <div class="type-section">
+            <label>نوع الطلب:</label>
+            <select id="request-type" onchange="updateMessageLabel()">
+                <option value="complaint">شكوى</option>
+                <option value="suggestion">اقتراح</option>
+            </select>
+        </div>
+
+        <textarea id="request-details" placeholder="تفاصيل الشكوى..." rows="5"></textarea>
+
+        <button id="submit-btn" onclick="submitRequest()">إرسال الطلب</button>
+    </div>
+</div>
