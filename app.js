@@ -1,4 +1,3 @@
-// Firebase Config
 const firebaseConfig = {
     apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
     authDomain: "itwsreq.firebaseapp.com",
@@ -7,51 +6,46 @@ const firebaseConfig = {
     messagingSenderId: "417900842360",
     appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d"
 };
-
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 1. نظام الرسائل الفخم (Custom Modal)
+// جلب إعدادات النقابة (اسم النقيب)
+window.onload = async () => {
+    const doc = await db.collection("SystemSettings").doc("mainConfig").get();
+    if(doc.exists) {
+        document.getElementById("union-name").innerText = doc.data().unionName;
+        document.getElementById("president-name").innerText = "النقيب العام: " + doc.data().presidentName;
+        document.getElementById("union-logo").src = doc.data().logoURL;
+    }
+};
+
 function showMsg(title, text, icon) {
-    Swal.fire({
-        title: title,
-        text: text,
-        icon: icon,
-        background: '#1e293b',
-        color: '#fff',
-        confirmButtonColor: '#0ea5e9',
-        confirmButtonText: 'حسناً فهمت',
-        showClass: { popup: 'animate__animated animate__zoomIn' },
-        hideClass: { popup: 'animate__animated animate__zoomOut' }
-    });
+    Swal.fire({ title, text, icon, background: '#1e293b', color: '#fff', confirmButtonColor: '#0ea5e9' });
 }
 
-// 2. إرسال الطلبات
 async function submitRequest() {
     const name = document.getElementById('user-fullname').value;
     const nid = document.getElementById('user-nationalid').value;
+    const gov = document.getElementById('user-gov').value;
+    const job = document.getElementById('user-job').value;
     const type = document.getElementById('req-type').value;
     const details = document.getElementById('req-details').value;
 
-    if(!name || nid.length !== 14) {
-        showMsg("بيانات ناقصة", "يرجى إدخال الاسم الرباعي والرقم القومي الصحيح", "warning");
-        return;
-    }
+    if(!name || nid.length !== 14 || !gov) return showMsg("تنبيه", "برجاء استكمال كافة الحقول بدقة", "warning");
 
     const ref = (type === 'complaint' ? 'ITW' : 'SUG') + "-" + Math.floor(1000 + Math.random() * 9000) + "-2026";
 
-    try {
-        await db.collection("Requests").add({
-            fullName: name, nationalId: nid, type: type, details: details,
-            refId: ref, status: "تم الاستلام", date: new Date().toLocaleString('ar-EG'),
-            tracking: [{ stage: "تم الاستلام", comment: "تم فتح الملف في النظام", date: new Date().toLocaleString('ar-EG') }]
-        });
-        showMsg("تم الإرسال بنجاح", `رقمك المرجعي هو: ${ref}\nاحتفظ به للمتابعة.`, "success");
-        setTimeout(() => location.reload(), 4000);
-    } catch(e) { showMsg("خطأ فني", "فشل الاتصال بالقاعدة", "error"); }
+    await db.collection("Requests").add({
+        fullName: name, nationalId: nid, governorate: gov, job: job,
+        type: type, details: details, refId: ref, status: "تم الاستلام",
+        date: new Date().toLocaleString('ar-EG'),
+        tracking: [{ stage: "تم الاستلام", comment: "تم تسجيل طلبكم بنجاح في النظام", date: new Date().toLocaleString('ar-EG') }]
+    });
+
+    showMsg("تم الإرسال", `رقم طلبك: ${ref}`, "success");
+    setTimeout(() => location.reload(), 3000);
 }
 
-// 3. دخول الإدارة
 function loginAdmin() {
     const u = document.getElementById("adm-user").value;
     const p = document.getElementById("adm-pass").value;
@@ -63,26 +57,27 @@ function loginAdmin() {
         sessionStorage.setItem("role", "super");
         window.location.href = "admin.html";
     } else {
-        showMsg("فشل الدخول", "اسم المستخدم أو كلمة السر غير صحيحة", "error");
+        showMsg("خطأ", "بيانات الدخول غير صحيحة", "error");
     }
 }
 
-// 4. استعلام الزائر (تتبع شيك)
 async function searchRequest() {
+    const type = document.getElementById('search-type').value;
     const nid = document.getElementById('search-nid').value;
     const ref = document.getElementById('search-ref').value;
 
-    const snap = await db.collection("Requests").where("nationalId", "==", nid).where("refId", "==", ref).get();
+    const snap = await db.collection("Requests")
+        .where("type", "==", type)
+        .where("nationalId", "==", nid)
+        .where("refId", "==", ref).get();
     
-    if(snap.empty) {
-        showMsg("لا توجد سجلات", "تأكد من الرقم القومي والرقم المرجعي", "info");
-        return;
-    }
+    if(snap.empty) return showMsg("نعتذر", "لا توجد بيانات تطابق بحثك", "info");
 
     const d = snap.docs[0].data();
-    let trackHtml = `<div class="tracking-card"><h4>المسار الزمني للطلب:</h4>`;
+    let trackHtml = `<div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; text-align:right;">
+        <h4 style="color:var(--primary)">حالة الطلب: ${d.status}</h4>`;
     d.tracking.forEach(s => {
-        trackHtml += `<p>✅ <b>${s.stage}</b> <br><small>${s.comment} - ${s.date}</small></p>`;
+        trackHtml += `<p>🔹 ${s.stage} <br><small>${s.date} - ${s.comment}</small></p>`;
     });
     trackHtml += `</div>`;
     document.getElementById('search-result').innerHTML = trackHtml;
