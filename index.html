@@ -10,96 +10,91 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root { --primary: #00d2ff; --secondary: #3a7bd5; --bg: #050b18; --glass: rgba(255, 255, 255, 0.05); }
-        body { background: radial-gradient(circle at center, #10203e 0%, #050b18 100%); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; min-height: 100vh; }
-        .container { max-width: 850px; margin: 20px auto; padding: 30px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; }
+        body { background: radial-gradient(circle at center, #10203e 0%, #050b18 100%); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; min-height: 100vh; user-select: none; }
+        .container { max-width: 850px; margin: 20px auto; padding: 30px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
         
         .header-section { text-align: center; margin-bottom: 20px; position: relative; }
-        #services-btn { position: absolute; top: 0; left: 0; background: #10b981; color: white; padding: 10px 15px; border-radius: 10px; text-decoration: none; font-size: 0.8rem; font-weight: bold; transition: 0.3s; }
-        #services-btn:hover { background: #059669; transform: scale(1.05); }
+        #services-link { position: absolute; top: 0; left: 0; background: #10b981; color: white; padding: 8px 12px; border-radius: 10px; text-decoration: none; font-size: 0.75rem; font-weight: bold; }
 
-        .pres-box { margin-top: 10px; border-top: 1px dashed var(--primary); padding-top: 10px; display: inline-block; }
-        .pres-label { display: block; font-size: 0.8rem; color: #94a3b8; }
-        #president-name { display: block; font-size: 1.2rem; font-weight: bold; color: var(--primary); }
+        .pres-box { margin-top: 5px; }
+        .pres-label { display: block; font-size: 0.8rem; color: #94a3b8; margin-bottom: -2px; }
+        #president-name { font-size: 1.3rem; font-weight: bold; color: var(--primary); text-shadow: 0 0 10px rgba(0, 210, 255, 0.3); }
 
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
-        input, select, textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px; box-sizing: border-box; font-family: 'Cairo'; margin-top: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        input, select, textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px; box-sizing: border-box; font-family: 'Cairo'; margin-top: 5px; outline: none; }
         label { font-size: 0.85rem; color: var(--primary); margin-top: 10px; display: block; }
-        
-        /* الخط الزمني للتتبع */
-        .timeline { display: flex; justify-content: space-between; align-items: center; margin: 40px 0; position: relative; padding: 0 20px; }
-        .timeline::before { content: ''; position: absolute; height: 4px; background: #334155; width: calc(100% - 40px); top: 50%; transform: translateY(-50%); z-index: 1; }
-        .timeline-progress { position: absolute; height: 4px; background: var(--primary); top: 50%; transform: translateY(-50%); z-index: 2; transition: 0.5s; width: 0%; }
-        .step { position: relative; z-index: 3; background: #1e293b; border: 3px solid #334155; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .step.active { border-color: var(--primary); box-shadow: 0 0 15px var(--primary); background: var(--bg); }
-        .step i { font-size: 0.9rem; color: #94a3b8; }
-        .step.active i { color: var(--primary); }
-        .step-label { position: absolute; top: 50px; white-space: nowrap; font-size: 0.75rem; text-align: center; width: 100px; left: 50%; transform: translateX(-50%); }
 
-        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        /* Timeline Style */
+        .timeline { display: flex; justify-content: space-between; margin: 45px 0; position: relative; }
+        .timeline::before { content: ''; position: absolute; height: 4px; background: #334155; width: 100%; top: 20px; z-index: 1; }
+        .timeline-progress { position: absolute; height: 4px; background: var(--primary); top: 20px; z-index: 2; transition: 0.8s ease; width: 0; }
+        .step { position: relative; z-index: 3; background: #1e293b; border: 3px solid #334155; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .step.active { border-color: var(--primary); background: #050b18; color: var(--primary); box-shadow: 0 0 15px var(--primary); }
+        .step-label { position: absolute; top: 45px; font-size: 0.7rem; white-space: nowrap; left: 50%; transform: translateX(-50%); color: #94a3b8; }
+        .step.active .step-label { color: #fff; font-weight: bold; }
+
+        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .main-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 210, 255, 0.4); }
+
+        .tab-btn { flex:1; padding:10px; border:none; border-radius:10px; cursor:pointer; font-family:'Cairo'; transition: 0.3s; }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
 <div class="container animate__animated animate__fadeIn">
     <div class="header-section">
-        <a id="services-btn" href="#" target="_blank"><i class="fas fa-external-link-alt"></i> موقع الخدمات</a>
-        <img id="union-logo" src="" style="width: 80px; filter: drop-shadow(0 0 10px var(--primary));">
+        <a id="services-link" href="#" target="_blank"><i class="fas fa-external-link-alt"></i> موقع الخدمات</a>
+        <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png" style="width: 90px; filter: drop-shadow(0 0 10px var(--primary));">
         <h2 id="union-name" style="margin: 5px 0;">نقابة تكنولوجيا المعلومات</h2>
         <div class="pres-box">
             <span class="pres-label">النقيب العام</span>
-            <span id="president-name">جاري التحميل...</span>
+            <span id="president-name">...</span>
         </div>
     </div>
 
-    <div style="display: flex; gap: 10px; margin-bottom: 20px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 12px;">
-        <button onclick="switchTab('submit')" class="tab-btn" id="btn-submit" style="flex:1; padding:10px; border:none; border-radius:10px; background:var(--primary); color:black; font-weight:bold; cursor:pointer;">تقديم طلب</button>
-        <button onclick="switchTab('track')" class="tab-btn" id="btn-track" style="flex:1; padding:10px; border:none; border-radius:10px; background:transparent; color:white; cursor:pointer;">الاستعلام عن طلب</button>
-        <button onclick="switchTab('login')" class="tab-btn" id="btn-login" style="flex:1; padding:10px; border:none; border-radius:10px; background:transparent; color:white; cursor:pointer;">الإدارة</button>
+    <div style="display: flex; gap: 10px; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 15px;">
+        <button onclick="switchTab('submit')" class="tab-btn" id="btn-submit" style="background:var(--primary); color:black; font-weight:bold;">تقديم طلب</button>
+        <button onclick="switchTab('track')" class="tab-btn" id="btn-track" style="background:transparent; color:white;">الاستعلام عن طلب</button>
+        <button onclick="switchTab('login')" class="tab-btn" id="btn-login" style="background:transparent; color:white;">الإدارة</button>
     </div>
 
-    <div id="view-submit">
+    <div id="view-submit" class="animate__animated animate__fadeIn">
         <div class="grid">
-            <div><label>الاسم الرباعي *</label><input type="text" id="u-name" required></div>
-            <div><label>الرقم القومي (14 رقم) *</label><input type="number" id="u-nid" required></div>
+            <div><label>الاسم الرباعي الكامل *</label><input type="text" id="u-name"></div>
+            <div><label>الرقم القومي (14 رقم) *</label><input type="number" id="u-nid"></div>
         </div>
         <div class="grid">
-            <div><label>رقم التليفون *</label><input type="number" id="u-phone" required></div>
+            <div><label>رقم التليفون الشخصي *</label><input type="number" id="u-phone"></div>
             <div><label>المحافظة *</label>
-                <select id="u-gov" required>
+                <select id="u-gov">
                     <option value="">اختر المحافظة</option>
                     <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option><option value="الدقهلية">الدقهلية</option><option value="الغربية">الغربية</option><option value="المنوفية">المنوفية</option><option value="الشرقية">الشرقية</option><option value="القليوبية">القليوبية</option><option value="دمياط">دمياط</option><option value="البحيرة">البحيرة</option><option value="كفر الشيخ">كفر الشيخ</option><option value="بورسعيد">بورسعيد</option><option value="الإسماعيلية">الإسماعيلية</option><option value="السويس">السويس</option><option value="الفيوم">الفيوم</option><option value="بني سويف">بني سويف</option><option value="المنيا">المنيا</option><option value="أسيوط">أسيوط</option><option value="سوهاج">سوهاج</option><option value="قنا">قنا</option><option value="الأقصر">الأقصر</option><option value="أسوان">أسوان</option><option value="البحر الأحمر">البحر الأحمر</option><option value="الوادي الجديد">الوادي الجديد</option><option value="مطروح">مطروح</option><option value="شمال سيناء">شمال سيناء</option><option value="جنوب سيناء">جنوب سيناء</option>
                 </select>
             </div>
         </div>
         <div class="grid">
-            <div><label>المهنة الحالية *</label><input type="text" id="u-job" placeholder="مثلاً: مهندس برمجيات" required></div>
-            <div><label>نوع الطلب *</label>
-                <select id="u-type">
-                    <option value="complaint">شكوى</option><option value="suggestion">اقتراح</option>
-                </select>
-            </div>
+            <div><label>المهنة الحالية *</label><input type="text" id="u-job" placeholder="ادخل مهنتك"></div>
+            <div><label>نوع الطلب *</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
         </div>
-        <label>العنوان التفصيلي *</label>
-        <input type="text" id="u-address" required>
-        <label>تفاصيل الموضوع *</label>
-        <textarea id="u-details" rows="3" required></textarea>
-        <button class="main-btn" onclick="submitRequest()">إرسال بنبض رقمي</button>
+        <label>العنوان بالتفصيل *</label><input type="text" id="u-address">
+        <label>تفاصيل الموضوع *</label><textarea id="u-details" rows="3"></textarea>
+        <button class="main-btn" onclick="submitRequest()">إرسال الطلب</button>
     </div>
 
-    <div id="view-track" style="display:none;">
+    <div id="view-track" style="display:none;" class="animate__animated animate__fadeIn">
         <div class="grid">
-            <select id="s-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select>
+            <select id="s-type"><option value="complaint">استعلام عن شكوى</option><option value="suggestion">استعلام عن اقتراح</option></select>
             <input type="number" id="s-nid" placeholder="الرقم القومي">
         </div>
-        <input type="text" id="s-ref" placeholder="رقم الطلب (ITW-XXXX-2026)" style="margin-top:10px;">
+        <input type="text" id="s-ref" placeholder="رقم الطلب (مثال: ITW-1234-2026)" style="margin-top:10px;">
         <button class="main-btn" style="background:#34d399" onclick="searchRequest()">بدء البحث</button>
         <div id="track-res"></div>
     </div>
 
-    <div id="view-login" style="display:none;">
+    <div id="view-login" style="display:none;" class="animate__animated animate__fadeIn">
         <label>اسم المستخدم</label><input type="text" id="adm-u" autocomplete="off">
         <label>كلمة السر</label><input type="password" id="adm-p" autocomplete="off">
-        <button class="main-btn" onclick="loginAdmin()">دخول الإدارة</button>
+        <button class="main-btn" onclick="loginAdmin()">تخويل الدخول</button>
     </div>
 </div>
 
@@ -112,7 +107,9 @@
             document.getElementById('view-'+x).style.display = (x==v?'block':'none');
             document.getElementById('btn-'+x).style.background = (x==v? 'var(--primary)' : 'transparent');
             document.getElementById('btn-'+x).style.color = (x==v? 'black' : 'white');
+            document.getElementById('btn-'+x).style.fontWeight = (x==v? 'bold' : 'normal');
         });
+        if(v === 'login') { document.getElementById('adm-u').value = ""; document.getElementById('adm-p').value = ""; }
     }
 </script>
 </body>
