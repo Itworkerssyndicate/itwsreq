@@ -7,24 +7,27 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body oncontextmenu="return false;"> <div id="download-card">
-        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
-        <h2 id="card-union">نقابة تكنولوجيا المعلومات</h2>
-        <hr>
-        <p>تم تسجيل طلبكم بنجاح</p>
-        <h1 id="card-ref" style="color: #3a7bd5;"></h1>
-        <p id="card-date"></p>
-        <p style="font-size: 10px;">برجاء الاحتفاظ بهذا الكارت للمراجعة</p>
+<body oncontextmenu="return false;" onkeydown="return (event.keyCode != 123 && !event.ctrlKey)">
+    
+    <div id="download-card">
+        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="100">
+        <h3>نقابة تكنولوجيا المعلومات والبرمجيات</h3>
+        <p style="margin:10px 0;">وصل استلام طلب رقمي</p>
+        <div style="border: 2px dashed #3a7bd5; padding: 15px; margin: 10px 0;">
+            <h1 id="card-ref" style="letter-spacing: 2px;"></h1>
+            <p id="card-name" style="font-weight:bold;"></p>
+        </div>
+        <p id="card-date" style="font-size: 12px;"></p>
     </div>
 
     <div class="container">
         <div style="text-align: center;">
             <img id="union-logo" src="https://i.ibb.co/vzPRTfK/image-8999a2.png">
-            <h2 id="union-name">بوابة الخدمات الرقمية</h2>
-            <p id="president-name" style="color:#00d2ff; font-size:0.9rem;"></p>
+            <h3 style="margin-bottom:5px;">بوابة الخدمات الرقمية</h3>
+            <p id="president-name" style="color:#00d2ff; font-size:0.8rem;"></p>
         </div>
 
-        <div style="display:flex; gap:8px; margin:20px 0;">
+        <div style="display:flex; gap:5px; margin:15px 0;">
             <button class="main-btn" onclick="showTab('submit')">تقديم</button>
             <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">استعلام</button>
             <button class="main-btn" onclick="showTab('login')" style="background:#1e293b;">إدارة</button>
@@ -32,27 +35,36 @@
 
         <div id="tab-submit">
             <div class="input-grid">
-                <div><label>الاسم</label><input type="text" id="u-name"></div>
+                <div><label>الاسم الرباعي</label><input type="text" id="u-name"></div>
                 <div><label>الرقم القومي</label><input type="number" id="u-nid"></div>
             </div>
             <div class="input-grid">
-                <div><label>التليفون</label><input type="number" id="u-phone"></div>
-                <div><label>المحافظة</label><select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select></div>
+                <div><label>رقم التليفون</label><input type="number" id="u-phone"></div>
+                <div><label>المحافظة</label>
+                    <select id="u-gov">
+                        <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option><option>الشرقية</option><option>المنوفية</option><option>القليوبية</option><option>الغربية</option><option>البحيرة</option><option>دمياط</option><option>بورسعيد</option><option>الإسماعيلية</option><option>السويس</option><option>كفر الشيخ</option><option>الفيوم</option><option>بني سويف</option><option>المنيا</option><option>أسيوط</option><option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option><option>البحر الأحمر</option><option>الوادي الجديد</option><option>مطروح</option><option>شمال سيناء</option><option>جنوب سيناء</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-grid">
+                <div><label>المهنة</label><input type="text" id="u-job"></div>
+                <div><label>نوع الطلب</label><select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select></div>
             </div>
             <div><label>التفاصيل</label><textarea id="u-details" rows="3"></textarea></div>
-            <button class="main-btn" onclick="submitRequest()" style="margin-top:15px;">إرسال واحفظ الكود</button>
+            <button class="main-btn" onclick="submitRequest()">إرسال الطلب وحفظ الكود</button>
         </div>
 
         <div id="tab-track" style="display:none;">
-            <input type="text" id="s-ref" placeholder="ضع الكود هنا" class="allow-copy">
-            <button class="main-btn" onclick="searchRequest()" style="margin-top:10px;">بحث</button>
-            <div id="track-res"></div>
+            <label>أدخل الكود المرجعي</label>
+            <input type="text" id="s-ref" class="allow-copy" placeholder="REQ-XXXXX">
+            <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
+            <div id="track-res" style="margin-top:15px;"></div>
         </div>
 
         <div id="tab-login" style="display:none;">
-            <input type="text" id="adm-u" placeholder="Admin">
-            <input type="password" id="adm-p" placeholder="Password" style="margin-top:10px;">
-            <button class="main-btn" onclick="loginAdmin()">دخول</button>
+            <input type="text" id="adm-u" placeholder="Admin Name" style="margin-bottom:10px;">
+            <input type="password" id="adm-p" placeholder="Password">
+            <button class="main-btn" onclick="loginAdmin()">دخول الإدارة</button>
         </div>
     </div>
 
