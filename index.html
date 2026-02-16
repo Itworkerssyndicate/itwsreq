@@ -2,40 +2,50 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>بوابة الخدمات</title>
+    <title>البوابة الإلكترونية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; gap: 10px;">
-            <button class="btn-glam" onclick="switchTab('submit')">تقديم طلب</button>
-            <button class="btn-glam" onclick="switchTab('track')">استعلام متقدم</button>
+        <header class="header-box">
+            <img id="main-logo" src="logo.png">
+            <span class="pres-label">النقيب العام</span>
+            <h2 id="pres-display" class="pres-name">...</h2>
+        </header>
+
+        <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+            <button class="btn-glam" style="flex:1" onclick="showSection('submit')">تقديم طلب</button>
+            <button class="btn-glam" style="flex:1" onclick="showSection('track')">استعلام متقدم</button>
         </div>
 
-        <div id="view-submit" class="tab-view">
-            <div class="grid-fields">
-                <select id="u-member" style="grid-column: span 2;"><option>عضو نقابة</option><option>غير عضو</option></select>
-                <input type="text" id="u-name" placeholder="الاسم" style="grid-column: span 2;">
+        <div id="sec-submit" class="sections">
+            <div class="form-grid">
+                <select id="u-member" class="full-w"><option>عضو نقابة</option><option>غير عضو</option></select>
+                <input type="text" id="u-name" class="full-w" placeholder="الاسم بالكامل">
                 <input type="number" id="u-nid" placeholder="الرقم القومي">
                 <input type="text" id="u-m-id" placeholder="رقم العضوية">
-                <textarea id="u-details" placeholder="التفاصيل" style="grid-column: span 2;" rows="3"></textarea>
+                <select id="u-type" class="full-w"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+                <textarea id="u-details" class="full-w" rows="4" placeholder="التفاصيل..."></textarea>
             </div>
-            <button class="btn-glam" style="margin-top:20px" onclick="sendRequest()">إرسال وحفظ</button>
+            <button class="btn-glam" style="width:100%; margin-top:20px;" onclick="sendToFirebase()">إرسال الطلب</button>
         </div>
 
-        <div id="view-track" class="tab-view" style="display:none;">
-            <div class="grid-fields">
+        <div id="sec-track" class="sections" style="display:none;">
+            <div class="form-grid">
                 <input type="number" id="q-nid" placeholder="الرقم القومي">
                 <input type="text" id="q-ref" placeholder="رقم الطلب">
-                <select id="q-type" style="grid-column: span 2;">
-                    <option value="شكوى">شكوى</option>
-                    <option value="اقتراح">اقتراح</option>
+                <select id="q-type" class="full-w">
+                    <option value="شكوى">نوع الطلب: شكوى</option>
+                    <option value="اقتراح">نوع الطلب: اقتراح</option>
                 </select>
             </div>
-            <button class="btn-glam" style="margin-top:20px" onclick="getTrack()">🔍 ابدأ البحث</button>
-            <div id="track-output"></div>
+            <button class="btn-glam" style="width:100%; margin-top:15px;" onclick="fetchTracking()">🔍 ابدأ البحث</button>
+            <div id="track-display"></div>
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
 </body>
 </html>
