@@ -1,80 +1,70 @@
 const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-let allData = [];
 
-function loadView(viewType, btn) {
-    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+function loadView(type, btn) {
+    document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
     if(btn) btn.classList.add('active');
+
     db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
-        allData = [];
+        let h = "";
         snap.forEach(doc => {
             const d = doc.data();
-            if(viewType === 'all' || d.type === viewType) allData.push({id: doc.id, ...d});
+            if(type === 'all' || d.type === type) {
+                h += `<tr>
+                    <td>${d.createdAt?.toDate().toLocaleDateString('ar-EG') || '---'}</td>
+                    <td>${d.refId}</td>
+                    <td>${d.name}<br><small>${d.isMember}: ${d.memberId}</small></td>
+                    <td>${d.type}</td>
+                    <td><span class="badge">${d.status}</span></td>
+                    <td>
+                        <button class="svc-btn" style="padding:4px 10px" onclick="openCard('${doc.id}')">إدارة</button>
+                        <button class="del-btn" onclick="deleteReq('${doc.id}')">حذف</button>
+                    </td>
+                </tr>`;
+            }
         });
-        filterTable();
+        document.getElementById('tbody').innerHTML = h;
     });
 }
 
-function filterTable() {
-    const name = document.getElementById('f-name').value.toLowerCase();
-    const status = document.getElementById('f-status').value;
-    const filtered = allData.filter(d => (d.name||"").toLowerCase().includes(name) && (status==="" || d.status===status));
-    renderTable(filtered);
-}
-
-function renderTable(data) {
-    let h = "";
-    data.forEach(d => {
-        h += `<tr>
-            <td>${d.createdAt?.toDate().toLocaleDateString('ar-EG') || '---'}</td>
-            <td>${d.refId || '---'}</td>
-            <td>${d.name || 'مجهول'}<br><small>${d.memberId || 'مواطن'}</small></td>
-            <td>${d.type || '---'}</td>
-            <td><span class="badge">${d.status || 'معلق'}</span></td>
-            <td>
-                <button class="btn-sm" onclick="openAdminCard('${d.id}')">إدارة</button>
-                <button class="btn-sm del" onclick="deleteReq('${d.id}')">حذف</button>
-            </td>
-        </tr>`;
-    });
-    document.getElementById('tbody').innerHTML = h;
-}
-
-async function openAdminCard(id) {
+async function openCard(id) {
     const doc = await db.collection("Requests").doc(id).get();
     const d = doc.data();
     Swal.fire({
-        title: 'كارت الطلب الكامل',
+        title: 'تفاصيل الطلب',
         width: '800px', background: '#0f172a', color: '#fff',
-        html: `
-            <div class="card-info" style="text-align:right; display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <p>👤 الاسم: ${d.name}</p> <p>🆔 القومي: ${d.nationalId}</p>
-                <p>📞 الهاتف: ${d.phone}</p> <p>📍 المحافظة: ${d.gov}</p>
-                <p>🏗️ المهنة: ${d.job}</p> <p>🎖️ العضوية: ${d.memberId}</p>
-            </div>
-            <hr><div class="logs-admin">${d.tracking.map(t=>`<div>${t.stage} (${t.date})<br>${t.comment}</div>`).join('')}</div>
-            <input id="n-stage" class="swal2-input" placeholder="المرحلة الجديدة">
-            <textarea id="n-comm" class="swal2-textarea" placeholder="التعليق"></textarea>`,
-        confirmButtonText: 'تحديث'
-    }).then(r => { if(r.isConfirmed) updateStat(id, document.getElementById('n-stage').value, document.getElementById('n-comm').value); });
-}
-
-async function updateStat(id, stage, comm) {
-    if(!stage) return;
-    await db.collection("Requests").doc(id).update({
-        status: stage,
-        tracking: firebase.firestore.FieldValue.arrayUnion({stage, comment: comm, date: new Date().toLocaleString('ar-EG')})
+        html: `<div style="text-align:right; font-size:14px;">
+            <p>👤 الاسم: ${d.name} | 🆔 القومي: ${d.nationalId}</p>
+            <p>📞 الهاتف: ${d.phone} | 🏗️ المهنة: ${d.job}</p>
+            <p>📍 العنوان: ${d.address} (${d.gov})</p>
+            <hr><p>📝 التفاصيل: ${d.details}</p><hr>
+            <input id="n-stg" class="swal2-input" placeholder="المرحلة الجديدة">
+            <textarea id="n-cmm" class="swal2-textarea" placeholder="التعليق..."></textarea>
+        </div>`,
+        confirmButtonText: 'تحديث الحالة'
+    }).then(r => {
+        if(r.isConfirmed) {
+            const stg = document.getElementById('n-stg').value;
+            if(!stg) return;
+            db.collection("Requests").doc(id).update({
+                status: stg,
+                tracking: firebase.firestore.FieldValue.arrayUnion({ stage: stg, comment: document.getElementById('n-cmm').value, date: new Date().toLocaleString('ar-EG') })
+            });
+        }
     });
 }
 
 async function deleteReq(id) {
-    if(confirm("هل أنت متأكد من الحذف؟")) await db.collection("Requests").doc(id).delete();
+    const r = await Swal.fire({ title: 'هل أنت متأكد؟', icon: 'warning', showCancelButton: true });
+    if(r.isConfirmed) db.collection("Requests").doc(id).delete();
 }
 
 function showSettings() {
     Swal.fire({
-        title: 'الإعدادات',
-        html: `<input id="s-p" class="swal2-input" placeholder="اسم النقيب"><input id="s-l" class="swal2-input" placeholder="رابط اللوجو">`,
-    }).then(r => { if(r.isConfirmed) db.collection("SystemSettings").doc("mainConfig").update({presidentName: document.getElementById('s-p').value, logoUrl: document.getElementById('s-l').value}); });
+        title: 'الإعدادات العامة',
+        html: `<input id="set-p" class="swal2-input" placeholder="اسم النقيب"><input id="set-l" class="swal2-input" placeholder="رابط اللوجو">`,
+    }).then(r => { if(r.isConfirmed) db.collection("SystemSettings").doc("mainConfig").update({ presidentName: document.getElementById('set-p').value, logoUrl: document.getElementById('set-l').value }); });
 }
+
+loadView('all');
