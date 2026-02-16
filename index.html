@@ -7,59 +7,44 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="download-card" style="position:fixed; left:-9999px; background:#fff; color:#000; padding:40px; text-align:center; width:500px; border:5px solid #00d2ff;">
-        <img id="print-logo" src="" width="100">
-        <h2>وصل استلام رسمي</h2>
-        <h1 id="card-ref" style="font-size:40px; color:#3a7bd5;"></h1>
-        <h3 id="card-name"></h3>
-        <p id="card-date"></p>
-    </div>
-
     <div class="container main-layout">
         <header class="main-header">
-            <img id="main-logo" src="" width="80">
+            <img id="main-logo" src="" width="70">
             <div class="pres-info">
                 <span>النقيب العام</span>
                 <h2 id="pres-display">...</h2>
             </div>
-            <button class="svc-btn" id="svc-link" onclick="">موقع الخدمات</button>
+            <button class="svc-btn" id="svc-link">موقع الخدمات</button>
         </header>
 
         <div class="tabs">
             <button class="tab-btn active" id="t-submit" onclick="showTab('submit')">تقديم طلب</button>
             <button class="tab-btn" id="t-track" onclick="showTab('track')">استعلام</button>
-            <button class="tab-btn login-lock" onclick="showTab('login')">🔒</button>
+            <button class="tab-btn login-lock" onclick="showTab('login')">دخول</button>
         </div>
 
         <div id="tab-submit" class="content-section">
-            <div class="input-group">
-                <input type="text" id="u-name" placeholder="الاسم الرباعي">
-                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
-                <input type="text" id="u-job" placeholder="المهنة">
-                <input type="number" id="u-phone" placeholder="رقم الهاتف">
-                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
-                <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
-                <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-                <textarea id="u-details" placeholder="تفاصيل الطلب"></textarea>
-            </div>
-            <button class="submit-btn" id="submitBtn" onclick="submitRequest()">إرسال وحفظ الوصل</button>
+            <input type="text" id="u-name" placeholder="الاسم الرباعي">
+            <input type="number" id="u-nid" placeholder="الرقم القومي">
+            <input type="text" id="u-job" placeholder="المهنة">
+            <input type="number" id="u-phone" placeholder="رقم الهاتف">
+            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option></select>
+            <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
+            <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+            <textarea id="u-details" placeholder="تفاصيل الطلب"></textarea>
+            <button class="submit-btn" id="submitBtn" onclick="submitRequest()">إرسال الطلب</button>
         </div>
 
         <div id="tab-track" class="content-section" style="display:none;">
-            <div class="input-group">
-                <select id="s-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-                <input type="number" id="s-nid" placeholder="الرقم القومي">
-                <input type="text" id="s-ref" placeholder="رقم الطلب">
-            </div>
-            <button class="submit-btn" onclick="searchRequest()">بحث</button>
+            <input type="number" id="s-nid" placeholder="الرقم القومي">
+            <input type="text" id="s-ref" placeholder="رقم الطلب">
+            <button class="submit-btn" onclick="searchRequest()">ابدأ البحث</button>
             <div id="track-res"></div>
         </div>
 
         <div id="tab-login" class="content-section" style="display:none;">
-            <div class="input-group">
-                <input type="text" id="adm-u" placeholder="اسم المستخدم">
-                <input type="password" id="adm-p" placeholder="كلمة المرور">
-            </div>
+            <input type="text" id="adm-u" placeholder="اليوزر">
+            <input type="password" id="adm-p" placeholder="الباسورد">
             <button class="submit-btn" onclick="loginAdmin()">دخول</button>
         </div>
     </div>
@@ -67,7 +52,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="app.js"></script>
     <script>
         function showTab(t){
