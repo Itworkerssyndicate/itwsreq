@@ -2,33 +2,68 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة المنظومة</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوابة الرقمية للخدمات</title>
     <link rel="stylesheet" href="style.css">
-    <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
-<body class="admin-layout">
-    <aside class="sidebar">
-        <h3 style="color:var(--primary); margin-bottom:20px;">لوحة التحكم</h3>
-        <button class="side-item active" onclick="loadView('all', this)">كل الطلبات</button>
-        <button class="side-item" onclick="loadView('شكوى', this)">الشكاوى</button>
-        <button class="side-item" onclick="loadView('اقتراح', this)">المقترحات</button>
-        <button class="side-item" onclick="showSettings()">الإعدادات</button>
-        <button class="svc-btn" style="margin-top:auto; background:#ff4757;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
-    </aside>
+<body>
+    <div class="container">
+        <header class="main-header">
+            <img id="main-logo" src="" alt="لوجو النقابة">
+            <p style="color: #94a3b8; font-size: 14px;">النقيب العام</p>
+            <h2 id="pres-display" class="pres-name">...</h2>
+            <button class="svc-btn" id="svc-link">موقع الخدمات الإلكترونية</button>
+        </header>
 
-    <main class="admin-main">
-        <h2 id="view-title">السجلات الشاملة</h2>
-        <div class="table-card">
-            <table>
-                <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إجراء</th></tr></thead>
-                <tbody id="tbody"></tbody>
-            </table>
+        <nav class="tabs">
+            <button class="tab-btn active" id="t-submit" onclick="showTab('submit')">تقديم طلب</button>
+            <button class="tab-btn" id="t-track" onclick="showTab('track')">استعلام</button>
+            <button class="tab-btn" onclick="showTab('login')">🔒</button>
+        </nav>
+
+        <div id="tab-submit" class="tab-content">
+            <div class="input-grid">
+                <select id="u-member-type" class="full-row" onchange="toggleMember()">
+                    <option value="عضو">عضو نقابة</option>
+                    <option value="غير عضو">غير عضو (مواطن)</option>
+                </select>
+                <input type="text" id="u-name" class="full-row" placeholder="الاسم الرباعي الكامل">
+                <input type="number" id="u-m-id" placeholder="رقم العضوية">
+                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
+                <input type="number" id="u-phone" placeholder="رقم الهاتف">
+                <input type="text" id="u-job" placeholder="المهنة">
+                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
+                <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
+                <select id="u-type" class="full-row">
+                    <option value="شكوى">تقديم شكوى</option>
+                    <option value="اقتراح">تقديم اقتراح</option>
+                </select>
+                <textarea id="u-details" class="full-row" rows="4" placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
+            </div>
+            <button class="svc-btn" style="width:100%; padding:15px; font-size:16px;" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
         </div>
-    </main>
+
+        <div id="tab-track" class="tab-content" style="display:none;">
+            <div class="input-grid">
+                <input type="number" id="s-nid" placeholder="الرقم القومي">
+                <input type="text" id="s-ref" placeholder="رقم الطلب">
+            </div>
+            <button class="svc-btn" style="width:100%; margin-top:15px;" onclick="searchRequest()">🔍 استعلام</button>
+            <div id="track-res"></div>
+        </div>
+
+        <div id="tab-login" class="tab-content" style="display:none;">
+            <div class="input-grid">
+                <input type="text" id="adm-u" class="full-row" placeholder="اسم المستخدم">
+                <input type="password" id="adm-p" class="full-row" placeholder="كلمة المرور">
+            </div>
+            <button class="svc-btn" style="width:100%; margin-top:15px;" onclick="loginAdmin()">دخول</button>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="admin_logic.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
