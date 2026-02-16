@@ -1,21 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
-body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-user-select: none; user-select: none; }
+body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; overflow-x: hidden; }
 body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #111e36 0%, #050b18 100%); z-index: -1; }
-.container { width: 95%; max-width: 850px; margin: 10px auto; padding: 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(15px); }
 
-/* نظام التتبع المائي */
+/* ضبط حجم الشاشة للديسك توب والموبايل */
+.container { 
+    width: 95%; 
+    max-width: 600px; /* العرض المثالي للديسك توب لمنع التمدد الزائد */
+    margin: 20px auto; 
+    padding: 20px; 
+    background: rgba(15, 23, 42, 0.8); 
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 15px; 
+    backdrop-filter: blur(15px); 
+}
+
+/* في الإدارة نحتاج مساحة أكبر قليلاً للجدول */
+.admin-container { max-width: 1000px; }
+
 .progress-container { display: flex; justify-content: space-between; position: relative; margin: 40px 0; }
 .progress-line { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: #1e293b; width: 100%; z-index: 1; }
 .progress-fill { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: #00d2ff; z-index: 2; transition: 0.5s; box-shadow: 0 0 10px #00d2ff; }
-.step-node { width: 35px; height: 35px; background: #1e293b; border: 3px solid #334155; border-radius: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 14px; position: relative; }
+.step-node { width: 30px; height: 30px; background: #1e293b; border: 2px solid #334155; border-radius: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; }
 .step-node.active { border-color: #00d2ff; background: #00d2ff; color: #000; }
-.step-node span { position: absolute; top: 40px; font-size: 10px; white-space: nowrap; color: #cbd5e1; }
+.step-node span { position: absolute; top: 35px; font-size: 9px; white-space: nowrap; color: #cbd5e1; }
 
-.log-card { background: rgba(255,255,255,0.03); border-right: 3px solid #00d2ff; padding: 12px; margin-bottom: 10px; border-radius: 5px; }
+.log-card { background: rgba(255,255,255,0.03); border-right: 3px solid #00d2ff; padding: 10px; margin-bottom: 8px; border-radius: 5px; font-size: 13px; }
 input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; color: #fff; font-family: 'Cairo'; outline: none; margin-bottom: 10px; }
-.main-btn { width: 100%; padding: 14px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.allow-copy { -webkit-user-select: text !important; user-select: text !important; color: #00d2ff !important; font-weight: bold; }
+.main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.allow-copy { -webkit-user-select: text !important; user-select: text !important; }
+
+@media (max-width: 600px) { .container { width: 98%; padding: 15px; } .step-node span { font-size: 8px; } }
 @media print { body { display: none !important; } }
