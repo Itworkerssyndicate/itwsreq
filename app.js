@@ -2,64 +2,73 @@ const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", proj
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-window.onload = async () => {
-    const doc = await db.collection("SystemSettings").doc("mainConfig").get();
-    if(doc.exists){
-        const d = doc.data();
-        document.getElementById("union-name").innerText = d.unionName;
-        document.getElementById("president-name").innerText = "النقيب العام: " + d.presidentName;
-        document.getElementById("union-logo").src = d.logoURL;
+// حماية متقدمة: منع الاختصارات
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u' || e.key === 'c')) {
+        e.preventDefault();
+        alert("النسخ والطباعة غير مسموح بهما لدواعي الأمان");
     }
-};
+});
 
 async function submitRequest() {
     const now = new Date();
-    // توليد كود منظم: سنة-شهر-يوم-دقيقة-ثانية
-    const timeRef = now.getFullYear().toString().slice(-2) + (now.getMonth()+1) + now.getDate() + now.getHours() + now.getMinutes();
+    const timeCode = now.getFullYear().toString().slice(-2) + (now.getMonth()+1).toString().padStart(2,'0') + now.getDate().toString().padStart(2,'0') + now.getHours().toString().padStart(2,'0') + now.getMinutes().toString().padStart(2,'0');
     
     const d = { 
         name: document.getElementById('u-name').value, 
         nationalId: document.getElementById('u-nid').value,
         phone: document.getElementById('u-phone').value,
         gov: document.getElementById('u-gov').value,
-        job: document.getElementById('u-job').value,
-        address: document.getElementById('u-address').value,
         details: document.getElementById('u-details').value,
-        type: document.getElementById('u-type').value,
+        type: 'complaint',
         timestamp: now.toLocaleString('ar-EG'),
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        createdAt: firebase.firestore.Timestamp.now()
     };
     
-    if(Object.values(d).some(v=>!v && v !== d.createdAt)) return Swal.fire("تنبيه","أكمل الحقول","warning");
+    if(!d.name || !d.nationalId) return Swal.fire("تنبيه","أكمل الحقول","warning");
     
-    const refId = (d.type=='complaint'?'REQ-':'SUG-') + timeRef;
-    
-    await db.collection("Requests").add({
-        ...d, refId: refId, status: "تم الاستلام",
-        tracking: [{stage: "تم الاستلام", comment: "تم استلام طلبك بنجاح", date: now.toLocaleString('ar-EG')}]
+    const refId = "REQ-" + timeCode;
+    await db.collection("Requests").add({ ...d, refId: refId, status: "تم الاستلام", tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب", date: d.timestamp}]});
+
+    // تجهيز الكارت للتحميل
+    document.getElementById('card-ref').innerText = refId;
+    document.getElementById('card-date').innerText = d.timestamp;
+
+    Swal.fire({
+        title: "تم التسجيل بنجاح",
+        html: `كود الطلب الخاص بك: <br><b class="allow-copy" style="font-size:24px;">${refId}</b><br><br>يُرجى حفظ الكود أو تحميله كصورة الآن`,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonText: "تحميل كارت الطلب (صورة)",
+        cancelButtonText: "موافق"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            downloadCardAsImage(refId);
+        }
     });
-    Swal.fire("نجاح", "كود الطلب المنظم: " + refId, "success");
+}
+
+function downloadCardAsImage(refId) {
+    const card = document.getElementById('download-card');
+    html2canvas(card, { scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Union-Ticket-${refId}.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+    });
 }
 
 async function searchRequest() {
     const ref = document.getElementById('s-ref').value;
     const snap = await db.collection("Requests").where("refId","==",ref).get();
     if(snap.empty) return Swal.fire("خطأ","الكود غير صحيح","error");
-    renderTimeline(snap.docs[0].data(), 'track-res');
-}
-
-function renderTimeline(data, targetId) {
-    let steps = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم"];
-    let currentIdx = steps.indexOf(data.status);
     
-    let h = `<div class="timeline">`;
-    steps.forEach((s, i) => {
-        let cls = i <= currentIdx ? "completed" : "";
-        h += `<div class="step ${cls}"><i class="fas fa-${i <= currentIdx?'check':'clock'}"></i><div class="step-label">${s}</div></div>`;
-    });
-    h += `</div><div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px;">
-          ${data.tracking.slice().reverse().map(t=> `<p style="border-bottom:1px solid #334155; padding:8px;"><b>${t.stage}:</b> ${t.comment} <br><small>${t.date}</small></p>`).join('')}</div>`;
-    document.getElementById(targetId).innerHTML = h;
+    const data = snap.docs[0].data();
+    let h = `<div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">
+                <p>الحالة الحالية: <b>${data.status}</b></p>
+                <small>الكود المرجعي: <span class="allow-copy">${data.refId}</span></small>
+             </div>`;
+    document.getElementById('track-res').innerHTML = h;
 }
 
 function loginAdmin() {
