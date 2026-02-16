@@ -2,35 +2,26 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم</title>
+    <title>لوحة التحكم الإدارية</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .admin-nav { background: #0a1120; padding: 10px; display: flex; gap: 8px; border-bottom: 2px solid #00d2ff; }
-        .btn-nav { flex:1; background:#1e293b; color:#fff; border:none; padding:10px; border-radius:8px; cursor:pointer; }
-        .btn-nav.active { background:#00d2ff; color:#000; font-weight:bold; }
-        table { width:100%; border-collapse: collapse; margin-top:10px; }
-        th, td { padding: 10px; border: 1px solid #1e293b; text-align: center; font-size: 12px; }
-    </style>
 </head>
 <body>
-    <div class="admin-nav">
-        <button id="btn-comp" class="btn-nav active" onclick="loadData('شكوى')">سجل الشكاوى</button>
-        <button id="btn-sug" class="btn-nav" onclick="loadData('اقتراح')">سجل المقترحات</button>
-        <button class="btn-nav" style="background:#ef4444; max-width:50px;" onclick="location.href='index.html'"><i class="fas fa-power-off"></i></button>
+    <div class="admin-nav" style="display:flex; gap:10px; background:#0a1120; padding:10px; border-bottom:2px solid #00d2ff;">
+        <button class="main-btn" onclick="loadData('شكوى')">الشكاوى</button>
+        <button class="main-btn" onclick="loadData('اقتراح')">المقترحات</button>
+        <button class="main-btn btn-red" style="max-width:60px;" onclick="location.href='index.html'">خروج</button>
     </div>
     <div class="container admin-container">
-        <h3 id="v-title" style="color:#00d2ff; margin-bottom:10px;">سجل الشكاوى</h3>
+        <h2 id="v-title" style="margin-bottom:15px; color:#00d2ff;">سجل الشكاوى</h2>
         <div style="overflow-x:auto;">
             <table>
-                <thead>
-                    <tr><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إجراء</th></tr>
-                </thead>
+                <thead><tr><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إجراء</th></tr></thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="admin_logic.js"></script>
 </body>
