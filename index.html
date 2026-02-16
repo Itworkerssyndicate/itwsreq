@@ -8,157 +8,70 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <style>
-        :root {
-            --primary: #00d2ff;
-            --secondary: #3a7bd5;
-            --bg: #050b18;
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            background: radial-gradient(circle at center, #10203e 0%, #050b18 100%);
-            color: #fff;
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* تأثير الخلفية التقني */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            z-index: -1;
-            opacity: 0.2;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 40px;
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-        }
-
-        .header-section { text-align: center; margin-bottom: 40px; }
-        .logo-glow {
-            width: 100px; height: 100px;
-            filter: drop-shadow(0 0 15px var(--primary));
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-
-        .nav-tabs {
-            display: flex; gap: 15px; margin-bottom: 30px;
-            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 15px;
-        }
-
-        .tab-btn {
-            flex: 1; padding: 12px; border: none; background: transparent;
-            color: #94a3b8; cursor: pointer; transition: 0.4s;
-            border-radius: 10px; font-weight: bold; font-family: 'Cairo';
-        }
-
-        .tab-btn.active {
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
-        }
-
-        .form-group { margin-bottom: 20px; }
-        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--primary); }
-
-        input, select, textarea {
-            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border);
-            color: white; padding: 15px; border-radius: 12px;
-            transition: 0.3s; box-sizing: border-box;
-        }
-
-        input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.6); }
-
-        .main-btn {
-            width: 100%; padding: 18px; border: none; border-radius: 15px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white; font-weight: 700; font-size: 1.1rem;
-            cursor: pointer; transition: 0.3s; margin-top: 10px;
-        }
-
-        .main-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4); }
-
-        /* تتبع المراحل شيك */
-        .tracking-card {
-            background: rgba(255,255,255,0.03); border-radius: 15px; padding: 20px; margin-top: 20px;
-        }
-
-        /* منع التصوير والكليك يمين */
+        :root { --primary: #00d2ff; --secondary: #3a7bd5; --bg: #050b18; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        body { background: radial-gradient(circle at center, #10203e 0%, #050b18 100%); color: #fff; font-family: 'Cairo', sans-serif; margin: 0; min-height: 100vh; user-select: none; }
+        .container { max-width: 800px; margin: 40px auto; padding: 30px; background: var(--glass); backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .header-section { text-align: center; margin-bottom: 30px; }
+        .logo-glow { width: 90px; filter: drop-shadow(0 0 15px var(--primary)); }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 25px; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 15px; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #94a3b8; cursor: pointer; transition: 0.4s; border-radius: 10px; font-weight: bold; font-family: 'Cairo'; }
+        .tab-btn.active { background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; }
+        input, select, textarea { width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border); color: white; padding: 12px; border-radius: 10px; margin-top: 5px; box-sizing: border-box; font-family: 'Cairo'; }
+        .main-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; background: linear-gradient(45deg, var(--primary), var(--secondary)); color: white; font-weight: 700; cursor: pointer; margin-top: 15px; transition: 0.3s; }
+        .main-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4); }
         @media print { body { display: none; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div class="container animate__animated animate__fadeInDown">
+<div class="container animate__animated animate__fadeIn">
     <div class="header-section">
         <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png" class="logo-glow">
-        <h2 id="union-name" class="animate__animated animate__pulse animate__infinite">نقابة تكنولوجيا المعلومات</h2>
-        <p id="president-name" style="color: #64748b; font-size: 0.9rem;"></p>
+        <h2 id="union-name">نقابة تكنولوجيا المعلومات</h2>
+        <p id="president-name" style="color: var(--primary); font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
     </div>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('submit', this)"><i class="fas fa-paper-plane"></i> تقديم طلب</button>
-        <button class="tab-btn" onclick="switchTab('track', this)"><i class="fas fa-search"></i> استعلام ذكي</button>
-        <button class="tab-btn" onclick="switchTab('login', this)"><i class="fas fa-lock"></i> الإدارة</button>
+        <button class="tab-btn active" onclick="switchTab('submit', this)">تقديم طلب</button>
+        <button class="tab-btn" onclick="switchTab('track', this)">الاستعلام عن طلب</button>
+        <button class="tab-btn" onclick="switchTab('login', this)">الإدارة</button>
     </div>
 
-    <div id="view-submit" class="animate__animated animate__fadeIn">
-        <div class="form-group">
-            <label>الاسم الرباعي</label>
-            <input type="text" id="user-fullname" placeholder="أدخل اسمك الكامل">
+    <div id="view-submit">
+        <div style="display:flex; gap:10px">
+            <input type="text" id="user-fullname" placeholder="الاسم الرباعي الكامل">
+            <input type="number" id="user-nationalid" placeholder="الرقم القومي (14 رقم)">
         </div>
-        <div style="display:flex; gap:15px">
-            <div class="form-group" style="flex:1">
-                <label>الرقم القومي</label>
-                <input type="number" id="user-nationalid" placeholder="14 رقم">
-            </div>
-            <div class="form-group" style="flex:1">
-                <label>نوع الطلب</label>
-                <select id="req-type">
-                    <option value="complaint">شكوى رسمية</option>
-                    <option value="suggestion">اقتراح تطوير</option>
-                </select>
-            </div>
+        <div style="display:flex; gap:10px; margin-top:10px">
+            <select id="user-gov">
+                <option value="">اختر المحافظة</option>
+                <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option><option value="الدقهلية">الدقهلية</option><option value="البحر الأحمر">البحر الأحمر</option><option value="البحيرة">البحيرة</option><option value="الفيوم">الفيوم</option><option value="الغربية">الغربية</option><option value="الإسماعيلية">الإسماعيلية</option><option value="المنوفية">المنوفية</option><option value="المنيا">المنيا</option><option value="القليوبية">القليوبية</option><option value="الوادي الجديد">الوادي الجديد</option><option value="السويس">السويس</option><option value="الشرقية">الشرقية</option><option value="سوهاج">سوهاج</option><option value="جنوب سيناء">جنوب سيناء</option><option value="شمال سيناء">شمال سيناء</option><option value="قنا">قنا</option><option value="كفر الشيخ">كفر الشيخ</option><option value="مطروح">مطروح</option><option value="الأقصر">الأقصر</option><option value="أسوان">أسوان</option><option value="أسيوط">أسيوط</option><option value="بني سويف">بني سويف</option><option value="بورسعيد">بورسعيد</option><option value="دمياط">دمياط</option>
+            </select>
+            <input type="text" id="user-job" placeholder="المهنة الحالية">
         </div>
-        <div class="form-group">
-            <label>التفاصيل</label>
-            <textarea id="req-details" rows="4" placeholder="اكتب موضوعك هنا..."></textarea>
-        </div>
-        <button class="main-btn" onclick="submitRequest()">إرسال بنبض رقمي</button>
+        <select id="req-type" style="margin-top:10px">
+            <option value="complaint">شكوى</option>
+            <option value="suggestion">اقتراح</option>
+        </select>
+        <textarea id="req-details" rows="4" placeholder="تفاصيل الطلب..." style="margin-top:10px"></textarea>
+        <button class="main-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
     </div>
 
-    <div id="view-track" style="display:none;" class="animate__animated animate__fadeIn">
-        <div class="form-group">
-            <label>بيانات الاستعلام</label>
-            <input type="number" id="search-nid" placeholder="الرقم القومي">
-            <input type="text" id="search-ref" placeholder="الرقم المرجعي (مثال: ITW-XXXX-2026)" style="margin-top:10px">
-        </div>
-        <button class="main-btn" onclick="searchRequest()" style="background: #34d399;">بحث في السجلات</button>
-        <div id="search-result"></div>
+    <div id="view-track" style="display:none;">
+        <select id="search-type">
+            <option value="complaint">استعلام عن شكوى</option>
+            <option value="suggestion">استعلام عن اقتراح</option>
+        </select>
+        <input type="number" id="search-nid" placeholder="الرقم القومي المستخدم">
+        <input type="text" id="search-ref" placeholder="رقم الطلب (مثال: ITW-1234-2026)" style="margin-top:10px">
+        <button class="main-btn" onclick="searchRequest()" style="background:#34d399">بدء البحث الرقمي</button>
+        <div id="search-result" style="margin-top:20px"></div>
     </div>
 
-    <div id="view-login" style="display:none;" class="animate__animated animate__fadeIn">
-        <div class="form-group">
-            <label>هوية المسؤول</label>
-            <input type="text" id="adm-user" placeholder="اسم المستخدم">
-            <input type="password" id="adm-pass" placeholder="كلمة السر" style="margin-top:10px">
-        </div>
+    <div id="view-login" style="display:none;">
+        <input type="text" id="adm-user" placeholder="اسم المستخدم">
+        <input type="password" id="adm-pass" placeholder="كلمة السر" style="margin-top:10px">
         <button class="main-btn" onclick="loginAdmin()">تخويل الدخول</button>
     </div>
 </div>
@@ -168,9 +81,9 @@
 <script src="app.js"></script>
 <script>
     function switchTab(view, btn) {
-        document.querySelectorAll('.animate__animated').forEach(el => {
-            if(el.id && el.id.startsWith('view-')) el.style.display = 'none';
-        });
+        document.getElementById('view-submit').style.display = 'none';
+        document.getElementById('view-track').style.display = 'none';
+        document.getElementById('view-login').style.display = 'none';
         document.getElementById('view-' + view).style.display = 'block';
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
