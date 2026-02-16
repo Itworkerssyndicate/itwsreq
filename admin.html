@@ -2,71 +2,53 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة الإدارة - نظام الشكاوى المتطور</title>
+    <title>لوحة الإدارة الذكية</title>
     <link rel="stylesheet" href="style.css">
-    <script>
-        if(!sessionStorage.getItem("isAdmin")) {
-            window.location.href = "index.html";
-        }
-    </script>
 </head>
-<body class="admin-body">
-
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <h3>نظام الإدارة</h3>
-            <p>مرحباً بك يا مدير</p>
+<body class="admin-layout">
+    <aside class="sidebar-modern">
+        <div class="side-header">
+            <h3>لوحة التحكم</h3>
         </div>
-        <nav>
-            <button class="nav-item active" onclick="loadView('all', this)">📋 كل الطلبات</button>
-            <button class="nav-item" onclick="loadView('شكوى', this)">⚠️ الشكاوى فقط</button>
-            <button class="nav-item" onclick="loadView('اقتراح', this)">💡 المقترحات فقط</button>
-            <button class="nav-item" onclick="showSettings()">⚙️ الإعدادات العامة</button>
+        <nav class="side-nav">
+            <button class="side-item active" onclick="loadView('all', this)">كل الطلبات</button>
+            <button class="side-item" onclick="loadView('شكوى', this)">سجل الشكاوى</button>
+            <button class="side-item" onclick="loadView('اقتراح', this)">سجل المقترحات</button>
+            <button class="side-item" onclick="showSettings()">الإعدادات العامة</button>
         </nav>
-        <div class="sidebar-footer">
-            <button class="logout-btn" onclick="sessionStorage.clear(); location.href='index.html'">تسجيل الخروج</button>
-        </div>
+        <button class="exit-btn" onclick="sessionStorage.clear(); location.href='index.html'">خروج آمن</button>
     </aside>
 
-    <main class="admin-content">
-        <header class="content-header">
-            <h2 id="view-title">سجل البيانات الشامل</h2>
-            <div class="header-actions">
-                <button class="svc-btn" onclick="printTableData()">🖨️ طباعة الجدول الحالي</button>
-            </div>
-        </header>
+    <main class="content-area">
+        <div class="top-bar">
+            <h2>سجل البيانات الشامل</h2>
+            <button class="print-btn" onclick="printTableData()">🖨️ تصدير للطباعة</button>
+        </div>
 
-        <div class="filter-bar">
+        <div class="filters-glass">
             <input type="text" id="f-name" placeholder="بحث بالاسم..." oninput="filterTable()">
-            <input type="text" id="f-nid" placeholder="الرقم القومي..." oninput="filterTable()">
-            <select id="f-type" onchange="filterTable()">
-                <option value="">كل الأنواع (شكوى/اقتراح)</option>
-                <option value="شكوى">شكاوى</option>
-                <option value="اقتراح">مقترحات</option>
-            </select>
+            <input type="text" id="f-nid" placeholder="بالرقم القومي..." oninput="filterTable()">
             <select id="f-status" onchange="filterTable()">
                 <option value="">كل الحالات</option>
                 <option value="تم الاستلام">تم الاستلام</option>
                 <option value="قيد المراجعة">قيد المراجعة</option>
-                <option value="تم الحل والإغلاق">تم الإغلاق</option>
+                <option value="تم الحل والإغلاق">مغلق</option>
             </select>
         </div>
 
-        <div class="table-container">
-            <table id="mainTable">
+        <div class="table-wrapper">
+            <table>
                 <thead>
                     <tr>
-                        <th>التاريخ والوقت</th>
-                        <th>كود الطلب</th>
+                        <th>التاريخ</th>
+                        <th>الكود</th>
                         <th>صاحب الطلب</th>
                         <th>النوع</th>
                         <th>الحالة</th>
-                        <th>الإجراءات</th>
+                        <th>إدارة</th>
                     </tr>
                 </thead>
-                <tbody id="tbody">
-                    </tbody>
+                <tbody id="tbody"></tbody>
             </table>
         </div>
     </main>
