@@ -2,55 +2,32 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الإدارية</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة النظام</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .sidebar { width: 240px; background: #0a1120; height: 100vh; position: fixed; right: 0; padding: 20px; border-left: 1px solid #1e293b; }
-        .main { margin-right: 240px; padding: 30px; }
-        .nav-link { display: block; padding: 12px; color: #94a3b8; text-decoration: none; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
-        .nav-link.active { background: #00d2ff; color: #000; font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 10px; border: 1px solid #1e293b; text-align: center; font-size: 13px; }
+        /* إعادة تفعيل التحديد في لوحة الإدارة فقط */
+        * { -webkit-user-select: auto !important; user-select: auto !important; }
+        .admin-layout { display: flex; flex-direction: column; }
+        .sidebar { background: #0a1120; padding: 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid #1e293b; }
+        @media (min-width: 900px) { .admin-layout { flex-direction: row; } .sidebar { width: 220px; height: 100vh; flex-direction: column; border-left: 1px solid #1e293b; } }
     </style>
 </head>
-<body>
-    <div class="sidebar no-print">
-        <h3 style="color:#00d2ff; text-align:center; margin-bottom:20px;">التحكم الإداري</h3>
-        <div class="nav-link active" onclick="loadData('complaint', this)"><i class="fas fa-file-alt"></i> الشكاوى</div>
-        <div class="nav-link" onclick="loadData('suggestion', this)"><i class="fas fa-lightbulb"></i> المقترحات</div>
-        <div class="nav-link" onclick="showSettings(this)"><i class="fas fa-cog"></i> الإعدادات</div>
-        <hr style="border-color:#1e293b; margin:20px 0;">
-        <button class="main-btn" onclick="window.print()" style="background:#4f46e5; margin-bottom:10px;"><i class="fas fa-print"></i> التقرير العام</button>
-        <button class="main-btn" onclick="location.href='index.html'" style="background:#e11d48;"><i class="fas fa-sign-out-alt"></i> خروج</button>
-    </div>
-
-    <div class="main">
-        <div id="view-data">
-            <h2 id="view-title">السجلات</h2>
+<body oncontextmenu="return false;">
+    <div class="admin-layout">
+        <div class="sidebar no-print">
+            <button class="main-btn" onclick="loadData('complaint')">الشكاوى</button>
+            <button class="main-btn" onclick="window.print()" style="background:#4f46e5;">تقرير عام</button>
+            <button class="main-btn" onclick="location.href='index.html'" style="background:#e11d48;">خروج</button>
+        </div>
+        <div style="flex:1; padding:20px;">
+            <h3>السجلات الواردة</h3>
             <div style="overflow-x:auto;">
-                <table id="report-table">
-                    <thead>
-                        <tr>
-                            <th>الكود المرجعي</th>
-                            <th>الاسم</th>
-                            <th>تاريخ الاستلام</th>
-                            <th>المحافظة</th>
-                            <th>الحالة</th>
-                            <th class="no-print">الإجراء</th>
-                        </tr>
-                    </thead>
+                <table>
+                    <thead><tr><th>الكود</th><th>الاسم</th><th>التاريخ</th><th>إجراء</th></tr></thead>
                     <tbody id="tbody"></tbody>
                 </table>
             </div>
-        </div>
-
-        <div id="view-settings" style="display:none;">
-            <h2>إعدادات النظام</h2>
-            <div><label>اسم النقابة</label><input type="text" id="set-name"></div>
-            <div><label>اسم النقيب</label><input type="text" id="set-pres" style="margin:10px 0;"></div>
-            <div><label>رابط الشعار</label><input type="text" id="set-logo"></div>
-            <button class="main-btn" onclick="saveSettings()" style="margin-top:20px;">حفظ التغييرات</button>
         </div>
     </div>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
