@@ -2,64 +2,60 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>بوابة نقابة تكنولوجيا المعلومات</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body>
+<body oncontextmenu="return false;"> <div id="download-card">
+        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
+        <h2 id="card-union">نقابة تكنولوجيا المعلومات</h2>
+        <hr>
+        <p>تم تسجيل طلبكم بنجاح</p>
+        <h1 id="card-ref" style="color: #3a7bd5;"></h1>
+        <p id="card-date"></p>
+        <p style="font-size: 10px;">برجاء الاحتفاظ بهذا الكارت للمراجعة</p>
+    </div>
+
     <div class="container">
         <div style="text-align: center;">
-            <img id="union-logo" src="">
-            <h2 id="union-name">...</h2>
-            <p id="president-name" style="color:#00d2ff;"></p>
+            <img id="union-logo" src="https://i.ibb.co/vzPRTfK/image-8999a2.png">
+            <h2 id="union-name">بوابة الخدمات الرقمية</h2>
+            <p id="president-name" style="color:#00d2ff; font-size:0.9rem;"></p>
         </div>
 
-        <div style="display:flex; gap:10px; margin:25px 0;" class="no-print">
-            <button class="main-btn" onclick="showTab('submit')">تقديم طلب</button>
-            <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">الاستعلام</button>
-            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b;">الإدارة</button>
+        <div style="display:flex; gap:8px; margin:20px 0;">
+            <button class="main-btn" onclick="showTab('submit')">تقديم</button>
+            <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">استعلام</button>
+            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b;">إدارة</button>
         </div>
 
         <div id="tab-submit">
             <div class="input-grid">
-                <div><label>الاسم الرباعي</label><input type="text" id="u-name"></div>
+                <div><label>الاسم</label><input type="text" id="u-name"></div>
                 <div><label>الرقم القومي</label><input type="number" id="u-nid"></div>
             </div>
             <div class="input-grid">
-                <div><label>رقم الهاتف</label><input type="number" id="u-phone"></div>
-                <div><label>المحافظة</label><select id="u-gov">
-                    <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
-                    <option value="الدقهلية">الدقهلية</option><option value="البحر الأحمر">البحر الأحمر</option><option value="البحيرة">البحيرة</option>
-                    <option value="الفيوم">الفيوم</option><option value="الغربية">الغربية</option><option value="الإسماعيلية">الإسماعيلية</option>
-                    <option value="المنوفية">المنوفية</option><option value="المنيا">المنيا</option><option value="القليوبية">القليوبية</option>
-                    <option value="الوادي الجديد">الوادي الجديد</option><option value="السويس">السويس</option><option value="الشرقية">الشرقية</option>
-                    <option value="سوهاج">سوهاج</option><option value="جنوب سيناء">جنوب سيناء</option><option value="شمال سيناء">شمال سيناء</option>
-                    <option value="قنا">قنا</option><option value="كفر الشيخ">كفر الشيخ</option><option value="مطروح">مطروح</option>
-                    <option value="الأقصر">الأقصر</option><option value="أسوان">أسوان</option><option value="أسيوط">أسيوط</option>
-                    <option value="بني سويف">بني سويف</option><option value="بورسعيد">بورسعيد</option><option value="دمياط">دمياط</option>
-                </select></div>
+                <div><label>التليفون</label><input type="number" id="u-phone"></div>
+                <div><label>المحافظة</label><select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select></div>
             </div>
-            <div class="input-grid">
-                <div><label>المهنة</label><input type="text" id="u-job"></div>
-                <div><label>نوع الطلب</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
-            </div>
-            <div><label>العنوان التفصيلي</label><input type="text" id="u-address" style="margin-bottom:15px;"></div>
-            <div><label>تفاصيل الموضوع</label><textarea id="u-details" rows="3"></textarea></div>
-            <button class="main-btn" onclick="submitRequest()" style="margin-top:15px;">إرسال الطلب</button>
+            <div><label>التفاصيل</label><textarea id="u-details" rows="3"></textarea></div>
+            <button class="main-btn" onclick="submitRequest()" style="margin-top:15px;">إرسال واحفظ الكود</button>
         </div>
 
         <div id="tab-track" style="display:none;">
-            <input type="text" id="s-ref" placeholder="أدخل كود الطلب المرجعي" style="margin-bottom:15px;">
-            <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
+            <input type="text" id="s-ref" placeholder="ضع الكود هنا" class="allow-copy">
+            <button class="main-btn" onclick="searchRequest()" style="margin-top:10px;">بحث</button>
             <div id="track-res"></div>
         </div>
 
         <div id="tab-login" style="display:none;">
-            <input type="text" id="adm-u" placeholder="اسم المستخدم" style="margin-bottom:10px;">
-            <input type="password" id="adm-p" placeholder="كلمة السر">
-            <button class="main-btn" onclick="loginAdmin()" style="margin-top:10px;">دخول</button>
+            <input type="text" id="adm-u" placeholder="Admin">
+            <input type="password" id="adm-p" placeholder="Password" style="margin-top:10px;">
+            <button class="main-btn" onclick="loginAdmin()">دخول</button>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
