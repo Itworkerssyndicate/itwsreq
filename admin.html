@@ -1,63 +1,27 @@
-const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
-    if(doc.exists) document.getElementById("pres-display").innerText = doc.data().presidentName;
-});
-
-async function submitRequest() {
-    const btn = document.getElementById('submitBtn');
-    const n = document.getElementById('u-name').value;
-    const nid = document.getElementById('u-nid').value;
-    if(!n || nid.length !== 14) return Swal.fire("خطأ", "بيانات غير مكتملة", "error");
-
-    btn.disabled = true;
-    const now = new Date();
-    const refId = `${now.getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
-    const d = {
-        name: n, nationalId: nid, job: document.getElementById('u-job').value,
-        phone: document.getElementById('u-phone').value, gov: document.getElementById('u-gov').value,
-        address: document.getElementById('u-address').value, type: document.getElementById('u-type').value,
-        details: document.getElementById('u-details').value, status: "تم الاستلام", refId: refId,
-        createdAt: firebase.firestore.Timestamp.now(),
-        tracking: [{stage: "تم الاستلام", comment: "تم التقديم", date: now.toLocaleString('ar-EG')}]
-    };
-
-    await db.collection("Requests").add(d);
-    document.getElementById('card-ref').innerText = refId;
-    document.getElementById('card-name').innerText = n;
-    document.getElementById('card-date').innerText = now.toLocaleString('ar-EG');
-    Swal.fire("نجاح", `كودك: ${refId}`, "success").then(() => {
-        html2canvas(document.getElementById('download-card')).then(c => {
-            const a = document.createElement('a'); a.download = 'Receipt.png'; a.href = c.toDataURL(); a.click();
-        });
-    });
-    btn.disabled = false;
-}
-
-async function searchRequest() {
-    const snap = await db.collection("Requests")
-        .where("type","==",document.getElementById('s-type').value)
-        .where("nationalId","==",document.getElementById('s-nid').value)
-        .where("refId","==",document.getElementById('s-ref').value).get();
-
-    if(snap.empty) return Swal.fire("خطأ", "لا توجد بيانات", "error");
-    const d = snap.docs[0].data();
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
-    let idx = stages.indexOf(d.status); if(idx === -1) idx = 1;
-
-    let h = `<div class="progress-box"><div class="line"></div><div class="fill" style="width:${(idx/3)*100}%"></div><div class="steps">
-        ${stages.map((s,i)=>`<div class="dot ${i<=idx?'active':''}">✓<span>${s}</span></div>`).join('')}</div></div>`;
-    h += d.tracking.map(t=>`<div class="log-card"><b>${t.stage}</b><br><small>${t.comment}</small></div>`).reverse().join('');
-    document.getElementById('track-res').innerHTML = h;
-}
-
-function loginAdmin() {
-    const u = document.getElementById('adm-u').value.trim();
-    const p = document.getElementById('adm-p').value.trim();
-    if((u === "admin" && p === "itws@manager@2026@") || (u === "super" && p === "itws@super@2026@")) {
-        sessionStorage.setItem("adminAuth", "true");
-        window.location.href = "admin.html"; // تم تعديل التوجيه ليعمل في GitHub Pages
-    } else Swal.fire("خطأ", "البيانات غلط", "error");
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="style.css">
+    <script>if(!sessionStorage.getItem("adminAuth")) window.location.href="index.html";</script>
+</head>
+<body onload="loadData('شكوى')">
+    <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#0a1120; border-bottom:2px solid #00d2ff;">
+        <button class="main-btn" onclick="loadData('شكوى')">الشكاوى</button>
+        <button class="main-btn" onclick="loadData('اقتراح')">المقترحات</button>
+        <button class="main-btn btn-red" style="max-width:80px;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
+    </div>
+    <div class="container admin-container">
+        <h2 id="v-title" style="color:#00d2ff;">جاري التحميل...</h2>
+        <table>
+            <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إدارة</th></tr></thead>
+            <tbody id="tbody"></tbody>
+        </table>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="admin_logic.js"></script>
+</body>
+</html>
