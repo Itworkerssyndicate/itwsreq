@@ -8,21 +8,21 @@
         .admin-nav { background: #0a1120; padding: 10px; display: flex; gap: 10px; border-bottom: 2px solid #00d2ff; position: sticky; top:0; z-index:100; }
         .btn-nav { flex:1; background:#1e293b; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; }
         .btn-nav.active { background:#00d2ff; color:#000; font-weight:bold; }
-        th, td { padding: 12px; border: 1px solid #1e293b; text-align: center; font-size: 13px; }
+        th, td { padding: 10px; border: 1px solid #1e293b; text-align: center; font-size: 12px; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
     <div class="admin-nav">
         <button id="btn-comp" class="btn-nav active" onclick="loadData('شكوى')">سجل الشكاوى</button>
         <button id="btn-sug" class="btn-nav" onclick="loadData('اقتراح')">سجل المقترحات</button>
-        <button class="btn-nav" style="background:#e11d48; max-width:60px;" onclick="location.href='index.html'">خروج</button>
+        <button class="btn-nav" style="background:#e11d48; max-width:60px;" onclick="location.href='index.html'"><i class="fas fa-sign-out-alt"></i></button>
     </div>
-    <div class="container" style="max-width:1000px;">
+    <div class="container admin-container">
         <h3 id="v-title" style="margin-bottom:15px; color:#00d2ff;">سجل الشكاوى</h3>
         <div style="overflow-x:auto;">
-            <table>
+            <table style="width:100%; border-collapse: collapse;">
                 <thead>
-                    <tr><th>الكود</th><th>الاسم</th><th>القومي</th><th>التوقيت</th><th>الحالة</th><th>إجراء</th></tr>
+                    <tr><th>الكود</th><th>الاسم</th><th>القومي</th><th>الحالة</th><th>إجراء</th></tr>
                 </thead>
                 <tbody id="tbody"></tbody>
             </table>
