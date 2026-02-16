@@ -2,13 +2,13 @@ const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", proj
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// حماية متقدمة: منع الاختصارات
-document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u' || e.key === 'c')) {
-        e.preventDefault();
-        alert("النسخ والطباعة غير مسموح بهما لدواعي الأمان");
-    }
-});
+// حماية الاختصارات
+document.addEventListener('keydown', e => { if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) e.preventDefault(); });
+
+window.onload = async () => {
+    const doc = await db.collection("SystemSettings").doc("mainConfig").get();
+    if(doc.exists) document.getElementById("president-name").innerText = "النقيب العام: " + doc.data().presidentName;
+};
 
 async function submitRequest() {
     const now = new Date();
@@ -19,40 +19,37 @@ async function submitRequest() {
         nationalId: document.getElementById('u-nid').value,
         phone: document.getElementById('u-phone').value,
         gov: document.getElementById('u-gov').value,
+        job: document.getElementById('u-job').value,
         details: document.getElementById('u-details').value,
-        type: 'complaint',
+        type: document.getElementById('u-type').value,
         timestamp: now.toLocaleString('ar-EG'),
         createdAt: firebase.firestore.Timestamp.now()
     };
     
-    if(!d.name || !d.nationalId) return Swal.fire("تنبيه","أكمل الحقول","warning");
+    if(!d.name || !d.nationalId || !d.details) return Swal.fire("تنبيه","أكمل كافة البيانات","warning");
     
-    const refId = "REQ-" + timeCode;
-    await db.collection("Requests").add({ ...d, refId: refId, status: "تم الاستلام", tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب", date: d.timestamp}]});
+    const refId = (d.type=='شكوى'?'REQ-':'SUG-') + timeCode;
+    await db.collection("Requests").add({ ...d, refId: refId, status: "تم الاستلام", tracking: [{stage: "تم الاستلام", comment: "تم استلام طلبك", date: d.timestamp}]});
 
-    // تجهيز الكارت للتحميل
+    // تجهيز كارت الصورة
     document.getElementById('card-ref').innerText = refId;
+    document.getElementById('card-name').innerText = d.name;
     document.getElementById('card-date').innerText = d.timestamp;
 
     Swal.fire({
         title: "تم التسجيل بنجاح",
-        html: `كود الطلب الخاص بك: <br><b class="allow-copy" style="font-size:24px;">${refId}</b><br><br>يُرجى حفظ الكود أو تحميله كصورة الآن`,
+        html: `كود الطلب: <b class="allow-copy">${refId}</b><br>يرجى تحميل الكارت للضرورة`,
         icon: "success",
-        showCancelButton: true,
         confirmButtonText: "تحميل كارت الطلب (صورة)",
-        cancelButtonText: "موافق"
-    }).then((result) => {
-        if (result.isConfirmed) {
-            downloadCardAsImage(refId);
-        }
-    });
+        allowOutsideClick: false
+    }).then(() => downloadCard(refId));
 }
 
-function downloadCardAsImage(refId) {
+function downloadCard(refId) {
     const card = document.getElementById('download-card');
     html2canvas(card, { scale: 2 }).then(canvas => {
         const link = document.createElement('a');
-        link.download = `Union-Ticket-${refId}.png`;
+        link.download = `Ticket-${refId}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
     });
@@ -63,17 +60,21 @@ async function searchRequest() {
     const snap = await db.collection("Requests").where("refId","==",ref).get();
     if(snap.empty) return Swal.fire("خطأ","الكود غير صحيح","error");
     
-    const data = snap.docs[0].data();
-    let h = `<div style="padding:15px; background:rgba(255,255,255,0.05); border-radius:10px;">
-                <p>الحالة الحالية: <b>${data.status}</b></p>
-                <small>الكود المرجعي: <span class="allow-copy">${data.refId}</span></small>
-             </div>`;
-    document.getElementById('track-res').innerHTML = h;
+    const d = snap.docs[0].data();
+    document.getElementById('track-res').innerHTML = `
+        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px; text-align:right; font-size:0.9rem;">
+            <p><b>مقدم الطلب:</b> ${d.name}</p>
+            <p><b>نوع الطلب:</b> ${d.type}</p>
+            <p><b>الحالة:</b> <span style="color:#00d2ff">${d.status}</span></p>
+            <hr style="margin:10px 0; border-color:#334155;">
+            ${d.tracking.reverse().map(t=> `<p>• ${t.stage}: ${t.comment}</p>`).join('')}
+        </div>`;
 }
 
 function loginAdmin() {
     const u = document.getElementById('adm-u').value, p = document.getElementById('adm-p').value;
-    if(u=="مدير" && p=="itws@manager@2026@") { sessionStorage.setItem("role","manager"); window.location.href="admin.html"; }
-    else if(u=="الادمن_الرئيسي" && p=="itws@super@2026@") { sessionStorage.setItem("role","super"); window.location.href="admin.html"; }
-    else Swal.fire("فشل","بيانات خاطئة","error");
+    if((u=="مدير" && p=="itws@manager@2026@") || (u=="الادمن_الرئيسي" && p=="itws@super@2026@")) {
+        sessionStorage.setItem("role", u=="مدير"?"manager":"super");
+        window.location.href="admin.html";
+    } else Swal.fire("فشل","البيانات خاطئة","error");
 }
