@@ -5,30 +5,29 @@
     <title>لوحة التحكم الإدارية</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .admin-nav { background: #0a1120; padding: 10px; display: flex; gap: 10px; border-bottom: 1px solid #1e293b; }
-        th, td { padding: 12px; border: 1px solid #334155; font-size: 0.85rem; text-align: center; }
-        * { -webkit-user-select: auto !important; user-select: auto !important; }
+        .admin-nav { background: #0a1120; padding: 10px; display: flex; gap: 10px; border-bottom: 2px solid #00d2ff; position: sticky; top:0; z-index:100; }
+        th, td { padding: 12px; border: 1px solid #1e293b; text-align: center; font-size: 13px; }
+        tr:nth-child(even) { background: rgba(255,255,255,0.02); }
     </style>
 </head>
 <body oncontextmenu="return false;">
-    <div class="admin-nav no-print">
-        <button class="main-btn" onclick="loadData('شكوى')" style="margin:0; flex:1;">سجل الشكاوى</button>
-        <button class="main-btn" onclick="loadData('اقتراح')" style="margin:0; flex:1; background:#1e293b;">سجل المقترحات</button>
+    <div class="admin-nav">
+        <button class="main-btn" onclick="loadData('شكوى')" style="margin:0; flex:1;"><i class="fas fa-exclamation-triangle"></i> سجل الشكاوى</button>
+        <button class="main-btn" onclick="loadData('اقتراح')" style="margin:0; flex:1; background:#1e293b;"><i class="fas fa-lightbulb"></i> سجل المقترحات</button>
         <button class="main-btn" onclick="location.href='index.html'" style="margin:0; width:60px; background:#e11d48;"><i class="fas fa-sign-out-alt"></i></button>
     </div>
 
     <div class="container" style="max-width:1000px;">
-        <h3 id="v-title" style="margin-bottom:15px;">...</h3>
+        <h3 id="v-title" style="margin-bottom:15px; color:#00d2ff;">...</h3>
         <div style="overflow-x:auto;">
             <table>
                 <thead>
-                    <tr><th>الكود</th><th>الاسم</th><th>الرقم القومي</th><th>المحافظة</th><th>الحالة</th><th>إجراء</th></tr>
+                    <tr><th>الكود المرجعي</th><th>اسم المقدم</th><th>القومي</th><th>التوقيت</th><th>الحالة</th><th>إجراء</th></tr>
                 </thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
     </div>
-
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
