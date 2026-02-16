@@ -10,7 +10,8 @@
     <aside class="sidebar">
         <div class="sidebar-header">نظام الإدارة</div>
         <nav>
-            <button class="nav-item active" onclick="loadView('شكوى', this)">الشكاوى</button>
+            <button class="nav-item active" onclick="loadView('all', this)">كل الطلبات</button>
+            <button class="nav-item" onclick="loadView('شكوى', this)">الشكاوى</button>
             <button class="nav-item" onclick="loadView('اقتراح', this)">المقترحات</button>
             <button class="nav-item" onclick="showSettings()">الإعدادات</button>
         </nav>
@@ -19,19 +20,17 @@
 
     <main class="admin-content">
         <header class="content-header">
-            <h2 id="view-title">سجل الشكاوى</h2>
-            <div class="header-actions">
-                <button class="submit-btn svc-small" onclick="printFilteredReport()">طباعة التقارير المحددة</button>
-            </div>
+            <h2 id="view-title">سجل البيانات</h2>
+            <button class="submit-btn svc-styled" style="width:auto; padding:8px 20px;" onclick="printTableData()">طباعة الجدول الحالي</button>
         </header>
 
         <div class="filter-bar">
             <input type="text" id="f-name" placeholder="بحث بالاسم..." oninput="filterTable()">
             <input type="text" id="f-nid" placeholder="الرقم القومي..." oninput="filterTable()">
-            <select id="f-gov" onchange="filterTable()">
-                <option value="">كل المحافظات</option>
-                <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option>
-                <option>البحيرة</option><option>الشرقية</option><option>الغربية</option><option>المنوفية</option>
+            <select id="f-type" onchange="filterTable()">
+                <option value="">كل الأنواع</option>
+                <option value="شكوى">شكاوى</option>
+                <option value="اقتراح">مقترحات</option>
             </select>
             <select id="f-status" onchange="filterTable()">
                 <option value="">كل الحالات</option>
@@ -43,7 +42,7 @@
         <div class="table-container">
             <table id="mainTable">
                 <thead>
-                    <tr><th>التاريخ والوقت</th><th>الكود</th><th>الاسم</th><th>المحافظة</th><th>الحالة</th><th>إدارة</th></tr>
+                    <tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إدارة</th></tr>
                 </thead>
                 <tbody id="tbody"></tbody>
             </table>
