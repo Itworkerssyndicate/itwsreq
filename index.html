@@ -33,8 +33,12 @@
             <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
             <input type="text" id="u-job" placeholder="المهنة">
             <input type="number" id="u-phone" placeholder="رقم الهاتف">
-            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option></select>
-            <input type="text" id="u-address" placeholder="العنوان بالتفصيل"> <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+            <select id="u-gov">
+                <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option>
+                <option>الدقهلية</option><option>الشرقية</option><option>الغربية</option>
+            </select>
+            <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
+            <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
             <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب"></textarea>
             <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال وحفظ الوصل</button>
         </div>
