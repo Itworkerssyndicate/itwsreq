@@ -2,23 +2,46 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم</title>
+    <title>نظام الإدارة</title>
     <link rel="stylesheet" href="style.css">
     <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
-<body onload="loadData('شكوى')">
-    <div style="display:flex; gap:10px; padding:10px; background:#0a1120; border-bottom:2px solid #00d2ff;">
-        <button class="main-btn" onclick="loadData('شكوى')">الشكاوى</button>
-        <button class="main-btn" onclick="loadData('اقتراح')">المقترحات</button>
-        <button class="main-btn btn-red" style="max-width:80px;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
-    </div>
-    <div class="container admin-container">
-        <h2 id="v-title" style="color:#00d2ff;">سجل البيانات</h2>
-        <table>
-            <thead><tr><th>التاريخ والوقت</th><th>الكود</th><th>الاسم</th><th>إدارة</th></tr></thead>
-            <tbody id="tbody"></tbody>
-        </table>
-    </div>
+<body class="admin-body">
+    <aside class="sidebar">
+        <div class="sidebar-header">نظام الإدارة</div>
+        <nav>
+            <button class="nav-item active" onclick="loadView('شكوى', this)">الشكاوى</button>
+            <button class="nav-item" onclick="loadView('اقتراح', this)">المقترحات</button>
+            <button class="nav-item" onclick="loadSettings(this)">الإعدادات</button>
+        </nav>
+        <button class="logout-btn" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
+    </aside>
+
+    <main class="admin-content">
+        <header class="content-header">
+            <h2 id="view-title">سجل الشكاوى</h2>
+        </header>
+
+        <div id="table-view" class="view-section">
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>التاريخ والوقت</th><th>الكود</th><th>الاسم</th><th>إدارة</th></tr></thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="settings-view" class="view-section" style="display:none;">
+            <div class="settings-card">
+                <h3>إعدادات البرنامج</h3>
+                <input type="text" id="set-pres" placeholder="اسم النقيب العام">
+                <input type="text" id="set-logo" placeholder="رابط الشعار (URL)">
+                <input type="text" id="set-link" placeholder="رابط موقع الخدمات">
+                <button class="submit-btn" onclick="saveSettings()">حفظ التغييرات</button>
+            </div>
+        </div>
+    </main>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
