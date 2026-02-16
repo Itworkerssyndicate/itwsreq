@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الخدمات</title>
+    <title>بوابة الخدمات الرقمية</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body oncontextmenu="return false;">
     <div id="download-card" style="position:fixed; left:-9999px; background:#fff; color:#000; padding:40px; text-align:center; width:500px; border:5px solid #00d2ff;">
         <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="100">
-        <h2 style="margin:20px 0;">وصل استلام طلب رقمي</h2>
+        <h2 style="margin:20px 0;">وصل استلام طلب رسمي</h2>
         <h1 id="card-ref" style="font-size:40px; color:#3a7bd5;"></h1>
         <h3 id="card-name"></h3>
         <p id="card-date" style="margin-top:20px; border-top:1px solid #ccc;"></p>
@@ -19,7 +19,7 @@
         <div style="text-align: center; margin-bottom: 25px;">
             <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="70">
             <p style="color:#00d2ff; margin-bottom:5px;">النقيب العام</p>
-            <h2 id="pres-display">...</h2>
+            <h2 id="pres-display">جاري التحميل...</h2>
         </div>
 
         <div class="tabs">
@@ -31,18 +31,18 @@
         <div id="tab-submit">
             <input type="text" id="u-name" placeholder="الاسم الرباعي">
             <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
-            <input type="text" id="u-job" placeholder="المهنة / الوظيفة">
+            <input type="text" id="u-job" placeholder="المهنة">
             <input type="number" id="u-phone" placeholder="رقم الهاتف">
-            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option></select>
-            <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option></select>
+            <input type="text" id="u-address" placeholder="العنوان بالتفصيل"> <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
             <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب"></textarea>
-            <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال الطلب</button>
+            <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال وحفظ الوصل</button>
         </div>
 
         <div id="tab-track" style="display:none;">
             <select id="s-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
             <input type="number" id="s-nid" placeholder="الرقم القومي">
-            <input type="text" id="s-ref" placeholder="رقم الطلب (السنة/الرقم)">
+            <input type="text" id="s-ref" placeholder="رقم الطلب">
             <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
             <div id="track-res"></div>
         </div>
