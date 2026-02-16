@@ -2,65 +2,93 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة الاحترافية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <title>لوحة التحكم الذكية | الإدارة العليا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        body { font-family: 'Cairo'; background: #0f172a; color: white; padding: 20px; }
-        .nav-bar { display: flex; gap: 15px; background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .nav-item { cursor: pointer; padding: 10px; border-radius: 5px; }
-        .nav-item.active { background: #0ea5e9; }
-        table { width: 100%; border-collapse: collapse; background: #1e293b; margin-top: 10px; }
-        th, td { padding: 12px; border: 1px solid #334155; text-align: center; }
-        .status-pill { padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; }
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; }
-        .modal-content { background:#1e293b; padding:30px; border-radius:15px; width:80%; max-width:700px; }
-        .track-history { margin: 20px 0; border-right: 2px solid #0ea5e9; padding-right: 20px; }
-        .del-btn { color: #ef4444; cursor: pointer; border: none; background: none; font-size: 1.2rem; }
+        :root { --primary: #00d2ff; --secondary: #3a7bd5; --bg: #050b18; --glass: rgba(255, 255, 255, 0.05); }
+        body { background: var(--bg); color: #fff; font-family: 'Cairo'; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* Side Navigation */
+        .sidebar { width: 250px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border-left: 1px solid rgba(255,255,255,0.1); padding: 20px; position: fixed; height: 100%; }
+        .main-content { margin-right: 270px; padding: 30px; flex: 1; }
+
+        .nav-item { padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; color: #94a3b8; }
+        .nav-item:hover, .nav-item.active { background: var(--glass); color: var(--primary); border-right: 4px solid var(--primary); }
+
+        .stat-card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        th { padding: 15px; color: var(--primary); text-align: center; font-size: 0.9rem; }
+        td { background: rgba(255,255,255,0.02); padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
+        td:first-child { border-radius: 0 15px 15px 0; border-right: 1px solid rgba(255,255,255,0.05); }
+        td:last-child { border-radius: 15px 0 0 15px; border-left: 1px solid rgba(255,255,255,0.05); }
+
+        .btn-action { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Cairo'; transition: 0.2s; }
+        .btn-track { background: var(--primary); color: #000; font-weight: bold; }
+        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; margin-right: 5px; }
+
+        /* Modal Tracking Style */
+        .tracking-timeline { position: relative; padding: 20px 0; }
+        .track-item { border-right: 2px solid var(--primary); padding-right: 25px; margin-bottom: 20px; position: relative; }
+        .track-item::after { content: ''; position: absolute; right: -7px; top: 0; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); }
+
+        #settings-view input { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="loadData('complaint')"><i class="fas fa-exclamation-triangle"></i> تقرير الشكاوى</div>
-        <div class="nav-item" onclick="loadData('suggestion')"><i class="fas fa-lightbulb"></i> تقرير المقترحات</div>
-        <div class="nav-item" onclick="showSettings()"><i class="fas fa-cogs"></i> إعدادات النظام</div>
-        <div style="margin-right:auto" onclick="location.href='index.html'">خروج</div>
+
+<div class="sidebar">
+    <div style="text-align: center; margin-bottom: 30px;">
+        <img id="admin-logo" src="" style="width: 60px; filter: drop-shadow(0 0 10px var(--primary));">
+        <h4 style="margin: 10px 0; font-size: 0.9rem;">نظام الإدارة الذكي</h4>
+        <span id="role-badge" style="font-size: 0.7rem; background: var(--primary); color: #000; padding: 2px 8px; border-radius: 10px;"></span>
+    </div>
+    <div class="nav-item active" onclick="showTab('complaint', this)"><i class="fas fa-headset"></i> إدارة الشكاوى</div>
+    <div class="nav-item" onclick="showTab('suggestion', this)"><i class="fas fa-lightbulb"></i> إدارة المقترحات</div>
+    <div class="nav-item" onclick="showTab('settings', this)"><i class="fas fa-sliders-h"></i> إعدادات النظام</div>
+    <div class="nav-item" style="margin-top: 50px; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
+</div>
+
+<div class="main-content animate__animated animate__fadeIn">
+    <div id="view-title">
+        <h2 style="color: var(--primary);">مركز إدارة الشكاوى</h2>
+        <p style="color: #64748b;">متابعة ومعالجة الطلبات الواردة من الأعضاء</p>
     </div>
 
-    <div id="content-area">
-        <table id="main-table">
+    <div id="table-container">
+        <table>
             <thead>
                 <tr>
-                    <th>الرقم المرجعي</th>
+                    <th>المرجع</th>
                     <th>الاسم</th>
-                    <th>الحالة الحالية</th>
-                    <th>تحديث</th>
-                    <th id="del-header" style="display:none;">حذف</th>
+                    <th>الحالة</th>
+                    <th>التاريخ</th>
+                    <th>الإجراءات</th>
                 </tr>
             </thead>
-            <tbody id="table-body"></tbody>
+            <tbody id="admin-table-body"></tbody>
         </table>
     </div>
 
-    <div id="track-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="modal-title"></h3>
-            <div id="track-list" class="track-history"></div>
-            <hr>
-            <div id="admin-actions">
-                <input type="text" id="new-stage" placeholder="اسم المرحلة الجديدة...">
-                <textarea id="stage-comment" placeholder="كومنت للمرحلة السابقة..."></textarea>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button onclick="addStage()" style="background:#0ea5e9; color:white; border:none; padding:10px; flex:1;">إضافة مرحلة</button>
-                    <button onclick="markDone()" style="background:#10b981; color:white; border:none; padding:10px; flex:1;">إغلاق (تم)</button>
-                    <button onclick="closeModal()" style="background:#475569; color:white; border:none; padding:10px;">إلغاء</button>
-                </div>
-            </div>
+    <div id="settings-view" style="display: none;" class="animate__animated animate__fadeIn">
+        <div class="stat-card">
+            <h3>تخصيص هوية النظام</h3>
+            <label>اسم النقابة</label>
+            <input type="text" id="set-union-name">
+            <label>اسم النقيب العام</label>
+            <input type="text" id="set-president-name">
+            <label>رابط شعار النقابة (URL)</label>
+            <input type="text" id="set-logo-url">
+            <button onclick="saveSettings()" class="btn-action btn-track" style="width: 200px;">حفظ التغييرات</button>
         </div>
     </div>
+</div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="admin_logic.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="admin_logic.js"></script>
 </body>
 </html>
