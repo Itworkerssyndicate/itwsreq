@@ -7,29 +7,30 @@
     -webkit-touch-callout: none;
 }
 
-/* استثناء النسخ لكود الطلب فقط */
-.allow-copy { -webkit-user-select: text !important; user-select: text !important; color: #00d2ff !important; font-weight: bold; }
+/* حماية من الطباعة والسكرين شوت */
+@media print { body { display: none !important; } }
 
-body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; }
+body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; overflow-x: hidden; }
 body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #111e36 0%, #050b18 100%); z-index: -1; }
 
-.container { width: 95%; max-width: 850px; margin: 10px auto; padding: 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(15px); }
-#union-logo { width: 80px; filter: drop-shadow(0 0 8px #00d2ff); margin-bottom: 10px; }
+.container { width: 95%; max-width: 850px; margin: 10px auto; padding: 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(15px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
 
-.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 12px; }
-label { display: block; margin-bottom: 5px; color: #00d2ff; font-size: 0.85rem; font-weight: bold; }
-input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid #334155; border-radius: 8px; color: #fff; font-family: 'Cairo'; outline: none; -webkit-user-select: auto; }
+/* نظام التتبع المائي */
+.progress-container { display: flex; justify-content: space-between; position: relative; margin: 40px 0; padding: 0 10px; }
+.progress-line { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: #1e293b; width: 100%; z-index: 1; }
+.progress-fill { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: linear-gradient(90deg, #00d2ff, #3a7bd5); z-index: 2; transition: width 1s ease; box-shadow: 0 0 10px #00d2ff; }
+.step-node { width: 35px; height: 35px; background: #1e293b; border: 3px solid #334155; border-radius: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 14px; position: relative; transition: 0.5s; }
+.step-node.active { border-color: #00d2ff; background: #00d2ff; color: #000; box-shadow: 0 0 15px #00d2ff; }
+.step-node span { position: absolute; top: 40px; font-size: 10px; white-space: nowrap; color: #cbd5e1; }
 
-.main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; }
+/* سجل التعليقات */
+.log-card { background: rgba(255,255,255,0.03); border-left: 3px solid #00d2ff; padding: 12px; margin-bottom: 10px; border-radius: 5px; animation: fadeIn 0.5s; }
+.log-card b { color: #00d2ff; display: block; margin-bottom: 4px; }
+.log-card small { color: #94a3b8; font-size: 11px; }
 
-/* سجل التتبع للمستخدم */
-.track-log-item { background: rgba(255, 255, 255, 0.05); border-right: 4px solid #00d2ff; padding: 12px; margin: 10px 0; border-radius: 5px; text-align: right; }
-.track-log-item b { color: #00d2ff; font-size: 0.95rem; }
-.track-log-item p { margin: 5px 0; font-size: 0.85rem; color: #cbd5e1; }
-.track-log-item small { color: #94a3b8; font-size: 0.75rem; }
+input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; color: #fff; font-family: 'Cairo'; outline: none; margin-bottom: 10px; }
+.main-btn { width: 100%; padding: 14px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+.main-btn:active { transform: scale(0.98); }
 
-/* كارت التحميل المخفي */
-#download-card { background: #fff; color: #000; padding: 30px; text-align: center; border-radius: 15px; position: fixed; left: -9999px; width: 450px; border: 3px solid #00d2ff; }
-
-@media (max-width: 600px) { .input-grid { grid-template-columns: 1fr; } }
-@media print { body { display: none !important; } }
+#download-card { background: #fff; color: #000; padding: 30px; text-align: center; border-radius: 15px; position: fixed; left: -9999px; width: 450px; border: 4px solid #00d2ff; }
+.allow-copy { -webkit-user-select: text !important; user-select: text !important; color: #00d2ff !important; font-weight: bold; }
