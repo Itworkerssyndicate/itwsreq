@@ -2,56 +2,57 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>إدارة النقابة | التراك سيستم</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <title>الإدارة العليا | نظام تتبع الطلبات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { background: #050b18; color: white; font-family: 'Cairo'; margin: 0; display: flex; }
         .sidebar { width: 250px; background: #111827; height: 100vh; padding: 20px; position: fixed; border-left: 1px solid #374151; }
         .main { margin-right: 270px; padding: 30px; width: calc(100% - 270px); }
-        .nav-item { padding: 15px; margin-bottom: 5px; cursor: pointer; border-radius: 10px; color: #94a3b8; transition: 0.3s; }
-        .nav-item.active { background: #0ea5e9; color: white; }
-        table { width: 100%; border-collapse: collapse; background: #111827; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #374151; text-align: center; font-size: 0.9rem; }
-        .btn-view { background: #0ea5e9; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
-        .btn-del { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+        .nav-item { padding: 15px; margin-bottom: 5px; cursor: pointer; border-radius: 12px; color: #94a3b8; transition: 0.3s; display: flex; align-items: center; gap: 10px; }
+        .nav-item.active { background: #0ea5e9; color: white; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3); }
+        table { width: 100%; border-collapse: collapse; background: #111827; margin-top: 20px; border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; border: 1px solid #374151; text-align: center; }
+        th { background: #1f2937; color: #0ea5e9; }
+        .btn-view { background: #0ea5e9; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-family: 'Cairo'; }
+        .btn-del { background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; margin-right: 5px; font-family: 'Cairo'; }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <h3 style="color: #0ea5e9; text-align: center;">لوحة الإدارة</h3>
-        <div id="nav-complaint" class="nav-item active" onclick="loadData('complaint')"><i class="fas fa-file-invoice"></i> إدارة الشكاوى</div>
-        <div id="nav-suggestion" class="nav-item" onclick="loadData('suggestion')"><i class="fas fa-lightbulb"></i> المقترحات الواردة</div>
-        <div id="nav-settings" class="nav-item" onclick="showSettings()"><i class="fas fa-cog"></i> إعدادات النظام</div>
-        <div class="nav-item" style="color:red; margin-top:50px;" onclick="location.href='index.html'">خروج</div>
+        <h3 style="color: #0ea5e9; text-align: center; border-bottom: 1px solid #374151; padding-bottom: 15px;">لوحة الإدارة</h3>
+        <div id="nav-complaint" class="nav-item active" onclick="loadData('complaint')"><i class="fas fa-exclamation-circle"></i> إدارة الشكاوى</div>
+        <div id="nav-suggestion" class="nav-item" onclick="loadData('suggestion')"><i class="fas fa-lightbulb"></i> المقترحات</div>
+        <div id="nav-settings" class="nav-item" onclick="showSettings()"><i class="fas fa-cogs"></i> إعدادات الهوية</div>
+        <div class="nav-item" style="color:#ef4444; margin-top:60px;" onclick="location.href='index.html'"><i class="fas fa-sign-out-alt"></i> خروج آمن</div>
     </div>
 
     <div class="main">
         <div id="content-box">
-            <h2 id="view-title">تقرير الشكاوى</h2>
+            <h2 id="view-title" style="color: #0ea5e9;">إدارة الشكاوى الواردة</h2>
             <table>
                 <thead>
                     <tr>
                         <th>الرقم المرجعي</th>
-                        <th>الاسم</th>
+                        <th>اسم العضو</th>
                         <th>المحافظة</th>
-                        <th>الحالة</th>
-                        <th>الإجراء</th>
+                        <th>الحالة الحالية</th>
+                        <th>إجراءات</th>
                     </tr>
                 </thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
 
-        <div id="settings-box" style="display:none;">
-            <h2>إعدادات النظام</h2>
-            <div style="max-width: 500px;">
-                <label>اسم النقابة</label><input type="text" id="set-name" style="width:100%; padding:10px; margin-bottom:10px;">
-                <label>اسم النقيب العام</label><input type="text" id="set-pres" style="width:100%; padding:10px; margin-bottom:10px;">
-                <label>رابط اللوجو</label><input type="text" id="set-logo" style="width:100%; padding:10px; margin-bottom:10px;">
-                <label>رابط موقع الخدمات</label><input type="text" id="set-url" style="width:100%; padding:10px; margin-bottom:10px;">
-                <button onclick="saveSettings()" style="background:green; color:white; padding:10px 20px; border:none; cursor:pointer;">حفظ</button>
+        <div id="settings-box" style="display:none; background: #111827; padding: 30px; border-radius: 20px;">
+            <h2>إعدادات النظام البصرية</h2>
+            <div style="max-width: 600px;">
+                <label>اسم النقابة الموضح</label><input type="text" id="set-name" style="width:100%; padding:12px; margin:10px 0; background:#050b18; color:white; border:1px solid #374151; border-radius:8px;">
+                <label>اسم النقيب العام</label><input type="text" id="set-pres" style="width:100%; padding:12px; margin:10px 0; background:#050b18; color:white; border:1px solid #374151; border-radius:8px;">
+                <label>رابط اللوجو (URL)</label><input type="text" id="set-logo" style="width:100%; padding:12px; margin:10px 0; background:#050b18; color:white; border:1px solid #374151; border-radius:8px;">
+                <label>رابط موقع الخدمات</label><input type="text" id="set-url" style="width:100%; padding:12px; margin:10px 0; background:#050b18; color:white; border:1px solid #374151; border-radius:8px;">
+                <button onclick="saveSettings()" style="background:#10b981; color:white; padding:12px 30px; border:none; border-radius:8px; cursor:pointer; margin-top:15px; font-weight:bold;">حفظ التغييرات</button>
             </div>
         </div>
     </div>
@@ -62,28 +63,31 @@
     firebase.initializeApp({apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq"});
     const db = firebase.firestore();
     const role = sessionStorage.getItem("role");
+    if(!role) window.location.href = "index.html";
 
     function loadData(type) {
         document.getElementById('content-box').style.display='block';
         document.getElementById('settings-box').style.display='none';
-        document.getElementById('view-title').innerText = type=='complaint' ? "إدارة الشكاوى" : "إدارة المقترحات";
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('nav-'+type).classList.add('active');
+        document.getElementById('view-title').innerText = type=='complaint' ? "إدارة الشكاوى الواردة" : "المقترحات والأفكار";
         
         db.collection("Requests").where("type", "==", type).onSnapshot(snap => {
-            let h = "";
+            let html = "";
             snap.forEach(doc => {
                 const d = doc.data();
-                h += `<tr>
-                    <td>${d.refId}</td>
-                    <td>${d.name || d.fullName}</td>
-                    <td>${d.gov || d.governorate}</td>
-                    <td><span style="color:${d.status=='تم'?'#10b981':'#0ea5e9'}">${d.status}</span></td>
+                html += `<tr>
+                    <td style="color:#0ea5e9; font-weight:bold;">${d.refId}</td>
+                    <td>${d.name}</td>
+                    <td>${d.gov}</td>
+                    <td><span style="background:${d.status=='تم'?'#064e3b':'#1e3a8a'}; color:white; padding:4px 10px; border-radius:20px; font-size:0.8rem;">${d.status}</span></td>
                     <td>
                         <button class="btn-view" onclick="openCard('${doc.id}', '${type}')">إدارة</button>
-                        ${role=='super' ? `<button class="btn-del" onclick="deleteDoc('${doc.id}')">حذف</button>` : ''}
+                        ${role=='super' ? `<button class="btn-del" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
                     </td>
                 </tr>`;
             });
-            document.getElementById('tbody').innerHTML = h;
+            document.getElementById('tbody').innerHTML = html;
         });
     }
 
@@ -91,26 +95,34 @@
         const doc = await db.collection("Requests").doc(id).get();
         const d = doc.data();
         
-        if(type == 'suggestion') {
-            await db.collection("Requests").doc(id).update({status: "تمت القراءة"});
-            return Swal.fire({ title: 'تفاصيل الاقتراح', html: `<p><b>الاسم:</b> ${d.name}</p><p><b>المحتوى:</b> ${d.details}</p>`, background: '#1e293b', color: '#fff' });
+        if(type === 'suggestion') {
+            if(d.status !== 'تمت القراءة') await db.collection("Requests").doc(id).update({status: "تمت القراءة"});
+            return Swal.fire({ 
+                title: 'تفاصيل الاقتراح',
+                background: '#1e293b', color: '#fff',
+                html: `<div style="text-align:right; line-height:1.6">
+                    <b>صاحب الاقتراح:</b> ${d.name}<br>
+                    <b>المحافظة:</b> ${d.gov}<hr>
+                    <b>نص الاقتراح:</b><br>${d.details}
+                </div>`
+            });
         }
 
         const { value: form } = await Swal.fire({
-            title: 'إدارة الشكوى',
-            background: '#1e293b', color: '#fff',
+            title: 'إدارة طلب العضو',
+            background: '#1e293b', color: '#fff', width: '650px',
             html: `
-                <div style="text-align:right; font-size:0.8rem; background:rgba(0,0,0,0.2); padding:10px; border-radius:10px;">
-                    <p><b>الاسم:</b> ${d.name} | <b>المحافظة:</b> ${d.gov}</p>
-                    <p><b>التليفون:</b> ${d.phone} | <b>المهنة:</b> ${d.job}</p>
-                    <p><b>العنوان:</b> ${d.address}</p>
-                    <hr>
-                    <p><b>الموضوع:</b> ${d.details}</p>
+                <div style="text-align:right; font-size:0.85rem; background:rgba(0,0,0,0.4); padding:15px; border-radius:12px; border:1px solid #0ea5e9;">
+                    <p><b>الاسم:</b> ${d.name} | <b>الرقم القومي:</b> ${d.nationalId}</p>
+                    <p><b>التليفون:</b> ${d.phone} | <b>المحافظة:</b> ${d.gov}</p>
+                    <p><b>المهنة:</b> ${d.job} | <b>العنوان:</b> ${d.address}</p>
+                    <hr style="border:0; border-top:1px solid #334155">
+                    <p><b>موضوع الشكوى:</b><br>${d.details}</p>
                 </div>
-                <input id="sw-stage" class="swal2-input" placeholder="اسم المرحلة القادمة">
-                <textarea id="sw-comm" class="swal2-textarea" placeholder="كومنت لإغلاق المرحلة السابقة"></textarea>
+                <input id="sw-stage" class="swal2-input" style="font-family:Cairo; font-size:0.9rem" placeholder="المرحلة القادمة (مثال: جاري الفحص)">
+                <textarea id="sw-comm" class="swal2-textarea" style="font-family:Cairo; font-size:0.9rem" placeholder="اكتب تعليقاً على هذه المرحلة.."></textarea>
             `,
-            showCancelButton: true, confirmButtonText: 'تحديث المرحلة', cancelButtonText: 'تم (إغلاق نهائي)'
+            showCancelButton: true, confirmButtonText: 'تحديث المرحلة', cancelButtonText: 'إغلاق الملف نهائياً (تم)'
         });
 
         if(form) {
@@ -119,46 +131,50 @@
             if(!st) return;
             await db.collection("Requests").doc(id).update({
                 status: st,
-                tracking: firebase.firestore.FieldValue.arrayUnion({stage: st, comment: co, date: new Date().toLocaleString('ar-EG')})
+                tracking: firebase.firestore.FieldValue.arrayUnion({stage: st, comment: co || "لا يوجد تعليق", date: new Date().toLocaleString('ar-EG')})
             });
         } else if (Swal.dismissReason === 'cancel') {
             await db.collection("Requests").doc(id).update({
                 status: "تم",
-                tracking: firebase.firestore.FieldValue.arrayUnion({stage: "تم", comment: "تمت المعالجة والإغلاق", date: new Date().toLocaleString('ar-EG')})
+                tracking: firebase.firestore.FieldValue.arrayUnion({stage: "تم", comment: "تمت المعالجة والإغلاق بنجاح", date: new Date().toLocaleString('ar-EG')})
             });
         }
     }
 
     async function deleteDoc(id) {
-        const { value: pass } = await Swal.fire({ title: 'كلمة سر الحذف', input: 'password', background: '#1e293b', color: '#fff' });
+        const { value: pass } = await Swal.fire({ title: 'تأكيد الحذف', text: 'أدخل باسورد الحذف للمتابعة', input: 'password', background: '#1e293b', color: '#fff' });
         if(pass === '11111@') {
             await db.collection("Requests").doc(id).delete();
-            Swal.fire("تم الحذف", "", "success");
-        } else {
-            Swal.fire("خطأ", "كلمة سر خاطئة", "error");
+            Swal.fire("تم الحذف", "تم مسح البيانات بنجاح", "success");
+        } else if (pass) {
+            Swal.fire("خطأ", "كلمة السر غير صحيحة", "error");
         }
     }
 
-    function showSettings() { 
-        document.getElementById('content-box').style.display='none'; 
+    function showSettings() {
+        document.getElementById('content-box').style.display='none';
         document.getElementById('settings-box').style.display='block';
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('nav-settings').classList.add('active');
         db.collection("SystemSettings").doc("mainConfig").get().then(doc => {
-            const d = doc.data();
-            document.getElementById('set-name').value = d.unionName;
-            document.getElementById('set-pres').value = d.presidentName;
-            document.getElementById('set-logo').value = d.logoURL;
-            document.getElementById('set-url').value = d.servicesURL;
+            if(doc.exists) {
+                const d = doc.data();
+                document.getElementById('set-name').value = d.unionName;
+                document.getElementById('set-pres').value = d.presidentName;
+                document.getElementById('set-logo').value = d.logoURL;
+                document.getElementById('set-url').value = d.servicesURL;
+            }
         });
     }
 
     async function saveSettings() {
-        await db.collection("SystemSettings").doc("mainConfig").update({
+        await db.collection("SystemSettings").doc("mainConfig").set({
             unionName: document.getElementById('set-name').value,
             presidentName: document.getElementById('set-pres').value,
             logoURL: document.getElementById('set-logo').value,
             servicesURL: document.getElementById('set-url').value
         });
-        Swal.fire("تم الحفظ", "", "success");
+        Swal.fire("تم الحفظ", "تم تحديث هوية النظام بنجاح", "success");
     }
 
     loadData('complaint');
