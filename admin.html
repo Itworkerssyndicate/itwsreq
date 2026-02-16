@@ -2,20 +2,20 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>الإدارة</title>
+    <title>لوحة تحكم الإدارة</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div style="display:flex; gap:10px; margin-bottom:15px;">
+    <div style="display:flex; gap:10px; margin-bottom:15px; background:#0a1120; padding:10px; border-bottom:1px solid #1e293b;">
         <button class="main-btn" onclick="loadData('شكوى')">الشكاوى</button>
         <button class="main-btn" onclick="loadData('اقتراح')">المقترحات</button>
         <button class="main-btn btn-red" style="max-width:80px;" onclick="location.href='index.html'">خروج</button>
     </div>
     <div class="container admin-container">
-        <h2 id="v-title" style="color:#00d2ff; margin-bottom:15px;">لوحة التحكم</h2>
+        <h2 id="v-title" style="color:#00d2ff; margin-bottom:15px;">سجل الشكاوى</h2>
         <div style="overflow-x:auto;">
             <table>
-                <thead><tr><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إدارة</th></tr></thead>
+                <thead><tr><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إجراء</th></tr></thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
