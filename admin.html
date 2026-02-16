@@ -2,22 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم</title>
+    <title>لوحة الإدارة</title>
     <link rel="stylesheet" href="style.css">
-    <script>if(!sessionStorage.getItem("isAdmin")) window.location.replace("index.html");</script>
 </head>
-<body class="admin-layout">
-    <aside class="sidebar">
-        <h2 style="color:var(--primary); margin-bottom:30px;">الإدارة</h2>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="loadView('all')">كل الطلبات</button>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="loadView('شكوى')">الشكاوى</button>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="loadView('اقتراح')">المقترحات</button>
-        <button class="btn-glam btn-danger" style="margin-top:auto;" onclick="sessionStorage.clear(); location.reload();">خروج</button>
+<body style="display:flex;">
+    <aside style="width:250px; background:#0b1120; height:100vh; padding:20px;">
+        <h3 style="color:var(--primary); margin-bottom:20px;">التحكم</h3>
+        <button class="btn-glam" style="width:100%; margin-bottom:10px;" onclick="loadData('all')">كل الطلبات</button>
+        <button class="btn-glam btn-danger" style="width:100%;" onclick="location.href='index.html'">خروج</button>
     </aside>
-    <main class="admin-main">
-        <table id="admin-table">
-            <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إدارة</th></tr></thead>
-            <tbody id="tbody"></tbody>
+    <main style="flex:1; padding:30px;">
+        <table style="width:100%; background:var(--card); border-radius:15px; overflow:hidden;">
+            <thead><tr style="background:rgba(255,255,255,0.05);"><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody id="admin-body"></tbody>
         </table>
     </main>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
