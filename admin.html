@@ -1,32 +1,27 @@
-// ... (Firebase Initialize هنا) ...
-
-async function updateRequestStage(docId) {
-    const { value: formValues } = await Swal.fire({
-        title: 'تحديث حالة الطلب',
-        html: `
-            <input id="sw-stage" class="swal2-input" placeholder="اسم المرحلة (مثلاً: جاري الفحص)">
-            <textarea id="sw-comment" class="swal2-textarea" placeholder="أضف تعليقك هنا..."></textarea>
-            <div style="margin-top:10px">
-                <input type="checkbox" id="sw-final"> <label for="sw-final">إغلاق الطلب بقرار نهائي</label>
-            </div>`,
-        showCancelButton: true,
-        confirmButtonText: 'تحديث الآن'
-    });
-
-    if (formValues) {
-        const stage = document.getElementById('sw-stage').value;
-        const comment = document.getElementById('sw-comment').value;
-        const isFinal = document.getElementById('sw-final').checked;
-
-        await db.collection("Requests").doc(docId).update({
-            status: isFinal ? "اغلاق الطلب" : stage,
-            tracking: firebase.firestore.FieldValue.arrayUnion({
-                stage: isFinal ? "اغلاق الطلب" : stage,
-                comment: comment,
-                date: new Date().toLocaleString('ar-EG'),
-                isFinal: isFinal
-            })
-        });
-        Swal.fire("تم", "تم تحديث المسار بنجاح", "success");
-    }
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body style="display:flex; padding:0;">
+    <aside style="width:250px; background:#0b1120; height:100vh; padding:20px; border-left:1px solid var(--border);">
+        <h2 style="color:var(--primary); margin-bottom:30px;">الإدارة</h2>
+        <button class="btn-glam" style="width:100%; margin-bottom:10px;" onclick="loadAdminView('all')">كل الطلبات</button>
+        <button class="btn-glam" style="width:100%; margin-bottom:10px;" onclick="loadAdminView('شكوى')">الشكاوى</button>
+        <button class="btn-glam" style="width:100%; margin-bottom:10px;" onclick="loadAdminView('اقتراح')">المقترحات</button>
+        <button class="btn-glam" style="width:100%; margin-top:50px; background:red;" onclick="location.href='index.html'">خروج</button>
+    </aside>
+    <main style="flex:1; padding:30px; overflow-y:auto;">
+        <table style="width:100%; background:var(--card); border-radius:15px; overflow:hidden; border-collapse:collapse;">
+            <thead><tr style="background:rgba(255,255,255,0.05);"><th style="padding:15px;">الاسم</th><th>الكود</th><th>الحالة</th><th>إدارة</th></tr></thead>
+            <tbody id="admin-table-body"></tbody>
+        </table>
+    </main>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="admin_logic.js"></script>
+</body>
+</html>
