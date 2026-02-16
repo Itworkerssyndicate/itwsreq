@@ -1,23 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; overflow-x: hidden; }
-.container { width: 95%; max-width: 600px; margin: 20px auto; padding: 20px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(10px); }
-.admin-container { max-width: 1000px; }
+body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; }
+.container { width: 95%; max-width: 600px; margin: 20px auto; padding: 20px; background: rgba(15, 23, 42, 0.8); border-radius: 15px; }
+input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; color: #fff; margin-bottom: 10px; }
+.main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; cursor: pointer; }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 10px; border: 1px solid #1e293b; text-align: center; font-size: 11px; }
 
 /* التراك المائي */
 .progress-container { display: flex; justify-content: space-between; position: relative; margin: 40px 0; }
-.progress-line { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: #1e293b; width: 100%; z-index: 1; }
-.progress-fill { position: absolute; top: 50%; left: 0; transform: translateY(-50%); height: 4px; background: #00d2ff; z-index: 2; transition: 0.5s; }
-.step-node { width: 28px; height: 28px; background: #1e293b; border: 2px solid #334155; border-radius: 50%; z-index: 3; display: flex; align-items: center; justify-content: center; font-size: 10px; position: relative; }
-.step-node.active { border-color: #00d2ff; background: #00d2ff; color: #000; }
-.step-node span { position: absolute; top: 32px; font-size: 9px; white-space: nowrap; color: #cbd5e1; }
-
-input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 1px solid #334155; border-radius: 8px; color: #fff; font-family: 'Cairo'; margin-bottom: 10px; outline: none; }
-.main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.btn-red { background: #ef4444 !important; }
-
-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-th, td { padding: 10px; border: 1px solid #1e293b; text-align: center; font-size: 11px; }
-.log-card { background: rgba(255,255,255,0.05); padding: 10px; margin-bottom: 8px; border-right: 3px solid #00d2ff; border-radius: 5px; font-size: 12px; }
+.progress-line { position: absolute; top: 50%; left: 0; height: 4px; background: #1e293b; width: 100%; z-index: 1; }
+.progress-fill { position: absolute; top: 50%; left: 0; height: 4px; background: #00d2ff; z-index: 2; transition: 0.5s; }
+.step-node { width: 28px; height: 28px; background: #1e293b; border: 2px solid #334155; border-radius: 50%; z-index: 3; position: relative; }
+.step-node.active { border-color: #00d2ff; background: #00d2ff; }
+.step-node span { position: absolute; top: 32px; font-size: 9px; white-space: nowrap; }
