@@ -3,66 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة التواصل الرقمية</title>
+    <title>بوابة الخدمات الرقمية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header class="main-header">
-        <img id="main-logo" src="" alt="اللوجو">
-        <span class="pres-title">النقيب العام</span>
-        <h2 id="pres-display" class="pres-name">...</h2>
-        <button onclick="window.open(document.getElementById('svc-link-hidden').value, '_blank')" class="submit-btn" style="width:auto; margin-top:20px; padding: 10px 30px;">موقع خدمات النقابة</button>
-        <input type="hidden" id="svc-link-hidden">
+        <img id="main-logo" src="" alt="Logo">
+        <div class="pres-label">النقيب العام</div>
+        <div id="pres-display" class="pres-name">...</div>
     </header>
 
     <div class="container">
-        <div class="tabs">
-            <button class="tab-btn active" id="btn-submit" onclick="showTab('submit')">تقديم طلب</button>
-            <button class="tab-btn" id="btn-track" onclick="showTab('track')">استعلام عن طلب</button>
-            <button class="tab-btn" onclick="showTab('login')">🔒</button>
+        <div class="tabs" style="display:flex; gap:10px; margin-bottom:30px;">
+            <button class="btn-glam" id="t-submit" onclick="showTab('submit')" style="flex:1; justify-content:center;">تقديم طلب</button>
+            <button class="btn-glam" id="t-track" onclick="showTab('track')" style="flex:1; justify-content:center;">استعلام متقدم</button>
+            <button class="btn-glam" onclick="showTab('login')">🔒</button>
         </div>
 
         <div id="tab-submit" class="tab-content">
-            <div class="input-grid">
-                <select id="u-member-type" class="full" onchange="toggleMember()">
-                    <option value="عضو">عضو نقابة</option>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
+                <select id="u-member-type" style="grid-column:span 2;" onchange="toggleMember()">
+                    <option value="عضوا">عضو نقابة</option>
                     <option value="غير عضو">مواطن (غير عضو)</option>
                 </select>
-                <input type="text" id="u-name" class="full" placeholder="الاسم الرباعي الكامل">
+                <input type="text" id="u-name" style="grid-column:span 2;" placeholder="الاسم الرباعي الكامل">
+                <input type="number" id="u-nid" placeholder="الرقم القومي">
                 <input type="number" id="u-m-id" placeholder="رقم العضوية">
-                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
-                <input type="number" id="u-phone" placeholder="رقم الهاتف">
-                <input type="text" id="u-job" placeholder="المهنة">
-                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
-                <input type="text" id="u-address" placeholder="العنوان">
-                <select id="u-type" class="full">
-                    <option value="شكوى">شكوى</option>
-                    <option value="اقتراح">اقتراح</option>
+                <select id="u-type" style="grid-column:span 2;">
+                    <option value="شكوى">تقديم شكوى</option>
+                    <option value="اقتراح">تقديم اقتراح</option>
                 </select>
-                <textarea id="u-details" class="full" rows="4" placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
+                <textarea id="u-details" style="grid-column:span 2;" rows="4" placeholder="تفاصيل الطلب..."></textarea>
             </div>
-            <button class="submit-btn" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
+            <button class="btn-glam" style="width:100%; margin-top:20px; padding:18px;" onclick="submitRequest()">إرسال الطلب</button>
         </div>
 
         <div id="tab-track" class="tab-content" style="display:none;">
-            <div class="input-grid">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
                 <input type="number" id="s-nid" placeholder="الرقم القومي">
                 <input type="text" id="s-ref" placeholder="رقم الطلب">
-                <select id="s-type" class="full">
-                    <option value="شكوى">نوع الطلب: شكوى</option>
-                    <option value="اقتراح">نوع الطلب: اقتراح</option>
+                <select id="s-type" style="grid-column:span 2;">
+                    <option value="شكوى">البحث في: الشكاوى</option>
+                    <option value="اقتراح">البحث في: المقترحات</option>
                 </select>
             </div>
-            <button class="submit-btn" onclick="searchRequest()">🔍 ابحث الآن</button>
+            <button class="btn-glam" style="width:100%; margin-top:15px;" onclick="searchRequest()">🔍 استعلام شامل</button>
             <div id="track-res"></div>
         </div>
 
         <div id="tab-login" class="tab-content" style="display:none;">
-            <div class="input-grid">
-                <input type="text" id="adm-u" class="full" placeholder="اسم المستخدم">
-                <input type="password" id="adm-p" class="full" placeholder="كلمة المرور">
-            </div>
-            <button class="submit-btn" onclick="loginAdmin()">دخول المنظومة</button>
+            <input type="text" id="adm-u" placeholder="اليوزر" style="margin-bottom:10px;">
+            <input type="password" id="adm-p" placeholder="الباسورد">
+            <button class="btn-glam" style="width:100%; margin-top:15px;" onclick="loginAdmin()">دخول الإدارة</button>
         </div>
     </div>
 
