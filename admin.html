@@ -1,68 +1,66 @@
-// نفس الـ config الخاص بك
-firebase.initializeApp({apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq"});
-const db = firebase.firestore();
-const role = sessionStorage.getItem("role");
-let currentDocId = null;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة الإدارة الاحترافية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Cairo'; background: #0f172a; color: white; padding: 20px; }
+        .nav-bar { display: flex; gap: 15px; background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .nav-item { cursor: pointer; padding: 10px; border-radius: 5px; }
+        .nav-item.active { background: #0ea5e9; }
+        table { width: 100%; border-collapse: collapse; background: #1e293b; margin-top: 10px; }
+        th, td { padding: 12px; border: 1px solid #334155; text-align: center; }
+        .status-pill { padding: 4px 10px; border-radius: 15px; font-size: 0.8rem; }
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); justify-content:center; align-items:center; }
+        .modal-content { background:#1e293b; padding:30px; border-radius:15px; width:80%; max-width:700px; }
+        .track-history { margin: 20px 0; border-right: 2px solid #0ea5e9; padding-right: 20px; }
+        .del-btn { color: #ef4444; cursor: pointer; border: none; background: none; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="loadData('complaint')"><i class="fas fa-exclamation-triangle"></i> تقرير الشكاوى</div>
+        <div class="nav-item" onclick="loadData('suggestion')"><i class="fas fa-lightbulb"></i> تقرير المقترحات</div>
+        <div class="nav-item" onclick="showSettings()"><i class="fas fa-cogs"></i> إعدادات النظام</div>
+        <div style="margin-right:auto" onclick="location.href='index.html'">خروج</div>
+    </div>
 
-function loadData(type) {
-    document.getElementById('del-header').style.display = (role == 'super' ? 'table-cell' : 'none');
-    db.collection("Requests").where("type", "==", type).onSnapshot(snap => {
-        let html = "";
-        snap.forEach(doc => {
-            const d = doc.data();
-            html += `<tr>
-                <td>${d.refId}</td>
-                <td>${d.fullName}</td>
-                <td><span class="status-pill" style="background:${d.status=='تم'?'#10b981':'#3b82f6'}">${d.status}</span></td>
-                <td><button onclick="openTrack('${doc.id}')">إدارة</button></td>
-                ${role == 'super' ? `<td><button class="del-btn" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></button></td>` : ''}
-            </tr>`;
-        });
-        document.getElementById("table-body").innerHTML = html;
-    });
-}
+    <div id="content-area">
+        <table id="main-table">
+            <thead>
+                <tr>
+                    <th>الرقم المرجعي</th>
+                    <th>الاسم</th>
+                    <th>الحالة الحالية</th>
+                    <th>تحديث</th>
+                    <th id="del-header" style="display:none;">حذف</th>
+                </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+        </table>
+    </div>
 
-function openTrack(id) {
-    currentDocId = id;
-    db.collection("Requests").doc(id).get().then(doc => {
-        const d = doc.data();
-        document.getElementById('modal-title').innerText = "تتبع: " + d.refId;
-        let listHtml = "";
-        d.tracking.forEach((step, index) => {
-            const isLast = index === d.tracking.length - 1;
-            listHtml += `<div style="margin-bottom:15px;">
-                <i class="fas ${isLast ? 'fa-spinner fa-spin' : 'fa-check-circle'}" style="color:${isLast?'#0ea5e9':'#10b981'}"></i>
-                <b>${step.stage}</b> <small>(${step.date})</small><br>
-                <span style="color:#94a3b8; font-size:0.8rem">${step.comment || ''}</span>
-            </div>`;
-        });
-        document.getElementById('track-list').innerHTML = listHtml;
-        document.getElementById('track-modal').style.display = 'flex';
-    });
-}
+    <div id="track-modal" class="modal">
+        <div class="modal-content">
+            <h3 id="modal-title"></h3>
+            <div id="track-list" class="track-history"></div>
+            <hr>
+            <div id="admin-actions">
+                <input type="text" id="new-stage" placeholder="اسم المرحلة الجديدة...">
+                <textarea id="stage-comment" placeholder="كومنت للمرحلة السابقة..."></textarea>
+                <div style="display:flex; gap:10px; margin-top:10px;">
+                    <button onclick="addStage()" style="background:#0ea5e9; color:white; border:none; padding:10px; flex:1;">إضافة مرحلة</button>
+                    <button onclick="markDone()" style="background:#10b981; color:white; border:none; padding:10px; flex:1;">إغلاق (تم)</button>
+                    <button onclick="closeModal()" style="background:#475569; color:white; border:none; padding:10px;">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-async function addStage() {
-    const stage = document.getElementById('new-stage').value;
-    const comment = document.getElementById('stage-comment').value;
-    if(!stage) return;
-
-    const newStep = { stage, comment, date: new Date().toLocaleString('ar-EG') };
-    await db.collection("Requests").doc(currentDocId).update({
-        status: stage,
-        tracking: firebase.firestore.FieldValue.arrayUnion(newStep)
-    });
-    openTrack(currentDocId);
-}
-
-async function markDone() {
-    await db.collection("Requests").doc(currentDocId).update({
-        status: "تم",
-        tracking: firebase.firestore.FieldValue.arrayUnion({ stage: "تم", comment: "تم إغلاق الطلب بنجاح", date: new Date().toLocaleString('ar-EG') })
-    });
-    closeModal();
-}
-
-function closeModal() { document.getElementById('track-modal').style.display = 'none'; }
-function deleteDoc(id) { if(confirm("حذف نهائي؟")) db.collection("Requests").doc(id).delete(); }
-
-loadData('complaint'); // البداية بالشكاوى
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="admin_logic.js"></script>
+</body>
+</html>
