@@ -2,39 +2,49 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <title>لوحة الإدارة العليا</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .sidebar { width: 260px; background: #111827; height: 100vh; position: fixed; padding: 25px; border-left: 1px solid #374151; }
+        .main-content { margin-right: 260px; padding: 40px; width: calc(100% - 260px); }
+        .nav-link { padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 10px; transition: 0.3s; display: block; color: #94a3b8; text-decoration: none; }
+        .nav-link:hover, .nav-link.active { background: var(--primary); color: #000; font-weight: bold; }
+    </style>
 </head>
-<body style="display:flex;">
+<body>
     <div class="sidebar">
-        <h3>الإدارة الرقمية</h3>
-        <div class="nav-item active" onclick="loadData('complaint')">الشكاوى</div>
-        <div class="nav-item" onclick="loadData('suggestion')">المقترحات</div>
-        <div class="nav-item" onclick="showSettings()">الإعدادات</div>
-        <button onclick="window.print()" class="main-btn" style="background:#6366f1;">طباعة التقرير العام</button>
-        <div class="nav-item" style="color:red; margin-top:20px;" onclick="location.href='index.html'">خروج</div>
+        <h2 style="color: var(--primary); text-align: center;">التحكم</h2>
+        <div class="nav-link active" onclick="loadData('complaint', this)">الشكاوى</div>
+        <div class="nav-link" onclick="loadData('suggestion', this)">المقترحات</div>
+        <div class="nav-link" onclick="showSettings(this)">الإعدادات</div>
+        <hr style="border-color:#334155; margin: 20px 0;">
+        <button class="main-btn" style="background:#6366f1;" onclick="window.print()">طباعة التقرير</button>
+        <button class="main-btn" style="background:#ef4444; margin-top:10px;" onclick="location.href='index.html'">خروج</button>
     </div>
 
-    <div class="main-content" style="margin-right:260px; padding:30px; width:100%;">
+    <div class="main-content">
         <div id="content-box">
             <h2 id="view-title">إدارة الشكاوى</h2>
-            <table>
-                <thead><tr><th>الرقم</th><th>الاسم</th><th>المحافظة</th><th>الحالة</th><th>إجراء</th></tr></thead>
-                <tbody id="tbody"></tbody>
-            </table>
+            <div class="admin-table-container">
+                <table>
+                    <thead><tr><th>الرقم</th><th>الاسم</th><th>المحافظة</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                    <tbody id="tbody"></tbody>
+                </table>
+            </div>
         </div>
+
         <div id="settings-box" style="display:none;">
-            <h2>الإعدادات</h2>
-            <label>الاسم</label><input type="text" id="set-name">
-            <label>النقيب</label><input type="text" id="set-pres">
-            <label>اللوجو</label><input type="text" id="set-logo">
-            <label>الخدمات</label><input type="text" id="set-url">
-            <button class="main-btn" onclick="saveSettings()">حفظ</button>
+            <h2>إعدادات الهوية</h2>
+            <div class="form-group"><label>اسم النقابة</label><input type="text" id="set-name"></div>
+            <div class="form-group"><label>اسم النقيب</label><input type="text" id="set-pres"></div>
+            <div class="form-group"><label>رابط اللوجو</label><input type="text" id="set-logo"></div>
+            <button class="main-btn" onclick="saveSettings()">حفظ التعديلات</button>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="admin_logic.js"></script>
