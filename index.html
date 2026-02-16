@@ -23,6 +23,7 @@
             align-items: center;
             min-height: 100vh;
             padding: 20px;
+            user-select: none; /* منع تحديد النصوص */
         }
 
         .container {
@@ -35,12 +36,16 @@
             border: 1px solid #334155;
         }
 
+        /* تنسيق شاشة الدخول */
+        #login-section { display: none; text-align: center; }
+        #user-form-section { display: block; }
+
         .header-section { text-align: center; margin-bottom: 30px; }
-        #union-logo { width: 80px; margin-bottom: 10px; }
+        #union-logo { width: 80px; margin-bottom: 10px; border-radius: 50%; }
         h2 { color: var(--primary); margin: 0; font-size: 1.5rem; }
 
         .input-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .input-group { flex: 1; min-width: 250px; display: flex; flex-direction: column; }
+        .input-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
 
         label { margin-bottom: 8px; font-size: 0.9rem; color: #94a3b8; }
 
@@ -52,18 +57,9 @@
             border-radius: 10px;
             font-family: 'Cairo';
             outline: none;
-            transition: 0.3s;
         }
 
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(14, 165, 233, 0.3); }
-
-        .membership-box {
-            background: rgba(14, 165, 233, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-            margin: 15px 0;
-            border: 1px dashed #334155;
-        }
+        .membership-box { background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px dashed #334155; }
 
         button {
             width: 100%;
@@ -76,48 +72,37 @@
             font-size: 1.1rem;
             cursor: pointer;
             transition: 0.3s;
-            margin-top: 20px;
+            margin-top: 10px;
         }
 
-        button:hover { background: #0284c7; transform: translateY(-2px); }
+        .admin-link { margin-top: 20px; font-size: 0.8rem; color: #64748b; cursor: pointer; text-decoration: underline; }
 
-        /* حماية إضافية */
+        /* حماية الطباعة وتصوير الشاشة */
         @media print { body { display: none; } }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body oncontextmenu="return false;" onkeydown="return disableDevTools(event)">
 
-<div class="container">
+<div id="user-form-section" class="container">
     <div class="header-section">
         <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png" alt="Logo">
         <h2 id="union-name">نقابة تكنولوجيا المعلومات</h2>
-        <p style="font-size: 0.8rem; color: #64748b;">نموذج المقترحات والشكاوى الإلكتروني</p>
+        <p id="president-name" style="font-size: 0.9rem; color: #38bdf8;"></p>
     </div>
 
     <div class="input-row">
-        <div class="input-group">
-            <label>الاسم الرباعي</label>
-            <input type="text" id="user-fullname" placeholder="أدخل اسمك الكامل">
-        </div>
-        <div class="input-group">
-            <label>الرقم القومي</label>
-            <input type="number" id="user-nationalid" placeholder="14 رقم">
-        </div>
+        <div class="input-group"><label>الاسم الرباعي</label><input type="text" id="user-fullname"></div>
+        <div class="input-group"><label>الرقم القومي</label><input type="number" id="user-nationalid"></div>
     </div>
 
     <div class="input-row">
         <div class="input-group">
             <label>المحافظة</label>
             <select id="user-gov">
-                <option value="القاهرة">القاهرة</option>
-                <option value="الجيزة">الجيزة</option>
-                <option value="الإسكندرية">الإسكندرية</option>
+                <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
             </select>
         </div>
-        <div class="input-group">
-            <label>المهنة الحالية</label>
-            <input type="text" id="user-job" placeholder="مهنتك الحالية">
-        </div>
+        <div class="input-group"><label>المهنة الحالية</label><input type="text" id="user-job"></div>
     </div>
 
     <div class="membership-box">
@@ -126,23 +111,41 @@
             <option value="no">لا، لست عضواً</option>
             <option value="yes">نعم، أنا عضو</option>
         </select>
-        <input type="text" id="membership-id" placeholder="اكتب رقم العضوية هنا" style="display:none; width: 93%; margin-top: 10px;">
+        <input type="text" id="membership-id" placeholder="رقم العضوية" style="display:none; width: 93%; margin-top: 10px;">
+    </div>
+
+    <div class="input-row">
+        <div class="input-group">
+            <label>نوع الطلب</label>
+            <select id="request-type" onchange="updateMessageLabel()">
+                <option value="complaint">شكوى</option><option value="suggestion">اقتراح</option>
+            </select>
+        </div>
     </div>
 
     <div class="input-group">
-        <label>نوع الطلب</label>
-        <select id="request-type" onchange="updateMessageLabel()">
-            <option value="complaint">شكوى</option>
-            <option value="suggestion">اقتراح</option>
-        </select>
-    </div>
-
-    <div class="input-group" style="margin-top: 15px;">
         <label id="details-label">تفاصيل الشكوى</label>
-        <textarea id="request-details" rows="4" placeholder="اكتب التفاصيل هنا..."></textarea>
+        <textarea id="request-details" rows="4"></textarea>
     </div>
 
     <button onclick="submitRequest()">إرسال الطلب الآن</button>
+    <div class="admin-link" onclick="showLogin()">دخول الإدارة</div>
+</div>
+
+<div id="login-section" class="container">
+    <div class="header-section">
+        <h2>دخول النظام الآمن</h2>
+    </div>
+    <div class="input-group">
+        <label>اسم المستخدم</label>
+        <input type="text" id="admin-username">
+    </div>
+    <div class="input-group" style="margin-top: 15px;">
+        <label>كلمة السر</label>
+        <input type="password" id="admin-password">
+    </div>
+    <button onclick="loginAdmin()" style="background: #6366f1;">تسجيل الدخول</button>
+    <button onclick="hideLogin()" style="background: transparent; border: 1px solid #334155; margin-top: 10px;">رجوع</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -150,14 +153,25 @@
 <script src="app.js"></script>
 
 <script>
+    function showLogin() {
+        document.getElementById('user-form-section').style.display = 'none';
+        document.getElementById('login-section').style.display = 'block';
+    }
+    function hideLogin() {
+        document.getElementById('user-form-section').style.display = 'block';
+        document.getElementById('login-section').style.display = 'none';
+    }
     function toggleMembershipField() {
         const isMember = document.getElementById("is-member").value;
         document.getElementById("membership-id").style.display = (isMember === "yes") ? "block" : "none";
     }
-
     function updateMessageLabel() {
         const type = document.getElementById("request-type").value;
         document.getElementById("details-label").innerText = (type === "complaint") ? "تفاصيل الشكوى" : "تفاصيل الاقتراح";
+    }
+    function disableDevTools(e) {
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'i' || e.key === 'j')) return false;
+        if (e.key === 'F12') return false;
     }
 </script>
 </body>
