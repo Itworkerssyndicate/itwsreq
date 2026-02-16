@@ -1,36 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; }
+* { 
+    box-sizing: border-box; margin: 0; padding: 0; 
+    -webkit-user-select: none; /* منع النسخ في الموبايل */
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none; 
+    -webkit-touch-callout: none; /* منع ظهور القائمة عند اللمس المطول */
+}
+
+/* السماح بنسخ كود الطلب فقط */
+.allow-copy { 
+    -webkit-user-select: text !important; 
+    user-select: text !important; 
+    color: #00d2ff; font-weight: bold; 
+}
+
+body { font-family: 'Cairo', sans-serif; background: #050b18; color: #fff; direction: rtl; min-height: 100vh; overflow-x: hidden; }
 body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #111e36 0%, #050b18 100%); z-index: -1; }
 
-.container { max-width: 950px; margin: 30px auto; padding: 25px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; backdrop-filter: blur(15px); }
-#union-logo { width: 120px; height: auto; margin-bottom: 10px; filter: drop-shadow(0 0 8px #00d2ff); }
+.container { width: 95%; max-width: 950px; margin: 15px auto; padding: 15px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; backdrop-filter: blur(15px); }
+#union-logo { width: 100px; filter: drop-shadow(0 0 8px #00d2ff); }
 
-.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 15px; }
-label { display: block; margin-bottom: 5px; color: #00d2ff; font-weight: bold; font-size: 0.9rem; }
-input, select, textarea { width: 100%; padding: 12px; background: rgba(0,0,0,0.4); border: 1px solid #334155; border-radius: 10px; color: #fff; font-family: 'Cairo'; outline: none; }
+.input-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 15px; }
+input, select, textarea { 
+    width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid #334155; 
+    border-radius: 8px; color: #fff; font-family: 'Cairo'; outline: none; -webkit-user-select: auto; 
+}
 
-.main-btn { width: 100%; padding: 14px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-.main-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,210,255,0.3); }
+.main-btn { width: 100%; padding: 12px; background: linear-gradient(45deg, #00d2ff, #3a7bd5); border: none; border-radius: 10px; color: white; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
 
-/* التراك سيستم */
-.timeline { display: flex; justify-content: space-between; margin: 40px 0; position: relative; padding: 0 10px; }
-.timeline::before { content: ""; position: absolute; top: 20px; left: 0; width: 100%; height: 3px; background: #334155; z-index: 0; }
-.step { position: relative; z-index: 1; width: 40px; height: 40px; background: #1e293b; border: 2px solid #334155; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #475569; }
-.step.completed { border-color: #00d2ff; background: #00d2ff; color: #000; box-shadow: 0 0 15px #00d2ff; }
-.step-label { position: absolute; top: 45px; font-size: 11px; white-space: nowrap; color: #cbd5e1; }
+/* تصميم كارت التحميل */
+#download-card { 
+    background: #fff; color: #000; padding: 20px; text-align: center; 
+    border-radius: 10px; position: fixed; left: -9999px; width: 400px; 
+}
 
-/* الجداول */
-table { width: 100%; border-collapse: collapse; margin-top: 15px; background: rgba(0,0,0,0.2); }
-th { background: #1e293b; color: #00d2ff; padding: 12px; text-align: center; border: 1px solid #334155; }
-td { padding: 12px; border: 1px solid #334155; text-align: center; color: #e2e8f0; }
-
+/* منع السكرين شوت (خاص ببعض المتصفحات) */
+@media screen {
+    body { -webkit-filter: blur(0px); }
+}
 @media print {
-    .sidebar, .no-print, .swal2-container { display: none !important; }
-    body::before { display: none; }
-    body { background: white; color: black; }
-    .container, .main { border: none; width: 100%; margin: 0; padding: 0; background: transparent; }
-    td, th { border: 1px solid #000 !important; color: black !important; }
+    body { display: none; } /* منع الطباعة لغير الإدارة */
 }
