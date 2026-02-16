@@ -1,43 +1,104 @@
-* { box-sizing: border-box; }
-:root { --primary: #00d2ff; --secondary: #3a7bd5; --bg: #050b18; }
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
-body { 
-    background: #050b18; color: #fff; font-family: 'Cairo', sans-serif; 
-    margin: 0; direction: rtl; overflow-x: hidden;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --primary: #00d2ff;
+    --secondary: #3a7bd5;
+    --dark-bg: #050b18;
+    --card-bg: rgba(15, 23, 42, 0.8);
 }
 
-/* إصلاح الجريد والتداخل */
-.input-grid { 
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-    gap: 20px; margin-bottom: 20px; 
+body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--dark-bg);
+    color: #fff;
+    direction: rtl;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 
-.container { 
-    max-width: 1000px; margin: 30px auto; padding: 30px; 
-    background: rgba(30, 41, 59, 0.5); border-radius: 20px; 
-    border: 1px solid rgba(255,255,255,0.1); 
+/* خلفية متحركة انسيابية */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle at 50% 50%, #1e293b 0%, #050b18 100%);
+    z-index: -1;
 }
 
-/* تنسيق الجداول المنهار في الصور */
-.admin-table-container { width: 100%; overflow-x: auto; margin-top: 20px; }
-table { width: 100%; border-collapse: collapse; background: #111827; border-radius: 10px; overflow: hidden; }
-th { background: var(--secondary); color: white; padding: 15px; font-size: 0.9rem; }
-td { padding: 12px; text-align: center; border-bottom: 1px solid #1f2937; font-size: 0.85rem; }
+/* حاوية المحتوى */
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 30px;
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.8s ease-out;
+}
 
-/* إصلاح التراك سيستم (الأيقونات) */
-.timeline { display: flex; justify-content: space-between; margin: 50px 0; position: relative; }
-.timeline::before { content: ''; position: absolute; top: 20px; height: 3px; background: #334155; width: 100%; z-index: 1; }
-.step { position: relative; z-index: 2; width: 40px; height: 40px; background: #1e293b; border: 2px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); }
-.step-label { position: absolute; top: 45px; font-size: 0.7rem; white-space: nowrap; }
+/* إصلاح اللوجو العملاق */
+#union-logo {
+    width: 140px !important;
+    height: 140px !important;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 10px var(--primary));
+    transition: transform 0.3s;
+}
+#union-logo:hover { transform: scale(1.05) rotate(5deg); }
 
-/* أزرار الطباعة */
-.btn-print-all { background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 10px; }
-.btn-print-card { background: #10b981; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+/* الجريدات المصلحة */
+.input-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
 
+.form-group { margin-bottom: 15px; text-align: right; }
+label { display: block; margin-bottom: 8px; color: var(--primary); font-weight: bold; }
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid #334155;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Cairo';
+    transition: 0.3s;
+}
+input:focus { border-color: var(--primary); box-shadow: 0 0 10px rgba(0,210,255,0.3); }
+
+/* الأزرار الملونة */
+.main-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(45deg, var(--primary), var(--secondary));
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.main-btn:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,210,255,0.4); }
+
+/* التراك سيستم المطور */
+.timeline { display: flex; justify-content: space-between; margin: 40px 0; position: relative; }
+.timeline::before { content: ""; position: absolute; top: 20px; width: 100%; height: 3px; background: #334155; z-index: 0; }
+.step { position: relative; z-index: 1; width: 40px; height: 40px; background: #1e293b; border: 2px solid var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.step-label { position: absolute; top: 45px; font-size: 0.75rem; white-space: nowrap; }
+
+/* أنيميشن الظهور */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+/* التنسيق عند الطباعة */
 @media print {
-    .sidebar, .tabs-nav, .main-btn, .swal2-actions { display: none !important; }
+    .sidebar, .tabs-nav, .main-btn, .swal2-container { display: none !important; }
     body { background: white !important; color: black !important; }
-    .main-content { margin: 0 !important; width: 100% !important; }
-    table { border: 1px solid #000 !important; width: 100% !important; }
-    th, td { border: 1px solid #000 !important; color: black !important; }
+    .container { border: none; background: white; width: 100%; margin: 0; padding: 0; }
 }
