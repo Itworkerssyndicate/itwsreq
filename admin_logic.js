@@ -7,17 +7,23 @@ function loadData(type, btn) {
     if(btn) { document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active')); btn.classList.add('active'); }
     document.getElementById('view-data').style.display = 'block';
     document.getElementById('view-settings').style.display = 'none';
-    document.getElementById('view-title').innerText = type === 'complaint' ? "الشكاوى" : "المقترحات";
+    document.getElementById('view-title').innerText = type==='complaint'?'سجل الشكاوى':'سجل المقترحات';
 
-    db.collection("Requests").where("type","==",type).onSnapshot(snap => {
+    db.collection("Requests").where("type","==",type).orderBy("createdAt", "desc").onSnapshot(snap => {
         let h = "";
         snap.forEach(doc => {
             const d = doc.data();
-            h += `<tr><td>${d.refId}</td><td>${d.name}</td><td>${d.gov}</td><td><b>${d.status}</b></td>
-            <td>
-                <button onclick="openCard('${doc.id}')" style="background:#10b981; border:none; padding:6px 10px; border-radius:5px; color:#fff; cursor:pointer;"><i class="fas fa-tasks"></i> إدارة</button>
-                ${role=='super' ? `<button onclick="deleteDoc('${doc.id}')" style="background:#ef4444; border:none; padding:6px 10px; margin-right:5px; color:#fff; cursor:pointer;"><i class="fas fa-trash"></i></button>` : ''}
-            </td></tr>`;
+            h += `<tr>
+                <td>${d.refId}</td>
+                <td>${d.name}</td>
+                <td>${d.timestamp || 'قديم'}</td>
+                <td>${d.gov}</td>
+                <td><b style="color:#00d2ff">${d.status}</b></td>
+                <td class="no-print">
+                    <button onclick="openCard('${doc.id}')" style="background:#10b981; border:none; padding:5px 10px; border-radius:5px; color:#fff; cursor:pointer;">عرض كامل</button>
+                    ${role=='super' ? `<button onclick="deleteDoc('${doc.id}')" style="background:#ef4444; border:none; padding:5px 10px; margin-right:5px; color:#fff; cursor:pointer;"><i class="fas fa-trash"></i></button>` : ''}
+                </td>
+            </tr>`;
         });
         document.getElementById('tbody').innerHTML = h;
     });
@@ -27,44 +33,69 @@ async function openCard(id) {
     const doc = await db.collection("Requests").doc(id).get();
     const d = doc.data();
     
-    // بناء التراك سيستم ليعمل داخل الـ Modal
-    let trackHtml = `<div class="timeline" style="margin:25px 0;">`;
-    d.tracking.forEach(t => trackHtml += `<div class="step active"><i class="fas fa-check"></i><div class="step-label" style="font-size:10px">${t.stage}</div></div>`);
+    // بناء التراك سيستم الملون
+    let steps = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم"];
+    let currentIdx = steps.indexOf(d.status);
+    let trackHtml = `<div class="timeline">`;
+    steps.forEach((s, i) => {
+        let cls = i <= currentIdx ? "completed" : "";
+        trackHtml += `<div class="step ${cls}"><i class="fas fa-check"></i><div class="step-label">${s}</div></div>`;
+    });
     trackHtml += `</div>`;
 
     Swal.fire({
         title: 'تفاصيل الطلب: ' + d.refId,
-        width: '800px',
-        background: '#0f172a', color: '#fff',
+        width: '850px',
+        background: '#0a1120', color: '#fff',
         html: `
-            <div id="print-area" style="text-align:right; border:1px solid #334155; padding:15px; border-radius:10px; font-family:Cairo;">
-                <p><b>الاسم:</b> ${d.name} | <b>الرقم القومي:</b> ${d.nationalId}</p>
-                <p><b>الموضوع:</b> ${d.details}</p>
-                <hr style="border-color:#334155; margin:10px 0;">
+            <div id="card-print" style="text-align:right; border:1px solid #334155; padding:20px; border-radius:10px;">
+                <h4 style="color:#00d2ff">بيانات مقدم الطلب:</h4>
+                <p><b>الاسم:</b> ${d.name}</p>
+                <p><b>الرقم القومي:</b> ${d.nationalId} | <b>الهاتف:</b> ${d.phone}</p>
+                <p><b>المحافظة:</b> ${d.gov} | <b>المهنة:</b> ${d.job}</p>
+                <p><b>العنوان:</b> ${d.address}</p>
+                <p><b>تاريخ التقديم:</b> ${d.timestamp}</p>
+                <hr style="margin:15px 0; border-color:#334155;">
+                <p><b>موضوع الطلب:</b><br>${d.details}</p>
                 ${trackHtml}
             </div>
-            <div style="margin-top:20px;">
-                <input id="sw-stage" class="swal2-input" placeholder="المرحلة القادمة" style="color:#000">
-                <textarea id="sw-comm" class="swal2-textarea" placeholder="ملاحظات" style="color:#000"></textarea>
+            <div class="no-print" style="margin-top:20px;">
+                <select id="sw-status" class="swal2-input" style="color:#000">
+                    <option value="قيد المراجعة">نقل لـ: قيد المراجعة</option>
+                    <option value="جاري التنفيذ">نقل لـ: جاري التنفيذ</option>
+                    <option value="تم">إغلاق الطلب (تم)</option>
+                </select>
+                <textarea id="sw-comm" class="swal2-textarea" placeholder="أضف تعليق إداري" style="color:#000"></textarea>
+                <button class="main-btn" onclick="printCard()" style="background:#10b981; margin-top:10px;">طباعة الكارت</button>
             </div>
-            <button class="main-btn" style="background:#10b981; margin-top:10px;" onclick="printDiv('print-area')">طباعة الكارت</button>
         `,
-        confirmButtonText: 'تحديث المرحلة',
+        confirmButtonText: 'تحديث الحالة',
         showCancelButton: true
     }).then(r => {
-        if(r.isConfirmed) updateStage(id, document.getElementById('sw-stage').value, document.getElementById('sw-comm').value);
+        if(r.isConfirmed) updateStage(id, document.getElementById('sw-status').value, document.getElementById('sw-comm').value);
     });
 }
 
-function printDiv(id) {
-    const content = document.getElementById(id).innerHTML;
-    const win = window.open('', '', 'height=600,width=800');
-    win.document.write(`<html><head><style>body{direction:rtl; font-family:Cairo; padding:20px; color:#000;} .timeline{display:flex; justify-content:space-between; margin:40px 0;} .step{width:30px; height:30px; border:1px solid #000; border-radius:50%; text-align:center;}</style></head><body>${content}</body></html>`);
-    win.document.close(); win.print();
+function printCard() { window.print(); }
+
+async function deleteDoc(id) {
+    const { value: p } = await Swal.fire({ title: 'كلمة سر الحذف النهائية', input: 'password', background:'#0a1120', color:'#fff' });
+    if(p === '11111@') { await db.collection("Requests").doc(id).delete(); Swal.fire("تم الحذف بنجاح"); }
 }
 
-async function showSettings(btn) {
-    if(btn) { document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active')); btn.classList.add('active'); }
+async function updateStage(id, status, comment) {
+    await db.collection("Requests").doc(id).update({
+        status: status,
+        tracking: firebase.firestore.FieldValue.arrayUnion({
+            stage: status,
+            comment: comment || "تم تحديث الحالة من الإدارة",
+            date: new Date().toLocaleString('ar-EG')
+        })
+    });
+    Swal.fire("تم التحديث");
+}
+
+async function showSettings() {
     document.getElementById('view-data').style.display = 'none';
     document.getElementById('view-settings').style.display = 'block';
     const doc = await db.collection("SystemSettings").doc("mainConfig").get();
@@ -82,21 +113,7 @@ async function saveSettings() {
         presidentName: document.getElementById('set-pres').value,
         logoURL: document.getElementById('set-logo').value
     });
-    Swal.fire("تم الحفظ","","success");
-}
-
-async function deleteDoc(id) {
-    const { value: p } = await Swal.fire({ title: 'باسورد الحذف', input: 'password' });
-    if(p === '11111@') { await db.collection("Requests").doc(id).delete(); Swal.fire("تم"); }
-}
-
-async function updateStage(id, s, c) {
-    if(!s) return;
-    await db.collection("Requests").doc(id).update({
-        status: s,
-        tracking: firebase.firestore.FieldValue.arrayUnion({ stage: s, comment: c || "تحديث إداري", date: new Date().toLocaleString('ar-EG') })
-    });
-    Swal.fire("تم التحديث");
+    Swal.fire("تم حفظ الإعدادات بنجاح");
 }
 
 loadData('complaint');
