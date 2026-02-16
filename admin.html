@@ -1,38 +1,48 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة النظام</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        /* إعادة تفعيل التحديد في لوحة الإدارة فقط */
-        * { -webkit-user-select: auto !important; user-select: auto !important; }
-        .admin-layout { display: flex; flex-direction: column; }
-        .sidebar { background: #0a1120; padding: 15px; display: flex; gap: 10px; overflow-x: auto; border-bottom: 1px solid #1e293b; }
-        @media (min-width: 900px) { .admin-layout { flex-direction: row; } .sidebar { width: 220px; height: 100vh; flex-direction: column; border-left: 1px solid #1e293b; } }
-    </style>
-</head>
-<body oncontextmenu="return false;">
-    <div class="admin-layout">
-        <div class="sidebar no-print">
-            <button class="main-btn" onclick="loadData('complaint')">الشكاوى</button>
-            <button class="main-btn" onclick="window.print()" style="background:#4f46e5;">تقرير عام</button>
-            <button class="main-btn" onclick="location.href='index.html'" style="background:#e11d48;">خروج</button>
-        </div>
-        <div style="flex:1; padding:20px;">
-            <h3>السجلات الواردة</h3>
-            <div style="overflow-x:auto;">
-                <table>
-                    <thead><tr><th>الكود</th><th>الاسم</th><th>التاريخ</th><th>إجراء</th></tr></thead>
-                    <tbody id="tbody"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="admin_logic.js"></script>
-</body>
-</html>
+const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const role = sessionStorage.getItem("role");
+
+function loadData(type) {
+    db.collection("Requests").where("type","==",type).onSnapshot(snap => {
+        let h = "";
+        snap.forEach(doc => {
+            const d = doc.data();
+            h += `<tr>
+                <td>${d.refId}</td><td>${d.name}</td><td>${d.timestamp}</td>
+                <td>
+                    <button onclick="openCard('${doc.id}')" style="background:#10b981; border:none; padding:5px; color:#fff; border-radius:5px;">عرض</button>
+                    ${role=='super' ? `<button onclick="deleteDoc('${doc.id}')" style="background:#ef4444; border:none; padding:5px; color:#fff; border-radius:5px;">حذف</button>` : ''}
+                </td></tr>`;
+        });
+        document.getElementById('tbody').innerHTML = h;
+    });
+}
+
+async function openCard(id) {
+    const doc = await db.collection("Requests").doc(id).get();
+    const d = doc.data();
+    Swal.fire({
+        title: 'تفاصيل الطلب',
+        background: '#0a1120', color: '#fff',
+        html: `<div style="text-align:right; font-size:14px;">
+                <p><b>الاسم:</b> ${d.name}</p><p><b>القومي:</b> ${d.nationalId}</p>
+                <p><b>الموضوع:</b> ${d.details}</p>
+                <select id="sw-status" class="swal2-input" style="color:#000"><option value="تم">إغلاق (تم)</option></select>
+               </div>`,
+        confirmButtonText: 'تحديث'
+    }).then(r => {
+        if(r.isConfirmed) updateStage(id, document.getElementById('sw-status').value);
+    });
+}
+
+async function deleteDoc(id) {
+    const { value: p } = await Swal.fire({ title: 'كلمة السر', input: 'password' });
+    if(p === '11111@') { await db.collection("Requests").doc(id).delete(); Swal.fire("تم الحذف"); }
+}
+
+async function updateStage(id, status) {
+    await db.collection("Requests").doc(id).update({ status: status });
+    Swal.fire("تم التحديث");
+}
+loadData('complaint');
