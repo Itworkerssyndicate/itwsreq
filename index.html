@@ -2,76 +2,75 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام نقابة تكنولوجيا المعلومات</title>
+    <title>نظام النقابة الإلكتروني</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primary: #0ea5e9; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; user-select: none; }
-        .container { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 100%; max-width: 600px; border: 1px solid #334155; }
-        .header-section { text-align: center; margin-bottom: 25px; }
-        #union-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
-        h2 { color: var(--primary); margin: 0; }
-        .input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
-        label { margin-bottom: 5px; font-size: 0.9rem; color: #94a3b8; }
-        input, select, textarea { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; font-family: 'Cairo'; outline: none; }
-        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .admin-link { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #64748b; cursor: pointer; text-decoration: underline; }
-        #login-section { display: none; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; user-select: none; }
+        .container { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 600px; margin: 50px auto; border: 1px solid #334155; }
+        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: #334155; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        .tab-btn.active { background: var(--primary); }
+        .header-section { text-align: center; margin-bottom: 20px; }
+        #union-logo { width: 80px; height: 80px; object-fit: contain; }
+        input, select, textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; margin-top: 5px; box-sizing: border-box; }
+        button.main-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; }
+        .track-step { border-right: 3px solid var(--primary); padding: 10px 20px; position: relative; margin-bottom: 10px; background: rgba(255,255,255,0.05); }
+        .step-icon { position: absolute; right: -12px; top: 10px; background: var(--bg); border-radius: 50%; padding: 2px; }
         @media print { body { display: none; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div id="user-section" class="container">
+<div class="container">
     <div class="header-section">
-        <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png">
-        <h2 id="union-name">نقابة تكنولوجيا المعلومات</h2>
-        <p id="president-display" style="color: #38bdf8;"></p>
-    </div>
-    
-    <div class="input-group"><label>الاسم الرباعي</label><input type="text" id="user-fullname"></div>
-    <div class="input-group"><label>الرقم القومي (14 رقم)</label><input type="number" id="user-nationalid"></div>
-    
-    <div style="display:flex; gap:10px;">
-        <div class="input-group" style="flex:1;"><label>المحافظة</label><select id="user-gov"><option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option></select></div>
-        <div class="input-group" style="flex:1;"><label>المهنة</label><input type="text" id="user-job"></div>
+        <img id="union-logo" src="">
+        <h2 id="union-name">جاري التحميل...</h2>
+        <p id="president-name" style="color: var(--primary);"></p>
     </div>
 
-    <div class="input-group">
-        <label>هل أنت عضو بالنقابة؟</label>
-        <select id="is-member" onchange="document.getElementById('m-id-box').style.display = (this.value=='yes'?'block':'none')">
-            <option value="no">لا</option><option value="yes">نعم</option>
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="showView('submit')">تقديم طلب</button>
+        <button class="tab-btn" onclick="showView('track')">استعلام عن شكوى</button>
+        <button class="tab-btn" onclick="showView('login')">الإدارة</button>
+    </div>
+
+    <div id="submit-view">
+        <input type="text" id="user-fullname" placeholder="الاسم الرباعي">
+        <input type="number" id="user-nationalid" placeholder="الرقم القومي (14 رقم)">
+        <select id="req-type" onchange="toggleForm(this.value)">
+            <option value="complaint">شكوى</option>
+            <option value="suggestion">اقتراح</option>
         </select>
-        <input type="text" id="m-id-box" placeholder="رقم العضوية" style="display:none; margin-top:10px;">
+        <textarea id="req-details" rows="4" placeholder="تفاصيل الطلب..."></textarea>
+        <button class="main-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
     </div>
 
-    <div class="input-group">
-        <label>نوع الطلب</label>
-        <select id="req-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select>
+    <div id="track-view" style="display:none;">
+        <input type="number" id="search-nid" placeholder="الرقم القومي">
+        <input type="text" id="search-ref" placeholder="رقم الشكوى (مثال: ITW-1234-2026)">
+        <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
+        <div id="search-result" style="margin-top:20px;"></div>
     </div>
 
-    <div class="input-group"><label>التفاصيل</label><textarea id="req-details" rows="3"></textarea></div>
-
-    <button onclick="submitRequest()">إرسال الطلب</button>
-    <div class="admin-link" onclick="toggleView('login')">دخول الإدارة</div>
-</div>
-
-<div id="login-section" class="container">
-    <div class="header-section"><h2>دخول الإدارة</h2></div>
-    <div class="input-group"><label>اسم المستخدم</label><input type="text" id="adm-user"></div>
-    <div class="input-group"><label>كلمة السر</label><input type="password" id="adm-pass"></div>
-    <button onclick="loginAdmin()" style="background:#6366f1">دخول</button>
-    <div class="admin-link" onclick="toggleView('user')">رجوع للرئيسية</div>
+    <div id="login-view" style="display:none;">
+        <input type="text" id="adm-user" placeholder="اسم المستخدم">
+        <input type="password" id="adm-pass" placeholder="كلمة السر">
+        <button class="main-btn" onclick="loginAdmin()" style="background:#6366f1">دخول النظام</button>
+    </div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
 <script>
-    function toggleView(view) {
-        document.getElementById('user-section').style.display = (view == 'user' ? 'block' : 'none');
-        document.getElementById('login-section').style.display = (view == 'login' ? 'block' : 'none');
+    function showView(v) {
+        document.getElementById('submit-view').style.display = (v=='submit'?'block':'none');
+        document.getElementById('track-view').style.display = (v=='track'?'block':'none');
+        document.getElementById('login-view').style.display = (v=='login'?'block':'none');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
     }
 </script>
 </body>
