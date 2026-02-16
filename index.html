@@ -2,62 +2,164 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>نظام النقابة الإلكتروني</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة نقابة تكنولوجيا المعلومات الذكية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <style>
-        :root { --primary: #0ea5e9; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; user-select: none; }
-        .container { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); width: 90%; max-width: 600px; margin: 50px auto; border: 1px solid #334155; }
-        .nav-tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { background: #334155; border: none; color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
-        .tab-btn.active { background: var(--primary); }
-        .header-section { text-align: center; margin-bottom: 20px; }
-        #union-logo { width: 80px; height: 80px; object-fit: contain; }
-        input, select, textarea { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; margin-top: 5px; box-sizing: border-box; }
-        button.main-btn { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .track-step { border-right: 3px solid var(--primary); padding: 10px 20px; position: relative; margin-bottom: 10px; background: rgba(255,255,255,0.05); }
-        .step-icon { position: absolute; right: -12px; top: 10px; background: var(--bg); border-radius: 50%; padding: 2px; }
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg: #050b18;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: radial-gradient(circle at center, #10203e 0%, #050b18 100%);
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* تأثير الخلفية التقني */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        .header-section { text-align: center; margin-bottom: 40px; }
+        .logo-glow {
+            width: 100px; height: 100px;
+            filter: drop-shadow(0 0 15px var(--primary));
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .nav-tabs {
+            display: flex; gap: 15px; margin-bottom: 30px;
+            background: rgba(0,0,0,0.3); padding: 10px; border-radius: 15px;
+        }
+
+        .tab-btn {
+            flex: 1; padding: 12px; border: none; background: transparent;
+            color: #94a3b8; cursor: pointer; transition: 0.4s;
+            border-radius: 10px; font-weight: bold; font-family: 'Cairo';
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--primary); }
+
+        input, select, textarea {
+            width: 100%; background: rgba(0,0,0,0.4); border: 1px solid var(--border);
+            color: white; padding: 15px; border-radius: 12px;
+            transition: 0.3s; box-sizing: border-box;
+        }
+
+        input:focus { border-color: var(--primary); outline: none; background: rgba(0,0,0,0.6); }
+
+        .main-btn {
+            width: 100%; padding: 18px; border: none; border-radius: 15px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white; font-weight: 700; font-size: 1.1rem;
+            cursor: pointer; transition: 0.3s; margin-top: 10px;
+        }
+
+        .main-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4); }
+
+        /* تتبع المراحل شيك */
+        .tracking-card {
+            background: rgba(255,255,255,0.03); border-radius: 15px; padding: 20px; margin-top: 20px;
+        }
+
+        /* منع التصوير والكليك يمين */
         @media print { body { display: none; } }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
-<div class="container">
+<div class="container animate__animated animate__fadeInDown">
     <div class="header-section">
-        <img id="union-logo" src="">
-        <h2 id="union-name">جاري التحميل...</h2>
-        <p id="president-name" style="color: var(--primary);"></p>
+        <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png" class="logo-glow">
+        <h2 id="union-name" class="animate__animated animate__pulse animate__infinite">نقابة تكنولوجيا المعلومات</h2>
+        <p id="president-name" style="color: #64748b; font-size: 0.9rem;"></p>
     </div>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="showView('submit')">تقديم طلب</button>
-        <button class="tab-btn" onclick="showView('track')">استعلام عن شكوى</button>
-        <button class="tab-btn" onclick="showView('login')">الإدارة</button>
+        <button class="tab-btn active" onclick="switchTab('submit', this)"><i class="fas fa-paper-plane"></i> تقديم طلب</button>
+        <button class="tab-btn" onclick="switchTab('track', this)"><i class="fas fa-search"></i> استعلام ذكي</button>
+        <button class="tab-btn" onclick="switchTab('login', this)"><i class="fas fa-lock"></i> الإدارة</button>
     </div>
 
-    <div id="submit-view">
-        <input type="text" id="user-fullname" placeholder="الاسم الرباعي">
-        <input type="number" id="user-nationalid" placeholder="الرقم القومي (14 رقم)">
-        <select id="req-type" onchange="toggleForm(this.value)">
-            <option value="complaint">شكوى</option>
-            <option value="suggestion">اقتراح</option>
-        </select>
-        <textarea id="req-details" rows="4" placeholder="تفاصيل الطلب..."></textarea>
-        <button class="main-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
+    <div id="view-submit" class="animate__animated animate__fadeIn">
+        <div class="form-group">
+            <label>الاسم الرباعي</label>
+            <input type="text" id="user-fullname" placeholder="أدخل اسمك الكامل">
+        </div>
+        <div style="display:flex; gap:15px">
+            <div class="form-group" style="flex:1">
+                <label>الرقم القومي</label>
+                <input type="number" id="user-nationalid" placeholder="14 رقم">
+            </div>
+            <div class="form-group" style="flex:1">
+                <label>نوع الطلب</label>
+                <select id="req-type">
+                    <option value="complaint">شكوى رسمية</option>
+                    <option value="suggestion">اقتراح تطوير</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>التفاصيل</label>
+            <textarea id="req-details" rows="4" placeholder="اكتب موضوعك هنا..."></textarea>
+        </div>
+        <button class="main-btn" onclick="submitRequest()">إرسال بنبض رقمي</button>
     </div>
 
-    <div id="track-view" style="display:none;">
-        <input type="number" id="search-nid" placeholder="الرقم القومي">
-        <input type="text" id="search-ref" placeholder="رقم الشكوى (مثال: ITW-1234-2026)">
-        <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
-        <div id="search-result" style="margin-top:20px;"></div>
+    <div id="view-track" style="display:none;" class="animate__animated animate__fadeIn">
+        <div class="form-group">
+            <label>بيانات الاستعلام</label>
+            <input type="number" id="search-nid" placeholder="الرقم القومي">
+            <input type="text" id="search-ref" placeholder="الرقم المرجعي (مثال: ITW-XXXX-2026)" style="margin-top:10px">
+        </div>
+        <button class="main-btn" onclick="searchRequest()" style="background: #34d399;">بحث في السجلات</button>
+        <div id="search-result"></div>
     </div>
 
-    <div id="login-view" style="display:none;">
-        <input type="text" id="adm-user" placeholder="اسم المستخدم">
-        <input type="password" id="adm-pass" placeholder="كلمة السر">
-        <button class="main-btn" onclick="loginAdmin()" style="background:#6366f1">دخول النظام</button>
+    <div id="view-login" style="display:none;" class="animate__animated animate__fadeIn">
+        <div class="form-group">
+            <label>هوية المسؤول</label>
+            <input type="text" id="adm-user" placeholder="اسم المستخدم">
+            <input type="password" id="adm-pass" placeholder="كلمة السر" style="margin-top:10px">
+        </div>
+        <button class="main-btn" onclick="loginAdmin()">تخويل الدخول</button>
     </div>
 </div>
 
@@ -65,12 +167,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
 <script>
-    function showView(v) {
-        document.getElementById('submit-view').style.display = (v=='submit'?'block':'none');
-        document.getElementById('track-view').style.display = (v=='track'?'block':'none');
-        document.getElementById('login-view').style.display = (v=='login'?'block':'none');
+    function switchTab(view, btn) {
+        document.querySelectorAll('.animate__animated').forEach(el => {
+            if(el.id && el.id.startsWith('view-')) el.style.display = 'none';
+        });
+        document.getElementById('view-' + view).style.display = 'block';
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        event.target.classList.add('active');
+        btn.classList.add('active');
     }
 </script>
 </body>
