@@ -1,62 +1,104 @@
-const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-window.onload = async () => {
-    const doc = await db.collection("SystemSettings").doc("mainConfig").get();
-    document.getElementById("pres-display").innerText = doc.exists ? doc.data().presidentName : "نقابة تكنولوجيا المعلومات";
+// إعدادات Firebase
+const firebaseConfig = { 
+    apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", 
+    projectId: "itwsreq" 
 };
 
-async function submitRequest() {
-    const n = document.getElementById('u-name').value, nid = document.getElementById('u-nid').value;
-    if(!n || nid.length != 14) return Swal.fire("خطأ","يرجى إدخال البيانات كاملة","error");
-
-    const now = new Date();
-    const refId = `${now.getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
-    const d = {
-        name: n, nationalId: nid, phone: document.getElementById('u-phone').value,
-        gov: document.getElementById('u-gov').value, address: document.getElementById('u-address').value,
-        details: document.getElementById('u-details').value, type: document.getElementById('u-type').value,
-        status: "تم الاستلام", refId: refId,
-        createdAt: firebase.firestore.Timestamp.now(),
-        dateStr: now.toLocaleString('ar-EG'),
-        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب بنجاح", date: now.toLocaleString('ar-EG')}]
-    };
-
-    await db.collection("Requests").add(d);
-    document.getElementById('card-ref').innerText = refId;
-    document.getElementById('card-name').innerText = n;
-    document.getElementById('card-date').innerText = d.dateStr;
-    Swal.fire("تم التسجيل",`كودك هو: ${refId}`,"success").then(() => downloadCard());
+// تهيئة Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
 }
+const db = firebase.firestore();
 
-function downloadCard() {
-    html2canvas(document.getElementById('download-card')).then(canvas => {
-        const a = document.createElement('a'); a.download = 'Receipt.png'; a.href = canvas.toDataURL(); a.click();
+// دالة تحميل البيانات عند فتح الصفحة
+function loadData(type) {
+    const tbody = document.getElementById('tbody');
+    if (!tbody) return;
+
+    db.collection("Requests")
+      .where("type", "==", type)
+      .onSnapshot((snap) => {
+        let h = "";
+        snap.forEach((doc) => {
+            const d = doc.data();
+            const role = sessionStorage.getItem("role");
+            
+            h += `<tr>
+                <td>${d.refId || ''}</td>
+                <td>${d.name || ''}</td>
+                <td>${d.timestamp || ''}</td>
+                <td>
+                    <button class="btn-view" onclick="openCard('${doc.id}')">عرض</button>
+                    ${role === 'super' ? `<button class="btn-delete" onclick="deleteDoc('${doc.id}')">حذف</button>` : ''}
+                </td>
+            </tr>`;
+        });
+        tbody.innerHTML = h;
     });
 }
 
-async function searchRequest() {
-    const ref = document.getElementById('s-ref').value, nid = document.getElementById('s-nid').value;
-    const snap = await db.collection("Requests").where("refId","==",ref).where("nationalId","==",nid).get();
-    if(snap.empty) return Swal.fire("عذراً","لم يتم العثور على الطلب","error");
-    renderTracking(snap.docs[0].data(), 'track-res');
+// دالة فتح تفاصيل الطلب
+async function openCard(id) {
+    const doc = await db.collection("Requests").doc(id).get();
+    if (!doc.exists) return;
+    
+    const d = doc.data();
+    
+    Swal.fire({
+        title: 'تفاصيل الطلب',
+        background: '#0a1120',
+        color: '#fff',
+        html: `
+            <div style="text-align:right; direction:rtl;">
+                <p><b>الاسم:</b> ${d.name}</p>
+                <p><b>القومي:</b> ${d.nationalId}</p>
+                <p><b>الموضوع:</b> ${d.details}</p>
+                <hr>
+                <label>تحديث الحالة:</label>
+                <select id="sw-status" class="swal2-input" style="color:#000">
+                    <option value="تم الاستلام">تم الاستلام</option>
+                    <option value="قيد المراجعة">قيد المراجعة</option>
+                    <option value="جاري التنفيذ">جاري التنفيذ</option>
+                    <option value="تم الحل">تم الحل</option>
+                </select>
+            </div>`,
+        confirmButtonText: 'تحديث',
+        showCancelButton: true,
+        cancelButtonText: 'إغلاق'
+    }).then((r) => {
+        if (r.isConfirmed) {
+            const newStatus = document.getElementById('sw-status').value;
+            updateStage(id, newStatus);
+        }
+    });
 }
 
-function renderTracking(data, targetId) {
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
-    let idx = stages.indexOf(data.status);
-    if(idx == -1) idx = 1; if(data.status == "تم الحل") idx = 3;
+// دالة حذف الطلب
+async function deleteDoc(id) {
+    const { value: pass } = await Swal.fire({
+        title: 'كلمة السر',
+        input: 'password',
+        inputPlaceholder: 'أدخل كلمة سر الحذف'
+    });
 
-    let h = `<div class="progress-container"><div class="progress-line"></div><div class="progress-fill" style="width:${(idx/3)*100}%"></div>
-        ${stages.map((s,i)=>`<div class="step-node ${i<=idx?'active':''}"><i class="fas fa-check"></i><span>${s}</span></div>`).join('')}</div>`;
-    h += data.tracking.map(t=>`<div class="log-card"><b>${t.stage}</b><br>${t.comment}<br><small>${t.date}</small></div>`).reverse().join('');
-    document.getElementById(targetId).innerHTML = h;
+    if (pass === '11111@') {
+        await db.collection("Requests").doc(id).delete();
+        Swal.fire("تم الحذف", "", "success");
+    } else if (pass) {
+        Swal.fire("خطأ", "كلمة السر غير صحيحة", "error");
+    }
 }
 
-function loginAdmin() {
-    const p = document.getElementById('adm-p').value;
-    if(p === "itws@manager@2026@" || p === "itws@super@2026@") {
-        sessionStorage.setItem("isAdmin", "true"); window.location.href="admin.html";
-    } else Swal.fire("خطأ","الباسورد غير صحيح","error");
+// دالة تحديث الحالة
+async function updateStage(id, status) {
+    await db.collection("Requests").doc(id).update({ 
+        status: status,
+        lastUpdate: new Date().toLocaleString('ar-EG')
+    });
+    Swal.fire("تم التحديث", "", "success");
+}
+
+// تشغيل جلب البيانات الافتراضي (الشكاوى)
+if (document.getElementById('tbody')) {
+    loadData('complaint');
 }
