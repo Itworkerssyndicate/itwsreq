@@ -1,57 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
-:root { --main: #00d2ff; --bg: #050b18; --card: #0f172a; --border: #1e293b; --text: #f8fafc; }
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
-body { background: var(--bg); color: var(--text); direction: rtl; }
+:root { --main: #00d2ff; --bg: #050b18; --card: #0f172a; --border: #1e293b; }
+* { box-sizing: border-box; font-family: 'Cairo', sans-serif; margin:0; padding:0; }
+body { background: var(--bg); color: #fff; direction: rtl; }
 
-/* الواجهة الرئيسية */
-.container { width: 95%; max-width: 500px; margin: 20px auto; background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid var(--border); }
-.main-header { text-align: center; margin-bottom: 25px; }
-.pres-info span { color: var(--main); font-size: 14px; }
-.svc-btn { background: var(--border); border: 1px solid var(--main); color: var(--text); padding: 6px 15px; border-radius: 20px; cursor: pointer; margin-top: 10px; }
+.container { width: 95%; max-width: 500px; margin: 20px auto; background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid var(--border); }
+.main-header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.pres-info h2 { color: var(--main); font-size: 18px; }
 
-.tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-.tab-btn { flex: 1; padding: 12px; background: var(--border); border: none; border-radius: 8px; color: #94a3b8; cursor: pointer; }
-.tab-btn.active { background: linear-gradient(45deg, var(--main), #3a7bd5); color: #fff; }
-.login-lock { max-width: 50px; }
+.tabs { display: flex; gap: 5px; margin-bottom: 15px; }
+.tab-btn { flex: 1; padding: 10px; background: var(--border); border: none; border-radius: 8px; color: #94a3b8; cursor: pointer; }
+.tab-btn.active { background: var(--main); color: #000; font-weight: bold; }
 
-input, select, textarea { width: 100%; padding: 12px; margin-bottom: 12px; background: #050b18; border: 1px solid var(--border); border-radius: 8px; color: #fff; }
-.submit-btn { width: 100%; padding: 15px; background: var(--main); border: none; border-radius: 10px; color: #000; font-weight: bold; cursor: pointer; }
+input, select, textarea { width: 100%; padding: 12px; margin-bottom: 10px; background: #050b18; border: 1px solid var(--border); border-radius: 8px; color: #fff; }
+.submit-btn { width: 100%; padding: 15px; background: var(--main); border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-/* الإدارة - Sidebar */
-.admin-body { display: flex; height: 100vh; overflow: hidden; }
-.sidebar { width: 250px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
-.sidebar-header { font-size: 20px; font-weight: bold; color: var(--main); margin-bottom: 30px; text-align: center; }
-.nav-item { width: 100%; padding: 12px; background: transparent; border: none; color: #94a3b8; text-align: right; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
+/* الإدارة */
+.admin-body { display: flex; height: 100vh; }
+.sidebar { width: 220px; background: var(--card); border-left: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; }
+.nav-item { padding: 12px; background: transparent; border: none; color: #94a3b8; text-align: right; cursor: pointer; border-radius: 8px; margin-bottom: 5px; }
 .nav-item.active { background: var(--main); color: #000; font-weight: bold; }
-.logout-btn { margin-top: auto; padding: 10px; background: #ef4444; border: none; color: #fff; border-radius: 8px; cursor: pointer; }
+.logout-btn { margin-top: auto; padding: 10px; background: #ef4444; border: none; color: #fff; border-radius: 8px; }
 
-.admin-content { flex: 1; overflow-y: auto; padding: 30px; }
-.table-container { background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow-x: auto; }
+.admin-content { flex: 1; padding: 20px; overflow-y: auto; }
+.filter-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 15px; }
+.table-container { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; }
-th, td { padding: 15px; text-align: center; border-bottom: 1px solid var(--border); }
-th { color: var(--main); background: rgba(0,210,255,0.05); }
+th, td { padding: 12px; border-bottom: 1px solid var(--border); text-align: center; font-size: 12px; }
+th { color: var(--main); }
 
-.action-btn { padding: 6px 12px; border-radius: 5px; border: none; cursor: pointer; font-size: 12px; margin: 2px; }
-.action-btn.view { background: #10b981; color: #fff; }
-.action-btn.del { background: #ef4444; color: #fff; }
+.action-btn { padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; margin: 2px; }
+.view { background: #10b981; color: #fff; }
+.del { background: #ef4444; color: #fff; }
+.log-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 5px; margin-top: 5px; border-right: 3px solid var(--main); font-size: 11px; }
 
-.settings-card { max-width: 500px; margin: auto; background: var(--card); padding: 25px; border-radius: 12px; border: 1px solid var(--border); }
-
-/* الموبايل */
 @media (max-width: 768px) {
     .admin-body { flex-direction: column; }
-    .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; padding: 10px; }
-    .sidebar-header { display: none; }
-    .nav-item { white-space: nowrap; width: auto; margin-left: 10px; }
-    .logout-btn { margin-top: 0; padding: 5px 15px; }
+    .sidebar { width: 100%; height: auto; flex-direction: row; overflow-x: auto; }
+    .filter-bar { grid-template-columns: 1fr 1fr; }
 }
-
-/* التراك */
-.progress-box { position: relative; margin: 40px 0; }
-.line { position: absolute; top: 50%; width: 100%; height: 2px; background: var(--border); }
-.fill { position: absolute; top: 50%; height: 2px; background: var(--main); transition: 1s; }
-.steps { display: flex; justify-content: space-between; position: relative; }
-.dot { width: 25px; height: 25px; background: var(--card); border: 2px solid var(--border); border-radius: 50%; font-size: 10px; display: flex; align-items: center; justify-content: center; }
-.dot.active { border-color: var(--main); color: var(--main); box-shadow: 0 0 10px var(--main); }
-.dot span { position: absolute; top: 30px; font-size: 9px; white-space: nowrap; }
-.log-card { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin-top: 10px; border-right: 3px solid var(--main); }
