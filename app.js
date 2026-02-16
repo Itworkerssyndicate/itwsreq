@@ -9,22 +9,23 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// تحميل الإعدادات
+// 1. تحميل إعدادات الهوية فور فتح الصفحة
 window.onload = async () => {
     const doc = await db.collection("SystemSettings").doc("mainConfig").get();
     if(doc.exists) {
         const d = doc.data();
-        document.getElementById("union-name").innerText = d.unionName;
-        document.getElementById("president-name").innerText = d.presidentName;
-        document.getElementById("union-logo").src = d.logoURL;
-        document.getElementById("services-btn").href = d.servicesURL || "#";
+        document.getElementById("union-name").innerText = d.unionName || "نقابة تكنولوجيا المعلومات";
+        document.getElementById("president-name").innerText = d.presidentName || "";
+        if(d.logoURL) document.getElementById("union-logo").src = d.logoURL;
+        document.getElementById("services-link").href = d.servicesURL || "#";
     }
 };
 
+// 2. إرسال الطلب مع التحقق من جميع الحقول
 async function submitRequest() {
-    const data = {
+    const fields = {
         name: document.getElementById('u-name').value,
-        nid: document.getElementById('u-nid').value,
+        nationalId: document.getElementById('u-nid').value,
         phone: document.getElementById('u-phone').value,
         gov: document.getElementById('u-gov').value,
         job: document.getElementById('u-job').value,
@@ -33,54 +34,86 @@ async function submitRequest() {
         details: document.getElementById('u-details').value
     };
 
-    if(Object.values(data).some(v => v === "")) return Swal.fire("تنبيه", "يرجى ملء كافة الحقول", "warning");
-    if(data.nid.length !== 14) return Swal.fire("خطأ", "الرقم القومي يجب أن يكون 14 رقم", "error");
+    if(Object.values(fields).some(v => v.trim() === "")) {
+        return Swal.fire("بيانات ناقصة", "برجاء ملء جميع الحقول الإلزامية (*)", "warning");
+    }
 
-    const ref = (data.type === 'complaint' ? 'ITW' : 'SUG') + "-" + Math.floor(1000 + Math.random() * 9000) + "-2026";
+    if(fields.nationalId.length !== 14) {
+        return Swal.fire("خطأ", "يجب أن يتكون الرقم القومي من 14 رقم", "error");
+    }
 
-    await db.collection("Requests").add({
-        ...data, refId: ref, status: "تم الاستلام", date: new Date().toLocaleString('ar-EG'),
-        tracking: [{ stage: "تم الاستلام", comment: "تم استلام الطلب بنجاح", date: new Date().toLocaleString('ar-EG') }]
-    });
+    const ref = (fields.type === 'complaint' ? 'ITW' : 'SUG') + "-" + Math.floor(1000 + Math.random() * 9000) + "-2026";
 
-    Swal.fire("تم بنجاح", `رقم طلبك هو: ${ref}`, "success");
-    setTimeout(() => location.reload(), 3000);
+    try {
+        await db.collection("Requests").add({
+            ...fields,
+            refId: ref,
+            status: "تم الاستلام",
+            date: new Date().toLocaleString('ar-EG'),
+            tracking: [{ stage: "تم الاستلام", comment: "تم استلام الطلب وبدء دورة العمل الرقمية", date: new Date().toLocaleString('ar-EG') }]
+        });
+        Swal.fire("تم الإرسال بنجاح", `رقم الطلب الخاص بك: ${ref}`, "success");
+        setTimeout(() => location.reload(), 3000);
+    } catch(e) { Swal.fire("فشل الاتصال", "يرجى المحاولة لاحقاً", "error"); }
 }
 
+// 3. محرك البحث الذكي مع التايم لاين
 async function searchRequest() {
     const type = document.getElementById('s-type').value;
     const nid = document.getElementById('s-nid').value;
     const ref = document.getElementById('s-ref').value;
 
-    const snap = await db.collection("Requests").where("type", "==", type).where("nationalId", "==", nid).where("refId", "==", ref).get();
+    if(!nid || !ref) return Swal.fire("تنبيه", "يجب إدخال الرقم القومي ورقم الطلب للبحث", "info");
+
+    const snap = await db.collection("Requests")
+        .where("type", "==", (type.includes('complaint') ? 'complaint' : 'suggestion'))
+        .where("nationalId", "==", nid)
+        .where("refId", "==", ref).get();
     
-    if(snap.empty) return Swal.fire("خطأ", "لا توجد بيانات", "error");
+    if(snap.empty) return Swal.fire("لا توجد نتائج", "تأكد من البيانات المدخلة ونوع الطلب", "error");
 
     const d = snap.docs[0].data();
-    const steps = ["تم الاستلام", "جاري الفحص", "المراجعة الفنية", "تم"];
-    const currentIdx = steps.indexOf(d.status) === -1 ? 1 : steps.indexOf(d.status);
-    const progress = (currentIdx / (steps.length - 1)) * 100;
+    const stages = ["تم الاستلام", "جاري الفحص", "المراجعة الفنية", "تم"];
+    let currentIdx = stages.indexOf(d.status);
+    if(currentIdx === -1) currentIdx = 1; // حالة مخصصة من الأدمن
 
-    let html = `<div class="timeline">
-        <div class="timeline-progress" style="width: ${progress}%"></div>
-        ${steps.map((s, i) => `
+    const progressWidth = (currentIdx / (stages.length - 1)) * 100;
+
+    let html = `
+    <div class="timeline">
+        <div class="timeline-progress" style="width: ${progressWidth}%"></div>
+        ${stages.map((s, i) => `
             <div class="step ${i <= currentIdx ? 'active' : ''}">
                 <i class="fas ${i < currentIdx ? 'fa-check' : (i == currentIdx ? 'fa-spinner fa-spin' : 'fa-clock')}"></i>
                 <div class="step-label">${s}</div>
             </div>
         `).join('')}
     </div>
-    <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:15px; margin-top:50px;">
-        ${d.tracking.map(t => `<p style="font-size:0.85rem">🔹 <b>${t.stage}</b>: ${t.comment} <br><small>${t.date}</small></p>`).join('')}
+    <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; margin-top:50px; text-align:right; border: 1px solid rgba(0, 210, 255, 0.2);">
+        <h4 style="color:var(--primary); margin:0 0 15px 0;"><i class="fas fa-history"></i> سجل التحديثات:</h4>
+        ${d.tracking.reverse().map(t => `
+            <div style="border-right: 2px solid var(--primary); padding-right:15px; margin-bottom:15px;">
+                <b style="font-size:0.9rem">${t.stage}</b> <br>
+                <small style="color:#94a3b8">${t.date}</small> <br>
+                <span style="font-size:0.85rem; color:#cbd5e1;">${t.comment}</span>
+            </div>
+        `).join('')}
     </div>`;
     
     document.getElementById('track-res').innerHTML = html;
 }
 
+// 4. تسجيل دخول الإدارة
 function loginAdmin() {
     const u = document.getElementById("adm-u").value;
     const p = document.getElementById("adm-p").value;
-    if (u === "مدير" && p === "itws@manager@2026@") { sessionStorage.setItem("role", "manager"); window.location.href = "admin.html"; }
-    else if (u === "الادمن_الرئيسي" && p === "itws@super@2026@") { sessionStorage.setItem("role", "super"); window.location.href = "admin.html"; }
-    else { Swal.fire("خطأ", "بيانات خاطئة", "error"); }
+    if (u === "مدير" && p === "itws@manager@2026@") {
+        sessionStorage.setItem("role", "manager");
+        window.location.href = "admin.html";
+    } else if (u === "الادمن_الرئيسي" && p === "itws@super@2026@") {
+        sessionStorage.setItem("role", "super");
+        window.location.href = "admin.html";
+    } else {
+        Swal.fire("فشل المصادقة", "اسم المستخدم أو كلمة السر غير صحيحة", "error");
+    }
 }
