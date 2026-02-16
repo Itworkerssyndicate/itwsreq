@@ -1,104 +1,69 @@
-// إعدادات Firebase
-const firebaseConfig = { 
-    apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", 
-    projectId: "itwsreq" 
-};
-
-// تهيئة Firebase
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// دالة تحميل البيانات عند فتح الصفحة
-function loadData(type) {
-    const tbody = document.getElementById('tbody');
-    if (!tbody) return;
+// جلب اسم النقيب من قاعدة البيانات
+db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
+    if(doc.exists) document.getElementById("pres-display").innerText = doc.data().presidentName;
+});
 
-    db.collection("Requests")
-      .where("type", "==", type)
-      .onSnapshot((snap) => {
-        let h = "";
-        snap.forEach((doc) => {
-            const d = doc.data();
-            const role = sessionStorage.getItem("role");
-            
-            h += `<tr>
-                <td>${d.refId || ''}</td>
-                <td>${d.name || ''}</td>
-                <td>${d.timestamp || ''}</td>
-                <td>
-                    <button class="btn-view" onclick="openCard('${doc.id}')">عرض</button>
-                    ${role === 'super' ? `<button class="btn-delete" onclick="deleteDoc('${doc.id}')">حذف</button>` : ''}
-                </td>
-            </tr>`;
-        });
-        tbody.innerHTML = h;
+async function submitRequest() {
+    const btn = document.getElementById('submitBtn');
+    const n = document.getElementById('u-name').value, nid = document.getElementById('u-nid').value;
+    if(!n || nid.length !== 14) return Swal.fire("خطأ","يرجى إدخال البيانات كاملة والرقم القومي صحيح","error");
+
+    btn.disabled = true; btn.innerText = "جاري الحفظ...";
+    const now = new Date();
+    const refId = `${now.getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
+    const d = {
+        name: n, nationalId: nid, job: document.getElementById('u-job').value,
+        phone: document.getElementById('u-phone').value, gov: document.getElementById('u-gov').value,
+        address: document.getElementById('u-address').value, details: document.getElementById('u-details').value,
+        type: document.getElementById('u-type').value, status: "تم الاستلام", refId: refId,
+        createdAt: firebase.firestore.Timestamp.now(),
+        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب وبدأ المعالجة", date: now.toLocaleString('ar-EG')}]
+    };
+
+    try {
+        await db.collection("Requests").add(d);
+        document.getElementById('card-ref').innerText = refId;
+        document.getElementById('card-name').innerText = n;
+        document.getElementById('card-date').innerText = now.toLocaleString('ar-EG');
+        Swal.fire("تم الإرسال",`كود الطلب: ${refId}`,"success").then(() => downloadCard());
+    } catch(e) { Swal.fire("خطأ", "فشل الاتصال بقاعدة البيانات", "error"); }
+    btn.disabled = false; btn.innerText = "إرسال وحفظ الوصل";
+}
+
+function downloadCard() {
+    html2canvas(document.getElementById('download-card')).then(canvas => {
+        const a = document.createElement('a'); a.download = 'Receipt.png'; a.href = canvas.toDataURL(); a.click();
     });
 }
 
-// دالة فتح تفاصيل الطلب
-async function openCard(id) {
-    const doc = await db.collection("Requests").doc(id).get();
-    if (!doc.exists) return;
+async function searchRequest() {
+    const type = document.getElementById('s-type').value;
+    const nid = document.getElementById('s-nid').value;
+    const ref = document.getElementById('s-ref').value;
+
+    const snap = await db.collection("Requests")
+        .where("type","==",type).where("nationalId","==",nid).where("refId","==",ref).get();
+
+    if(snap.empty) return Swal.fire("عذراً","تأكد من اختيار النوع الصحيح وكتابة البيانات بدقة","error");
     
-    const d = doc.data();
+    const d = snap.docs[0].data();
+    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
+    let idx = stages.indexOf(d.status); if(idx === -1) idx = 1;
     
-    Swal.fire({
-        title: 'تفاصيل الطلب',
-        background: '#0a1120',
-        color: '#fff',
-        html: `
-            <div style="text-align:right; direction:rtl;">
-                <p><b>الاسم:</b> ${d.name}</p>
-                <p><b>القومي:</b> ${d.nationalId}</p>
-                <p><b>الموضوع:</b> ${d.details}</p>
-                <hr>
-                <label>تحديث الحالة:</label>
-                <select id="sw-status" class="swal2-input" style="color:#000">
-                    <option value="تم الاستلام">تم الاستلام</option>
-                    <option value="قيد المراجعة">قيد المراجعة</option>
-                    <option value="جاري التنفيذ">جاري التنفيذ</option>
-                    <option value="تم الحل">تم الحل</option>
-                </select>
-            </div>`,
-        confirmButtonText: 'تحديث',
-        showCancelButton: true,
-        cancelButtonText: 'إغلاق'
-    }).then((r) => {
-        if (r.isConfirmed) {
-            const newStatus = document.getElementById('sw-status').value;
-            updateStage(id, newStatus);
-        }
-    });
+    let h = `<div class="progress-container"><div class="progress-line"></div><div class="progress-fill" style="width:${(idx/3)*100}%"></div>
+        ${stages.map((s,i)=>`<div class="step-node ${i<=idx?'active':''}"><i class="fas fa-check"></i><span>${s}</span></div>`).join('')}</div>`;
+    h += d.tracking.map(t=>`<div class="log-card"><b>${t.stage}</b><br>${t.comment}<br><small>${t.date}</small></div>`).reverse().join('');
+    document.getElementById('track-res').innerHTML = h;
 }
 
-// دالة حذف الطلب
-async function deleteDoc(id) {
-    const { value: pass } = await Swal.fire({
-        title: 'كلمة السر',
-        input: 'password',
-        inputPlaceholder: 'أدخل كلمة سر الحذف'
-    });
-
-    if (pass === '11111@') {
-        await db.collection("Requests").doc(id).delete();
-        Swal.fire("تم الحذف", "", "success");
-    } else if (pass) {
-        Swal.fire("خطأ", "كلمة السر غير صحيحة", "error");
-    }
-}
-
-// دالة تحديث الحالة
-async function updateStage(id, status) {
-    await db.collection("Requests").doc(id).update({ 
-        status: status,
-        lastUpdate: new Date().toLocaleString('ar-EG')
-    });
-    Swal.fire("تم التحديث", "", "success");
-}
-
-// تشغيل جلب البيانات الافتراضي (الشكاوى)
-if (document.getElementById('tbody')) {
-    loadData('complaint');
+function loginAdmin() {
+    const u = document.getElementById('adm-u').value;
+    const p = document.getElementById('adm-p').value;
+    if((u === "admin" && p === "itws@manager@2026@") || (u === "super" && p === "itws@super@2026@")) {
+        sessionStorage.setItem("isAdmin", u); window.location.href="admin.html";
+    } else Swal.fire("خطأ","اسم المستخدم أو الباسورد غير صحيح","error");
 }
