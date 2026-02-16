@@ -2,10 +2,7 @@ const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", proj
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function loadView(type, btn) {
-    document.querySelectorAll('.side-link').forEach(l => l.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-
+function loadView(type) {
     db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
         let h = "";
         snap.forEach(doc => {
@@ -13,13 +10,12 @@ function loadView(type, btn) {
             if(type === 'all' || d.type === type) {
                 h += `<tr>
                     <td>${d.createdAt?.toDate().toLocaleDateString('ar-EG')}</td>
-                    <td><b>${d.refId}</b></td>
-                    <td>${d.name || '---'}<br><small>${d.memberId}</small></td>
-                    <td>${d.type}</td>
-                    <td><span class="badge">${d.status}</span></td>
+                    <td>${d.refId}</td>
+                    <td>${d.name}</td>
+                    <td><span class="btn-glam" style="padding:4px 10px; font-size:12px;">${d.status}</span></td>
                     <td>
-                        <button class="badge" style="cursor:pointer; border:none;" onclick="openAdminCard('${doc.id}')">إدارة</button>
-                        <button class="badge" style="background:#ff4757; cursor:pointer; border:none;" onclick="deleteReq('${doc.id}')">حذف</button>
+                        <button class="btn-glam" onclick="manage('${doc.id}')">تحديث</button>
+                        <button class="btn-glam btn-danger" onclick="del('${doc.id}')">حذف</button>
                     </td>
                 </tr>`;
             }
@@ -28,49 +24,35 @@ function loadView(type, btn) {
     });
 }
 
-async function openAdminCard(id) {
-    const doc = await db.collection("Requests").doc(id).get();
-    const d = doc.data();
-    Swal.fire({
-        title: 'تحديث حالة الطلب',
-        width: '800px', background: '#0f172a', color: '#fff',
-        html: `<div style="text-align:right;">
-            <p>صاحب الطلب: ${d.name} | الرقم القومي: ${d.nationalId}</p>
-            <p>رقم الهاتف: ${d.phone} | المهنة: ${d.job || '---'}</p>
-            <hr><p>تفاصيل: ${d.details}</p><hr>
-            <input id="n-stg" class="swal2-input" placeholder="اسم المرحلة (مثل: جاري التنفيذ)">
-            <textarea id="n-cmm" class="swal2-textarea" placeholder="الرد أو التعليق"></textarea>
-        </div>`,
-        confirmButtonText: 'تحديث المسار'
-    }).then(r => {
-        if(r.isConfirmed) {
-            const stg = document.getElementById('n-stg').value;
-            if(!stg) return;
-            db.collection("Requests").doc(id).update({
-                status: stg,
-                tracking: firebase.firestore.FieldValue.arrayUnion({stage: stg, comment: document.getElementById('n-cmm').value, date: new Date().toLocaleString('ar-EG')})
-            });
-        }
+async function manage(id) {
+    const { value: formValues } = await Swal.fire({
+        title: 'تحديث الطلب',
+        html: `
+            <input id="sw-stage" class="swal2-input" placeholder="اسم المرحلة الجديدة">
+            <textarea id="sw-comm" class="swal2-textarea" placeholder="التعليق أو القرار"></textarea>
+            <div style="margin-top:10px">
+                <input type="checkbox" id="sw-final"> <label for="sw-final">إغلاق الطلب بقرار نهائي؟</label>
+            </div>`,
+        showCancelButton: true,
+        confirmButtonText: 'حفظ التحديث'
     });
-}
 
-function deleteReq(id) {
-    Swal.fire({title:'حذف؟', icon:'warning', showCancelButton:true}).then(r=>{ if(r.isConfirmed) db.collection("Requests").doc(id).delete(); });
+    if (formValues) {
+        const stage = document.getElementById('sw-stage').value;
+        const comm = document.getElementById('sw-comm').value;
+        const isFinal = document.getElementById('sw-final').checked;
+        
+        const updateData = {
+            status: isFinal ? "تم الحل والإغلاق" : stage,
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                stage: isFinal ? "إغلاق الطلب" : stage,
+                comment: comm,
+                date: new Date().toLocaleString('ar-EG'),
+                isFinal: isFinal
+            })
+        };
+        await db.collection("Requests").doc(id).update(updateData);
+    }
 }
-
-function showSettings() {
-    Swal.fire({
-        title: 'إعدادات المنظومة',
-        html: `<input id="s-p" class="swal2-input" placeholder="اسم النقيب"><input id="s-l" class="swal2-input" placeholder="رابط اللوجو"><input id="s-link" class="swal2-input" placeholder="رابط الخدمات">`,
-    }).then(r => {
-        if(r.isConfirmed) {
-            db.collection("SystemSettings").doc("mainConfig").update({
-                presidentName: document.getElementById('s-p').value,
-                logoUrl: document.getElementById('s-l').value,
-                servicesLink: document.getElementById('s-link').value
-            });
-        }
-    });
-}
-
+// ... دالة الحذف ...
 loadView('all');
