@@ -2,93 +2,119 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة التحكم الذكية | الإدارة العليا</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <title>لوحة التحكم | الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        :root { --primary: #00d2ff; --secondary: #3a7bd5; --bg: #050b18; --glass: rgba(255, 255, 255, 0.05); }
-        body { background: var(--bg); color: #fff; font-family: 'Cairo'; margin: 0; display: flex; flex-direction: column; min-height: 100vh; }
-        
-        /* Side Navigation */
-        .sidebar { width: 250px; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); border-left: 1px solid rgba(255,255,255,0.1); padding: 20px; position: fixed; height: 100%; }
-        .main-content { margin-right: 270px; padding: 30px; flex: 1; }
-
-        .nav-item { padding: 15px; margin-bottom: 10px; border-radius: 12px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 10px; color: #94a3b8; }
-        .nav-item:hover, .nav-item.active { background: var(--glass); color: var(--primary); border-right: 4px solid var(--primary); }
-
-        .stat-card { background: var(--glass); padding: 20px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 30px; }
-        
-        table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        th { padding: 15px; color: var(--primary); text-align: center; font-size: 0.9rem; }
-        td { background: rgba(255,255,255,0.02); padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); border-bottom: 1px solid rgba(255,255,255,0.05); }
-        td:first-child { border-radius: 0 15px 15px 0; border-right: 1px solid rgba(255,255,255,0.05); }
-        td:last-child { border-radius: 15px 0 0 15px; border-left: 1px solid rgba(255,255,255,0.05); }
-
-        .btn-action { padding: 8px 15px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Cairo'; transition: 0.2s; }
-        .btn-track { background: var(--primary); color: #000; font-weight: bold; }
-        .btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; margin-right: 5px; }
-
-        /* Modal Tracking Style */
-        .tracking-timeline { position: relative; padding: 20px 0; }
-        .track-item { border-right: 2px solid var(--primary); padding-right: 25px; margin-bottom: 20px; position: relative; }
-        .track-item::after { content: ''; position: absolute; right: -7px; top: 0; width: 12px; height: 12px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary); }
-
-        #settings-view input { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 10px; }
+        body { background: #050b18; color: white; font-family: 'Cairo'; margin: 0; display: flex; }
+        .sidebar { width: 260px; background: #1e293b; height: 100vh; padding: 20px; position: fixed; }
+        .main { margin-right: 280px; padding: 30px; width: 100%; }
+        .nav-link { padding: 15px; display: block; color: #94a3b8; text-decoration: none; border-radius: 10px; margin-bottom: 10px; cursor: pointer; }
+        .nav-link.active { background: #0ea5e9; color: white; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: #111827; }
+        th, td { padding: 15px; border: 1px solid #374151; text-align: center; }
+        th { background: #1f2937; color: #0ea5e9; }
+        .btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; font-family: 'Cairo'; }
     </style>
 </head>
 <body>
-
-<div class="sidebar">
-    <div style="text-align: center; margin-bottom: 30px;">
-        <img id="admin-logo" src="" style="width: 60px; filter: drop-shadow(0 0 10px var(--primary));">
-        <h4 style="margin: 10px 0; font-size: 0.9rem;">نظام الإدارة الذكي</h4>
-        <span id="role-badge" style="font-size: 0.7rem; background: var(--primary); color: #000; padding: 2px 8px; border-radius: 10px;"></span>
+    <div class="sidebar">
+        <h2 style="color: #0ea5e9;">لوحة الإدارة</h2>
+        <div class="nav-link active" onclick="loadData('complaint', this)">إدارة الشكاوى</div>
+        <div class="nav-link" onclick="loadData('suggestion', this)">إدارة المقترحات</div>
+        <div class="nav-link" onclick="showSet()">إعدادات النظام</div>
+        <div class="nav-link" style="color:red; margin-top:50px;" onclick="location.href='index.html'">خروج</div>
     </div>
-    <div class="nav-item active" onclick="showTab('complaint', this)"><i class="fas fa-headset"></i> إدارة الشكاوى</div>
-    <div class="nav-item" onclick="showTab('suggestion', this)"><i class="fas fa-lightbulb"></i> إدارة المقترحات</div>
-    <div class="nav-item" onclick="showTab('settings', this)"><i class="fas fa-sliders-h"></i> إعدادات النظام</div>
-    <div class="nav-item" style="margin-top: 50px; color: #ef4444;" onclick="logout()"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</div>
-</div>
-
-<div class="main-content animate__animated animate__fadeIn">
-    <div id="view-title">
-        <h2 style="color: var(--primary);">مركز إدارة الشكاوى</h2>
-        <p style="color: #64748b;">متابعة ومعالجة الطلبات الواردة من الأعضاء</p>
-    </div>
-
-    <div id="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>المرجع</th>
-                    <th>الاسم</th>
-                    <th>الحالة</th>
-                    <th>التاريخ</th>
-                    <th>الإجراءات</th>
-                </tr>
-            </thead>
-            <tbody id="admin-table-body"></tbody>
-        </table>
-    </div>
-
-    <div id="settings-view" style="display: none;" class="animate__animated animate__fadeIn">
-        <div class="stat-card">
-            <h3>تخصيص هوية النظام</h3>
-            <label>اسم النقابة</label>
-            <input type="text" id="set-union-name">
-            <label>اسم النقيب العام</label>
-            <input type="text" id="set-president-name">
-            <label>رابط شعار النقابة (URL)</label>
-            <input type="text" id="set-logo-url">
-            <button onclick="saveSettings()" class="btn-action btn-track" style="width: 200px;">حفظ التغييرات</button>
+    <div class="main">
+        <div id="table-box">
+            <h2 id="title-text">تقرير الشكاوى</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>الاسم</th>
+                        <th>المحافظة</th>
+                        <th>الحالة</th>
+                        <th>إدارة</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
+        <div id="set-box" style="display:none;">
+            <h2>إعدادات الهوية</h2>
+            <input type="text" id="s-name" placeholder="اسم النقابة" style="width:100%; padding:10px; margin:10px 0;">
+            <input type="text" id="s-pres" placeholder="اسم النقيب" style="width:100%; padding:10px; margin:10px 0;">
+            <input type="text" id="s-logo" placeholder="رابط اللوجو" style="width:100%; padding:10px; margin:10px 0;">
+            <button class="btn" style="background:green; color:white" onclick="saveSet()">حفظ الإعدادات</button>
         </div>
     </div>
-</div>
 
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="admin_logic.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script>
+        firebase.initializeApp({apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq"});
+        const db = firebase.firestore();
+        const role = sessionStorage.getItem("role");
+
+        function loadData(type, el) {
+            document.getElementById('table-box').style.display = 'block';
+            document.getElementById('set-box').style.display = 'none';
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            if(el) el.classList.add('active');
+            document.getElementById('title-text').innerText = type == 'complaint' ? "تقرير الشكاوى" : "تقرير المقترحات";
+
+            db.collection("Requests").where("type", "==", type).onSnapshot(snap => {
+                let h = "";
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    h += `<tr>
+                        <td>${d.refId}</td>
+                        <td>${d.fullName}</td>
+                        <td>${d.governorate}</td>
+                        <td>${d.status}</td>
+                        <td>
+                            <button class="btn" style="background:#0ea5e9; color:white;" onclick="manageDoc('${doc.id}')">إدارة</button>
+                            ${role=='super' ? `<button class="btn" style="background:red; color:white; margin-right:5px;" onclick="delDoc('${doc.id}')">حذف</button>` : ''}
+                        </td>
+                    </tr>`;
+                });
+                document.getElementById('tbody').innerHTML = h;
+            });
+        }
+
+        async function manageDoc(id) {
+            const doc = await db.collection("Requests").doc(id).get();
+            const d = doc.data();
+            const { value: form } = await Swal.fire({
+                title: 'تحديث حالة الطلب',
+                html: `<input id="s1" class="swal2-input" placeholder="اسم المرحلة"><textarea id="s2" class="swal2-textarea" placeholder="كومنت"></textarea>`,
+                showCancelButton: true, confirmButtonText: 'تحديث', cancelButtonText: 'تم (إغلاق)'
+            });
+            if(form) {
+                const s = document.getElementById('s1').value;
+                const c = document.getElementById('s2').value;
+                await db.collection("Requests").doc(id).update({
+                    status: s,
+                    tracking: firebase.firestore.FieldValue.arrayUnion({stage: s, comment: c, date: new Date().toLocaleString('ar-EG')})
+                });
+            } else if (Swal.dismissReason === 'cancel') {
+                await db.collection("Requests").doc(id).update({status: "تم"});
+            }
+        }
+
+        function delDoc(id) { if(confirm("حذف؟")) db.collection("Requests").doc(id).delete(); }
+        function showSet() { document.getElementById('table-box').style.display='none'; document.getElementById('set-box').style.display='block'; }
+        async function saveSet() {
+            await db.collection("SystemSettings").doc("mainConfig").set({
+                unionName: document.getElementById('s-name').value,
+                presidentName: document.getElementById('s-pres').value,
+                logoURL: document.getElementById('s-logo').value
+            });
+            alert("تم الحفظ");
+        }
+        loadData('complaint');
+    </script>
 </body>
 </html>
