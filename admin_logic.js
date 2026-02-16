@@ -7,7 +7,7 @@ function loadView(viewType, btn) {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     if(btn) btn.classList.add('active');
     
-    db.collection("Requests").onSnapshot(snap => {
+    db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
         allData = [];
         snap.forEach(doc => {
             const d = doc.data();
@@ -21,76 +21,92 @@ function filterTable() {
     const name = document.getElementById('f-name').value.toLowerCase();
     const nid = document.getElementById('f-nid').value;
     const type = document.getElementById('f-type').value;
-    const status = document.getElementById('f-status').value;
 
     const filtered = allData.filter(d => 
         (d.name.toLowerCase().includes(name)) &&
         (d.nationalId.includes(nid)) &&
-        (type === "" || d.type === type) &&
-        (status === "" || d.status === status)
+        (type === "" || d.type === type)
     );
     renderTable(filtered);
 }
 
 function renderTable(data) {
     let h = "";
-    data.sort((a,b) => b.createdAt.toMillis() - a.createdAt.toMillis()).forEach(d => {
+    data.forEach(d => {
         h += `<tr>
-            <td style="font-size:10px">${d.createdAt.toDate().toLocaleString('ar-EG')}</td>
-            <td>${d.refId}</td><td>${d.name}</td><td>${d.type}</td>
+            <td>${d.createdAt.toDate().toLocaleString('ar-EG')}</td>
+            <td>${d.refId}</td>
+            <td>${d.name}<br><small>${d.isMember}: ${d.memberId}</small></td>
+            <td>${d.type}</td>
             <td><span class="badge">${d.status}</span></td>
-            <td><button class="action-btn view" onclick="openFullCard('${d.id}')">فتح</button></td></tr>`;
+            <td><button class="act-btn" onclick="openAdminCard('${d.id}')">إدارة</button></td>
+        </tr>`;
     });
     document.getElementById('tbody').innerHTML = h || "<tr><td colspan='6'>لا توجد نتائج</td></tr>";
 }
 
-async function openFullCard(id) {
+async function openAdminCard(id) {
     const doc = await db.collection("Requests").doc(id).get();
     const d = doc.data();
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
-    let idx = stages.indexOf(d.status);
-
+    
     Swal.fire({
-        title: 'تفاصيل الطلب والمسار',
-        width: '800px', background: '#0a1120', color: '#fff',
+        title: 'إدارة الطلب',
+        width: '800px', background: '#0f172a', color: '#fff',
         html: `
-            <div style="text-align:right; font-size:13px; display:grid; grid-template-columns: 1fr 1fr; border-bottom:1px solid #1e293b; padding-bottom:10px;">
-                <p>👤 ${d.name}</p> <p>📞 ${d.phone}</p>
-                <p>🏗️ ${d.job}</p> <p>📍 ${d.gov}</p>
-            </div>
-            <div class="progress-box">
-                <div class="line"></div><div class="fill" style="width:${(idx/3)*100}%"></div>
-                <div class="steps">${stages.map((s,i)=>`<div class="dot ${i<=idx?'active pulse':''}"></div>`).join('')}</div>
-            </div>
-            <div style="text-align:right; max-height:200px; overflow-y:auto; background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
-                ${d.tracking.map(t => `<div class="log-card"><b>${t.stage}</b> (${t.date})<br>${t.comment}</div>`).reverse().join('')}
-            </div>
-            <div style="text-align:right; margin-top:15px;">
-                <input id="n-stage" class="swal2-input" placeholder="اسم المرحلة الجديدة">
-                <textarea id="n-comm" class="swal2-textarea" placeholder="الرد الإداري"></textarea>
-                <button class="logout-btn" style="width:100%" onclick="updateStat('${id}', 'تم الحل والإغلاق', 'تم الإغلاق النهائي بالحل')">🔒 إغلاق نهائي</button>
+            <div class="admin-modal-info">
+                <p>👤 ${d.name} (${d.isMember})</p>
+                <p>🆔 رقم القومي: ${d.nationalId} | 🎖️ عضوية: ${d.memberId}</p>
+                <hr>
+                <div class="timeline-admin">
+                    ${d.tracking.map(t => `<div><b>${t.stage}</b> - ${t.date}<br>${t.comment}</div>`).reverse().join('<br>')}
+                </div>
+                <hr>
+                <input id="n-stage" class="swal2-input" placeholder="المرحلة">
+                <textarea id="n-comm" class="swal2-textarea" placeholder="التعليق"></textarea>
             </div>`,
-        confirmButtonText: 'تحديث الحالة'
-    }).then(r => {
-        if(r.isConfirmed) updateStat(id, document.getElementById('n-stage').value, document.getElementById('n-comm').value);
-    });
+        showCancelButton: true,
+        confirmButtonText: 'تحديث المسار',
+        preConfirm: () => {
+            const stage = document.getElementById('n-stage').value;
+            if(!stage) return Swal.showValidationMessage('يجب إدخال اسم المرحلة');
+            return { stage, comm: document.getElementById('n-comm').value };
+        }
+    }).then(r => { if(r.isConfirmed) updateRequest(id, r.value.stage, r.value.comm); });
 }
 
-async function updateStat(id, stage, comm) {
-    if(!stage) return;
+async function updateRequest(id, stage, comm) {
     await db.collection("Requests").doc(id).update({
         status: stage,
         tracking: firebase.firestore.FieldValue.arrayUnion({
-            stage: stage, comment: comm || "تحديث إداري", date: new Date().toLocaleString('ar-EG')
+            stage: stage, comment: comm, date: new Date().toLocaleString('ar-EG')
         })
     });
 }
 
+// دالة الإعدادات
+function showSettings() {
+    Swal.fire({
+        title: 'إعدادات المنظومة',
+        html: `
+            <input id="set-pres" class="swal2-input" placeholder="اسم النقيب">
+            <input id="set-link" class="swal2-input" placeholder="رابط الخدمات">
+            <input id="set-logo" class="swal2-input" placeholder="رابط اللوجو">`,
+        confirmButtonText: 'حفظ'
+    }).then(r => {
+        if(r.isConfirmed) {
+            db.collection("SystemSettings").doc("mainConfig").update({
+                presidentName: document.getElementById('set-pres').value,
+                servicesLink: document.getElementById('set-link').value,
+                logoUrl: document.getElementById('set-logo').value
+            });
+        }
+    });
+}
+
 function printTableData() {
-    let win = window.open('', '', 'height=700,width=1000');
-    win.document.write(`<html><head><style>body{direction:rtl; font-family:Arial;} table{width:100%; border-collapse:collapse;} th,td{border:1px solid #000; padding:10px;}</style></head><body>`);
-    win.document.write(`<h2>سجل البيانات المفلترة - ${new Date().toLocaleDateString()}</h2>`);
-    win.document.write(document.getElementById('mainTable').outerHTML);
+    const printContent = document.getElementById("mainTable").outerHTML;
+    const win = window.open('', '', 'width=900,height=700');
+    win.document.write(`<html><body dir="rtl"><h2>تقرير الطلبات</h2>${printContent}</body></html>`);
     win.document.close();
     win.print();
 }
