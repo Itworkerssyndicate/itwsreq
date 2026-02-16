@@ -2,77 +2,61 @@ const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", proj
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// جلب البيانات الأساسية
-db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
-    if(doc.exists) {
-        document.getElementById("pres-display").innerText = doc.data().presidentName || "غير محدد";
-        document.getElementById("main-logo").src = doc.data().logoUrl || "";
-        document.getElementById("svc-link-hidden").value = doc.data().servicesLink || "#";
-    }
-});
-
-function showTab(t) {
-    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-'+t).style.display = 'block';
-    if(t !== 'login') document.getElementById('btn-'+t).classList.add('active');
-}
-
-function toggleMember() {
-    const isMember = document.getElementById('u-member-type').value === "عضو";
-    document.getElementById('u-m-id').style.display = isMember ? 'block' : 'none';
-}
+// ... دوال التنقل (showTab, toggleMember) ...
 
 async function submitRequest() {
-    const d = {
+    const refId = `${new Date().getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
+    const data = {
         name: document.getElementById('u-name').value,
         nationalId: document.getElementById('u-nid').value,
-        memberId: document.getElementById('u-m-id').value || "غير عضو",
         type: document.getElementById('u-type').value,
-        phone: document.getElementById('u-phone').value,
         status: "تم الاستلام",
-        refId: `${new Date().getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`,
+        refId,
         createdAt: firebase.firestore.Timestamp.now(),
-        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب بنجاح", date: new Date().toLocaleString('ar-EG')}]
+        tracking: [{ stage: "تم الاستلام", comment: "تم استلام الطلب وبدء الدورة المستندية", date: new Date().toLocaleString('ar-EG'), isFinal: false }]
     };
-    if(!d.name || d.nationalId.length < 14) return Swal.fire("خطأ", "برجاء استكمال البيانات", "error");
-    await db.collection("Requests").add(d);
-    Swal.fire("نجاح", `كود الطلب: ${d.refId}`, "success");
+    await db.collection("Requests").add(data);
+    Swal.fire("نجاح", `كود الطلب: ${refId}`, "success");
 }
 
 async function searchRequest() {
-    const nid = document.getElementById('s-nid').value;
-    const ref = document.getElementById('s-ref').value;
-    const type = document.getElementById('s-type').value;
-
     const snap = await db.collection("Requests")
-        .where("nationalId", "==", nid)
-        .where("refId", "==", ref)
-        .where("type", "==", type).get();
+        .where("nationalId", "==", document.getElementById('s-nid').value)
+        .where("refId", "==", document.getElementById('s-ref').value)
+        .where("type", "==", document.getElementById('s-type').value).get();
 
-    if(snap.empty) return Swal.fire("عذراً", "لم يتم العثور على نتائج تطابق هذا النوع والرقم", "warning");
+    if(snap.empty) return Swal.fire("تنبيه", "لا توجد بيانات مطابقة", "warning");
+    const d = snap.docs[0].data();
     
-    const data = snap.docs[0].data();
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
-    const idx = stages.indexOf(data.status);
+    // حساب مراحل التراك
+    const stages = ["تم الاستلام", ...d.tracking.filter(t=>t.stage !== "تم الاستلام" && t.stage !== "إغلاق الطلب").map(t=>t.stage), "إغلاق الطلب"];
+    const currentIdx = d.status === "تم الحل والإغلاق" ? stages.length - 1 : stages.indexOf(d.status);
+    const progress = (currentIdx / (stages.length - 1)) * 100;
 
     document.getElementById('track-res').innerHTML = `
-        <div class="water-track">
-            <div class="track-line" style="position:absolute; width:100%; height:100%;"><div class="track-fill" style="width:${(idx/3)*100}%"></div></div>
-            ${stages.map((s,i) => `<div class="node ${i<=idx?'active':''}" style="right:${(i/3)*100}%"><span>${s}</span></div>`).join('')}
+        <div class="water-container">
+            <div class="water-fill" style="width: ${progress}%"></div>
+            ${stages.map((s, i) => `
+                <div class="track-node ${i <= currentIdx ? 'active' : ''}" style="right: ${(i/(stages.length-1))*100}%">
+                    <span>${s}</span>
+                </div>
+            `).join('')}
         </div>
-        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:15px; margin-top:30px;">
-            ${data.tracking.reverse().map(t => `<p><b>${t.stage}</b> - ${t.date}<br>${t.comment}</p><hr style="opacity:0.1; margin:10px 0;">`).join('')}
+        <div class="timeline-list">
+            <h4 style="margin-bottom:15px; color:var(--primary);">الحالة الحالية: ${d.status}</h4>
+            ${d.tracking.slice().reverse().map(t => `
+                <div class="timeline-item ${t.isFinal ? 'final' : ''}">
+                    ${t.isFinal ? '<span class="final-badge">القرار النهائي</span>' : ''}
+                    <small style="color:#64748b">${t.date}</small>
+                    <p style="margin-top:5px;"><b>${t.stage}:</b> ${t.comment}</p>
+                </div>
+            `).join('')}
         </div>`;
 }
 
 function loginAdmin() {
-    const u = document.getElementById('adm-u').value;
-    const p = document.getElementById('adm-p').value;
-    if(u === "admin" && p === "itws@manager@2026@") {
+    if(document.getElementById('adm-u').value === "admin" && document.getElementById('adm-p').value === "itws@manager@2026@") {
         sessionStorage.setItem("isAdmin", "true");
-        window.location.replace("admin.html"); // تم التغيير من href لضمان عدم العودة للخلف
-    } else {
-        Swal.fire("خطأ", "بيانات الدخول غير صحيحة", "error");
+        window.location.replace("admin.html");
     }
 }
