@@ -2,46 +2,50 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة العليا</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>لوحة التحكم - الإدارة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style>
-        .sidebar { width: 260px; background: #111827; height: 100vh; position: fixed; padding: 25px; border-left: 1px solid #374151; }
-        .main-content { margin-right: 260px; padding: 40px; width: calc(100% - 260px); }
-        .nav-link { padding: 15px; margin-bottom: 10px; cursor: pointer; border-radius: 10px; transition: 0.3s; display: block; color: #94a3b8; text-decoration: none; }
-        .nav-link:hover, .nav-link.active { background: var(--primary); color: #000; font-weight: bold; }
-    </style>
 </head>
-<body>
-    <div class="sidebar">
-        <h2 style="color: var(--primary); text-align: center;">التحكم</h2>
-        <div class="nav-link active" onclick="loadData('complaint', this)">الشكاوى</div>
-        <div class="nav-link" onclick="loadData('suggestion', this)">المقترحات</div>
-        <div class="nav-link" onclick="showSettings(this)">الإعدادات</div>
-        <hr style="border-color:#334155; margin: 20px 0;">
-        <button class="main-btn" style="background:#6366f1;" onclick="window.print()">طباعة التقرير</button>
-        <button class="main-btn" style="background:#ef4444; margin-top:10px;" onclick="location.href='index.html'">خروج</button>
+<body style="display:flex;">
+    <div class="sidebar" style="width:250px; background:#111827; height:100vh; position:fixed; padding:20px; border-left:1px solid #334155;">
+        <h3 style="text-align:center; color:var(--primary);">التحكم الرقمي</h3>
+        <button class="nav-link active" onclick="loadData('complaint', this)" style="width:100%; padding:12px; margin:5px 0; background:transparent; border:none; color:white; text-align:right; cursor:pointer; font-family:Cairo;">الشكاوى</button>
+        <button class="nav-link" onclick="loadData('suggestion', this)" style="width:100%; padding:12px; margin:5px 0; background:transparent; border:none; color:white; text-align:right; cursor:pointer; font-family:Cairo;">المقترحات</button>
+        <button class="nav-link" onclick="showSettings(this)" style="width:100%; padding:12px; margin:5px 0; background:transparent; border:none; color:white; text-align:right; cursor:pointer; font-family:Cairo;">الإعدادات</button>
+        <hr>
+        <button class="btn-print-all" onclick="window.print()" style="width:100%;"><i class="fas fa-print"></i> طباعة التقرير العام</button>
+        <button class="main-btn" onclick="location.href='index.html'" style="background:#ef4444; padding:10px; margin-top:10px;">خروج</button>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" style="margin-right:250px; padding:30px; width:calc(100% - 250px);">
         <div id="content-box">
             <h2 id="view-title">إدارة الشكاوى</h2>
             <div class="admin-table-container">
-                <table>
-                    <thead><tr><th>الرقم</th><th>الاسم</th><th>المحافظة</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <table id="main-table">
+                    <thead>
+                        <tr>
+                            <th>الرقم المرجعي</th>
+                            <th>الاسم</th>
+                            <th>المحافظة</th>
+                            <th>الحالة</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
                     <tbody id="tbody"></tbody>
                 </table>
             </div>
         </div>
-
+        
         <div id="settings-box" style="display:none;">
-            <h2>إعدادات الهوية</h2>
-            <div class="form-group"><label>اسم النقابة</label><input type="text" id="set-name"></div>
-            <div class="form-group"><label>اسم النقيب</label><input type="text" id="set-pres"></div>
-            <div class="form-group"><label>رابط اللوجو</label><input type="text" id="set-logo"></div>
-            <button class="main-btn" onclick="saveSettings()">حفظ التعديلات</button>
+            <h2>تعديل بيانات الهوية</h2>
+            <div class="input-grid">
+                <div><label>اسم النقابة</label><input type="text" id="set-name"></div>
+                <div><label>النقيب العام</label><input type="text" id="set-pres"></div>
+            </div>
+            <label>رابط اللوجو</label><input type="text" id="set-logo">
+            <button class="main-btn" onclick="saveSettings()" style="margin-top:20px;">حفظ النظام</button>
         </div>
     </div>
 
