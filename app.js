@@ -1,53 +1,65 @@
-// دوال التبديل لمنع التشنج
+// ... (بيانات Firebase Config الخاصة بك هنا) ...
+
 function openTab(id) {
-    document.querySelectorAll('.content-tab').forEach(t => t.style.display = 'none');
+    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
     document.getElementById(id).style.display = 'block';
 }
 
-// دالة البحث الثلاثي المحدثة
-async function startTracking() {
-    const nid = document.getElementById('s-nid').value;
-    const ref = document.getElementById('s-ref').value;
-    const type = document.getElementById('s-type').value;
-
-    if(!nid || !ref) return Swal.fire("تنبيه", "برجاء ادخال الرقم القومي ورقم الطلب", "warning");
-
-    const snap = await db.collection("Requests")
-        .where("nationalId", "==", nid)
-        .where("refId", "==", ref)
-        .where("type", "==", type).get();
-
-    if(snap.empty) return Swal.fire("خطأ", "لم يتم العثور على بيانات مطابقة", "error");
-
-    const data = snap.docs[0].data();
-    drawTrack(data);
+async function createNewRequest() {
+    const refId = `2026/${Math.floor(1000 + Math.random() * 9000)}`;
+    const data = {
+        name: document.getElementById('u-name').value,
+        nationalId: document.getElementById('u-nid').value,
+        phone: document.getElementById('u-phone').value,
+        address: document.getElementById('u-address').value,
+        type: document.getElementById('u-type').value,
+        status: "استلام الطلب",
+        refId: refId,
+        createdAt: firebase.firestore.Timestamp.now(),
+        tracking: [{ stage: "استلام الطلب", comment: "تم استلام الطلب بنجاح", date: new Date().toLocaleString('ar-EG'), isFinal: false }]
+    };
+    if(!data.name || !data.nationalId) return Swal.fire("خطأ", "برجاء ملء البيانات الأساسية", "error");
+    await db.collection("Requests").add(data);
+    Swal.fire("تم الإرسال", `رقم طلبك هو: ${refId}`, "success");
 }
 
-function drawTrack(d) {
-    // المراحل الأساسية (البداية، المراحل الوسيطة، النهاية)
-    const stages = ["استلام الطلب", "ارسال الطلب", "اغلاق الطلب"];
-    const currentStatus = d.status;
-    const currentIndex = stages.indexOf(currentStatus) === -1 ? 1 : stages.indexOf(currentStatus);
-    const progressPercent = (currentIndex / (stages.length - 1)) * 100;
+async function startTracking() {
+    const res = await db.collection("Requests")
+        .where("nationalId", "==", document.getElementById('s-nid').value)
+        .where("refId", "==", document.getElementById('s-ref').value)
+        .where("type", "==", document.getElementById('s-type').value).get();
 
-    document.getElementById('tracking-result').innerHTML = `
-        <div class="water-track-container">
-            <div class="water-fill" style="width: ${progressPercent}%"></div>
-            ${stages.map((s, i) => `
-                <div class="step-node ${i <= currentIndex ? 'done' : ''}" style="right: ${(i/(stages.length-1))*100}%">
-                    <span class="step-name">${s}</span>
-                </div>
-            `).join('')}
+    if(res.empty) return Swal.fire("لا يوجد", "تأكد من البيانات والنوع", "warning");
+    const d = res.docs[0].data();
+    showVisualTrack(d);
+}
+
+function showVisualTrack(d) {
+    const stages = ["استلام الطلب", "ارسال الطلب", "اغلاق الطلب"];
+    const current = d.status === "اغلاق الطلب" ? 2 : (d.status === "استلام الطلب" ? 0 : 1);
+    const progress = (current / 2) * 100;
+
+    document.getElementById('result-area').innerHTML = `
+        <div class="water-container">
+            <div class="water-fill" style="width: ${progress}%"></div>
+            ${stages.map((s,i) => `<div class="node ${i<=current?'active':''}" style="right:${(i/2)*100}%"><span class="node-text">${s}</span></div>`).join('')}
         </div>
         <div class="history-list">
-            <h4 style="margin-bottom:15px; color:var(--primary)">السجل الزمني (من الأحدث):</h4>
             ${d.tracking.slice().reverse().map(t => `
-                <div class="history-item ${t.isFinal ? 'final-decision' : ''}">
-                    ${t.isFinal ? '<span class="final-badge">القرار النهائي</span>' : ''}
-                    <div style="font-size:12px; color:#64748b">${t.date}</div>
-                    <div style="margin-top:5px"><b>${t.stage}:</b> ${t.comment}</div>
+                <div class="history-item ${t.isFinal ? 'final' : ''}">
+                    ${t.isFinal ? '<b style="color:#00ff88">🏁 قرار نهائي:</b>' : ''}
+                    <small>${t.date}</small>
+                    <p><b>${t.stage}:</b> ${t.comment}</p>
                 </div>
             `).join('')}
-        </div>
-    `;
+        </div>`;
+}
+
+function handleLogin() {
+    if(document.getElementById('adm-u').value === "admin" && document.getElementById('adm-p').value === "itws@manager@2026@") {
+        sessionStorage.setItem("isAdmin", "true");
+        window.location.href = "admin.html";
+    } else {
+        Swal.fire("خطأ", "بيانات الدخول خاطئة", "error");
+    }
 }
