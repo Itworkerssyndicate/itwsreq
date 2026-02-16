@@ -2,43 +2,30 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لوحة الإدارة</title>
+    <title>إدارة المنظومة</title>
     <link rel="stylesheet" href="style.css">
+    <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
-<body class="admin-body">
+<body class="admin-layout">
     <aside class="sidebar">
-        <div class="side-head">المنظومة الرقمية</div>
-        <nav>
-            <button class="nav-item active" onclick="loadView('all', this)">كل الطلبات</button>
-            <button class="nav-item" onclick="loadView('شكوى', this)">الشكاوى</button>
-            <button class="nav-item" onclick="loadView('اقتراح', this)">المقترحات</button>
-            <button class="nav-item" onclick="showSettings()">الإعدادات</button>
-        </nav>
-        <button class="logout-btn" onclick="sessionStorage.clear(); location.href='index.html'">تسجيل خروج</button>
+        <h3 style="color:var(--primary); margin-bottom:20px;">لوحة التحكم</h3>
+        <button class="side-item active" onclick="loadView('all', this)">كل الطلبات</button>
+        <button class="side-item" onclick="loadView('شكوى', this)">الشكاوى</button>
+        <button class="side-item" onclick="loadView('اقتراح', this)">المقترحات</button>
+        <button class="side-item" onclick="showSettings()">الإعدادات</button>
+        <button class="svc-btn" style="margin-top:auto; background:#ff4757;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
     </aside>
 
     <main class="admin-main">
-        <header class="admin-header">
-            <h2>إدارة السجلات</h2>
-            <button class="svc-link-btn" onclick="printTableData()">طباعة الجدول</button>
-        </header>
-
-        <div class="filter-bar">
-            <input type="text" id="f-name" placeholder="بحث بالاسم" oninput="filterTable()">
-            <select id="f-status" onchange="filterTable()">
-                <option value="">كل الحالات</option>
-                <option value="تم الاستلام">تم الاستلام</option>
-                <option value="تم الحل والإغلاق">تم الحل</option>
-            </select>
-        </div>
-
-        <div class="table-wrap">
-            <table id="mainTable">
-                <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>الإجراء</th></tr></thead>
+        <h2 id="view-title">السجلات الشاملة</h2>
+        <div class="table-card">
+            <table>
+                <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إجراء</th></tr></thead>
                 <tbody id="tbody"></tbody>
             </table>
         </div>
     </main>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
