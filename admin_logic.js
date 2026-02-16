@@ -1,138 +1,194 @@
-firebase.initializeApp({
+// تهيئة Firebase (تأكد من مطابقة الإعدادات لمشروعك)
+const firebaseConfig = {
     apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
-    projectId: "itwsreq"
-});
+    authDomain: "itwsreq.firebaseapp.com",
+    projectId: "itwsreq",
+    storageBucket: "itwsreq.firebasestorage.app",
+    messagingSenderId: "417900842360",
+    appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d"
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
 const db = firebase.firestore();
+
+// التحقق من صلاحية الجلسة (Login Guard)
 const role = sessionStorage.getItem("role");
-
-if(!role) window.location.href = "index.html";
-
-document.getElementById('role-badge').innerText = (role === 'super' ? 'الأدمن الرئيسي' : 'مدير نظام');
-
-// 1. تبديل الشاشات
-function showTab(type, btn) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    btn.classList.add('active');
-    
-    if(type === 'settings') {
-        document.getElementById('table-container').style.display = 'none';
-        document.getElementById('settings-view').style.display = 'block';
-        loadSettings();
-    } else {
-        document.getElementById('table-container').style.display = 'block';
-        document.getElementById('settings-view').style.display = 'none';
-        loadRequests(type);
-    }
+if (!role) {
+    window.location.href = "index.html";
 }
 
-// 2. تحميل البيانات
-function loadRequests(type) {
+/**
+ * وظيفة تحميل البيانات وعرضها في الجدول
+ * @param {string} type - 'complaint' أو 'suggestion'
+ */
+function loadData(type) {
+    // تحديث الواجهة
+    document.getElementById('content-box').style.display = 'block';
+    document.getElementById('settings-box').style.display = 'none';
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('nav-' + type).classList.add('active');
+    document.getElementById('view-title').innerText = type === 'complaint' ? "إدارة الشكاوى الواردة" : "المقترحات والأفكار";
+
+    // جلب البيانات لحظياً من Firestore
     db.collection("Requests").where("type", "==", type).onSnapshot(snap => {
         let html = "";
         snap.forEach(doc => {
             const d = doc.data();
-            html += `<tr class="animate__animated animate__fadeInUp">
-                <td style="color: var(--primary); font-weight: bold;">${d.refId}</td>
-                <td>${d.fullName}</td>
-                <td><span style="color: ${d.status === 'تم' ? '#10b981' : '#0ea5e9'}">${d.status}</span></td>
-                <td style="font-size: 0.8rem; color: #64748b;">${d.date}</td>
-                <td>
-                    <button class="btn-action btn-track" onclick="manageRequest('${doc.id}')">تتبع</button>
-                    ${role === 'super' ? `<button class="btn-action btn-delete" onclick="deleteReq('${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
-                </td>
-            </tr>`;
+            html += `
+                <tr>
+                    <td style="color:#0ea5e9; font-weight:bold;">${d.refId}</td>
+                    <td>${d.name || d.fullName}</td>
+                    <td>${d.gov || d.governorate}</td>
+                    <td>
+                        <span style="background:${d.status === 'تم' ? '#064e3b' : '#1e3a8a'}; color:white; padding:4px 10px; border-radius:20px; font-size:0.8rem;">
+                            ${d.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-view" onclick="openCard('${doc.id}', '${type}')">إدارة</button>
+                        ${role === 'super' ? `<button class="btn-del" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></button>` : ''}
+                    </td>
+                </tr>`;
         });
-        document.getElementById('admin-table-body').innerHTML = html;
+        document.getElementById('tbody').innerHTML = html;
     });
 }
 
-// 3. نظام التتبع (Tracking System) في SweetAlert
-async function manageRequest(id) {
+/**
+ * وظيفة فتح كارت التفاصيل والتحكم في المراحل
+ */
+async function openCard(id, type) {
     const doc = await db.collection("Requests").doc(id).get();
     const d = doc.data();
-    
-    let trackList = d.tracking.map(t => `
-        <div style="text-align: right; border-right: 2px solid #0ea5e9; padding-right: 15px; margin-bottom: 10px;">
-            <b style="color: #0ea5e9;">${t.stage}</b> <br>
-            <small style="color: #94a3b8;">${t.comment} - ${t.date}</small>
-        </div>
-    `).join('');
 
-    const { value: formValues } = await Swal.fire({
-        title: 'إدارة مسار الطلب',
-        html: `
-            <div style="max-height: 200px; overflow-y: auto; margin-bottom: 20px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 10px;">
-                ${trackList}
-            </div>
-            <input id="swal-stage" class="swal2-input" placeholder="اسم المرحلة الجديدة" style="font-family: Cairo; font-size: 0.9rem;">
-            <textarea id="swal-comment" class="swal2-textarea" placeholder="ملاحظات للمرحلة السابقة" style="font-family: Cairo; font-size: 0.9rem;"></textarea>
-        `,
-        focusConfirm: false,
-        showCancelButton: true,
-        confirmButtonText: 'إضافة مرحلة',
-        cancelButtonText: 'إغلاق الملف (تم)',
-        cancelButtonColor: '#10b981',
+    if (type === 'suggestion') {
+        // إذا كان اقتراحاً، يتم وضع علامة "تمت القراءة" تلقائياً
+        if (d.status !== 'تمت القراءة') {
+            await db.collection("Requests").doc(id).update({ status: "تمت القراءة" });
+        }
+        return Swal.fire({
+            title: 'تفاصيل الاقتراح',
+            background: '#1e293b',
+            color: '#fff',
+            html: `
+                <div style="text-align:right; line-height:1.6">
+                    <p><b>صاحب الاقتراح:</b> ${d.name}</p>
+                    <p><b>المحافظة:</b> ${d.gov}</p>
+                    <hr style="border-color:#334155">
+                    <p><b>نص الاقتراح:</b><br>${d.details}</p>
+                </div>`
+        });
+    }
+
+    // إذا كانت شكوى، يظهر الكارت الكامل مع التراك سيستم
+    const { value: form } = await Swal.fire({
+        title: 'إدارة طلب العضو',
         background: '#1e293b',
         color: '#fff',
-        preConfirm: () => {
-            return [
-                document.getElementById('swal-stage').value,
-                document.getElementById('swal-comment').value
-            ]
+        width: '650px',
+        html: `
+            <div style="text-align:right; font-size:0.85rem; background:rgba(0,0,0,0.4); padding:15px; border-radius:12px; border:1px solid #0ea5e9; margin-bottom:15px;">
+                <p><b>الاسم:</b> ${d.name} | <b>الرقم القومي:</b> ${d.nationalId}</p>
+                <p><b>التليفون:</b> ${d.phone} | <b>المحافظة:</b> ${d.gov}</p>
+                <p><b>المهنة:</b> ${d.job} | <b>العنوان:</b> ${d.address}</p>
+                <hr style="border:0; border-top:1px solid #334155">
+                <p><b>موضوع الشكوى:</b><br>${d.details}</p>
+            </div>
+            <input id="sw-stage" class="swal2-input" style="font-family:Cairo;" placeholder="المرحلة القادمة (مثل: المراجعة الفنية)">
+            <textarea id="sw-comm" class="swal2-textarea" style="font-family:Cairo;" placeholder="اكتب تعليقاً لإغلاق المرحلة السابقة.."></textarea>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'تحديث المرحلة',
+        cancelButtonText: 'إغلاق الطلب نهائياً (تم)',
+        confirmButtonColor: '#0ea5e9',
+        cancelButtonColor: '#10b981'
+    });
+
+    if (form) {
+        const stage = document.getElementById('sw-stage').value;
+        const comment = document.getElementById('sw-comm').value;
+        if (!stage) return;
+
+        await db.collection("Requests").doc(id).update({
+            status: stage,
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                stage: stage,
+                comment: comment || "تحديث إداري",
+                date: new Date().toLocaleString('ar-EG')
+            })
+        });
+    } else if (Swal.dismissReason === 'cancel') {
+        // عند الضغط على "إغلاق الطلب نهائياً"
+        await db.collection("Requests").doc(id).update({
+            status: "تم",
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                stage: "تم",
+                comment: "تمت المعالجة النهائية وإغلاق الملف",
+                date: new Date().toLocaleString('ar-EG')
+            })
+        });
+    }
+}
+
+/**
+ * وظيفة حذف الطلب بكلمة سر
+ */
+async function deleteDoc(id) {
+    const { value: pass } = await Swal.fire({
+        title: 'تأكيد الحذف النهائي',
+        text: 'يرجى إدخال كلمة سر الحذف للمتابعة',
+        input: 'password',
+        background: '#1e293b',
+        color: '#fff',
+        inputAttributes: { autocapitalize: 'off', autocorrect: 'off' }
+    });
+
+    if (pass === '11111@') {
+        await db.collection("Requests").doc(id).delete();
+        Swal.fire("تم الحذف", "تم مسح بيانات الطلب من السجلات", "success");
+    } else if (pass) {
+        Swal.fire("خطأ", "كلمة السر غير صحيحة", "error");
+    }
+}
+
+/**
+ * عرض وإدارة إعدادات النظام
+ */
+function showSettings() {
+    document.getElementById('content-box').style.display = 'none';
+    document.getElementById('settings-box').style.display = 'block';
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('nav-settings').classList.add('active');
+
+    db.collection("SystemSettings").doc("mainConfig").get().then(doc => {
+        if (doc.exists) {
+            const d = doc.data();
+            document.getElementById('set-name').value = d.unionName || "";
+            document.getElementById('set-pres').value = d.presidentName || "";
+            document.getElementById('set-logo').value = d.logoURL || "";
+            document.getElementById('set-url').value = d.servicesURL || "";
         }
     });
-
-    if (formValues && formValues[0]) {
-        updateStage(id, formValues[0], formValues[1]);
-    } else if (Swal.dismissReason === 'cancel') {
-        // إذا ضغط على إغلاق الملف (تم)
-        updateStage(id, "تم", "تمت معالجة الطلب بالكامل");
-    }
 }
 
-async function updateStage(id, stage, comment) {
-    const newStep = { stage, comment, date: new Date().toLocaleString('ar-EG') };
-    await db.collection("Requests").doc(id).update({
-        status: stage,
-        tracking: firebase.firestore.FieldValue.arrayUnion(newStep)
-    });
-    Swal.fire({ icon: 'success', title: 'تم التحديث', background: '#1e293b', color: '#fff' });
-}
-
-// 4. إعدادات النظام
-async function loadSettings() {
-    const doc = await db.collection("SystemSettings").doc("mainConfig").get();
-    if(doc.exists) {
-        const d = doc.data();
-        document.getElementById('set-union-name').value = d.unionName;
-        document.getElementById('set-president-name').value = d.presidentName;
-        document.getElementById('set-logo-url').value = d.logoURL;
-    }
-}
-
+/**
+ * حفظ الإعدادات في Firestore
+ */
 async function saveSettings() {
-    await db.collection("SystemSettings").doc("mainConfig").set({
-        unionName: document.getElementById('set-union-name').value,
-        presidentName: document.getElementById('set-president-name').value,
-        logoURL: document.getElementById('set-logo-url').value
-    });
-    Swal.fire({ icon: 'success', title: 'تم حفظ الإعدادات بنجاح', background: '#1e293b', color: '#fff' });
+    try {
+        await db.collection("SystemSettings").doc("mainConfig").set({
+            unionName: document.getElementById('set-name').value,
+            presidentName: document.getElementById('set-pres').value,
+            logoURL: document.getElementById('set-logo').value,
+            servicesURL: document.getElementById('set-url').value
+        }, { merge: true });
+        Swal.fire("تم الحفظ", "تم تحديث هوية النظام بنجاح", "success");
+    } catch (e) {
+        Swal.fire("خطأ", "فشل في حفظ الإعدادات", "error");
+    }
 }
 
-function deleteReq(id) {
-    Swal.fire({
-        title: 'هل أنت متأكد؟',
-        text: "سيتم حذف السجل نهائياً!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'نعم، احذف!'
-    }).then((result) => {
-        if (result.isConfirmed) db.collection("Requests").doc(id).delete();
-    });
-}
-
-function logout() { sessionStorage.clear(); window.location.href = "index.html"; }
-
-loadRequests('complaint'); // البداية التلقائية
+// البدء بتحميل الشكاوى كافتراضي
+loadData('complaint');
