@@ -23,11 +23,11 @@ async function submitRequest() {
         address: document.getElementById('u-address').value, type: document.getElementById('u-type').value,
         details: document.getElementById('u-details').value, status: "تم الاستلام", refId: refId,
         createdAt: firebase.firestore.Timestamp.now(),
-        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب آلياً", date: now.toLocaleString('ar-EG')}]
+        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب بنجاح عبر البوابة الرقمية", date: now.toLocaleString('ar-EG')}]
     };
 
     await db.collection("Requests").add(data);
-    Swal.fire("نجاح", `تم الحفظ بنجاح، كودك هو: ${refId}`, "success");
+    Swal.fire("نجاح", `كود الطلب: ${refId}`, "success");
 }
 
 async function searchRequest() {
@@ -39,18 +39,16 @@ async function searchRequest() {
     const d = snap.docs[0].data();
     
     const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
-    let idx = stages.indexOf(d.status);
-    if(idx === -1) idx = 1;
+    let idx = stages.indexOf(d.status); if(idx === -1) idx = 1;
 
     let h = `
         <div class="progress-box">
-            <div class="line"></div>
-            <div class="fill" style="width:${(idx/3)*100}%"></div>
-            <div class="steps">
-                ${stages.map((s,i)=>`<div class="dot ${i<=idx?'active pulse':''}"><span>${s}</span></div>`).join('')}
-            </div>
+            <div class="line"></div><div class="fill" style="width:${(idx/3)*100}%"></div>
+            <div class="steps">${stages.map((s,i)=>`<div class="dot ${i<=idx?'active pulse':''}"><span>${s}</span></div>`).join('')}</div>
+        </div>
+        <div class="timeline-container">
+            ${d.tracking.map(t => `<div class="log-card"><b>${t.stage}</b><br><small>${t.date}</small><p>${t.comment}</p></div>`).reverse().join('')}
         </div>`;
-    d.tracking.forEach(t => h += `<div class="log-card"><small>${t.date}</small><br><b>${t.stage}</b>: ${t.comment}</div>`);
     document.getElementById('track-res').innerHTML = h;
 }
 
