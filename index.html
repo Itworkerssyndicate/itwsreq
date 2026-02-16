@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الخدمات الرقمية</title>
+    <title>بوابة الخدمات</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body oncontextmenu="return false;">
+<body>
     <div id="download-card" style="background:#fff; color:#000; padding:30px; text-align:center; position:fixed; left:-9999px; width:400px; border:3px solid #00d2ff;">
         <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
         <h2>وصل استلام رسمي</h2>
@@ -20,7 +20,7 @@
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="60">
             <h4 style="color:#00d2ff; margin:0;">النقيب العام</h4>
-            <h2 id="pres-display" style="font-size: 1.1rem;">جاري التحميل...</h2>
+            <h2 id="pres-display">جاري التحميل...</h2>
         </div>
 
         <div style="display:flex; gap:8px; margin-bottom:20px;">
@@ -44,7 +44,7 @@
         <div id="tab-track" style="display:none;">
             <select id="s-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
             <input type="number" id="s-nid" placeholder="الرقم القومي">
-            <input type="text" id="s-ref" placeholder="رقم الطلب (السنة/الرقم)">
+            <input type="text" id="s-ref" placeholder="رقم الطلب">
             <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
             <div id="track-res" style="margin-top:20px;"></div>
         </div>
