@@ -4,78 +4,60 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>بوابة نقابة تكنولوجيا المعلومات</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container">
-        <div class="header-section">
+        <div style="text-align: center;">
             <img id="union-logo" src="">
-            <h2 id="union-name">جاري التحميل...</h2>
-            <div class="pres-box">
-                <span class="pres-label">النقيب العام</span>
-                <span id="president-name">...</span>
-            </div>
+            <h1 id="union-name" style="margin-bottom: 10px;">...</h1>
+            <p id="president-name" style="color:var(--primary); font-weight:bold;"></p>
         </div>
 
-        <div class="tabs-nav">
-            <button onclick="switchTab('submit', this)" class="tab-btn active">تقديم طلب</button>
-            <button onclick="switchTab('track', this)" class="tab-btn">الاستعلام عن طلب</button>
-            <button onclick="switchTab('login', this)" class="tab-btn">لوحة الإدارة</button>
+        <div style="display:flex; gap:10px; margin:30px 0; background:rgba(0,0,0,0.2); padding:10px; border-radius:15px;">
+            <button class="main-btn" onclick="showTab('submit')" style="flex:1;">تقديم طلب</button>
+            <button class="main-btn" onclick="showTab('track')" style="flex:1; background:#1e293b;">الاستعلام</button>
+            <button class="main-btn" onclick="showTab('login')" style="flex:1; background:#1e293b;">الإدارة</button>
         </div>
 
-        <div id="view-submit" class="tab-content">
+        <div id="tab-submit">
             <div class="input-grid">
-                <div class="form-group"><label>الاسم الرباعي *</label><input type="text" id="u-name" placeholder="أدخل اسمك الكامل"></div>
-                <div class="form-group"><label>الرقم القومي *</label><input type="number" id="u-nid" placeholder="14 رقم"></div>
+                <div class="form-group"><label>الاسم الرباعي</label><input type="text" id="u-name"></div>
+                <div class="form-group"><label>الرقم القومي</label><input type="number" id="u-nid"></div>
             </div>
             <div class="input-grid">
-                <div class="form-group"><label>رقم التليفون *</label><input type="number" id="u-phone" placeholder="01xxxxxxxxx"></div>
-                <div class="form-group">
-                    <label>المحافظة *</label>
-                    <select id="u-gov">
-                        <option value="">اختر محافظة</option>
-                        <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
-                        </select>
-                </div>
+                <div class="form-group"><label>التليفون</label><input type="number" id="u-phone"></div>
+                <div class="form-group"><label>المحافظة</label><select id="u-gov"><option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option></select></div>
             </div>
-            <div class="input-grid">
-                <div class="form-group"><label>المهنة *</label><input type="text" id="u-job"></div>
-                <div class="form-group"><label>نوع الطلب *</label><select id="u-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
-            </div>
-            <div class="form-group"><label>العنوان بالتفصيل *</label><input type="text" id="u-address"></div>
-            <div class="form-group"><label>تفاصيل الموضوع *</label><textarea id="u-details" rows="4"></textarea></div>
-            <button class="main-btn" onclick="submitRequest()">إرسال الطلب الآن</button>
+            <div class="form-group"><label>العنوان</label><input type="text" id="u-address"></div>
+            <div class="form-group"><label>التفاصيل</label><textarea id="u-details" rows="3"></textarea></div>
+            <button class="main-btn" onclick="submitRequest()">إرسال الطلب</button>
         </div>
 
-        <div id="view-track" class="tab-content" style="display:none;">
+        <div id="tab-track" style="display:none;">
             <div class="input-grid">
-                <div class="form-group"><label>نوع الطلب</label><select id="s-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select></div>
-                <div class="form-group"><label>الرقم القومي</label><input type="number" id="s-nid"></div>
+                <input type="number" id="s-nid" placeholder="الرقم القومي">
+                <input type="text" id="s-ref" placeholder="رقم الطلب المرجعي">
             </div>
-            <div class="form-group"><label>رقم الطلب المرجعي</label><input type="text" id="s-ref" placeholder="مثال: ITW-1234-2026"></div>
-            <button class="main-btn" style="background:#10b981;" onclick="searchRequest()">بدء عملية البحث</button>
-            <div id="track-res" style="margin-top:30px;"></div>
+            <button class="main-btn" onclick="searchRequest()">بحث الآن</button>
+            <div id="track-res" style="margin-top:20px;"></div>
         </div>
 
-        <div id="view-login" class="tab-content" style="display:none;">
-            <div class="form-group"><label>اسم المستخدم</label><input type="text" id="adm-u"></div>
-            <div class="form-group"><label>كلمة السر</label><input type="password" id="adm-p"></div>
-            <button class="main-btn" onclick="loginAdmin()">تسجيل الدخول</button>
+        <div id="tab-login" style="display:none;">
+            <input type="text" id="adm-u" placeholder="اسم المستخدم" style="margin-bottom:15px;">
+            <input type="password" id="adm-p" placeholder="كلمة السر">
+            <button class="main-btn" onclick="loginAdmin()" style="margin-top:15px;">دخول</button>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
     <script>
-        function switchTab(v, btn) {
-            document.querySelectorAll('.tab-content').forEach(x => x.style.display = 'none');
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('view-' + v).style.display = 'block';
-            btn.classList.add('active');
+        function showTab(t){
+            ['submit','track','login'].forEach(x => document.getElementById('tab-'+x).style.display = (x==t?'block':'none'));
         }
     </script>
 </body>
