@@ -11,12 +11,10 @@ db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
 });
 
 async function submitRequest() {
-    const btn = document.getElementById('submitBtn');
     const n = document.getElementById('u-name').value;
     const nid = document.getElementById('u-nid').value;
     if(!n || nid.length !== 14) return Swal.fire("خطأ", "بيانات غير مكتملة", "error");
 
-    btn.disabled = true;
     const now = new Date();
     const refId = `${now.getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
     const data = {
@@ -30,7 +28,6 @@ async function submitRequest() {
 
     await db.collection("Requests").add(data);
     Swal.fire("نجاح", `تم الحفظ بنجاح، كودك هو: ${refId}`, "success");
-    btn.disabled = false;
 }
 
 async function searchRequest() {
@@ -40,7 +37,19 @@ async function searchRequest() {
 
     if(snap.empty) return Swal.fire("خطأ", "لا توجد بيانات", "error");
     const d = snap.docs[0].data();
-    let h = `<div class="log-card"><b>الحالة الحالية: ${d.status}</b></div>`;
+    
+    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
+    let idx = stages.indexOf(d.status);
+    if(idx === -1) idx = 1;
+
+    let h = `
+        <div class="progress-box">
+            <div class="line"></div>
+            <div class="fill" style="width:${(idx/3)*100}%"></div>
+            <div class="steps">
+                ${stages.map((s,i)=>`<div class="dot ${i<=idx?'active pulse':''}"><span>${s}</span></div>`).join('')}
+            </div>
+        </div>`;
     d.tracking.forEach(t => h += `<div class="log-card"><small>${t.date}</small><br><b>${t.stage}</b>: ${t.comment}</div>`);
     document.getElementById('track-res').innerHTML = h;
 }
