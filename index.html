@@ -3,47 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الخدمات الرقمية</title>
+    <title>بوابة الخدمات</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body oncontextmenu="return false;">
-    <div id="download-card" style="background:#fff; color:#000; padding:30px; text-align:center; position:fixed; left:-9999px; width:400px; border:3px solid #00d2ff;">
-        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
-        <h2>وصل استلام رسمي</h2>
-        <h1 id="card-ref" style="color:#3a7bd5; margin:15px 0;"></h1>
+<body>
+    <div id="download-card" style="position:fixed; left:-9999px; background:#fff; color:#000; padding:40px; text-align:center; width:500px; border:5px solid #00d2ff;">
+        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="100">
+        <h2 style="margin:20px 0;">وصل استلام طلب رقمي</h2>
+        <h1 id="card-ref" style="font-size:40px; color:#3a7bd5;"></h1>
         <h3 id="card-name"></h3>
-        <p id="card-date"></p>
+        <p id="card-date" style="margin-top:20px; border-top:1px solid #ccc;"></p>
     </div>
 
     <div class="container">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="60">
-            <h4 style="color:#00d2ff; margin:0;">النقيب العام</h4>
-            <h2 id="pres-display">جاري التحميل...</h2>
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="70">
+            <p style="color:#00d2ff; margin-bottom:5px;">النقيب العام</p>
+            <h2 id="pres-display">...</h2>
         </div>
 
-        <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <div class="tabs">
             <button class="main-btn" onclick="showTab('submit')">تقديم طلب</button>
-            <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">استعلام</button>
-            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b; width:60px;"><i class="fas fa-lock"></i></button>
+            <button class="main-btn" onclick="showTab('track')" style="background:#1e293b">استعلام</button>
+            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b; max-width:60px;">🔒</button>
         </div>
 
         <div id="tab-submit">
             <input type="text" id="u-name" placeholder="الاسم الرباعي">
             <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
-            <input type="text" id="u-job" placeholder="المهنة">
+            <input type="text" id="u-job" placeholder="المهنة / الوظيفة">
             <input type="number" id="u-phone" placeholder="رقم الهاتف">
-            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
-            <textarea id="u-details" placeholder="تفاصيل الطلب"></textarea>
-            <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال وحفظ الوصل</button>
+            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الشرقية</option></select>
+            <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+            <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب"></textarea>
+            <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال الطلب</button>
         </div>
 
         <div id="tab-track" style="display:none;">
             <select id="s-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
             <input type="number" id="s-nid" placeholder="الرقم القومي">
-            <input type="text" id="s-ref" placeholder="رقم الطلب">
+            <input type="text" id="s-ref" placeholder="رقم الطلب (السنة/الرقم)">
             <button class="main-btn" onclick="searchRequest()">بحث عن الحالة</button>
-            <div id="track-res" style="margin-top:20px;"></div>
+            <div id="track-res"></div>
         </div>
 
         <div id="tab-login" style="display:none;">
@@ -58,6 +59,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="app.js"></script>
-    <script>function showTab(t){['submit','track','login'].forEach(x=>document.getElementById('tab-'+x).style.display=(x==t?'block':'none'));}</script>
+    <script>function showTab(t){['submit','track','login'].forEach(id=>document.getElementById('tab-'+id).style.display=(id===t?'block':'none'));}</script>
 </body>
 </html>
