@@ -2,6 +2,7 @@ const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", proj
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+// تحديث اسم النقيب
 db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
     if(doc.exists) document.getElementById("pres-display").innerText = doc.data().presidentName;
 });
@@ -15,20 +16,20 @@ async function submitRequest() {
     btn.disabled = true;
     const now = new Date();
     const refId = `${now.getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`;
-    const d = {
+    const data = {
         name: n, nationalId: nid, job: document.getElementById('u-job').value,
         phone: document.getElementById('u-phone').value, gov: document.getElementById('u-gov').value,
         address: document.getElementById('u-address').value, type: document.getElementById('u-type').value,
         details: document.getElementById('u-details').value, status: "تم الاستلام", refId: refId,
         createdAt: firebase.firestore.Timestamp.now(),
-        tracking: [{stage: "تم الاستلام", comment: "تم التقديم", date: now.toLocaleString('ar-EG')}]
+        tracking: [{stage: "تم الاستلام", comment: "تم استلام الطلب بنجاح", date: now.toLocaleString('ar-EG')}]
     };
 
-    await db.collection("Requests").add(d);
+    await db.collection("Requests").add(data);
     document.getElementById('card-ref').innerText = refId;
     document.getElementById('card-name').innerText = n;
     document.getElementById('card-date').innerText = now.toLocaleString('ar-EG');
-    Swal.fire("نجاح", `كودك: ${refId}`, "success").then(() => {
+    Swal.fire("تم الإرسال", `كود طلبك: ${refId}`, "success").then(() => {
         html2canvas(document.getElementById('download-card')).then(c => {
             const a = document.createElement('a'); a.download = 'Receipt.png'; a.href = c.toDataURL(); a.click();
         });
@@ -42,14 +43,16 @@ async function searchRequest() {
         .where("nationalId","==",document.getElementById('s-nid').value)
         .where("refId","==",document.getElementById('s-ref').value).get();
 
-    if(snap.empty) return Swal.fire("خطأ", "لا توجد بيانات", "error");
+    if(snap.empty) return Swal.fire("خطأ", "لم يتم العثور على الطلب", "error");
+    
     const d = snap.docs[0].data();
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
-    let idx = stages.indexOf(d.status); if(idx === -1) idx = 1;
+    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
+    let idx = (d.status === "تم الحل والإغلاق") ? 3 : stages.indexOf(d.status);
+    if(idx === -1) idx = 1;
 
     let h = `<div class="progress-box"><div class="line"></div><div class="fill" style="width:${(idx/3)*100}%"></div><div class="steps">
         ${stages.map((s,i)=>`<div class="dot ${i<=idx?'active':''}">✓<span>${s}</span></div>`).join('')}</div></div>`;
-    h += d.tracking.map(t=>`<div class="log-card"><b>${t.stage}</b><br><small>${t.comment}</small></div>`).reverse().join('');
+    h += d.tracking.map(t=>`<div class="log-card"><b>${t.stage}</b><br><small>${t.date}</small><br>${t.comment}</div>`).reverse().join('');
     document.getElementById('track-res').innerHTML = h;
 }
 
@@ -57,7 +60,7 @@ function loginAdmin() {
     const u = document.getElementById('adm-u').value.trim();
     const p = document.getElementById('adm-p').value.trim();
     if((u === "admin" && p === "itws@manager@2026@") || (u === "super" && p === "itws@super@2026@")) {
-        sessionStorage.setItem("adminAuth", "true");
-        window.location.href = "admin.html"; // تم تعديل التوجيه ليعمل في GitHub Pages
-    } else Swal.fire("خطأ", "البيانات غلط", "error");
+        sessionStorage.setItem("isAdmin", "true");
+        window.location.href = "admin.html";
+    } else Swal.fire("خطأ", "بيانات الدخول غلط", "error");
 }
