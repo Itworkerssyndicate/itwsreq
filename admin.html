@@ -1,29 +1,32 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>لوحة إدارة الطلبات</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body style="display:flex; padding:0;">
-    <aside style="width:260px; background:#0b1120; height:100vh; padding:20px; border-left:1px solid var(--border);">
-        <h3 style="color:var(--primary); margin-bottom:30px;">نظام الإدارة</h3>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="view('all')">كل الطلبات</button>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="view('شكوى')">الشكاوى فقط</button>
-        <button class="btn-glam" style="margin-bottom:10px;" onclick="view('اقتراح')">المقترحات فقط</button>
-        <button class="btn-glam btn-red" style="margin-top:50px;" onclick="location.href='index.html'">تسجيل الخروج</button>
-    </aside>
-    <main style="flex:1; padding:30px; overflow-y:auto;">
-        <table style="width:100%; border-collapse:collapse; background:var(--card-bg); border-radius:15px; overflow:hidden;">
-            <thead style="background:rgba(255,255,255,0.05);">
-                <tr><th style="padding:15px;">التاريخ</th><th>الكود</th><th>الاسم</th><th>الحالة</th><th>التحكم</th></tr>
-            </thead>
-            <tbody id="admin-table-body"></tbody>
-        </table>
-    </main>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="admin_logic.js"></script>
-</body>
-</html>
+// ... (Firebase Initialize هنا) ...
+
+async function updateRequestStage(docId) {
+    const { value: formValues } = await Swal.fire({
+        title: 'تحديث حالة الطلب',
+        html: `
+            <input id="sw-stage" class="swal2-input" placeholder="اسم المرحلة (مثلاً: جاري الفحص)">
+            <textarea id="sw-comment" class="swal2-textarea" placeholder="أضف تعليقك هنا..."></textarea>
+            <div style="margin-top:10px">
+                <input type="checkbox" id="sw-final"> <label for="sw-final">إغلاق الطلب بقرار نهائي</label>
+            </div>`,
+        showCancelButton: true,
+        confirmButtonText: 'تحديث الآن'
+    });
+
+    if (formValues) {
+        const stage = document.getElementById('sw-stage').value;
+        const comment = document.getElementById('sw-comment').value;
+        const isFinal = document.getElementById('sw-final').checked;
+
+        await db.collection("Requests").doc(docId).update({
+            status: isFinal ? "اغلاق الطلب" : stage,
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                stage: isFinal ? "اغلاق الطلب" : stage,
+                comment: comment,
+                date: new Date().toLocaleString('ar-EG'),
+                isFinal: isFinal
+            })
+        });
+        Swal.fire("تم", "تم تحديث المسار بنجاح", "success");
+    }
+}
