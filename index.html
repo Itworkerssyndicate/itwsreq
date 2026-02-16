@@ -6,172 +6,72 @@
     <title>نظام نقابة تكنولوجيا المعلومات</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0ea5e9;
-            --bg-dark: #0f172a;
-            --card-bg: #1e293b;
-            --text-light: #f8fafc;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
-            font-family: 'Cairo', sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-            user-select: none; /* منع تحديد النصوص */
-        }
-
-        .container {
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(14, 165, 233, 0.2);
-            width: 100%;
-            max-width: 600px;
-            border: 1px solid #334155;
-        }
-
-        /* تنسيق شاشة الدخول */
-        #login-section { display: none; text-align: center; }
-        #user-form-section { display: block; }
-
-        .header-section { text-align: center; margin-bottom: 30px; }
-        #union-logo { width: 80px; margin-bottom: 10px; border-radius: 50%; }
-        h2 { color: var(--primary); margin: 0; font-size: 1.5rem; }
-
-        .input-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap; }
-        .input-group { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
-
-        label { margin-bottom: 8px; font-size: 0.9rem; color: #94a3b8; }
-
-        input, select, textarea {
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: white;
-            padding: 12px;
-            border-radius: 10px;
-            font-family: 'Cairo';
-            outline: none;
-        }
-
-        .membership-box { background: rgba(14, 165, 233, 0.05); padding: 15px; border-radius: 12px; margin: 15px 0; border: 1px dashed #334155; }
-
-        button {
-            width: 100%;
-            padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .admin-link { margin-top: 20px; font-size: 0.8rem; color: #64748b; cursor: pointer; text-decoration: underline; }
-
-        /* حماية الطباعة وتصوير الشاشة */
+        :root { --primary: #0ea5e9; --bg: #0f172a; --card: #1e293b; --text: #f8fafc; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Cairo', sans-serif; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; user-select: none; }
+        .container { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); width: 100%; max-width: 600px; border: 1px solid #334155; }
+        .header-section { text-align: center; margin-bottom: 25px; }
+        #union-logo { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
+        h2 { color: var(--primary); margin: 0; }
+        .input-group { margin-bottom: 15px; display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-size: 0.9rem; color: #94a3b8; }
+        input, select, textarea { background: #0f172a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; font-family: 'Cairo'; outline: none; }
+        button { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .admin-link { text-align: center; margin-top: 20px; font-size: 0.8rem; color: #64748b; cursor: pointer; text-decoration: underline; }
+        #login-section { display: none; }
         @media print { body { display: none; } }
     </style>
 </head>
-<body oncontextmenu="return false;" onkeydown="return disableDevTools(event)">
+<body oncontextmenu="return false;">
 
-<div id="user-form-section" class="container">
+<div id="user-section" class="container">
     <div class="header-section">
-        <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png" alt="Logo">
+        <img id="union-logo" src="https://cdn-icons-png.flaticon.com/512/606/606201.png">
         <h2 id="union-name">نقابة تكنولوجيا المعلومات</h2>
-        <p id="president-name" style="font-size: 0.9rem; color: #38bdf8;"></p>
+        <p id="president-display" style="color: #38bdf8;"></p>
     </div>
-
-    <div class="input-row">
-        <div class="input-group"><label>الاسم الرباعي</label><input type="text" id="user-fullname"></div>
-        <div class="input-group"><label>الرقم القومي</label><input type="number" id="user-nationalid"></div>
-    </div>
-
-    <div class="input-row">
-        <div class="input-group">
-            <label>المحافظة</label>
-            <select id="user-gov">
-                <option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option><option value="الإسكندرية">الإسكندرية</option>
-            </select>
-        </div>
-        <div class="input-group"><label>المهنة الحالية</label><input type="text" id="user-job"></div>
-    </div>
-
-    <div class="membership-box">
-        <label>هل أنت عضو بالنقابة؟</label>
-        <select id="is-member" onchange="toggleMembershipField()" style="width: 100%;">
-            <option value="no">لا، لست عضواً</option>
-            <option value="yes">نعم، أنا عضو</option>
-        </select>
-        <input type="text" id="membership-id" placeholder="رقم العضوية" style="display:none; width: 93%; margin-top: 10px;">
-    </div>
-
-    <div class="input-row">
-        <div class="input-group">
-            <label>نوع الطلب</label>
-            <select id="request-type" onchange="updateMessageLabel()">
-                <option value="complaint">شكوى</option><option value="suggestion">اقتراح</option>
-            </select>
-        </div>
+    
+    <div class="input-group"><label>الاسم الرباعي</label><input type="text" id="user-fullname"></div>
+    <div class="input-group"><label>الرقم القومي (14 رقم)</label><input type="number" id="user-nationalid"></div>
+    
+    <div style="display:flex; gap:10px;">
+        <div class="input-group" style="flex:1;"><label>المحافظة</label><select id="user-gov"><option value="القاهرة">القاهرة</option><option value="الجيزة">الجيزة</option></select></div>
+        <div class="input-group" style="flex:1;"><label>المهنة</label><input type="text" id="user-job"></div>
     </div>
 
     <div class="input-group">
-        <label id="details-label">تفاصيل الشكوى</label>
-        <textarea id="request-details" rows="4"></textarea>
+        <label>هل أنت عضو بالنقابة؟</label>
+        <select id="is-member" onchange="document.getElementById('m-id-box').style.display = (this.value=='yes'?'block':'none')">
+            <option value="no">لا</option><option value="yes">نعم</option>
+        </select>
+        <input type="text" id="m-id-box" placeholder="رقم العضوية" style="display:none; margin-top:10px;">
     </div>
 
-    <button onclick="submitRequest()">إرسال الطلب الآن</button>
-    <div class="admin-link" onclick="showLogin()">دخول الإدارة</div>
+    <div class="input-group">
+        <label>نوع الطلب</label>
+        <select id="req-type"><option value="complaint">شكوى</option><option value="suggestion">اقتراح</option></select>
+    </div>
+
+    <div class="input-group"><label>التفاصيل</label><textarea id="req-details" rows="3"></textarea></div>
+
+    <button onclick="submitRequest()">إرسال الطلب</button>
+    <div class="admin-link" onclick="toggleView('login')">دخول الإدارة</div>
 </div>
 
 <div id="login-section" class="container">
-    <div class="header-section">
-        <h2>دخول النظام الآمن</h2>
-    </div>
-    <div class="input-group">
-        <label>اسم المستخدم</label>
-        <input type="text" id="admin-username">
-    </div>
-    <div class="input-group" style="margin-top: 15px;">
-        <label>كلمة السر</label>
-        <input type="password" id="admin-password">
-    </div>
-    <button onclick="loginAdmin()" style="background: #6366f1;">تسجيل الدخول</button>
-    <button onclick="hideLogin()" style="background: transparent; border: 1px solid #334155; margin-top: 10px;">رجوع</button>
+    <div class="header-section"><h2>دخول الإدارة</h2></div>
+    <div class="input-group"><label>اسم المستخدم</label><input type="text" id="adm-user"></div>
+    <div class="input-group"><label>كلمة السر</label><input type="password" id="adm-pass"></div>
+    <button onclick="loginAdmin()" style="background:#6366f1">دخول</button>
+    <div class="admin-link" onclick="toggleView('user')">رجوع للرئيسية</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
-
 <script>
-    function showLogin() {
-        document.getElementById('user-form-section').style.display = 'none';
-        document.getElementById('login-section').style.display = 'block';
-    }
-    function hideLogin() {
-        document.getElementById('user-form-section').style.display = 'block';
-        document.getElementById('login-section').style.display = 'none';
-    }
-    function toggleMembershipField() {
-        const isMember = document.getElementById("is-member").value;
-        document.getElementById("membership-id").style.display = (isMember === "yes") ? "block" : "none";
-    }
-    function updateMessageLabel() {
-        const type = document.getElementById("request-type").value;
-        document.getElementById("details-label").innerText = (type === "complaint") ? "تفاصيل الشكوى" : "تفاصيل الاقتراح";
-    }
-    function disableDevTools(e) {
-        if (e.ctrlKey && (e.key === 'u' || e.key === 'i' || e.key === 'j')) return false;
-        if (e.key === 'F12') return false;
+    function toggleView(view) {
+        document.getElementById('user-section').style.display = (view == 'user' ? 'block' : 'none');
+        document.getElementById('login-section').style.display = (view == 'login' ? 'block' : 'none');
     }
 </script>
 </body>
