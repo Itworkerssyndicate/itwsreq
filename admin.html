@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لوحة التحكم | نقابة تكنولوجيا المعلومات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #0ea5e9; --bg: #0f172a; --card: #1e293b; --success: #10b981; --danger: #ef4444; }
+        body { font-family: 'Cairo'; background: var(--bg); color: white; margin: 0; padding: 20px; }
+        
+        .admin-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--card); padding-bottom: 15px; margin-bottom: 20px; }
+        .tab-container { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: var(--card); border: 1px solid var(--primary); color: white; padding: 10px 25px; border-radius: 8px; cursor: pointer; }
+        .tab-btn.active { background: var(--primary); }
+
+        table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 12px; overflow: hidden; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #334155; }
+        th { background: rgba(14, 165, 233, 0.1); color: var(--primary); }
+
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; display: inline-block; }
+        .status-received { background: #3b82f6; }
+        .status-done { background: var(--success); }
+
+        /* مودال التتبع (Pop-up) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; }
+        .modal-content { background: var(--card); padding: 25px; border-radius: 15px; width: 90%; max-width: 700px; max-height: 80vh; overflow-y: auto; }
+        
+        .track-step { position: relative; padding-right: 35px; margin-bottom: 20px; border-right: 2px solid var(--primary); }
+        .track-step::before { content: '\f058'; font-family: 'Font Awesome 5 Free'; font-weight: 900; position: absolute; right: -12px; top: 0; color: var(--success); background: var(--bg); border-radius: 50%; }
+        .current-step::before { content: '\f110'; color: var(--primary); animation: spin 2s linear infinite; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .delete-btn { color: var(--danger); cursor: pointer; margin-right: 10px; display: none; }
+        .action-btn { background: var(--primary); border: none; color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="admin-header">
+    <div>
+        <h2 id="union-name-display">لوحة التحكم</h2>
+        <span id="admin-type-badge" class="status-badge" style="background: #6366f1;">مدير نظام</span>
+    </div>
+    <button onclick="logout()" class="tab-btn" style="border-color: var(--danger);">تسجيل خروج</button>
+</div>
+
+<div class="tab-container">
+    <button class="tab-btn active" onclick="loadRequests('complaint')">الشكاوى</button>
+    <button class="tab-btn" onclick="loadRequests('suggestion')">المقترحات</button>
+    <button class="tab-btn" onclick="openSettings()">إعدادات النظام</button>
+</div>
+
+<div id="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>رقم الطلب</th>
+                <th>اسم صاحب الطلب</th>
+                <th>المحافظة</th>
+                <th>الحالة</th>
+                <th>الإجراءات</th>
+            </tr>
+        </thead>
+        <tbody id="data-table-body">
+            </tbody>
+    </table>
+</div>
+
+<div id="tracking-modal" class="modal">
+    <div class="modal-content">
+        <h3>تحديث مسار الطلب: <span id="modal-ref-id"></span></h3>
+        <hr>
+        <div id="steps-list"></div>
+        <hr>
+        <div id="admin-actions">
+            <label>إضافة مرحلة جديدة:</label>
+            <input type="text" id="new-stage-name" placeholder="اسم المرحلة (مثلاً: جاري الفحص القانوني)" style="width:100%; padding:10px; margin:10px 0; background:#0f172a; color:white; border:1px solid #334155;">
+            <textarea id="new-stage-comment" placeholder="أضف تعليقاً على المرحلة السابقة..." style="width:100%; padding:10px; background:#0f172a; color:white; border:1px solid #334155;"></textarea>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button onclick="addNewStep()" class="action-btn" style="flex:1;">إضافة مرحلة</button>
+                <button onclick="closeRequest()" class="action-btn" style="flex:1; background: var(--success);">تم (إغلاق الملف)</button>
+                <button onclick="closeModal()" class="tab-btn">إلغاء</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="admin_logic.js"></script> </body>
+</html>
