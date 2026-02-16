@@ -4,18 +4,18 @@
     <meta charset="UTF-8">
     <title>لوحة التحكم</title>
     <link rel="stylesheet" href="style.css">
-    <script>if(!sessionStorage.getItem("adminAuth")) window.location.href="index.html";</script>
+    <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
 <body onload="loadData('شكوى')">
-    <div style="display:flex; gap:10px; margin-bottom:15px; padding:10px; background:#0a1120; border-bottom:2px solid #00d2ff;">
+    <div style="display:flex; gap:10px; padding:10px; background:#0a1120; border-bottom:2px solid #00d2ff;">
         <button class="main-btn" onclick="loadData('شكوى')">الشكاوى</button>
         <button class="main-btn" onclick="loadData('اقتراح')">المقترحات</button>
         <button class="main-btn btn-red" style="max-width:80px;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
     </div>
     <div class="container admin-container">
-        <h2 id="v-title" style="color:#00d2ff;">جاري التحميل...</h2>
+        <h2 id="v-title" style="color:#00d2ff;">سجل البيانات</h2>
         <table>
-            <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>الحالة</th><th>إدارة</th></tr></thead>
+            <thead><tr><th>التاريخ والوقت</th><th>الكود</th><th>الاسم</th><th>إدارة</th></tr></thead>
             <tbody id="tbody"></tbody>
         </table>
     </div>
