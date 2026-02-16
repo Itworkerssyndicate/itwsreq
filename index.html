@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container main-layout">
+    <div class="container">
         <header class="main-header">
-            <img id="main-logo" src="" width="70">
+            <img id="main-logo" src="" width="80">
             <div class="pres-info">
                 <span>النقيب العام</span>
                 <h2 id="pres-display">...</h2>
             </div>
-            <button class="main-btn svc-styled" id="svc-link">موقع خدمات النقابة</button>
+            <button class="svc-btn" id="svc-link">موقع خدمات النقابة</button>
         </header>
 
         <div class="tabs">
@@ -25,16 +25,23 @@
 
         <div id="tab-submit" class="content-section">
             <div class="input-grid">
+                <select id="u-member-type" onchange="toggleMemberFields()">
+                    <option value="عضو">عضو نقابة</option>
+                    <option value="غير عضو">غير عضو</option>
+                </select>
+                <input type="number" id="u-m-id" placeholder="رقم العضوية">
                 <input type="text" id="u-name" placeholder="الاسم الرباعي">
                 <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
                 <input type="text" id="u-job" placeholder="المهنة">
                 <input type="number" id="u-phone" placeholder="رقم الهاتف">
-                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الدقهلية</option><option>الإسكندرية</option></select>
-                <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
-                <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option></select>
+                <select id="u-type">
+                    <option value="شكوى">شكوى</option>
+                    <option value="اقتراح">اقتراح</option>
+                </select>
             </div>
             <textarea id="u-details" placeholder="تفاصيل الطلب"></textarea>
-            <button class="main-btn" id="submitBtn" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
+            <button class="main-btn" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
         </div>
 
         <div id="tab-track" class="content-section" style="display:none;">
@@ -55,12 +62,5 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="app.js"></script>
-    <script>
-        function showTab(t){
-            ['submit','track','login'].forEach(id => document.getElementById('tab-'+id).style.display = (id===t?'block':'none'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            if(t!=='login') document.getElementById('t-'+t).classList.add('active');
-        }
-    </script>
 </body>
 </html>
