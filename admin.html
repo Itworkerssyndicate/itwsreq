@@ -1,65 +1,68 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>لوحة الإدارة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Cairo'; background: #0f172a; color: white; padding: 20px; }
-        .card { background: #1e293b; padding: 20px; border-radius: 10px; margin-top: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #334155; text-align: center; }
-        th { background: #0ea5e9; }
-        .del-btn { background: #ef4444; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
-    </style>
-</head>
-<body>
-    <h2>لوحة تحكم النقابة</h2>
-    <div id="admin-info"></div>
-    
-    <div class="card">
-        <table id="req-table">
-            <thead>
-                <tr>
-                    <th>الرقم المرجعي</th>
-                    <th>الاسم</th>
-                    <th>النوع</th>
-                    <th>الحالة</th>
-                    <th>حذف</th>
-                </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-        </table>
-    </div>
+// نفس الـ config الخاص بك
+firebase.initializeApp({apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq"});
+const db = firebase.firestore();
+const role = sessionStorage.getItem("role");
+let currentDocId = null;
 
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script>
-        const firebaseConfig = { projectId: "itwsreq" }; // اختصار للربط السريع
-        firebase.initializeApp({apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", ...firebaseConfig});
-        const db = firebase.firestore();
-        const role = sessionStorage.getItem("role");
-
-        if(!role) window.location.href = "index.html";
-
-        db.collection("Requests").onSnapshot(snap => {
-            let html = "";
-            snap.forEach(doc => {
-                const d = doc.data();
-                html += `<tr>
-                    <td>${d.refId}</td>
-                    <td>${d.fullName}</td>
-                    <td>${d.type == 'complaint' ? 'شكوى' : 'اقتراح'}</td>
-                    <td>${d.status}</td>
-                    <td>${role == 'super' ? `<button class="del-btn" onclick="deleteDoc('${doc.id}')">حذف</button>` : '---'}</td>
-                </tr>`;
-            });
-            document.getElementById("table-body").innerHTML = html;
+function loadData(type) {
+    document.getElementById('del-header').style.display = (role == 'super' ? 'table-cell' : 'none');
+    db.collection("Requests").where("type", "==", type).onSnapshot(snap => {
+        let html = "";
+        snap.forEach(doc => {
+            const d = doc.data();
+            html += `<tr>
+                <td>${d.refId}</td>
+                <td>${d.fullName}</td>
+                <td><span class="status-pill" style="background:${d.status=='تم'?'#10b981':'#3b82f6'}">${d.status}</span></td>
+                <td><button onclick="openTrack('${doc.id}')">إدارة</button></td>
+                ${role == 'super' ? `<td><button class="del-btn" onclick="deleteDoc('${doc.id}')"><i class="fas fa-trash"></i></button></td>` : ''}
+            </tr>`;
         });
+        document.getElementById("table-body").innerHTML = html;
+    });
+}
 
-        function deleteDoc(id) {
-            if(confirm("هل تريد الحذف فعلاً؟")) db.collection("Requests").doc(id).delete();
-        }
-    </script>
-</body>
-</html>
+function openTrack(id) {
+    currentDocId = id;
+    db.collection("Requests").doc(id).get().then(doc => {
+        const d = doc.data();
+        document.getElementById('modal-title').innerText = "تتبع: " + d.refId;
+        let listHtml = "";
+        d.tracking.forEach((step, index) => {
+            const isLast = index === d.tracking.length - 1;
+            listHtml += `<div style="margin-bottom:15px;">
+                <i class="fas ${isLast ? 'fa-spinner fa-spin' : 'fa-check-circle'}" style="color:${isLast?'#0ea5e9':'#10b981'}"></i>
+                <b>${step.stage}</b> <small>(${step.date})</small><br>
+                <span style="color:#94a3b8; font-size:0.8rem">${step.comment || ''}</span>
+            </div>`;
+        });
+        document.getElementById('track-list').innerHTML = listHtml;
+        document.getElementById('track-modal').style.display = 'flex';
+    });
+}
+
+async function addStage() {
+    const stage = document.getElementById('new-stage').value;
+    const comment = document.getElementById('stage-comment').value;
+    if(!stage) return;
+
+    const newStep = { stage, comment, date: new Date().toLocaleString('ar-EG') };
+    await db.collection("Requests").doc(currentDocId).update({
+        status: stage,
+        tracking: firebase.firestore.FieldValue.arrayUnion(newStep)
+    });
+    openTrack(currentDocId);
+}
+
+async function markDone() {
+    await db.collection("Requests").doc(currentDocId).update({
+        status: "تم",
+        tracking: firebase.firestore.FieldValue.arrayUnion({ stage: "تم", comment: "تم إغلاق الطلب بنجاح", date: new Date().toLocaleString('ar-EG') })
+    });
+    closeModal();
+}
+
+function closeModal() { document.getElementById('track-modal').style.display = 'none'; }
+function deleteDoc(id) { if(confirm("حذف نهائي؟")) db.collection("Requests").doc(id).delete(); }
+
+loadData('complaint'); // البداية بالشكاوى
