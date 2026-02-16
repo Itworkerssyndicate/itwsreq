@@ -2,62 +2,89 @@
 
 :root {
     --primary: #00d2ff;
+    --secondary: #3a7bd5;
     --success: #00ff88;
     --danger: #ff4757;
-    --bg: #050b18;
-    --card: #0f172a;
-    --border: rgba(255, 255, 255, 0.1);
+    --bg: #0f172a;
+    --card: #1e293b;
+    --input-bg: rgba(255, 255, 255, 0.05);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; transition: 0.3s; }
-body { background: var(--bg); color: #fff; direction: rtl; overflow-x: hidden; }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; }
 
-/* الهيدر المتناسق */
-.main-header { text-align: center; padding: 40px 10px; border-bottom: 2px solid var(--border); margin-bottom: 30px; }
-#main-logo { width: 140px; filter: drop-shadow(0 0 15px var(--primary)); margin-bottom: 10px; }
-.pres-label { color: #94a3b8; font-size: 14px; letter-spacing: 2px; }
-.pres-name { font-size: 32px; font-weight: 900; color: #fff; }
-
-.container { max-width: 850px; margin: 0 auto 50px; background: var(--card); padding: 40px; border-radius: 30px; border: 1px solid var(--border); box-shadow: 0 30px 60px rgba(0,0,0,0.6); }
-
-/* الأزرار الجديدة */
-.btn-glam { 
-    background: linear-gradient(135deg, var(--primary), #3a7bd5);
-    border: none; color: #fff; padding: 12px 25px; border-radius: 12px;
-    cursor: pointer; font-weight: bold; display: inline-flex; align-items: center; gap: 8px;
-    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+body { 
+    background: var(--bg); 
+    color: #fff; 
+    direction: rtl; 
+    min-height: 100vh;
+    padding: 20px;
 }
-.btn-glam:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 210, 255, 0.5); }
-.btn-danger { background: linear-gradient(135deg, #ff4757, #ff6b81); }
 
-/* التراك المائي المطور */
-.water-container { position: relative; height: 12px; background: #1e293b; margin: 60px 0; border-radius: 20px; overflow: visible; }
-.water-fill { 
-    position: absolute; height: 100%; background: var(--primary); border-radius: 20px;
-    box-shadow: 0 0 20px var(--primary); transition: width 2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.container { 
+    max-width: 800px; 
+    margin: 20px auto; 
+    background: var(--card); 
+    padding: 30px; 
+    border-radius: 20px; 
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* الأزرار المحدثة */
+.btn-glam {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border: none; color: white; padding: 12px 20px; border-radius: 10px;
+    cursor: pointer; font-weight: bold; transition: 0.3s; width: 100%;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+}
+.btn-glam:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4); }
+
+.grid-fields { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px; 
+    margin-top: 20px; 
+}
+
+input, select, textarea {
+    background: var(--input-bg);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 12px; border-radius: 8px; color: #fff; width: 100%;
+}
+
+/* التراك المائي */
+.water-track {
+    height: 15px; background: #0f172a; border-radius: 10px;
+    margin: 50px 0; position: relative; overflow: visible;
+}
+.water-fill {
+    height: 100%; background: var(--primary); border-radius: 10px;
+    position: relative; transition: width 1.5s ease-in-out;
+    box-shadow: 0 0 15px var(--primary);
 }
 .water-fill::after {
     content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     animation: wave 2s infinite linear;
 }
-
 @keyframes wave { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-.track-node { position: absolute; top: -10px; width: 32px; height: 32px; background: var(--card); border: 4px solid #1e293b; border-radius: 50%; transform: translateX(50%); z-index: 10; }
-.track-node.active { border-color: #fff; background: var(--primary); box-shadow: 0 0 15px var(--primary); }
-.track-node span { position: absolute; top: 38px; white-space: nowrap; font-size: 13px; right: -25px; color: #64748b; font-weight: bold; }
-.track-node.active span { color: #fff; }
+.node {
+    position: absolute; top: -8px; width: 30px; height: 30px;
+    background: var(--card); border: 3px solid #334155; border-radius: 50%;
+    transform: translateX(50%); z-index: 5;
+}
+.node.active { border-color: var(--primary); background: var(--primary); }
+.node-label { 
+    position: absolute; top: 35px; white-space: nowrap; 
+    font-size: 12px; color: #94a3b8; right: -15px; font-weight: bold;
+}
 
 /* السجل الزمني */
-.timeline-list { margin-top: 30px; border-right: 2px solid var(--border); padding-right: 20px; }
-.timeline-item { position: relative; margin-bottom: 25px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; }
-.timeline-item.final { border: 2px solid var(--success); background: rgba(0, 255, 136, 0.05); }
-.final-badge { color: var(--success); font-weight: 900; font-size: 12px; text-transform: uppercase; border: 1px solid; padding: 2px 8px; border-radius: 4px; margin-right: 10px; }
-
-/* الإدارة */
-.admin-layout { display: flex; min-height: 100vh; }
-.sidebar { width: 280px; background: #0b1120; border-left: 1px solid var(--border); padding: 30px; display: flex; flex-direction: column; }
-.admin-main { flex: 1; padding: 40px; overflow-y: auto; }
-table { width: 100%; border-collapse: collapse; border-radius: 15px; overflow: hidden; }
-th, td { padding: 18px; text-align: center; border-bottom: 1px solid var(--border); }
+.timeline { margin-top: 30px; border-right: 2px solid #334155; padding-right: 20px; }
+.time-card { 
+    background: rgba(255,255,255,0.03); padding: 15px; 
+    border-radius: 12px; margin-bottom: 15px; position: relative;
+}
+.time-card.final { border: 2px solid var(--success); background: rgba(0, 255, 136, 0.05); }
+.final-mark { color: var(--success); font-weight: bold; font-size: 12px; display: block; margin-bottom: 5px; }
