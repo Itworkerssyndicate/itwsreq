@@ -2,47 +2,48 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>البوابة الإلكترونية</title>
+    <title>بوابة نقابة تكنولوجيا المعلومات</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header-box">
-            <img id="main-logo" src="logo.png">
-            <span class="pres-label">النقيب العام</span>
-            <h2 id="pres-display" class="pres-name">...</h2>
-        </header>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-            <button class="btn-glam" style="flex:1" onclick="showSection('submit')">تقديم طلب</button>
-            <button class="btn-glam" style="flex:1" onclick="showSection('track')">استعلام متقدم</button>
+    <div class="main-wrapper">
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="logo.png" style="width: 120px;">
+            <h2 style="margin-top: 10px;">المهندس / محمود جميل</h2>
+            <p style="color: var(--primary);">النقيب العام</p>
         </div>
 
-        <div id="sec-submit" class="sections">
-            <div class="form-grid">
-                <select id="u-member" class="full-w"><option>عضو نقابة</option><option>غير عضو</option></select>
-                <input type="text" id="u-name" class="full-w" placeholder="الاسم بالكامل">
+        <div style="display: flex; gap: 10px; margin-bottom: 25px;">
+            <button class="btn-glam" onclick="openTab('submit-tab')">تقديم طلب</button>
+            <button class="btn-glam" onclick="openTab('track-tab')">استعلام متقدم</button>
+        </div>
+
+        <div id="submit-tab" class="content-tab">
+            <div class="field-grid">
+                <select id="u-member" class="span-2"><option>عضو نقابة</option><option>غير عضو</option></select>
+                <input type="text" id="u-name" class="span-2" placeholder="الاسم الكامل">
                 <input type="number" id="u-nid" placeholder="الرقم القومي">
                 <input type="text" id="u-m-id" placeholder="رقم العضوية">
-                <select id="u-type" class="full-w"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-                <textarea id="u-details" class="full-w" rows="4" placeholder="التفاصيل..."></textarea>
+                <select id="u-type" class="span-2"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+                <textarea id="u-details" class="span-2" rows="4" placeholder="تفاصيل الطلب..."></textarea>
             </div>
-            <button class="btn-glam" style="width:100%; margin-top:20px;" onclick="sendToFirebase()">إرسال الطلب</button>
+            <button class="btn-glam" style="margin-top: 15px;" onclick="saveNewRequest()">إرسال الطلب وحفظ الوصل</button>
         </div>
 
-        <div id="sec-track" class="sections" style="display:none;">
-            <div class="form-grid">
-                <input type="number" id="q-nid" placeholder="الرقم القومي">
-                <input type="text" id="q-ref" placeholder="رقم الطلب">
-                <select id="q-type" class="full-w">
-                    <option value="شكوى">نوع الطلب: شكوى</option>
-                    <option value="اقتراح">نوع الطلب: اقتراح</option>
+        <div id="track-tab" class="content-tab" style="display:none;">
+            <div class="field-grid">
+                <input type="number" id="s-nid" placeholder="الرقم القومي (14 رقم)">
+                <input type="text" id="s-ref" placeholder="رقم الطلب (مثال: 2026/1234)">
+                <select id="s-type" class="span-2">
+                    <option value="شكوى">البحث في الشكاوى</option>
+                    <option value="اقتراح">البحث في المقترحات</option>
                 </select>
             </div>
-            <button class="btn-glam" style="width:100%; margin-top:15px;" onclick="fetchTracking()">🔍 ابدأ البحث</button>
-            <div id="track-display"></div>
+            <button class="btn-glam" style="margin-top: 15px;" onclick="startTracking()">🔍 ابدأ البحث الذكي</button>
+            <div id="tracking-result"></div>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
