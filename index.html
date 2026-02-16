@@ -7,53 +7,40 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body oncontextmenu="return false;" onkeydown="if(event.keyCode==123 || (event.ctrlKey && event.shiftKey && event.keyCode==73)) return false;">
-    
-    <div id="download-card" style="background:#fff; color:#000; padding:30px; text-align:center; border-radius:15px; position:fixed; left:-9999px; width:450px; border:4px solid #00d2ff;">
-        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="100">
+<body oncontextmenu="return false;">
+    <div id="download-card" style="background:#fff; color:#000; padding:30px; text-align:center; border-radius:15px; position:fixed; left:-9999px; width:450px;">
+        <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
         <h2>نقابة تكنولوجيا المعلومات</h2>
-        <h1 id="card-ref" style="color:#3a7bd5; margin:15px 0;"></h1>
+        <h1 id="card-ref" style="color:#3a7bd5;"></h1>
         <h3 id="card-name"></h3>
         <p id="card-date"></p>
     </div>
-
     <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="80">
-            <h4 style="color:#00d2ff;">النقيب العام</h4>
-            <h2 id="pres-display">...</h2>
+            <img src="https://i.ibb.co/vzPRTfK/image-8999a2.png" width="70">
+            <h4 style="color:#00d2ff; margin:0;">النقيب العام</h4>
+            <h2 id="pres-display" style="font-size: 1.2rem;">...</h2>
         </div>
-
-        <div style="display:flex; gap:10px; margin-bottom:20px;">
+        <div style="display:flex; gap:8px; margin-bottom:20px;">
             <button class="main-btn" onclick="showTab('submit')">تقديم طلب</button>
             <button class="main-btn" onclick="showTab('track')" style="background:#1e293b;">استعلام</button>
-            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b; width:70px;"><i class="fas fa-lock"></i></button>
+            <button class="main-btn" onclick="showTab('login')" style="background:#1e293b; width:60px;"><i class="fas fa-lock"></i></button>
         </div>
-
         <div id="tab-submit">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="text" id="u-name" placeholder="الاسم الرباعي">
-                <input type="number" id="u-nid" placeholder="الرقم القومي">
-                <input type="number" id="u-phone" placeholder="رقم الهاتف">
-                <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option><option>الشرقية</option><option>المنوفية</option><option>القليوبية</option><option>الغربية</option><option>البحيرة</option><option>دمياط</option><option>بورسعيد</option><option>الإسماعيلية</option><option>السويس</option><option>كفر الشيخ</option><option>الفيوم</option><option>بني سويف</option><option>المنيا</option><option>أسيوط</option><option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option><option>البحر الأحمر</option><option>الوادي الجديد</option><option>مطروح</option><option>شمال سيناء</option><option>جنوب سيناء</option></select>
-                <input type="text" id="u-job" placeholder="المهنة">
-                <select id="u-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-            </div>
+            <input type="text" id="u-name" placeholder="الاسم الرباعي">
+            <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
+            <input type="number" id="u-phone" placeholder="رقم الهاتف">
+            <select id="u-gov"><option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option><option>الشرقية</option><option>المنوفية</option><option>القليوبية</option><option>الغربية</option><option>البحيرة</option><option>دمياط</option><option>بورسعيد</option><option>الإسماعيلية</option><option>السويس</option><option>كفر الشيخ</option><option>الفيوم</option><option>بني سويف</option><option>المنيا</option><option>أسيوط</option><option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option><option>البحر الأحمر</option><option>الوادي الجديد</option><option>مطروح</option><option>شمال سيناء</option><option>جنوب سيناء</option></select>
             <input type="text" id="u-address" placeholder="العنوان بالتفصيل">
             <textarea id="u-details" rows="3" placeholder="تفاصيل الموضوع"></textarea>
-            <button class="main-btn" onclick="submitRequest()">إرسال الطلب وحفظ الوصل</button>
+            <button class="main-btn" onclick="submitRequest()">إرسال الطلب</button>
         </div>
-
         <div id="tab-track" style="display:none;">
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <input type="number" id="s-nid" placeholder="الرقم القومي">
-                <select id="s-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
-            </div>
+            <input type="number" id="s-nid" placeholder="الرقم القومي">
             <input type="text" id="s-ref" class="allow-copy" placeholder="كود الطلب">
             <button class="main-btn" onclick="searchRequest()">استعلام</button>
             <div id="track-res" style="margin-top:20px;"></div>
         </div>
-
         <div id="tab-login" style="display:none;">
             <input type="text" id="adm-u" placeholder="اسم المستخدم">
             <input type="password" id="adm-p" placeholder="كلمة المرور">
