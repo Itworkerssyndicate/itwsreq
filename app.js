@@ -117,14 +117,13 @@ async function handleSubmit() {
     }
 }
 
-// دالة تنسيق النص مع مسافات واضحة
+// دالة تنسيق النص
 function formatTextForCard(text) {
     if (!text) return '';
-    // إضافة مسافات بين الكلمات وتنظيف النص
     return text.replace(/\s+/g, ' ').trim();
 }
 
-// دالة إنشاء الكارت مع حل مشكلة الحروف
+// دالة إنشاء الكارت مع dom-to-image
 async function generateRequestCard(data) {
     const logo = getSavedLogo();
     const now = new Date();
@@ -134,57 +133,57 @@ async function generateRequestCard(data) {
     const container = document.getElementById('request-card-container');
     container.innerHTML = '';
     
-    // إنشاء عنصر الكارت بخصائص محسنة للخطوط
+    // إنشاء الكارت بخطوط واضحة جداً
     const card = document.createElement('div');
     card.style.cssText = `
-        width: 550px;
-        padding: 45px;
+        width: 600px;
+        padding: 50px;
         background: linear-gradient(135deg, #161f32, #0b1120);
-        border-radius: 35px;
-        border: 4px solid #00d2ff;
+        border-radius: 40px;
+        border: 5px solid #00d2ff;
         font-family: 'Tajawal', 'Cairo', sans-serif;
         color: white;
         text-align: center;
         direction: rtl;
-        box-shadow: 0 20px 40px rgba(0,210,255,0.4);
-        line-height: 2.2;
-        letter-spacing: 0.8px;
-        word-spacing: 6px;
+        box-shadow: 0 30px 50px rgba(0,210,255,0.5);
+        line-height: 2.5;
+        letter-spacing: 1px;
+        word-spacing: 8px;
+        font-weight: 500;
     `;
     
-    // تحسين عرض الصورة
+    // اللوجو
     const logoImg = document.createElement('img');
     logoImg.src = logo;
-    logoImg.style.cssText = 'width: 140px; height: 140px; border-radius: 50%; border: 4px solid #00d2ff; margin-bottom: 20px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 30px #00d2ff;';
+    logoImg.style.cssText = 'width: 150px; height: 150px; border-radius: 50%; border: 5px solid #00d2ff; margin-bottom: 25px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 40px #00d2ff;';
     
-    // محتوى الكارت بخطوط محسنة ومسافات واضحة
+    // محتوى الكارت بخطوط كبيرة وواضحة
     const contentDiv = document.createElement('div');
-    contentDiv.style.cssText = 'font-family: \'Tajawal\', sans-serif;';
     contentDiv.innerHTML = `
-        <h2 style="font-size: 30px; color: #00d2ff; margin: 10px 0; font-weight: 900; letter-spacing: 1.5px; word-spacing: 8px; line-height: 1.6;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-        <h3 style="font-size: 24px; color: white; margin: 8px 0; font-weight: 700; letter-spacing: 1px; word-spacing: 6px;">المهندس / محمود جميل</h3>
-        <p style="color: #94a3b8; font-size: 20px; margin-bottom: 25px; word-spacing: 5px;">النقيب العام</p>
+        <h2 style="font-size: 34px; color: #00d2ff; margin: 15px 0; font-weight: 900; letter-spacing: 2px; word-spacing: 10px; line-height: 1.8;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+        <h3 style="font-size: 28px; color: white; margin: 10px 0; font-weight: 700; letter-spacing: 1.5px; word-spacing: 8px;">المهندس / محمود جميل</h3>
+        <p style="color: #94a3b8; font-size: 22px; margin-bottom: 30px; word-spacing: 6px;">النقيب العام</p>
         
-        <div style="background: rgba(0,210,255,0.15); padding: 25px; border-radius: 25px; margin: 25px 0; border: 1px solid rgba(0,210,255,0.3);">
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+        <div style="background: rgba(0,210,255,0.15); padding: 30px; border-radius: 30px; margin: 30px 0; border: 2px solid rgba(0,210,255,0.3);">
+            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
                 <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span>
                 <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px;">${data.refId}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
                 <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span>
                 <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700;">${data.type}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
                 <span style="color: #94a3b8; font-weight: 600;">صاحب الطلب :</span>
                 <span style="font-weight: 600;">${formatTextForCard(data.name)}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 18px;">
+            <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px;">
                 <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span>
                 <span style="font-weight: 600;">${date} - ${time}</span>
             </div>
         </div>
         
-        <div style="color: #94a3b8; font-size: 16px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.15); margin-top: 20px; word-spacing: 4px;">
+        <div style="color: #94a3b8; font-size: 18px; padding-top: 25px; border-top: 2px solid rgba(255,255,255,0.15); margin-top: 25px; word-spacing: 5px;">
             هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
         </div>
     `;
@@ -193,40 +192,29 @@ async function generateRequestCard(data) {
     card.appendChild(contentDiv);
     container.appendChild(card);
     
-    // دالة تصوير الكارت بجودة عالية
+    // دالة تصوير الكارت باستخدام dom-to-image
     const captureCard = async () => {
         try {
-            const canvas = await html2canvas(card, {
-                scale: 4,
-                backgroundColor: '#161f32',
-                logging: false,
-                windowWidth: 600,
-                windowHeight: 800,
-                allowTaint: true,
-                useCORS: true,
-                letterRendering: true,
-                foreignObjectRendering: false,
-                onclone: (clonedDoc, element) => {
-                    // تحسين الخطوط في النسخة المستنسخة
-                    const style = clonedDoc.createElement('style');
-                    style.innerHTML = `
-                        * { 
-                            font-family: 'Tajawal', 'Cairo', sans-serif !important;
-                            letter-spacing: 0.8px !important;
-                            word-spacing: 6px !important;
-                            line-height: 2.2 !important;
-                        }
-                    `;
-                    clonedDoc.head.appendChild(style);
+            // استخدام dom-to-image للحصول على صورة أفضل
+            const dataUrl = await domtoimage.toPng(card, {
+                quality: 1,
+                bgcolor: '#161f32',
+                width: 600,
+                height: card.offsetHeight,
+                style: {
+                    'font-family': 'Tajawal, Cairo, sans-serif',
+                    'line-height': '2.5',
+                    'letter-spacing': '1px',
+                    'word-spacing': '8px'
                 }
             });
             
             const result = await Swal.fire({
                 title: 'تم حفظ الطلب',
-                html: `<div style="color:#00d2ff; font-size:20px; margin-bottom:15px; letter-spacing:2px;">${data.refId}</div>`,
-                imageUrl: canvas.toDataURL('image/png'),
-                imageWidth: 450,
-                imageHeight: canvas.height * 450 / canvas.width,
+                html: `<div style="color:#00d2ff; font-size:22px; margin-bottom:20px; letter-spacing:2px;">${data.refId}</div>`,
+                imageUrl: dataUrl,
+                imageWidth: 500,
+                imageHeight: card.offsetHeight * 500 / 600,
                 showCancelButton: true,
                 confirmButtonText: 'تحميل',
                 cancelButtonText: 'إغلاق',
@@ -238,18 +226,49 @@ async function generateRequestCard(data) {
             if (result.isConfirmed) {
                 const link = document.createElement('a');
                 link.download = `طلب_${data.refId}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
             }
         } catch (error) {
             console.error('Error capturing card:', error);
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ في إنشاء الكارت',
-                background: '#161f32',
-                color: '#fff'
-            });
+            // fallback to html2canvas if dom-to-image fails
+            try {
+                const canvas = await html2canvas(card, {
+                    scale: 3,
+                    backgroundColor: '#161f32',
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
+                });
+                
+                const result = await Swal.fire({
+                    title: 'تم حفظ الطلب',
+                    html: `<div style="color:#00d2ff; font-size:22px; margin-bottom:20px;">${data.refId}</div>`,
+                    imageUrl: canvas.toDataURL('image/png'),
+                    imageWidth: 500,
+                    imageHeight: canvas.height * 500 / canvas.width,
+                    showCancelButton: true,
+                    confirmButtonText: 'تحميل',
+                    cancelButtonText: 'إغلاق',
+                    background: '#161f32',
+                    color: '#fff'
+                });
+                
+                if (result.isConfirmed) {
+                    const link = document.createElement('a');
+                    link.download = `طلب_${data.refId}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                }
+            } catch (fallbackError) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في إنشاء الكارت',
+                    background: '#161f32',
+                    color: '#fff'
+                });
+            }
         }
         container.innerHTML = '';
     };
@@ -260,7 +279,7 @@ async function generateRequestCard(data) {
     } else {
         logoImg.onload = captureCard;
         logoImg.onerror = () => {
-            logoImg.src = 'https://via.placeholder.com/140x140?text=Logo';
+            logoImg.src = 'https://via.placeholder.com/150x150?text=Logo';
             setTimeout(captureCard, 100);
         };
     }
