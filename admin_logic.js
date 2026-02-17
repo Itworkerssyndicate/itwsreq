@@ -1,6 +1,7 @@
 let currentFilter = 'all';
 let allRequests = [];
 let unsubscribe;
+let currentDeleteId = null; // لتخزين ID الطلب المراد حذفه
 
 function setActiveNav(buttonId) {
     document.querySelectorAll('.admin-nav-btn').forEach(btn => {
@@ -119,7 +120,7 @@ function toggleSearch() {
 
 function formatText(text) {
     if (!text) return '';
-    return text.replace(/\s+/g, ' ').trim();
+    return text.replace(/\s+/g, ' ').trim().split('').join(' ').replace(/\s+/g, ' ');
 }
 
 function renderRequests(requests) {
@@ -141,7 +142,7 @@ function renderRequests(requests) {
         html += `
         <tr>
             <td><div>${createdDate}</div><small style="color:var(--text-muted);">${createdTime}</small></td>
-            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:1.5px;">${d.refId}</span></td>
+            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:2px !important;">${d.refId}</span></td>
             <td><div><strong>${formatText(d.name)}</strong><br><small>${formatText(d.job)}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
             <td>${membershipHtml}</td>
             <td>${d.gov}</td>
@@ -170,6 +171,57 @@ async function manageReq(id) {
         showRequestModal(snap.data());
     } catch(error) {
         console.error(error);
+    }
+}
+
+// فتح نافذة الحذف المنفصلة
+function openDeleteModal(id) {
+    currentDeleteId = id;
+    document.getElementById('delete-modal').style.display = 'flex';
+    document.getElementById('delete-modal').classList.add('show');
+    document.getElementById('delete-password').value = '';
+    document.getElementById('delete-password').focus();
+}
+
+// إغلاق نافذة الحذف
+function closeDeleteModal() {
+    document.getElementById('delete-modal').style.display = 'none';
+    document.getElementById('delete-modal').classList.remove('show');
+    currentDeleteId = null;
+}
+
+// تأكيد الحذف
+async function confirmDelete() {
+    const pass = document.getElementById('delete-password').value;
+    
+    if (pass === '11111@') {
+        try {
+            await db.collection("Requests").doc(currentDeleteId).delete();
+            Swal.fire({
+                icon: 'success',
+                title: 'تم',
+                text: 'تم الحذف',
+                background: '#161f32',
+                color: '#fff'
+            });
+            closeDeleteModal();
+        } catch(error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ',
+                background: '#161f32',
+                color: '#fff'
+            });
+        }
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'كلمة السر خطأ',
+            background: '#161f32',
+            color: '#fff'
+        });
     }
 }
 
@@ -209,12 +261,12 @@ function showRequestModal(d) {
     const modalHtml = `
         <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="color:var(--primary); font-size:18px;">إدارة الطلب</h3>
-                <button class="action-btn delete" onclick="deleteReqFromModal('${d.refId}')"><i class="fas fa-trash"></i></button>
+                <h3 style="color:var(--primary); font-size:20px;">إدارة الطلب</h3>
+                <button class="action-btn delete" onclick="openDeleteModal('${d.refId}')"><i class="fas fa-trash"></i></button>
             </div>
             
-            <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:15px;">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
+            <div style="background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin-bottom:20px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:14px;">
                     <div><span style="color:#94a3b8;">الاسم :</span> ${formatText(d.name)}</div>
                     <div><span style="color:#94a3b8;">الرقم القومي :</span> ${d.nid}</div>
                     <div><span style="color:#94a3b8;">الهاتف :</span> ${d.phone}</div>
@@ -224,12 +276,12 @@ function showRequestModal(d) {
                     <div><span style="color:#94a3b8;">المهنة :</span> ${formatText(d.job)}</div>
                     <div><span style="color:#94a3b8;">نوع الطلب :</span> <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></div>
                 </div>
-                <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان :</span> ${formatText(d.address)}</div>
-                <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${formatText(d.details)}</div>
+                <div style="margin-top:15px;"><span style="color:#94a3b8;">العنوان :</span> ${formatText(d.address)}</div>
+                <div style="margin-top:15px;"><span style="color:#94a3b8;">التفاصيل :</span> ${formatText(d.details)}</div>
             </div>
 
             <!-- التراك المائي الأفقي من اليمين للشمال -->
-            <div class="track-container" style="margin:20px 0;">
+            <div class="track-container" style="margin:25px 0;">
                 <div class="track-water">
                     <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
                 </div>
@@ -248,8 +300,8 @@ function showRequestModal(d) {
                 </div>
             </div>
 
-            <div style="margin:15px 0;">
-                <h4 style="font-size:14px; margin-bottom:10px;">المسار الزمني</h4>
+            <div style="margin:20px 0;">
+                <h4 style="font-size:16px; margin-bottom:12px;">المسار الزمني</h4>
                 ${d.tracking.slice().reverse().map(t => `
                     <div class="timeline-card ${t.isFinal ? 'final' : ''}">
                         <div class="timeline-header"><h4>${t.status}</h4><span>${t.time}</span></div>
@@ -258,12 +310,12 @@ function showRequestModal(d) {
                 `).join('')}
             </div>
 
-            <div style="border-top:1px solid var(--border); padding-top:15px;">
-                <h4 style="font-size:14px; margin-bottom:10px;">تحديث جديد</h4>
+            <div style="border-top:1px solid var(--border); padding-top:20px;">
+                <h4 style="font-size:16px; margin-bottom:15px;">تحديث جديد</h4>
                 ${statusInput}
                 <div class="input-group">
                     <label><i class="fas fa-comment"></i> تعليق المرحلة السابقة</label>
-                    <textarea id="status-comment" class="neon-border" placeholder="اكتب تعليقك هنا..." rows="2" style="margin-bottom:10px;"></textarea>
+                    <textarea id="status-comment" class="neon-border" placeholder="اكتب تعليقك هنا..." rows="3" style="margin-bottom:10px;"></textarea>
                 </div>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">تحديث</button>
@@ -315,53 +367,6 @@ async function updateRequestStatus(refId) {
             icon: 'error',
             title: 'خطأ',
             text: 'حدث خطأ',
-            background: '#161f32',
-            color: '#fff'
-        });
-    }
-}
-
-async function deleteReqFromModal(id) {
-    const { value: pass } = await Swal.fire({
-        title: 'حذف الطلب',
-        input: 'password',
-        inputPlaceholder: 'كلمة السر',
-        showCancelButton: true,
-        background: '#161f32',
-        color: '#fff',
-        inputAttributes: { 
-            style: 'direction:ltr;',
-            autocomplete: 'off'
-        },
-        allowOutsideClick: false,
-        allowEscapeKey: false
-    });
-
-    if (pass === '11111@') {
-        try {
-            await db.collection("Requests").doc(id).delete();
-            Swal.fire({
-                icon: 'success',
-                title: 'تم',
-                text: 'تم الحذف',
-                background: '#161f32',
-                color: '#fff'
-            });
-            closeModal();
-        } catch(error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ',
-                background: '#161f32',
-                color: '#fff'
-            });
-        }
-    } else if(pass) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'كلمة السر خطأ',
             background: '#161f32',
             color: '#fff'
         });
