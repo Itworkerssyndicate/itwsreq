@@ -3,100 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة خدمات تكنولوجيا المعلومات</title>
+    <title>نقابة المهندسين - تكنولوجيا المعلومات</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="main-wrapper">
         <header class="header-box">
-            <span>النقيب العام</span>
-            <h1>المهندس / محمود جميل</h1>
+            <img id="header-logo" src="https://via.placeholder.com/80x80?text=Logo" alt="شعار النقابة" class="header-logo">
+            <div>
+                <span>النقيب العام</span>
+                <h1>المهندس / محمود جميل</h1>
+            </div>
         </header>
 
         <nav class="nav-buttons">
-            <button class="btn-nav active" onclick="switchView('submit')">➕ تقديم طلب</button>
-            <button class="btn-nav" onclick="switchView('track')">🔍 استعلام</button>
-            <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')">👤</button>
+            <button class="btn-nav active" onclick="switchView('submit')">
+                <i class="fas fa-plus-circle"></i> تقديم طلب
+            </button>
+            <button class="btn-nav" onclick="switchView('track')">
+                <i class="fas fa-search"></i> استعلام
+            </button>
+            <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')">
+                <i class="fas fa-user-cog"></i>
+            </button>
         </nav>
 
+        <!-- شاشة تقديم الطلب -->
         <section id="view-submit" class="view">
             <div class="card">
                 <div class="input-group">
-                    <label>نوع مقدم الطلب</label>
+                    <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
                     <select id="u-member-type" onchange="toggleMemberField()">
                         <option value="عضو نقابة">عضو نقابة</option>
                         <option value="غير عضو">غير عضو</option>
                     </select>
                 </div>
+                
                 <div class="input-group" id="member-id-box">
-                    <label>رقم العضوية</label>
+                    <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
                     <input type="text" id="u-member-id" placeholder="ادخل رقم عضويتك">
                 </div>
+
                 <div class="input-group">
-                    <label>الاسم الكامل</label>
-                    <input type="text" id="u-name">
+                    <label><i class="fas fa-user"></i> الاسم الكامل</label>
+                    <input type="text" id="u-name" placeholder="الاسم ثلاثي">
                 </div>
+
                 <div class="input-group">
-                    <label>الرقم القومي</label>
-                    <input type="number" id="u-nid" maxlength="14">
+                    <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                    <input type="number" id="u-nid" maxlength="14" placeholder="14 رقم">
                 </div>
+
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <div class="input-group">
-                        <label>رقم الهاتف</label>
-                        <input type="number" id="u-phone">
+                        <label><i class="fas fa-phone"></i> رقم الهاتف</label>
+                        <input type="number" id="u-phone" placeholder="01xxxxxxxxx">
                     </div>
                     <div class="input-group">
-                        <label>المحافظة</label>
+                        <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
                         <select id="u-gov">
-                            <option>القاهرة</option><option>الجيزة</option><option>الأسكندرية</option>
+                            <option value="القاهرة">القاهرة</option>
+                            <option value="الجيزة">الجيزة</option>
+                            <option value="الإسكندرية">الإسكندرية</option>
+                            <option value="الدقهلية">الدقهلية</option>
+                            <option value="الشرقية">الشرقية</option>
+                            <option value="القليوبية">القليوبية</option>
+                            <option value="الغربية">الغربية</option>
+                            <option value="المنوفية">المنوفية</option>
+                            <option value="البحيرة">البحيرة</option>
+                            <option value="كفر الشيخ">كفر الشيخ</option>
+                            <option value="دمياط">دمياط</option>
+                            <option value="بورسعيد">بورسعيد</option>
+                            <option value="السويس">السويس</option>
+                            <option value="الإسماعيلية">الإسماعيلية</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="قنا">قنا</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="البحر الأحمر">البحر الأحمر</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="مطروح">مطروح</option>
+                            <option value="شمال سيناء">شمال سيناء</option>
+                            <option value="جنوب سيناء">جنوب سيناء</option>
                         </select>
                     </div>
                 </div>
+
                 <div class="input-group">
-                    <label>المهنة الحالية</label>
-                    <input type="text" id="u-job">
+                    <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
+                    <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة">
                 </div>
+
                 <div class="input-group">
-                    <label>نوع الطلب</label>
+                    <label><i class="fas fa-briefcase"></i> المهنة الحالية</label>
+                    <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات">
+                </div>
+
+                <div class="input-group">
+                    <label><i class="fas fa-tag"></i> نوع الطلب</label>
                     <select id="u-req-type">
                         <option value="شكوى">شكوى</option>
                         <option value="اقتراح">اقتراح</option>
                     </select>
                 </div>
+
                 <div class="input-group">
-                    <label>تفاصيل الطلب</label>
-                    <textarea id="u-details" rows="3"></textarea>
+                    <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
+                    <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك هنا..."></textarea>
                 </div>
-                <button class="btn-main" onclick="handleSubmit()">إرسال الطلب وحفظ الوصل</button>
+
+                <button class="btn-main" onclick="handleSubmit()">
+                    <i class="fas fa-paper-plane"></i> إرسال الطلب وحفظ الوصل
+                </button>
             </div>
         </section>
 
+        <!-- شاشة الاستعلام -->
         <section id="view-track" class="view" style="display:none;">
             <div class="card">
                 <div class="input-group">
-                    <label>الرقم القومي</label>
-                    <input type="number" id="q-nid">
+                    <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                    <input type="number" id="q-nid" placeholder="ادخل الرقم القومي">
                 </div>
+                
                 <div class="input-group">
-                    <label>نوع الطلب</label>
-                    <select id="q-type"><option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option></select>
+                    <label><i class="fas fa-tag"></i> نوع الطلب</label>
+                    <select id="q-type">
+                        <option value="شكوى">شكوى</option>
+                        <option value="اقتراح">اقتراح</option>
+                    </select>
                 </div>
+
                 <div class="input-group">
-                    <label>كود الطلب</label>
-                    <input type="text" id="q-ref" placeholder="REQ-0000000000">
+                    <label><i class="fas fa-qrcode"></i> كود الطلب</label>
+                    <input type="text" id="q-ref" placeholder="مثال: REQ-1234567890">
                 </div>
-                <button class="btn-main" onclick="handleTrack()">استعلام عن المسار</button>
+
+                <button class="btn-main" onclick="handleTrack()">
+                    <i class="fas fa-search"></i> استعلام عن المسار
+                </button>
             </div>
-            <div id="track-result-box" style="display:none;">
-                </div>
+
+            <div id="track-result-box" style="display:none;"></div>
         </section>
 
+        <!-- شاشة دخول الادمن -->
         <section id="view-admin-login" class="view" style="display:none;">
             <div class="card">
-                <h3 style="text-align:center; margin-bottom:20px;">دخول المنظومة</h3>
-                <input type="text" id="adm-user" placeholder="اسم المستخدم" style="margin-bottom:10px;">
-                <input type="password" id="adm-pass" placeholder="كلمة المرور">
-                <button class="btn-main" style="margin-top:20px;" onclick="adminLogin()">دخول آمن ✅</button>
+                <h3 style="text-align:center; margin-bottom:20px;">
+                    <i class="fas fa-lock"></i> دخول المنظومة
+                </h3>
+                <div class="input-group">
+                    <input type="text" id="adm-user" placeholder="اسم المستخدم">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="adm-pass" placeholder="كلمة المرور">
+                </div>
+                <button class="btn-main" onclick="adminLogin()">
+                    <i class="fas fa-sign-in-alt"></i> دخول آمن
+                </button>
             </div>
         </section>
     </div>
@@ -104,6 +174,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
