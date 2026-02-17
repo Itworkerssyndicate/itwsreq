@@ -1,70 +1,75 @@
-const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// ... Firebase Config (نفسه الموجود في app.js) ...
 
-function loadView(type, btn) {
-    document.querySelectorAll('.side-item').forEach(i => i.classList.remove('active'));
-    if(btn) btn.classList.add('active');
-
+function loadData(filter) {
     db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
-        let h = "";
+        let html = "";
         snap.forEach(doc => {
             const d = doc.data();
-            if(type === 'all' || d.type === type) {
-                h += `<tr>
-                    <td>${d.createdAt?.toDate().toLocaleDateString('ar-EG') || '---'}</td>
+            if(filter === 'all' || d.type === filter) {
+                html += `
+                <tr>
+                    <td>${d.createdAt.toDate().toLocaleDateString('ar-EG')}</td>
                     <td>${d.refId}</td>
-                    <td>${d.name}<br><small>${d.isMember}: ${d.memberId}</small></td>
+                    <td><b>${d.name}</b><br><small>${d.job}</small></td>
+                    <td>${d.gov}</td>
                     <td>${d.type}</td>
-                    <td><span class="badge">${d.status}</span></td>
+                    <td><span class="status-badge">${d.status}</span></td>
                     <td>
-                        <button class="svc-btn" style="padding:4px 10px" onclick="openCard('${doc.id}')">إدارة</button>
-                        <button class="del-btn" onclick="deleteReq('${doc.id}')">حذف</button>
+                        <button class="btn-nav" onclick="manageReq('${d.refId}')">⚙️</button>
+                        <button class="btn-nav" style="background:#ff4757" onclick="deleteReq('${d.refId}')">🗑️</button>
                     </td>
                 </tr>`;
             }
         });
-        document.getElementById('tbody').innerHTML = h;
+        document.getElementById('admin-tbody').innerHTML = html;
     });
 }
 
-async function openCard(id) {
-    const doc = await db.collection("Requests").doc(id).get();
-    const d = doc.data();
-    Swal.fire({
-        title: 'تفاصيل الطلب',
-        width: '800px', background: '#0f172a', color: '#fff',
-        html: `<div style="text-align:right; font-size:14px;">
-            <p>👤 الاسم: ${d.name} | 🆔 القومي: ${d.nationalId}</p>
-            <p>📞 الهاتف: ${d.phone} | 🏗️ المهنة: ${d.job}</p>
-            <p>📍 العنوان: ${d.address} (${d.gov})</p>
-            <hr><p>📝 التفاصيل: ${d.details}</p><hr>
-            <input id="n-stg" class="swal2-input" placeholder="المرحلة الجديدة">
-            <textarea id="n-cmm" class="swal2-textarea" placeholder="التعليق..."></textarea>
-        </div>`,
+async function manageReq(id) {
+    const snap = await db.collection("Requests").doc(id).get();
+    const d = snap.data();
+
+    const { value: form } = await Swal.fire({
+        title: `إدارة طلب: ${d.name}`,
+        html: `
+            <select id="sw-status" class="swal2-input">
+                <option value="قيد المراجعة">قيد المراجعة</option>
+                <option value="جاري التنفيذ">جاري التنفيذ</option>
+                <option value="تم الحل">تم الحل (إغلاق)</option>
+            </select>
+            <textarea id="sw-comm" class="swal2-textarea" placeholder="القرار النهائي أو الكومنت"></textarea>
+        `,
         confirmButtonText: 'تحديث الحالة'
-    }).then(r => {
-        if(r.isConfirmed) {
-            const stg = document.getElementById('n-stg').value;
-            if(!stg) return;
-            db.collection("Requests").doc(id).update({
-                status: stg,
-                tracking: firebase.firestore.FieldValue.arrayUnion({ stage: stg, comment: document.getElementById('n-cmm').value, date: new Date().toLocaleString('ar-EG') })
-            });
-        }
     });
+
+    if(form) {
+        const newStatus = document.getElementById('sw-status').value;
+        const comment = document.getElementById('sw-comm').value;
+        const isFinal = newStatus === "تم الحل";
+
+        await db.collection("Requests").doc(id).update({
+            status: newStatus,
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                status: newStatus,
+                comment: comment,
+                time: new Date().toLocaleString('ar-EG'),
+                isFinal: isFinal
+            })
+        });
+    }
 }
 
 async function deleteReq(id) {
-    const r = await Swal.fire({ title: 'هل أنت متأكد؟', icon: 'warning', showCancelButton: true });
-    if(r.isConfirmed) db.collection("Requests").doc(id).delete();
+    const { value: pass } = await Swal.fire({
+        title: 'كلمة سر الحذف',
+        input: 'password',
+        inputPlaceholder: 'ادخل 11111@'
+    });
+    if(pass === '11111@') {
+        await db.collection("Requests").doc(id).delete();
+        Swal.fire("تم الحذف", "", "success");
+    } else {
+        Swal.fire("خطأ", "كلمة السر غلط", "error");
+    }
 }
-
-function showSettings() {
-    Swal.fire({
-        title: 'الإعدادات العامة',
-        html: `<input id="set-p" class="swal2-input" placeholder="اسم النقيب"><input id="set-l" class="swal2-input" placeholder="رابط اللوجو">`,
-    }).then(r => { if(r.isConfirmed) db.collection("SystemSettings").doc("mainConfig").update({ presidentName: document.getElementById('set-p').value, logoUrl: document.getElementById('set-l').value }); });
-}
-
-loadView('all');
+loadData('all');
