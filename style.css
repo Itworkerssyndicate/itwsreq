@@ -325,7 +325,7 @@ img, .btn-nav, .btn-main {
 
 .header-text {
     flex: 1;
-    min-width: 200px;
+    min-width: 250px;
     text-align: center;
 }
 
@@ -338,28 +338,12 @@ img, .btn-nav, .btn-main {
     display: inline-block;
 }
 
-.header-subtitle::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, var(--primary), transparent);
-    animation: line-width 3s ease-in-out infinite;
-}
-
-@keyframes line-width {
-    0%, 100% { width: 100%; }
-    50% { width: 50%; }
-}
-
 .header-title {
-    font-size: clamp(20px, 5vw, 24px);
+    font-size: clamp(22px, 5vw, 28px);
     font-weight: 900;
     color: var(--primary);
     text-shadow: 0 0 15px var(--primary-glow);
-    margin-bottom: 5px;
+    margin-bottom: 10px;
     position: relative;
     display: inline-block;
 }
@@ -367,9 +351,16 @@ img, .btn-nav, .btn-main {
 .header-role {
     display: block;
     color: var(--text-muted);
-    font-size: clamp(12px, 3vw, 14px);
-    position: relative;
-    padding-right: 15px;
+    font-size: clamp(14px, 3.5vw, 16px);
+    margin-bottom: 5px;
+}
+
+.header-name {
+    display: block;
+    color: var(--text);
+    font-size: clamp(16px, 4vw, 18px);
+    font-weight: 700;
+    margin-top: 5px;
 }
 
 /* زر موقع الخدمات */
@@ -1011,7 +1002,7 @@ img, .btn-nav, .btn-main {
     width: 100%;
     border-collapse: collapse;
     background: transparent;
-    min-width: 800px;
+    min-width: 1000px;
 }
 
 #main-table thead tr {
@@ -1174,6 +1165,28 @@ img, .btn-nav, .btn-main {
     color: var(--success);
     border: 1px solid var(--success);
     box-shadow: 0 0 10px var(--success-glow);
+}
+
+/* نوع العضوية */
+.membership-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.membership-badge.member {
+    background: rgba(0,210,255,0.15);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.membership-badge.non-member {
+    background: rgba(148,163,184,0.15);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
 }
 
 /* أزرار الإجراءات */
@@ -1423,6 +1436,229 @@ img, .btn-nav, .btn-main {
     box-shadow: 0 0 20px var(--danger-glow);
 }
 
+/* التراك المائي */
+.track-container {
+    position: relative;
+    height: 100px;
+    margin: 40px 0;
+    padding: 0 10px;
+}
+
+.track-water {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(30, 41, 59, 0.5);
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(5px);
+}
+
+.water-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(180deg, var(--primary), var(--secondary));
+    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 30px var(--primary-glow);
+    animation: water-wave 2s ease-in-out infinite;
+}
+
+@keyframes water-wave {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.water-fill::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    filter: blur(5px);
+    animation: water-light 3s linear infinite;
+}
+
+@keyframes water-light {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.track-bar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    z-index: 2;
+    padding: 0 10px;
+}
+
+.track-point {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.dot {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--card-solid);
+    border: 3px solid var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: all 0.3s;
+    z-index: 3;
+    position: relative;
+    color: var(--text);
+    box-shadow: 0 0 20px transparent;
+}
+
+.dot i {
+    font-size: 18px;
+    color: var(--text);
+}
+
+.dot.active {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-color: var(--text);
+    box-shadow: 0 0 30px var(--primary-glow);
+    transform: scale(1.2);
+    animation: dot-pulse 2s infinite;
+}
+
+@keyframes dot-pulse {
+    0%, 100% { box-shadow: 0 0 30px var(--primary-glow); }
+    50% { box-shadow: 0 0 50px var(--primary-glow); }
+}
+
+.dot-label {
+    margin-top: 15px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.3s;
+    position: relative;
+    background: var(--card);
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    max-width: 150px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.dot.active + .dot-label {
+    color: var(--primary);
+    border-color: var(--primary);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* المسار الزمني */
+.timeline-card {
+    background: rgba(255,255,255,0.03);
+    border-right: 4px solid var(--primary);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    animation: border-scan 3s linear infinite;
+}
+
+@keyframes border-scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.timeline-card:hover {
+    transform: translateX(-5px);
+    background: rgba(0, 210, 255, 0.05);
+    border-right-color: var(--secondary);
+}
+
+.timeline-card.final {
+    border-right-color: var(--success);
+    background: rgba(0, 255, 136, 0.03);
+}
+
+.timeline-card.final:hover {
+    background: rgba(0, 255, 136, 0.08);
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.timeline-header h4 {
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-header h4::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: currentColor;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+.timeline-header span {
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--card);
+    padding: 3px 8px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+
+.timeline-card p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-top: 8px;
+    padding-right: 20px;
+    border-right: 2px dashed var(--border);
+}
+
 /* تحسينات للجوال */
 @media (max-width: 768px) {
     .admin-sidebar {
@@ -1447,11 +1683,11 @@ img, .btn-nav, .btn-main {
     }
     
     .header-title {
-        font-size: 18px;
+        font-size: 22px;
     }
     
-    .header-subtitle, .header-role {
-        font-size: 12px;
+    .header-name {
+        font-size: 16px;
     }
     
     .modal-content {
@@ -1484,6 +1720,21 @@ img, .btn-nav, .btn-main {
     .action-btn {
         width: 30px;
         height: 30px;
+    }
+    
+    .track-container {
+        height: 80px;
+    }
+    
+    .dot {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .dot-label {
+        font-size: 9px;
+        padding: 3px 6px;
+        max-width: 100px;
     }
 }
 
