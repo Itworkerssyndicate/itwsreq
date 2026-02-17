@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
 
 :root {
     --bg: #0a0f1e;
@@ -27,8 +27,6 @@
     margin: 0;
     padding: 0;
     font-family: 'Tajawal', 'Cairo', sans-serif;
-    letter-spacing: 0.3px;
-    word-spacing: 2px;
 }
 
 body {
@@ -45,9 +43,10 @@ body {
 
 /* تحسين الخطوط والتباعد */
 h1, h2, h3, h4, h5, h6, p, span, div, label, input, textarea, select, button, td, th {
-    letter-spacing: 0.5px;
-    word-spacing: 3px;
-    line-height: 1.6;
+    font-family: 'Tajawal', 'Cairo', sans-serif;
+    letter-spacing: 0.2px;
+    word-spacing: 2px;
+    line-height: 1.7;
 }
 
 /* السماح بالكتابة */
@@ -56,7 +55,7 @@ input, textarea, select {
     -webkit-user-select: text !important;
     -moz-user-select: text !important;
     -ms-user-select: text !important;
-    letter-spacing: 0.5px;
+    font-family: 'Tajawal', sans-serif;
 }
 
 input:focus, textarea:focus, select:focus {
@@ -119,12 +118,14 @@ input:focus, textarea:focus, select:focus {
     text-shadow: 0 0 20px var(--primary-glow);
     margin-bottom: 10px;
     letter-spacing: 1px;
+    word-spacing: 4px;
 }
 
 .splash-subtitle {
     font-size: clamp(14px, 4vw, 18px);
     color: var(--text-muted);
     margin-bottom: 30px;
+    word-spacing: 3px;
 }
 
 .splash-loader {
@@ -340,6 +341,7 @@ input:focus, textarea:focus, select:focus {
     font-size: 16px;
     margin-bottom: 8px;
     letter-spacing: 1px;
+    word-spacing: 4px;
 }
 
 .header-title {
@@ -348,8 +350,9 @@ input:focus, textarea:focus, select:focus {
     color: var(--primary);
     text-shadow: 0 0 15px var(--primary-glow);
     margin-bottom: 8px;
-    line-height: 1.4;
-    letter-spacing: 1px;
+    line-height: 1.5;
+    letter-spacing: 1.5px;
+    word-spacing: 5px;
 }
 
 .header-role {
@@ -357,6 +360,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text-muted);
     font-size: 18px;
     margin-bottom: 5px;
+    word-spacing: 3px;
 }
 
 .header-name {
@@ -364,6 +368,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text);
     font-size: 20px;
     font-weight: 700;
+    word-spacing: 4px;
 }
 
 /* زر موقع الخدمات */
@@ -562,6 +567,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text-muted);
     font-weight: 600;
     letter-spacing: 0.5px;
+    word-spacing: 3px;
 }
 
 .input-group label i {
@@ -582,6 +588,7 @@ input:focus, textarea:focus, select:focus {
     backdrop-filter: blur(5px);
     font-family: 'Tajawal', sans-serif;
     letter-spacing: 0.5px;
+    word-spacing: 3px;
 }
 
 .neon-border:focus {
@@ -615,6 +622,7 @@ input:focus, textarea:focus, select:focus {
     transition: all 0.3s;
     border: 1px solid transparent;
     letter-spacing: 0.5px;
+    word-spacing: 3px;
 }
 
 .btn-main::before {
@@ -732,6 +740,7 @@ input:focus, textarea:focus, select:focus {
 
 .search-field label {
     font-size: 12px;
+    word-spacing: 2px;
 }
 
 .search-field input,
@@ -1214,7 +1223,7 @@ input:focus, textarea:focus, select:focus {
 .track-container {
     position: relative;
     width: 100%;
-    height: 80px;
+    height: 100px;
     margin: 30px 0;
     padding: 0;
     direction: ltr; /* لتغيير الاتجاه */
@@ -1227,7 +1236,7 @@ input:focus, textarea:focus, select:focus {
     right: 0;
     bottom: 0;
     background: rgba(30, 41, 59, 0.5);
-    border-radius: 40px;
+    border-radius: 50px;
     overflow: hidden;
     border: 1px solid var(--border);
 }
@@ -1250,7 +1259,7 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
     animation: water-flow 2s linear infinite;
 }
 
@@ -1266,7 +1275,7 @@ input:focus, textarea:focus, select:focus {
     align-items: center;
     height: 100%;
     z-index: 2;
-    padding: 0 10px;
+    padding: 0 15px;
     direction: rtl; /* النصوص بالعربي */
 }
 
@@ -1276,76 +1285,82 @@ input:focus, textarea:focus, select:focus {
     flex-direction: column;
     align-items: center;
     flex: 1;
+    z-index: 3;
 }
 
 .dot {
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: var(--card-solid);
-    border: 2px solid var(--primary);
+    border: 3px solid var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    font-size: 14px;
     transition: all 0.3s;
     z-index: 3;
     position: relative;
     color: var(--text);
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .dot i {
-    font-size: 14px;
+    font-size: 16px;
     color: var(--text);
 }
 
 .dot.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-color: var(--text);
-    box-shadow: 0 0 20px var(--primary-glow);
-    transform: scale(1.1);
+    box-shadow: 0 0 30px var(--primary-glow);
+    transform: scale(1.15);
 }
 
 .dot.inactive {
-    opacity: 0.5;
+    opacity: 0.6;
     border-color: var(--text-muted);
+    background: rgba(30, 41, 59, 0.8);
 }
 
 .dot-label {
-    margin-top: 10px;
-    font-size: 10px;
+    margin-top: 12px;
+    font-size: 11px;
     color: var(--text-muted);
     font-weight: 600;
     text-align: center;
     background: var(--card);
-    padding: 4px 8px;
-    border-radius: 15px;
+    padding: 5px 10px;
+    border-radius: 20px;
     border: 1px solid var(--border);
-    max-width: 120px;
+    max-width: 130px;
     white-space: normal;
     word-break: break-word;
-    line-height: 1.4;
+    line-height: 1.5;
     letter-spacing: 0.3px;
+    word-spacing: 2px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
 }
 
 .dot.active + .dot-label {
     color: var(--primary);
     border-color: var(--primary);
-    box-shadow: 0 0 10px var(--primary-glow);
+    box-shadow: 0 0 15px var(--primary-glow);
 }
 
 /* المسار الزمني */
 .timeline-card {
-    background: rgba(255,255,255,0.02);
-    border-right: 3px solid var(--primary);
+    background: rgba(255,255,255,0.03);
+    border-right: 4px solid var(--primary);
     padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .timeline-card.final {
     border-right-color: var(--success);
-    background: rgba(0,255,136,0.03);
+    background: rgba(0,255,136,0.05);
 }
 
 .timeline-header {
@@ -1354,7 +1369,7 @@ input:focus, textarea:focus, select:focus {
     align-items: center;
     margin-bottom: 8px;
     flex-wrap: wrap;
-    gap: 5px;
+    gap: 8px;
 }
 
 .timeline-header h4 {
@@ -1362,24 +1377,27 @@ input:focus, textarea:focus, select:focus {
     font-size: 14px;
     font-weight: 700;
     letter-spacing: 0.3px;
+    word-spacing: 3px;
 }
 
 .timeline-header span {
     font-size: 11px;
     color: var(--text-muted);
     background: var(--card);
-    padding: 3px 8px;
-    border-radius: 15px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
 }
 
 .timeline-card p {
     font-size: 12px;
     color: var(--text-muted);
-    line-height: 1.7;
-    margin-top: 5px;
-    padding-right: 10px;
-    border-right: 1px dashed var(--border);
+    line-height: 1.8;
+    margin-top: 8px;
+    padding-right: 12px;
+    border-right: 2px dashed var(--border);
     letter-spacing: 0.3px;
+    word-spacing: 3px;
 }
 
 /* تحسينات للجوال */
@@ -1422,17 +1440,17 @@ input:focus, textarea:focus, select:focus {
     }
     
     .track-container {
-        height: 70px;
+        height: 80px;
     }
     
     .dot {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
     }
     
     .dot-label {
-        font-size: 9px;
-        padding: 3px 5px;
-        max-width: 90px;
+        font-size: 10px;
+        padding: 4px 8px;
+        max-width: 100px;
     }
 }
