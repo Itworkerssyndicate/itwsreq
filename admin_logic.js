@@ -1,6 +1,7 @@
 let currentFilter = 'all';
 let allRequests = []; // تخزين جميع الطلبات للبحث المباشر
 let unsubscribe; // دالة إلغاء الاستماع للتحديثات المباشرة
+let systemResetDone = false; // للتأكد من أن زر التهيئة يستخدم مرة واحدة فقط
 
 // تبديل حالة الأزرار النشطة
 function setActiveNav(buttonId) {
@@ -237,7 +238,7 @@ function renderRequests(requests) {
                 </span>
             </td>
             <td>
-                <div style="display:flex; gap:5px;">
+                <div style="display:flex; gap:5px; justify-content: center;">
                     <button class="action-btn" onclick="manageReq('${d.refId}')" title="إدارة">
                         <i class="fas fa-cog"></i>
                     </button>
@@ -425,14 +426,14 @@ function showRequestModal(d) {
                     <label><i class="fas fa-comment"></i> تعليق / قرار</label>
                     <textarea id="status-comment" rows="3" class="neon-border" placeholder="اكتب تفاصيل التحديث..."></textarea>
                 </div>
-                <div style="display:flex; gap:10px; margin-top:20px;">
-                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">
+                <div style="display:flex; gap:10px; margin-top:20px; flex-wrap: wrap;">
+                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2; min-width: 150px;">
                         <i class="fas fa-save"></i> تحديث الحالة
                     </button>
-                    <button class="btn-nav" onclick="printRequestCard('${d.refId}')" style="flex:1;">
+                    <button class="btn-nav" onclick="printRequestCard('${d.refId}')" style="flex:1; min-width: 100px;">
                         <i class="fas fa-print"></i> طباعة
                     </button>
-                    <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; background:var(--danger);">
+                    <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; min-width: 100px; background:var(--danger);">
                         <i class="fas fa-lock"></i> إغلاق
                     </button>
                 </div>
@@ -557,18 +558,20 @@ async function closeRequest(refId) {
     }
 }
 
-// حذف الطلب
+// حذف الطلب مع إخفاء الباسورد
 async function deleteReq(id) {
+    // إنشاء عنصر input من نوع password مباشرة بدون ظهور الباسورد
     const { value: pass } = await Swal.fire({
         title: 'حذف الطلب',
-        text: 'ادخل كلمة سر الحذف',
-        input: 'password',
-        inputPlaceholder: '11111@',
+        html: '<input type="password" id="delete-password" class="swal2-input" placeholder="كلمة سر الحذف" style="direction: ltr;">',
         showCancelButton: true,
         confirmButtonText: 'حذف',
         cancelButtonText: 'إلغاء',
         background: '#161f32',
-        color: '#fff'
+        color: '#fff',
+        preConfirm: () => {
+            return document.getElementById('delete-password').value;
+        }
     });
 
     if(pass === '11111@') {
@@ -598,6 +601,85 @@ async function deleteReq(id) {
     }
 }
 
+// تهيئة النظام (حذف كل البيانات)
+async function resetSystem() {
+    // التحقق من أن الزر لم يستخدم من قبل
+    if (systemResetDone) {
+        Swal.fire({
+            icon: 'info',
+            title: 'تم التهيئة مسبقاً',
+            text: 'هذا الزر يستخدم لمرة واحدة فقط وتم استخدامه بالفعل',
+            confirmButtonText: 'حسناً',
+            background: '#161f32',
+            color: '#fff'
+        });
+        document.getElementById('reset-system-section').style.display = 'none';
+        return;
+    }
+
+    const { value: pass } = await Swal.fire({
+        title: '⚠️ تحذير شديد الخطورة ⚠️',
+        text: 'أنت على وشك حذف جميع البيانات نهائياً من النظام. هذا الإجراء لا يمكن التراجع عنه.',
+        input: 'password',
+        inputPlaceholder: 'ادخل كلمة سر التهيئة 11111@',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، قم بتهيئة النظام',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#ff4757',
+        background: '#161f32',
+        color: '#fff',
+        inputAttributes: {
+            'class': 'neon-border',
+            'style': 'direction: ltr; width:100%;'
+        }
+    });
+
+    if (pass === '11111@') {
+        try {
+            // حذف جميع المستندات في مجموعة Requests
+            const snapshot = await db.collection("Requests").get();
+            const batch = db.batch();
+            snapshot.docs.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+            
+            // إخفاء الزر بشكل دائم
+            systemResetDone = true;
+            document.getElementById('reset-system-section').style.display = 'none';
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'تمت تهيئة النظام',
+                text: 'تم حذف جميع البيانات بنجاح. النظام الآن جاهز للاستخدام الجديد.',
+                confirmButtonText: 'حسناً',
+                background: '#161f32',
+                color: '#fff'
+            });
+            
+        } catch(error) {
+            console.error("Error resetting system:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ في تهيئة النظام',
+                confirmButtonText: 'حسناً',
+                background: '#161f32',
+                color: '#fff'
+            });
+        }
+    } else if(pass) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'كلمة السر غير صحيحة',
+            confirmButtonText: 'حسناً',
+            background: '#161f32',
+            color: '#fff'
+        });
+    }
+}
+
 // طباعة كارت الطلب
 async function printRequestCard(refId) {
     try {
@@ -606,7 +688,6 @@ async function printRequestCard(refId) {
         
         const d = snap.data();
         const logo = getSavedLogo();
-        const now = new Date();
         
         const printWindow = window.open('', '_blank');
         printWindow.document.write(`
@@ -705,10 +786,9 @@ async function printRequestCard(refId) {
                 <div class="print-card">
                     <div class="header">
                         <img src="${logo}" class="logo">
-                        <h1 class="title">نقابة المهندسين المصرية</h1>
-                        <p class="subtitle">شعبة تكنولوجيا المعلومات</p>
-                        <h2 class="title" style="font-size: 20px;">المهندس / محمود جميل</h2>
-                        <p class="subtitle">النقيب العام</p>
+                        <h1 class="title">نقابة تكنولوجيا المعلومات والبرمجيات</h1>
+                        <p class="subtitle">بوابة الشكاوي والمقترحات</p>
+                        <h2 class="title" style="font-size: 20px;">نقيب المعلومات</h2>
                     </div>
                     
                     <div class="ref-id">${d.refId}</div>
@@ -762,7 +842,7 @@ async function printRequestCard(refId) {
                     </div>
                     
                     <div class="footer">
-                        <p class="footer-text">هذا الكارت معتمد من نقابة المهندسين المصرية</p>
+                        <p class="footer-text">هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات</p>
                         <p class="footer-text">يمكنك متابعة طلبك عبر رقم الطلب</p>
                     </div>
                 </div>
@@ -810,7 +890,8 @@ function updateSettings() {
         suggestionPrefix: document.getElementById('suggestion-prefix').value
     };
     
-    updateAllSettings(settings);
+    // حفظ الإعدادات
+    saveSettings(settings);
     
     Swal.fire({
         icon: 'success',
@@ -822,6 +903,12 @@ function updateSettings() {
     });
     
     document.getElementById('settings-menu').classList.remove('show');
+}
+
+// تسجيل الخروج
+function logout() {
+    localStorage.removeItem('admin');
+    window.location.href = 'index.html';
 }
 
 // إضافة أنيميشن للصفوف
@@ -845,6 +932,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // إخفاء شريط البحث في البداية
     document.getElementById('search-body').style.display = 'none';
+    
+    // التحقق من حالة زر التهيئة
+    const resetDone = localStorage.getItem('system_reset_done');
+    if (resetDone === 'true') {
+        systemResetDone = true;
+        document.getElementById('reset-system-section').style.display = 'none';
+    }
 });
 
 // تنظيف الاستماع عند مغادرة الصفحة
