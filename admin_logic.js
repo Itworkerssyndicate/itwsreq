@@ -141,7 +141,7 @@ function renderRequests(requests) {
         html += `
         <tr>
             <td><div>${createdDate}</div><small style="color:var(--text-muted);">${createdTime}</small></td>
-            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:1px;">${d.refId}</span></td>
+            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:1.5px;">${d.refId}</span></td>
             <td><div><strong>${formatText(d.name)}</strong><br><small>${formatText(d.job)}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
             <td>${membershipHtml}</td>
             <td>${d.gov}</td>
