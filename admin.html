@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لوحة التحكم - نقابة المهندسين</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>لوحة التحكم - بوابة الشكاوي</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -25,7 +25,7 @@
         <div class="settings-menu glass-effect" id="settings-menu">
             <div class="settings-menu-header">
                 <i class="fas fa-sliders-h"></i>
-                <h4>إعدادات البرنامج</h4>
+                <h4>إعدادات بوابة الشكاوي</h4>
             </div>
             
             <!-- إعدادات الشعار -->
@@ -33,7 +33,7 @@
                 <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
                 <div class="input-group">
                     <label>رابط الشعار (URL)</label>
-                    <input type="url" id="logo-url" placeholder="https://example.com/logo.png" class="neon-border">
+                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png">
                 </div>
             </div>
 
@@ -42,15 +42,15 @@
                 <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
                 <div class="input-group">
                     <label>رابط الموقع</label>
-                    <input type="url" id="services-url" placeholder="https://example.com/services" class="neon-border" value="https://services.egeng.org">
+                    <input type="url" id="services-url" class="neon-border" placeholder="https://example.com/services">
                 </div>
                 <div class="input-group">
                     <label>نص الزر</label>
-                    <input type="text" id="services-text" placeholder="موقع تقديم خدمات النقابة" class="neon-border" value="موقع تقديم خدمات النقابة">
+                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة">
                 </div>
                 <div class="checkbox-group">
                     <label>
-                        <input type="checkbox" id="show-services-btn" checked> 
+                        <input type="checkbox" id="show-services-btn"> 
                         <span>إظهار الزر في شاشة تقديم الطلبات</span>
                     </label>
                 </div>
@@ -69,7 +69,16 @@
                 </div>
             </div>
 
-            <button class="btn-nav" onclick="updateSettings()" style="width:100%; margin-top:10px;">
+            <!-- زر تهيئة النظام (يظهر مرة واحدة فقط) -->
+            <div class="settings-section" id="reset-system-section">
+                <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> تهيئة النظام</h5>
+                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 10px;">هذا الزر يستخدم لمرة واحدة فقط لتهيئة النظام وحذف جميع البيانات</p>
+                <button class="btn-nav" onclick="resetSystem()" style="width:100%; background: var(--danger); color: white;" id="reset-system-btn">
+                    <i class="fas fa-trash-alt"></i> تهيئة النظام (مرة واحدة)
+                </button>
+            </div>
+
+            <button class="btn-main" onclick="updateSettings()" style="margin-top:15px;">
                 <i class="fas fa-save"></i> حفظ التغييرات
             </button>
         </div>
@@ -81,8 +90,8 @@
                 <img src="https://via.placeholder.com/100x100?text=Logo" alt="شعار النقابة" id="admin-logo" class="admin-logo">
                 <div class="admin-logo-glow"></div>
             </div>
-            <h2>لوحة التحكم</h2>
-            <p class="admin-subtitle">نظام إدارة الطلبات</p>
+            <h2>بوابة الشكاوي</h2>
+            <p class="admin-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</p>
         </div>
         
         <nav class="admin-nav">
@@ -103,7 +112,7 @@
             </button>
         </nav>
         
-        <button class="btn-main admin-logout-btn" onclick="location.href='index.html'">
+        <button class="btn-main admin-logout-btn" onclick="logout()">
             <i class="fas fa-sign-out-alt"></i> 
             <span>خروج آمن</span>
             <div class="btn-main-glow"></div>
@@ -112,7 +121,7 @@
 
     <main class="admin-main">
         <header class="admin-header glass-effect">
-            <h1><i class="fas fa-database"></i> سجل البيانات الشامل</h1>
+            <h1><i class="fas fa-database"></i> سجل الشكاوي والمقترحات</h1>
             <div class="admin-header-actions">
                 <button class="btn-nav" onclick="exportToPDF()">
                     <i class="fas fa-file-pdf"></i> تصدير PDF
@@ -218,30 +227,32 @@
         </div>
 
         <div class="admin-table-container glass-effect">
-            <table id="main-table">
-                <thead>
-                    <tr>
-                        <th>التاريخ</th>
-                        <th>رقم الطلب</th>
-                        <th>صاحب الطلب</th>
-                        <th>رقم العضوية</th>
-                        <th>المحافظة</th>
-                        <th>النوع</th>
-                        <th>الحالة</th>
-                        <th>الإجراءات</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-tbody">
-                    <tr>
-                        <td colspan="8" class="loading-row">
-                            <div class="loading-spinner">
-                                <i class="fas fa-spinner fa-spin"></i>
-                                <p>جاري تحميل البيانات...</p>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="main-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>رقم الطلب</th>
+                            <th>صاحب الطلب</th>
+                            <th>رقم العضوية</th>
+                            <th>المحافظة</th>
+                            <th>النوع</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-tbody">
+                        <tr>
+                            <td colspan="8" class="loading-row">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>جاري تحميل البيانات...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </main>
 
