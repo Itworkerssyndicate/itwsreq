@@ -1,43 +1,75 @@
-// ... (Firebase Initialize) ...
+// ... Firebase Config (نفسه الموجود في app.js) ...
 
-function loadAdminView(filter) {
+function loadData(filter) {
     db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
-        let h = "";
+        let html = "";
         snap.forEach(doc => {
             const d = doc.data();
             if(filter === 'all' || d.type === filter) {
-                h += `<tr style="border-bottom:1px solid var(--border);">
-                    <td style="padding:15px;">${d.name}</td>
+                html += `
+                <tr>
+                    <td>${d.createdAt.toDate().toLocaleDateString('ar-EG')}</td>
                     <td>${d.refId}</td>
-                    <td><span style="color:var(--primary)">${d.status}</span></td>
-                    <td><button class="btn-glam" style="padding:5px 10px;" onclick="updateReq('${doc.id}')">تحديث</button></td>
+                    <td><b>${d.name}</b><br><small>${d.job}</small></td>
+                    <td>${d.gov}</td>
+                    <td>${d.type}</td>
+                    <td><span class="status-badge">${d.status}</span></td>
+                    <td>
+                        <button class="btn-nav" onclick="manageReq('${d.refId}')">⚙️</button>
+                        <button class="btn-nav" style="background:#ff4757" onclick="deleteReq('${d.refId}')">🗑️</button>
+                    </td>
                 </tr>`;
             }
         });
-        document.getElementById('admin-table-body').innerHTML = h;
+        document.getElementById('admin-tbody').innerHTML = html;
     });
 }
 
-async function updateReq(id) {
+async function manageReq(id) {
+    const snap = await db.collection("Requests").doc(id).get();
+    const d = snap.data();
+
     const { value: form } = await Swal.fire({
-        title: 'تحديث الطلب',
+        title: `إدارة طلب: ${d.name}`,
         html: `
-            <input id="sw-stg" class="swal2-input" placeholder="اسم المرحلة">
-            <textarea id="sw-cm" class="swal2-textarea" placeholder="التعليق"></textarea>
-            <label><input type="checkbox" id="sw-fin"> قرار نهائي وإغلاق؟</label>`,
-        confirmButtonText: 'حفظ'
+            <select id="sw-status" class="swal2-input">
+                <option value="قيد المراجعة">قيد المراجعة</option>
+                <option value="جاري التنفيذ">جاري التنفيذ</option>
+                <option value="تم الحل">تم الحل (إغلاق)</option>
+            </select>
+            <textarea id="sw-comm" class="swal2-textarea" placeholder="القرار النهائي أو الكومنت"></textarea>
+        `,
+        confirmButtonText: 'تحديث الحالة'
     });
+
     if(form) {
-        const isFin = document.getElementById('sw-fin').checked;
+        const newStatus = document.getElementById('sw-status').value;
+        const comment = document.getElementById('sw-comm').value;
+        const isFinal = newStatus === "تم الحل";
+
         await db.collection("Requests").doc(id).update({
-            status: isFin ? "اغلاق الطلب" : document.getElementById('sw-stg').value,
+            status: newStatus,
             tracking: firebase.firestore.FieldValue.arrayUnion({
-                stage: document.getElementById('sw-stg').value,
-                comment: document.getElementById('sw-cm').value,
-                date: new Date().toLocaleString('ar-EG'),
-                isFinal: isFin
+                status: newStatus,
+                comment: comment,
+                time: new Date().toLocaleString('ar-EG'),
+                isFinal: isFinal
             })
         });
     }
 }
-loadAdminView('all');
+
+async function deleteReq(id) {
+    const { value: pass } = await Swal.fire({
+        title: 'كلمة سر الحذف',
+        input: 'password',
+        inputPlaceholder: 'ادخل 11111@'
+    });
+    if(pass === '11111@') {
+        await db.collection("Requests").doc(id).delete();
+        Swal.fire("تم الحذف", "", "success");
+    } else {
+        Swal.fire("خطأ", "كلمة السر غلط", "error");
+    }
+}
+loadData('all');
