@@ -82,7 +82,7 @@ async function generateRequestCard(data) {
     
     card.innerHTML = `
         <div style="margin-bottom: 25px;">
-            <img src="${logo}" style="width: 130px; height: 130px; border-radius: 50%; border: 4px solid #00d2ff; margin-bottom: 15px;">
+            <img src="${logo}" style="width: 130px; height: 130px; border-radius: 50%; border: 4px solid #00d2ff; margin-bottom: 15px; object-fit: cover;">
             <h2 style="font-size: 26px; color: #00d2ff; margin: 5px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات</h2>
             <h3 style="font-size: 20px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
             <p style="color: #94a3b8; font-size: 16px;">النقيب العام</p>
@@ -185,17 +185,17 @@ function renderTrack(d) {
                 </div>
             </div>
             
+            <!-- التراك المائي - خط يتملى -->
             <div class="track-container">
-                <div class="track-water">
-                    <div class="water-fill-horizontal" style="width: ${progress}%;"></div>
-                </div>
-                <div class="track-bar-horizontal">
+                <div class="track-line-bg"></div>
+                <div class="track-line-fill" style="width: ${progress}%;"></div>
+                <div class="track-points">
                     ${stages.map((s, i) => `
                         <div class="track-point">
-                            <div class="dot ${i <= currentIdx ? 'active' : ''}">
+                            <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
                                 ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
                             </div>
-                            <span class="dot-label">${s}</span>
+                            <span class="track-label">${s}</span>
                         </div>
                     `).join('')}
                 </div>
