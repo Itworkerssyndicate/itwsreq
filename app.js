@@ -1,78 +1,123 @@
-const firebaseConfig = { apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE", projectId: "itwsreq" };
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseConfig = {
+    apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
+    authDomain: "itwsreq.firebaseapp.com",
+    projectId: "itwsreq",
+    storageBucket: "itwsreq.firebasestorage.app",
+    messagingSenderId: "417900842360",
+    appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d"
+};
+
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// تحميل بيانات الواجهة
-db.collection("SystemSettings").doc("mainConfig").onSnapshot(doc => {
-    if(doc.exists) {
-        document.getElementById("pres-display").innerText = doc.data().presidentName || "غير محدد";
-        document.getElementById("main-logo").src = doc.data().logoUrl || "";
-        document.getElementById("svc-link").onclick = () => window.open(doc.data().servicesLink, '_blank');
+// التبديل بين الشاشات
+function switchView(view) {
+    document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+    document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + view).style.display = 'block';
+    const activeBtn = [...document.querySelectorAll('.btn-nav')].find(b => b.innerText.includes(view === 'submit' ? 'تقديم' : 'استعلام'));
+    if(activeBtn) activeBtn.classList.add('active');
+}
+
+// التحكم في حقول العضوية
+function toggleMemberField() {
+    const type = document.getElementById('u-member-type').value;
+    const mBox = document.getElementById('member-id-box');
+    const typeSelect = document.getElementById('u-req-type');
+    
+    if(type === 'عضو نقابة') {
+        mBox.style.display = 'block';
+        typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+    } else {
+        mBox.style.display = 'none';
+        typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
     }
-});
-
-function toggleMember() {
-    const isMember = document.getElementById('u-member-type').value === "عضو";
-    document.getElementById('u-m-id').style.display = isMember ? 'block' : 'none';
-    const typeBox = document.getElementById('u-type');
-    if(!isMember) { typeBox.value = "اقتراح"; typeBox.disabled = true; } 
-    else { typeBox.disabled = false; }
 }
 
-function showTab(t) {
-    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-'+t).style.display = 'block';
-    if(t !== 'login') document.getElementById('t-'+t).classList.add('active');
-}
-
-async function submitRequest() {
-    const d = {
+// تقديم الطلب
+async function handleSubmit() {
+    const refId = "REQ-" + Date.now().toString().slice(-10);
+    const data = {
+        refId,
         name: document.getElementById('u-name').value,
-        nationalId: document.getElementById('u-nid').value,
-        memberId: document.getElementById('u-m-id').value || "غير عضو",
-        isMember: document.getElementById('u-member-type').value,
+        nid: document.getElementById('u-nid').value,
         phone: document.getElementById('u-phone').value,
-        job: document.getElementById('u-job').value,
         gov: document.getElementById('u-gov').value,
-        address: document.getElementById('u-address').value,
-        type: document.getElementById('u-type').value,
+        job: document.getElementById('u-job').value,
+        type: document.getElementById('u-req-type').value,
         details: document.getElementById('u-details').value,
+        memberId: document.getElementById('u-member-id').value || "غير عضو",
         status: "تم الاستلام",
-        refId: `${new Date().getFullYear()}/${Math.floor(1000 + Math.random() * 9000)}`,
-        createdAt: firebase.firestore.Timestamp.now(),
-        tracking: [{ stage: "تم الاستلام", comment: "تم استلام الطلب آلياً", date: new Date().toLocaleString('ar-EG') }]
+        createdAt: new Date(),
+        tracking: [{
+            status: "تم الاستلام",
+            comment: "تم استلام طلبك بنجاح وجاري العرض على الإدارة",
+            time: new Date().toLocaleString('ar-EG'),
+            isFinal: false
+        }]
     };
 
-    if(!d.name || d.nationalId.length < 14) return Swal.fire("خطأ", "برجاء ملء البيانات بشكل صحيح", "error");
-    
-    await db.collection("Requests").add(d);
-    Swal.fire("تم الإرسال", `كود الطلب: ${d.refId}`, "success");
+    if(!data.name || !data.nid) return Swal.fire("خطأ", "برجاء ملء البيانات الأساسية", "error");
+
+    await db.collection("Requests").doc(refId).set(data);
+    Swal.fire("تم بنجاح", `كود الطلب: ${refId}`, "success");
 }
 
-async function searchRequest() {
+// الاستعلام
+async function handleTrack() {
+    const nid = document.getElementById('q-nid').value;
+    const ref = document.getElementById('q-ref').value;
+    const type = document.getElementById('q-type').value;
+
     const snap = await db.collection("Requests")
-        .where("nationalId", "==", document.getElementById('s-nid').value)
-        .where("refId", "==", document.getElementById('s-ref').value).get();
+        .where("nid", "==", nid)
+        .where("refId", "==", ref)
+        .where("type", "==", type).get();
 
-    if(snap.empty) return Swal.fire("عذراً", "الطلب غير موجود", "warning");
-    const data = snap.docs[0].data();
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل والإغلاق"];
-    const idx = stages.indexOf(data.status);
-
-    document.getElementById('track-res').innerHTML = `
-        <div class="water-track">
-            <div class="track-line"><div class="track-fill" style="width:${(idx/3)*100}%"></div></div>
-            ${stages.map((s,i) => `<div class="node ${i<=idx?'active':''}" style="right:${(i/3)*100}%"><span>${s}</span></div>`).join('')}
-        </div>
-        <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:10px;">
-            ${data.tracking.reverse().map(t => `<p><b>${t.stage}</b> - ${t.date}<br><small>${t.comment}</small></p><hr style="opacity:0.1">`).join('')}
-        </div>`;
+    if(snap.empty) return Swal.fire("عذراً", "لا يوجد طلب بهذه البيانات", "error");
+    
+    renderTrack(snap.docs[0].data());
 }
 
-function loginAdmin() {
-    if(document.getElementById('adm-u').value === "admin" && document.getElementById('adm-p').value === "itws@manager@2026@") {
-        sessionStorage.setItem("isAdmin", "true");
-        window.location.href = "admin.html";
-    } else Swal.fire("خطأ", "بيانات الدخول خاطئة", "error");
+function renderTrack(d) {
+    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
+    const currentIdx = stages.indexOf(d.status);
+    const pct = (currentIdx / (stages.length - 1)) * 100;
+
+    let html = `
+        <div class="card">
+            <h4 style="color:var(--primary); text-align:center;">${d.refId}</h4>
+            <div class="track-bar">
+                <div class="track-line"><div class="track-line-fill" style="width:${pct}%"></div></div>
+                ${stages.map((s, i) => `
+                    <div class="dot ${i <= currentIdx ? 'active' : ''}">
+                        ${i <= currentIdx ? '✓' : ''}
+                        <div class="dot-label">${s}</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div style="margin-top:50px;">
+                ${d.tracking.slice().reverse().map(t => `
+                    <div class="timeline-card ${t.isFinal ? 'final' : ''}">
+                        <div class="timeline-header">
+                            <h4>${t.status}</h4>
+                            <span>${t.time}</span>
+                        </div>
+                        <p style="font-size:13px;">${t.comment}</p>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    
+    document.getElementById('track-result-box').innerHTML = html;
+    document.getElementById('track-result-box').style.display = 'block';
+}
+
+function adminLogin() {
+    if(document.getElementById('adm-user').value === 'admin' && document.getElementById('adm-pass').value === 'itws@2026') {
+        localStorage.setItem('admin', 'true');
+        window.location.href = 'admin.html';
+    } else {
+        Swal.fire("خطأ", "بيانات الدخول خاطئة", "error");
+    }
 }
