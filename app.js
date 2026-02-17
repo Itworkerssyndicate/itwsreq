@@ -126,88 +126,92 @@ async function handleSubmit() {
     }
 }
 
-// إنشاء كارت الطلب
+// تنسيق النص مع مسافات
+function formatText(text) {
+    if (!text) return '';
+    return text.replace(/\s+/g, ' ').trim();
+}
+
+// إنشاء كارت الطلب (بدون حالة)
 async function generateRequestCard(data) {
     const now = new Date();
     const date = now.toLocaleDateString('ar-EG');
     const time = now.toLocaleTimeString('ar-EG');
     const logo = getSavedLogo();
 
-    // تنسيق النص مع مسافات
-    const formatText = (text) => {
-        return text.replace(/([^\s])/g, '$1 ').trim();
-    };
-
     const cardHTML = `
         <div id="request-card" style="
             background: linear-gradient(135deg, #161f32, #0b1120);
-            padding: 25px;
+            padding: 30px 25px;
             border-radius: 20px;
             color: white;
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
             max-width: 380px;
             margin: 0 auto;
             border: 2px solid #00d2ff;
             direction: rtl;
+            letter-spacing: 0.5px;
+            line-height: 1.8;
         ">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <img src="${logo}" style="width: 90px; height: 90px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 15px;">
-                <h2 style="font-size: 20px; color: #00d2ff; margin-bottom: 5px; letter-spacing: 1px;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <h3 style="font-size: 16px; color: white; margin-bottom: 5px;">المهندس / محمود جميل</h3>
-                <p style="color: #94a3b8; font-size: 13px;">النقيب العام</p>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <img src="${logo}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 15px; box-shadow: 0 0 30px #00d2ff;">
+                <h2 style="font-size: 22px; color: #00d2ff; margin-bottom: 8px; font-weight: 900; letter-spacing: 1px;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 style="font-size: 18px; color: white; margin-bottom: 5px; font-weight: 700;">المهندس / محمود جميل</h3>
+                <p style="color: #94a3b8; font-size: 14px;">النقيب العام</p>
             </div>
 
-            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 15px; margin: 15px 0;">
-                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                    <span style="color: #94a3b8;">رقم الطلب :</span> 
-                    <span style="color: #00d2ff; font-weight: bold; direction: ltr; letter-spacing: 1px;">${data.refId}</span>
+            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(0,210,255,0.2);">
+                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span> 
+                    <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px;">${data.refId}</span>
                 </div>
-                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                    <span style="color: #94a3b8;">نوع الطلب :</span> 
-                    <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: bold;">${data.type}</span>
+                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span> 
+                    <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700;">${data.type}</span>
                 </div>
-                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                    <span style="color: #94a3b8;">صاحب الطلب :</span> 
-                    <span style="color: white;">${formatText(data.name)}</span>
+                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8; font-weight: 600;">صاحب الطلب :</span> 
+                    <span style="color: white; font-weight: 600;">${formatText(data.name)}</span>
                 </div>
-                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                    <span style="color: #94a3b8;">الحالة :</span> 
-                    <span style="color: ${data.type === 'شكوى' ? '#ffa502' : '#ffa502'};">${data.status}</span>
+                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8; font-weight: 600;">رقم العضوية :</span> 
+                    <span style="color: white; font-weight: 600;">${data.memberId !== 'غير عضو' ? data.memberId : 'غير عضو'}</span>
                 </div>
-                <div style="font-size: 14px; display: flex; justify-content: space-between;">
-                    <span style="color: #94a3b8;">التاريخ :</span> 
-                    <span style="color: white;">${date} ${time}</span>
+                <div style="font-size: 15px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span> 
+                    <span style="color: white; font-weight: 600;">${date} - ${time}</span>
                 </div>
             </div>
 
-            <div style="text-align: center; font-size: 12px; color: #94a3b8; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <div style="text-align: center; font-size: 13px; color: #94a3b8; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
                 هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
             </div>
         </div>
     `;
 
-    const { value: accept } = await Swal.fire({
-        title: 'تم حفظ الطلب',
-        html: `<div style="color:#00d2ff; margin-bottom:15px; font-size:18px; direction:ltr;">${data.refId}</div>${cardHTML}`,
+    const result = await Swal.fire({
+        title: 'تم حفظ الطلب بنجاح',
+        html: `<div style="color:#00d2ff; margin-bottom:20px; font-size:18px; direction:ltr; font-weight:700;">${data.refId}</div>${cardHTML}`,
         showCancelButton: true,
         confirmButtonText: 'تحميل الكارت',
         cancelButtonText: 'إغلاق',
         background: '#161f32',
         color: '#fff',
         width: '450px',
-        didOpen: () => {
-            // منع إغلاق النافذة عند النقر خارجها
-            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
-        }
+        allowOutsideClick: false,
+        allowEscapeKey: false
     });
 
-    if(accept) {
+    if(result.isConfirmed) {
         const element = document.getElementById('request-card');
         if(element) {
             try {
                 const canvas = await html2canvas(element, {
                     scale: 2,
-                    backgroundColor: '#161f32'
+                    backgroundColor: '#161f32',
+                    logging: false,
+                    allowTaint: true,
+                    useCORS: true
                 });
                 const link = document.createElement('a');
                 link.download = `طلب_${data.refId}.png`;
@@ -215,6 +219,7 @@ async function generateRequestCard(data) {
                 link.click();
             } catch(error) {
                 console.error('Error generating image:', error);
+                Swal.fire('خطأ', 'حدث خطأ في تحميل الكارت', 'error');
             }
         }
     }
@@ -272,7 +277,8 @@ function renderTrack(d) {
     const allStages = [...stages, finalStage];
     const currentStatus = d.status;
     const currentIdx = allStages.indexOf(currentStatus);
-    const progressPercent = allStages.length > 0 ? ((currentIdx + 1) / allStages.length) * 100 : 0;
+    // من اليمين للشمال: نبدأ من 0% عند أول مرحلة وصولاً لـ 100% عند آخر مرحلة
+    const progressPercent = allStages.length > 0 ? (currentIdx / (allStages.length - 1)) * 100 : 0;
 
     let html = `
         <div class="card glass-effect" style="margin-top:15px;">
@@ -282,11 +288,11 @@ function renderTrack(d) {
                 </div>
                 <div>
                     <h4 style="color:var(--primary); font-size:14px; direction:ltr;">${d.refId}</h4>
-                    <p style="color:var(--text-muted); font-size:11px;">${d.name}</p>
+                    <p style="color:var(--text-muted); font-size:11px;">${formatText(d.name)}</p>
                 </div>
             </div>
 
-            <!-- التراك المائي الأفقي -->
+            <!-- التراك المائي الأفقي من اليمين للشمال -->
             <div class="track-container">
                 <div class="track-water">
                     <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
