@@ -164,6 +164,13 @@ function updateServicesButton() {
     }
 }
 
+// تنسيق النص مع مسافات بين الكلمات
+function formatText(text) {
+    if (!text) return '';
+    // إضافة مسافات بعد كل كلمة وتنظيف النص
+    return text.replace(/\s+/g, ' ').trim();
+}
+
 // إنشاء رقم طلب متسلسل
 async function generateRequestNumber(type) {
     const year = new Date().getFullYear();
