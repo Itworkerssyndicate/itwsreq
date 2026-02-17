@@ -9,95 +9,94 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// التنقل بين الشاشات
-function showView(v, btn) {
-    document.querySelectorAll('.view-content').forEach(s => s.style.display = 'none');
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('view-' + v).style.display = 'block';
-    if(btn) btn.classList.add('active');
+// حماية الشاشة
+document.addEventListener('keyup', (e) => { if (e.key === 'PrintScreen') { Swal.fire("تنبيه", "ممنوع تصوير الشاشة", "warning"); } });
+
+function changeTab(tab, btn) {
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-' + tab).style.display = 'block';
+    btn.classList.add('active');
 }
 
-function toggleMember() {
-    const isMember = document.getElementById('u-member').value === 'عضو';
-    document.getElementById('u-mid').style.display = isMember ? 'block' : 'none';
+function checkMemberType() {
+    const isM = document.getElementById('u-member').value === 'عضو';
+    document.getElementById('u-mid').style.display = isM ? 'block' : 'none';
 }
 
-// إرسال الطلب وحفظ التذكرة
-async function submitRequest() {
-    const refId = "REQ-" + Math.floor(100000 + Math.random() * 900000);
+async function processSubmit() {
+    const rid = "REQ-" + Math.floor(100000 + Math.random() * 900000);
     const name = document.getElementById('u-name').value;
     const nid = document.getElementById('u-nid').value;
 
-    if(!name || nid.length < 14) return Swal.fire("خطأ", "برجاء كتابة الاسم والرقم القومي بدقة", "error");
+    if(!name || nid.length < 14) return Swal.fire("عذراً", "تأكد من الاسم والرقم القومي", "error");
 
     const data = {
-        refId, name, nid,
+        refId: rid, name, nid,
         phone: document.getElementById('u-phone').value,
-        gov: document.getElementById('u-gov').value,
         status: "تم الاستلام",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        tracking: [{ status: "تم الاستلام", comment: "تم استلام الطلب بنجاح", time: new Date().toLocaleString('ar-EG') }]
+        tracking: [{ s: "تم الاستلام", c: "تم استلام طلبك بنجاح", t: new Date().toLocaleString('ar-EG') }]
     };
 
-    await db.collection("Requests").doc(refId).set(data);
+    await db.collection("Requests").doc(rid).set(data);
 
-    // توليد الصورة
+    // تصدير التذكرة كصورة
     document.getElementById('t-name').innerText = name;
     document.getElementById('t-nid').innerText = nid;
-    document.getElementById('t-ref').innerText = refId;
+    document.getElementById('t-ref').innerText = rid;
 
-    html2canvas(document.querySelector("#ticket-wrap")).then(canvas => {
-        let a = document.createElement('a');
-        a.download = `Ticket-${refId}.png`;
-        a.href = canvas.toDataURL();
-        a.click();
+    html2canvas(document.getElementById('ticket-capture')).then(canvas => {
+        let link = document.createElement('a');
+        link.download = rid + ".png";
+        link.href = canvas.toDataURL();
+        link.click();
     });
 
-    Swal.fire("تم الإرسال", "تم حفظ تذكرة المراجعة في جهازك بنجاح", "success");
+    Swal.fire("نجاح", "تم إرسال الطلب وحفظ التذكرة بجهازك", "success");
 }
 
-// الاستعلام عن الطلب (مع ظهور الداتا فوراً)
-async function trackRequest() {
+function processTrack() {
     const nid = document.getElementById('q-nid').value;
-    const ref = document.getElementById('q-ref').value;
+    const rid = document.getElementById('q-ref').value;
 
-    db.collection("Requests").where("nid", "==", nid).where("refId", "==", ref).onSnapshot(snap => {
-        if(snap.empty) return Swal.fire("عذراً", "لا توجد بيانات مطابقة", "error");
-        renderTrackUI(snap.docs[0].data());
+    db.collection("Requests").where("nid", "==", nid).where("refId", "==", rid).onSnapshot(snap => {
+        if(snap.empty) return Swal.fire("خطأ", "البيانات غير صحيحة", "error");
+        renderTrack(snap.docs[0].data());
     });
 }
 
-function renderTrackUI(d) {
-    const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
-    const idx = stages.indexOf(d.status);
+function renderTrack(d) {
+    const steps = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
+    const curr = steps.indexOf(d.status);
     
     let html = `
-        <div class="glass-card">
-            <h4 style="text-align:center; color:var(--primary)">${d.refId}</h4>
-            <div class="water-track">
-                <div class="track-line"><div class="track-fill" style="width:${(idx/3)*100}%"></div></div>
-                ${stages.map((s, i) => `
-                    <div class="step-dot ${i <= idx ? 'active' : ''}">
-                        ${i <= idx ? '✓' : ''}
+        <div class="card">
+            <h3 style="text-align:center; color:var(--accent); margin-bottom:20px;">${d.refId}</h3>
+            <div class="stepper">
+                <div class="step-line"><div class="step-fill" style="width:${(curr/3)*100}%"></div></div>
+                ${steps.map((s, i) => `
+                    <div class="step-dot ${i <= curr ? 'completed' : ''}">
+                        ${i <= curr ? '✓' : ''}
                         <div class="step-label">${s}</div>
                     </div>
                 `).join('')}
             </div>
-            <div style="margin-top:50px;">
-                ${d.tracking.slice().reverse().map(t => `
-                    <div style="border-right:3px solid var(--primary); padding:10px; background:rgba(255,255,255,0.05); margin-bottom:10px;">
-                        <b>${t.status}</b> <small style="float:left">${t.time}</small>
-                        <p style="font-size:13px; color:#94a3b8">${t.comment}</p>
+            <div style="margin-top:60px;">
+                ${d.tracking.reverse().map(item => `
+                    <div style="border-right:3px solid var(--accent); padding:12px; background:rgba(255,255,255,0.03); margin-bottom:12px; border-radius:0 10px 10px 0;">
+                        <div style="display:flex; justify-content:space-between">
+                            <b>${item.s}</b>
+                            <small style="color:var(--text-muted)">${item.t}</small>
+                        </div>
+                        <p style="font-size:13px; color:var(--text-muted); margin-top:5px;">${item.c}</p>
                     </div>
                 `).join('')}
             </div>
         </div>`;
-    document.getElementById('result-display').innerHTML = html;
+    document.getElementById('track-result').innerHTML = html;
 }
 
-function loginAdmin() {
-    if(document.getElementById('adm-pass').value === 'itws@2026') {
-        localStorage.setItem('isAdm', 'true');
-        window.location.href = 'admin.html';
-    }
+function tryAdmin() {
+    if(document.getElementById('adm-pass').value === 'itws@2026') window.location.href = 'admin.html';
 }
