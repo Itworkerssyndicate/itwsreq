@@ -864,7 +864,7 @@ input:focus, textarea:focus, select:focus {
     width: 100%;
     border-collapse: collapse;
     background: transparent;
-    min-width: 900px;
+    min-width: 1000px;
 }
 
 #main-table th {
@@ -943,6 +943,18 @@ input:focus, textarea:focus, select:focus {
     background: rgba(255,71,87,0.15);
     color: var(--danger);
     border: 1px solid var(--danger);
+}
+
+.status-تمت\ القراءة {
+    background: rgba(0,210,255,0.15);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+
+.status-لم\ يقرأ {
+    background: rgba(255,165,2,0.15);
+    color: var(--warning);
+    border: 1px solid var(--warning);
 }
 
 /* نوع الطلب */
@@ -1042,7 +1054,7 @@ input:focus, textarea:focus, select:focus {
     border: 1px solid var(--border);
     border-radius: 15px;
     padding: 20px;
-    width: 300px;
+    width: 320px;
     display: none;
     backdrop-filter: blur(10px);
     z-index: 1001;
@@ -1087,6 +1099,30 @@ input:focus, textarea:focus, select:focus {
 .settings-section h5 {
     font-size: 13px;
     margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.auto-save-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px;
+    background: rgba(0,255,136,0.1);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--success);
+    margin-top: 10px;
+    animation: fadeInOut 2s ease;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 /* النافذة المنبثقة */
@@ -1157,12 +1193,13 @@ input:focus, textarea:focus, select:focus {
     border-color: var(--danger);
 }
 
-/* التراك المائي */
+/* التراك المائي الأفقي */
 .track-container {
     position: relative;
+    width: 100%;
     height: 80px;
     margin: 30px 0;
-    padding: 0 5px;
+    padding: 0;
 }
 
 .track-water {
@@ -1177,41 +1214,41 @@ input:focus, textarea:focus, select:focus {
     border: 1px solid var(--border);
 }
 
-.water-fill {
+.water-fill-horizontal {
     position: absolute;
-    bottom: 0;
+    top: 0;
     left: 0;
-    right: 0;
-    background: linear-gradient(180deg, var(--primary), var(--secondary));
-    transition: height 1s cubic-bezier(0.4, 0, 0.2, 1);
+    bottom: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 0 20px var(--primary-glow);
 }
 
-.water-fill::before {
+.water-fill-horizontal::before {
     content: '';
     position: absolute;
-    top: -5px;
+    top: 0;
     left: 0;
     right: 0;
-    height: 10px;
-    background: rgba(255,255,255,0.3);
-    filter: blur(3px);
-    animation: water-light 3s linear infinite;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: water-flow 2s linear infinite;
 }
 
-@keyframes water-light {
+@keyframes water-flow {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
 }
 
-.track-bar {
+.track-bar-horizontal {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 100%;
     z-index: 2;
-    padding: 0 5px;
+    padding: 0 10px;
 }
 
 .track-point {
@@ -1274,10 +1311,6 @@ input:focus, textarea:focus, select:focus {
     color: var(--primary);
     border-color: var(--primary);
     box-shadow: 0 0 10px var(--primary-glow);
-}
-
-.dot.inactive + .dot-label {
-    opacity: 0.5;
 }
 
 /* المسار الزمني */
@@ -1361,7 +1394,7 @@ input:focus, textarea:focus, select:focus {
     }
     
     .settings-menu {
-        width: 280px;
+        width: 290px;
         left: 5px;
     }
     
