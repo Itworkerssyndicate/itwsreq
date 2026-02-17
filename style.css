@@ -1753,3 +1753,37 @@ input:focus, textarea:focus, select:focus {
         border-color: #ddd !important;
     }
 }
+/* تنسيقات محسنة للكارت */
+#request-card-container * {
+    font-family: 'Tajawal', 'Cairo', sans-serif !important;
+    letter-spacing: 0.8px !important;
+    word-spacing: 6px !important;
+    line-height: 2.2 !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* تحسين عرض SweetAlert للصورة */
+.swal2-image {
+    border-radius: 25px !important;
+    box-shadow: 0 10px 30px rgba(0,210,255,0.3) !important;
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+.swal2-popup {
+    font-family: 'Tajawal', sans-serif !important;
+}
+
+.swal2-title {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+}
+
+.swal2-confirm, .swal2-cancel {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+}
