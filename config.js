@@ -164,11 +164,11 @@ function updateServicesButton() {
     }
 }
 
-// تنسيق النص مع مسافات بين الكلمات
+// تنسيق النص مع مسافات بين الكلمات (محسن جداً)
 function formatText(text) {
     if (!text) return '';
-    // تنظيف النص وإضافة مسافات مناسبة
-    return text.replace(/\s+/g, ' ').trim();
+    // تنظيف النص وإضافة مسافات مناسبة جداً
+    return text.replace(/\s+/g, ' ').trim().split('').join(' ').replace(/\s+/g, ' ');
 }
 
 // إنشاء رقم طلب متسلسل
