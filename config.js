@@ -33,19 +33,37 @@ const DEFAULT_SETTINGS = {
     SUGGESTION_PREFIX: 'REP'
 };
 
+// تحميل الإعدادات من localStorage
+function loadSettings() {
+    const settings = {};
+    for (let key in STORAGE_KEYS) {
+        const value = localStorage.getItem(STORAGE_KEYS[key]);
+        if (value !== null) {
+            settings[key] = value;
+        }
+    }
+    return settings;
+}
+
+// الحصول على قيمة إعداد معين
+function getSetting(key, defaultValue) {
+    const value = localStorage.getItem(STORAGE_KEYS[key]);
+    return value !== null ? value : defaultValue;
+}
+
 // الحصول على رابط الشعار المحفوظ
 function getSavedLogo() {
-    return localStorage.getItem(STORAGE_KEYS.LOGO_URL) || DEFAULT_SETTINGS.LOGO_URL;
+    return getSetting('LOGO_URL', DEFAULT_SETTINGS.LOGO_URL);
 }
 
 // الحصول على رابط موقع الخدمات
 function getServicesUrl() {
-    return localStorage.getItem(STORAGE_KEYS.SERVICES_URL) || DEFAULT_SETTINGS.SERVICES_URL;
+    return getSetting('SERVICES_URL', DEFAULT_SETTINGS.SERVICES_URL);
 }
 
 // الحصول على نص زر الخدمات
 function getServicesText() {
-    return localStorage.getItem(STORAGE_KEYS.SERVICES_TEXT) || DEFAULT_SETTINGS.SERVICES_TEXT;
+    return getSetting('SERVICES_TEXT', DEFAULT_SETTINGS.SERVICES_TEXT);
 }
 
 // هل يتم إظهار زر الخدمات
@@ -56,22 +74,22 @@ function shouldShowServices() {
 
 // الحصول على بادئة الشكاوى
 function getComplaintPrefix() {
-    return localStorage.getItem(STORAGE_KEYS.COMPLAINT_PREFIX) || DEFAULT_SETTINGS.COMPLAINT_PREFIX;
+    return getSetting('COMPLAINT_PREFIX', DEFAULT_SETTINGS.COMPLAINT_PREFIX);
 }
 
 // الحصول على بادئة المقترحات
 function getSuggestionPrefix() {
-    return localStorage.getItem(STORAGE_KEYS.SUGGESTION_PREFIX) || DEFAULT_SETTINGS.SUGGESTION_PREFIX;
+    return getSetting('SUGGESTION_PREFIX', DEFAULT_SETTINGS.SUGGESTION_PREFIX);
 }
 
-// تحديث جميع الإعدادات
-function updateAllSettings(settings) {
-    if (settings.logoUrl) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logoUrl);
-    if (settings.servicesUrl) localStorage.setItem(STORAGE_KEYS.SERVICES_URL, settings.servicesUrl);
-    if (settings.servicesText) localStorage.setItem(STORAGE_KEYS.SERVICES_TEXT, settings.servicesText);
+// حفظ جميع الإعدادات
+function saveSettings(settings) {
+    if (settings.logoUrl !== undefined) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logoUrl);
+    if (settings.servicesUrl !== undefined) localStorage.setItem(STORAGE_KEYS.SERVICES_URL, settings.servicesUrl);
+    if (settings.servicesText !== undefined) localStorage.setItem(STORAGE_KEYS.SERVICES_TEXT, settings.servicesText);
     if (settings.showServices !== undefined) localStorage.setItem(STORAGE_KEYS.SHOW_SERVICES, settings.showServices);
-    if (settings.complaintPrefix) localStorage.setItem(STORAGE_KEYS.COMPLAINT_PREFIX, settings.complaintPrefix);
-    if (settings.suggestionPrefix) localStorage.setItem(STORAGE_KEYS.SUGGESTION_PREFIX, settings.suggestionPrefix);
+    if (settings.complaintPrefix !== undefined) localStorage.setItem(STORAGE_KEYS.COMPLAINT_PREFIX, settings.complaintPrefix);
+    if (settings.suggestionPrefix !== undefined) localStorage.setItem(STORAGE_KEYS.SUGGESTION_PREFIX, settings.suggestionPrefix);
     
     // تحديث الشعارات في الصفحة الحالية
     updateAllLogos(settings.logoUrl || getSavedLogo());
@@ -103,7 +121,8 @@ function updateServicesButton() {
     if (showServices && servicesUrl) {
         servicesBtn.style.display = 'flex';
         servicesBtn.href = servicesUrl;
-        servicesBtn.querySelector('span').textContent = servicesText;
+        const span = servicesBtn.querySelector('span');
+        if (span) span.textContent = servicesText;
     } else {
         servicesBtn.style.display = 'none';
     }
