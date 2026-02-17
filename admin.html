@@ -69,12 +69,12 @@
                 </div>
             </div>
 
-            <!-- زر تهيئة النظام (يظهر مرة واحدة فقط) -->
+            <!-- زر تهيئة النظام -->
             <div class="settings-section" id="reset-system-section">
                 <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> تهيئة النظام</h5>
-                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 10px;">هذا الزر يستخدم لمرة واحدة فقط لتهيئة النظام وحذف جميع البيانات</p>
+                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 10px;">هذا الزر يحذف جميع البيانات ويبدأ الترقيم من 1</p>
                 <button class="btn-nav" onclick="resetSystem()" style="width:100%; background: var(--danger); color: white;" id="reset-system-btn">
-                    <i class="fas fa-trash-alt"></i> تهيئة النظام (مرة واحدة)
+                    <i class="fas fa-trash-alt"></i> تهيئة النظام وبداية جديدة
                 </button>
             </div>
 
@@ -231,10 +231,10 @@
                 <table id="main-table">
                     <thead>
                         <tr>
-                            <th>التاريخ</th>
+                            <th>التاريخ والوقت</th>
                             <th>رقم الطلب</th>
                             <th>صاحب الطلب</th>
-                            <th>رقم العضوية</th>
+                            <th>نوع العضوية</th>
                             <th>المحافظة</th>
                             <th>النوع</th>
                             <th>الحالة</th>
