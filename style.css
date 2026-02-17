@@ -86,6 +86,7 @@ img, .btn-nav, .btn-main {
 .splash-content {
     text-align: center;
     animation: float 3s ease-in-out infinite;
+    max-width: 90%;
 }
 
 @keyframes float {
@@ -101,6 +102,7 @@ img, .btn-nav, .btn-main {
     box-shadow: 0 0 50px var(--primary-glow);
     animation: pulse 2s ease-in-out infinite;
     margin-bottom: 30px;
+    max-width: 80%;
 }
 
 @keyframes pulse {
@@ -109,7 +111,7 @@ img, .btn-nav, .btn-main {
 }
 
 .splash-title {
-    font-size: 28px;
+    font-size: clamp(20px, 5vw, 28px);
     font-weight: 900;
     color: var(--primary);
     text-shadow: 0 0 20px var(--primary-glow);
@@ -117,13 +119,13 @@ img, .btn-nav, .btn-main {
 }
 
 .splash-subtitle {
-    font-size: 18px;
+    font-size: clamp(14px, 4vw, 18px);
     color: var(--text-muted);
     margin-bottom: 30px;
 }
 
 .splash-loader {
-    width: 200px;
+    width: min(200px, 80%);
     height: 4px;
     background: rgba(255,255,255,0.1);
     border-radius: 2px;
@@ -150,7 +152,7 @@ img, .btn-nav, .btn-main {
 
 .splash-text {
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: clamp(12px, 3vw, 14px);
     animation: blink 1.5s ease-in-out infinite;
 }
 
@@ -180,16 +182,16 @@ img, .btn-nav, .btn-main {
 }
 
 .floating-element:nth-child(1) {
-    width: 300px;
-    height: 300px;
+    width: min(300px, 50vw);
+    height: min(300px, 50vw);
     top: -100px;
     right: -100px;
     animation-delay: 0s;
 }
 
 .floating-element:nth-child(2) {
-    width: 400px;
-    height: 400px;
+    width: min(400px, 60vw);
+    height: min(400px, 60vw);
     bottom: -150px;
     left: -150px;
     background: linear-gradient(135deg, var(--secondary), var(--primary));
@@ -197,8 +199,8 @@ img, .btn-nav, .btn-main {
 }
 
 .floating-element:nth-child(3) {
-    width: 200px;
-    height: 200px;
+    width: min(200px, 40vw);
+    height: min(200px, 40vw);
     top: 50%;
     left: 20%;
     background: linear-gradient(135deg, var(--success), var(--primary));
@@ -206,8 +208,8 @@ img, .btn-nav, .btn-main {
 }
 
 .floating-element:nth-child(4) {
-    width: 250px;
-    height: 250px;
+    width: min(250px, 45vw);
+    height: min(250px, 45vw);
     top: 20%;
     right: 30%;
     background: linear-gradient(135deg, var(--warning), var(--secondary));
@@ -215,8 +217,8 @@ img, .btn-nav, .btn-main {
 }
 
 .floating-element:nth-child(5) {
-    width: 350px;
-    height: 350px;
+    width: min(350px, 55vw);
+    height: min(350px, 55vw);
     bottom: 20%;
     right: 40%;
     background: linear-gradient(135deg, var(--primary), var(--success));
@@ -240,16 +242,18 @@ img, .btn-nav, .btn-main {
 
 /* المحتوى الرئيسي */
 .main-wrapper {
-    max-width: 500px;
+    max-width: 1200px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
-    padding: 20px 15px;
+    padding: 20px;
+    width: 100%;
 }
 
 .main-content {
     position: relative;
     z-index: 2;
+    width: 100%;
 }
 
 /* تأثير الزجاج */
@@ -263,7 +267,7 @@ img, .btn-nav, .btn-main {
 /* الهيدر */
 .header-box {
     margin-bottom: 25px;
-    padding: 25px;
+    padding: clamp(15px, 4vw, 25px);
     background: var(--card);
     border-radius: 30px;
     border: 1px solid var(--border);
@@ -297,14 +301,16 @@ img, .btn-nav, .btn-main {
 .header-logo-container {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: clamp(10px, 3vw, 20px);
     position: relative;
     z-index: 2;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .header-main-logo {
-    width: 120px;
-    height: 120px;
+    width: clamp(80px, 15vw, 120px);
+    height: clamp(80px, 15vw, 120px);
     border-radius: 50%;
     border: 3px solid var(--primary);
     box-shadow: 0 0 30px var(--primary-glow);
@@ -319,12 +325,14 @@ img, .btn-nav, .btn-main {
 
 .header-text {
     flex: 1;
+    min-width: 200px;
+    text-align: center;
 }
 
 .header-subtitle {
     display: block;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: clamp(12px, 3vw, 14px);
     margin-bottom: 5px;
     position: relative;
     display: inline-block;
@@ -347,7 +355,7 @@ img, .btn-nav, .btn-main {
 }
 
 .header-title {
-    font-size: 24px;
+    font-size: clamp(20px, 5vw, 24px);
     font-weight: 900;
     color: var(--primary);
     text-shadow: 0 0 15px var(--primary-glow);
@@ -356,59 +364,12 @@ img, .btn-nav, .btn-main {
     display: inline-block;
 }
 
-.header-title::before {
-    content: '';
-    position: absolute;
-    top: -5px;
-    left: -10px;
-    width: 20px;
-    height: 20px;
-    border-top: 2px solid var(--primary);
-    border-left: 2px solid var(--primary);
-    animation: corner-move 4s infinite;
-}
-
-.header-title::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    right: -10px;
-    width: 20px;
-    height: 20px;
-    border-bottom: 2px solid var(--primary);
-    border-right: 2px solid var(--primary);
-    animation: corner-move 4s infinite reverse;
-}
-
-@keyframes corner-move {
-    0%, 100% { opacity: 0.3; }
-    50% { opacity: 1; }
-}
-
 .header-role {
     display: block;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: clamp(12px, 3vw, 14px);
     position: relative;
     padding-right: 15px;
-}
-
-.header-role::before {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 8px;
-    height: 8px;
-    background: var(--success);
-    border-radius: 50%;
-    animation: blink-dot 2s infinite;
-}
-
-@keyframes blink-dot {
-    0%, 100% { opacity: 1; box-shadow: 0 0 10px var(--success-glow); }
-    50% { opacity: 0.5; box-shadow: 0 0 20px var(--success-glow); }
 }
 
 /* زر موقع الخدمات */
@@ -417,7 +378,7 @@ img, .btn-nav, .btn-main {
     align-items: center;
     justify-content: center;
     gap: 10px;
-    padding: 15px;
+    padding: clamp(12px, 3vw, 15px);
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-radius: 15px;
     color: white;
@@ -428,6 +389,7 @@ img, .btn-nav, .btn-main {
     overflow: hidden;
     animation: services-pulse 2s infinite;
     border: 1px solid rgba(255,255,255,0.2);
+    font-size: clamp(13px, 3vw, 14px);
 }
 
 .services-btn::before {
@@ -442,7 +404,7 @@ img, .btn-nav, .btn-main {
 }
 
 .services-btn i {
-    font-size: 20px;
+    font-size: clamp(16px, 4vw, 20px);
     position: relative;
     z-index: 2;
 }
@@ -452,25 +414,6 @@ img, .btn-nav, .btn-main {
     z-index: 2;
 }
 
-.services-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px var(--primary-glow);
-}
-
-.services-btn:hover i:last-child {
-    animation: arrow-move 1s infinite;
-}
-
-@keyframes arrow-move {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(5px); }
-}
-
-@keyframes services-pulse {
-    0%, 100% { box-shadow: 0 0 20px var(--primary-glow); }
-    50% { box-shadow: 0 0 40px var(--primary-glow); }
-}
-
 /* الأزرار العلوية */
 .nav-buttons {
     display: flex;
@@ -478,11 +421,13 @@ img, .btn-nav, .btn-main {
     margin-bottom: 25px;
     position: relative;
     z-index: 2;
+    flex-wrap: wrap;
 }
 
 .btn-nav {
     flex: 1;
-    padding: 15px;
+    min-width: 80px;
+    padding: clamp(12px, 3vw, 15px);
     border: none;
     border-radius: 15px;
     background: var(--card);
@@ -497,7 +442,7 @@ img, .btn-nav, .btn-main {
     position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
-    font-size: 14px;
+    font-size: clamp(13px, 3vw, 14px);
     backdrop-filter: blur(10px);
 }
 
@@ -520,7 +465,7 @@ img, .btn-nav, .btn-main {
 }
 
 .btn-nav i {
-    font-size: 18px;
+    font-size: clamp(16px, 4vw, 18px);
     transition: all 0.3s;
     position: relative;
     z-index: 2;
@@ -595,12 +540,13 @@ img, .btn-nav, .btn-main {
 
 /* الكروت */
 .card {
-    padding: 25px;
+    padding: clamp(20px, 4vw, 25px);
     border-radius: 25px;
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s;
+    width: 100%;
 }
 
 .card::before {
@@ -645,7 +591,7 @@ img, .btn-nav, .btn-main {
 .input-group label {
     display: block;
     margin-bottom: 8px;
-    font-size: 13px;
+    font-size: clamp(12px, 3vw, 13px);
     color: var(--text-muted);
     font-weight: 600;
     transition: all 0.3s;
@@ -663,14 +609,14 @@ img, .btn-nav, .btn-main {
 
 .neon-border {
     width: 100%;
-    padding: 15px;
+    padding: clamp(12px, 3vw, 15px);
     background: rgba(11, 17, 32, 0.7);
     border: 2px solid var(--border);
     border-radius: 15px;
     color: var(--text);
     outline: none;
     transition: all 0.3s;
-    font-size: 14px;
+    font-size: clamp(13px, 3vw, 14px);
     backdrop-filter: blur(5px);
 }
 
@@ -685,16 +631,22 @@ img, .btn-nav, .btn-main {
     box-shadow: 0 0 15px var(--primary-glow);
 }
 
+.responsive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
 /* الزر الرئيسي */
 .btn-main {
     width: 100%;
-    padding: 18px;
+    padding: clamp(15px, 4vw, 18px);
     border: none;
     border-radius: 15px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: var(--text);
     font-weight: 700;
-    font-size: 16px;
+    font-size: clamp(14px, 3.5vw, 16px);
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -704,7 +656,6 @@ img, .btn-nav, .btn-main {
     overflow: hidden;
     transition: all 0.3s;
     border: 1px solid transparent;
-    margin-top: 20px;
 }
 
 .btn-main::before {
@@ -728,7 +679,7 @@ img, .btn-nav, .btn-main {
 }
 
 .btn-main i {
-    font-size: 20px;
+    font-size: clamp(18px, 4.5vw, 20px);
     transition: all 0.3s;
 }
 
@@ -762,7 +713,7 @@ img, .btn-nav, .btn-main {
 }
 
 .search-header {
-    padding: 15px 20px;
+    padding: clamp(12px, 3vw, 15px) clamp(15px, 4vw, 20px);
     display: flex;
     align-items: center;
     gap: 10px;
@@ -777,18 +728,20 @@ img, .btn-nav, .btn-main {
 
 .search-header i:first-child {
     color: var(--primary);
-    font-size: 18px;
+    font-size: clamp(16px, 4vw, 18px);
 }
 
 .search-header span {
     flex: 1;
     font-weight: 600;
     color: var(--primary);
+    font-size: clamp(13px, 3.5vw, 14px);
 }
 
 .search-header i:last-child {
     transition: transform 0.3s;
     color: var(--text-muted);
+    font-size: clamp(14px, 3.5vw, 16px);
 }
 
 .search-header.active i:last-child {
@@ -796,7 +749,7 @@ img, .btn-nav, .btn-main {
 }
 
 .search-body {
-    padding: 20px;
+    padding: clamp(15px, 4vw, 20px);
     border-top: 1px solid var(--border);
     display: none;
 }
@@ -819,7 +772,7 @@ img, .btn-nav, .btn-main {
 
 .search-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
 }
@@ -832,25 +785,25 @@ img, .btn-nav, .btn-main {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 12px;
+    font-size: clamp(11px, 2.8vw, 12px);
     color: var(--text-muted);
     margin-bottom: 5px;
 }
 
 .search-field label i {
     color: var(--primary);
-    font-size: 12px;
+    font-size: clamp(11px, 2.8vw, 12px);
 }
 
 .search-field input,
 .search-field select {
     width: 100%;
-    padding: 12px;
+    padding: clamp(10px, 2.5vw, 12px);
     background: rgba(0,0,0,0.3);
     border: 1px solid var(--border);
     border-radius: 10px;
     color: var(--text);
-    font-size: 13px;
+    font-size: clamp(12px, 3vw, 13px);
 }
 
 .search-field input:focus,
@@ -865,10 +818,12 @@ img, .btn-nav, .btn-main {
     align-items: center;
     padding-top: 15px;
     border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .search-results-count {
-    font-size: 13px;
+    font-size: clamp(12px, 3vw, 13px);
     color: var(--primary);
     font-weight: 600;
     padding: 5px 15px;
@@ -942,7 +897,7 @@ img, .btn-nav, .btn-main {
 
 .admin-sidebar-header h2 {
     color: var(--primary);
-    font-size: 24px;
+    font-size: clamp(20px, 5vw, 24px);
     font-weight: 900;
     margin-bottom: 5px;
     text-shadow: 0 0 15px var(--primary-glow);
@@ -950,7 +905,7 @@ img, .btn-nav, .btn-main {
 
 .admin-subtitle {
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: clamp(11px, 2.8vw, 12px);
 }
 
 .admin-nav {
@@ -965,12 +920,12 @@ img, .btn-nav, .btn-main {
     padding: 15px 20px;
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
-    font-size: 15px;
+    font-size: clamp(13px, 3.5vw, 15px);
 }
 
 .admin-nav-btn i {
     width: 25px;
-    font-size: 18px;
+    font-size: clamp(16px, 4vw, 18px);
 }
 
 .admin-nav-btn.active {
@@ -1002,15 +957,17 @@ img, .btn-nav, .btn-main {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
-    padding: 20px 25px;
+    padding: clamp(15px, 4vw, 20px) clamp(20px, 5vw, 25px);
     background: var(--card);
     border-radius: 20px;
     border: 1px solid var(--border);
     backdrop-filter: blur(10px);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .admin-header h1 {
-    font-size: 24px;
+    font-size: clamp(18px, 4.5vw, 24px);
     font-weight: 900;
     color: var(--primary);
     text-shadow: 0 0 15px var(--primary-glow);
@@ -1020,7 +977,7 @@ img, .btn-nav, .btn-main {
 }
 
 .admin-header h1 i {
-    font-size: 28px;
+    font-size: clamp(22px, 5.5vw, 28px);
     animation: float-icon 3s ease-in-out infinite;
 }
 
@@ -1032,6 +989,7 @@ img, .btn-nav, .btn-main {
 .admin-header-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 /* جدول الادمن */
@@ -1044,10 +1002,16 @@ img, .btn-nav, .btn-main {
     padding: 1px;
 }
 
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 #main-table {
     width: 100%;
     border-collapse: collapse;
     background: transparent;
+    min-width: 800px;
 }
 
 #main-table thead tr {
@@ -1055,8 +1019,8 @@ img, .btn-nav, .btn-main {
 }
 
 #main-table th {
-    padding: 18px 15px;
-    font-size: 13px;
+    padding: clamp(12px, 3vw, 18px) clamp(10px, 2.5vw, 15px);
+    font-size: clamp(11px, 2.8vw, 13px);
     font-weight: 700;
     color: var(--primary);
     text-align: right;
@@ -1082,10 +1046,11 @@ img, .btn-nav, .btn-main {
 }
 
 #main-table td {
-    padding: 15px;
-    font-size: 13px;
+    padding: clamp(12px, 3vw, 15px) clamp(10px, 2.5vw, 15px);
+    font-size: clamp(11px, 2.8vw, 13px);
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 #main-table tbody tr {
@@ -1302,6 +1267,7 @@ img, .btn-nav, .btn-main {
     animation: menuSlideIn 0.3s;
     max-height: 80vh;
     overflow-y: auto;
+    z-index: 1001;
 }
 
 @keyframes menuSlideIn {
@@ -1383,7 +1349,7 @@ img, .btn-nav, .btn-main {
 /* النافذة المنبثقة */
 .modal {
     position: fixed;
-    z-index: 1000;
+    z-index: 2000;
     left: 0;
     top: 0;
     width: 100%;
@@ -1513,6 +1479,11 @@ img, .btn-nav, .btn-main {
     .admin-header-actions {
         width: 100%;
         justify-content: center;
+    }
+    
+    .action-btn {
+        width: 30px;
+        height: 30px;
     }
 }
 
