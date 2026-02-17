@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;" onselectstart="return false;">
+<body>
     <div class="main-wrapper">
         <!-- شاشة البداية -->
         <div class="splash-screen" id="splash-screen">
@@ -25,9 +25,11 @@
         <!-- المحتوى الرئيسي -->
         <div class="main-content" id="main-content" style="display: none;">
             <header class="header-box">
-                <div class="header-logo-container">
-                    <img src="https://via.placeholder.com/100x100?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
-                    <div class="header-text">
+                <div class="header-content">
+                    <div class="header-logo-container">
+                        <img src="https://via.placeholder.com/120x120?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
+                    </div>
+                    <div class="header-titles">
                         <span class="header-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</span>
                         <h1 class="header-title">بوابة الشكاوي والمقترحات</h1>
                         <span class="header-role">النقيب العام</span>
@@ -85,13 +87,13 @@
 
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="number" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-border">
+                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
 
                     <div class="responsive-grid">
                         <div class="input-group">
                             <label><i class="fas fa-phone"></i> رقم الهاتف</label>
-                            <input type="number" id="u-phone" placeholder="01xxxxxxxxx" class="neon-border">
+                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
                         <div class="input-group">
                             <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
@@ -164,7 +166,7 @@
                     <div class="card-glow"></div>
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="number" id="q-nid" placeholder="ادخل الرقم القومي" class="neon-border">
+                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     
                     <div class="input-group">
