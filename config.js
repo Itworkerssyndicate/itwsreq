@@ -20,8 +20,7 @@ const STORAGE_KEYS = {
     SERVICES_TEXT: 'services_text',
     SHOW_SERVICES: 'show_services',
     COMPLAINT_PREFIX: 'complaint_prefix',
-    SUGGESTION_PREFIX: 'suggestion_prefix',
-    SYSTEM_RESET_DONE: 'system_reset_done'
+    SUGGESTION_PREFIX: 'suggestion_prefix'
 };
 
 // الإعدادات الافتراضية
@@ -33,18 +32,6 @@ const DEFAULT_SETTINGS = {
     COMPLAINT_PREFIX: 'REQ',
     SUGGESTION_PREFIX: 'REP'
 };
-
-// تحميل الإعدادات من localStorage
-function loadSettings() {
-    const settings = {};
-    for (let key in STORAGE_KEYS) {
-        const value = localStorage.getItem(STORAGE_KEYS[key]);
-        if (value !== null) {
-            settings[key] = value;
-        }
-    }
-    return settings;
-}
 
 // الحصول على قيمة إعداد معين
 function getSetting(key, defaultValue) {
@@ -92,22 +79,11 @@ function saveSettings(settings) {
     if (settings.complaintPrefix !== undefined) localStorage.setItem(STORAGE_KEYS.COMPLAINT_PREFIX, settings.complaintPrefix);
     if (settings.suggestionPrefix !== undefined) localStorage.setItem(STORAGE_KEYS.SUGGESTION_PREFIX, settings.suggestionPrefix);
     
-    // تحديث الشعارات في الصفحة الحالية
+    // تحديث الشعارات
     updateAllLogos(settings.logoUrl || getSavedLogo());
     
     // تحديث زر الخدمات
     updateServicesButton();
-    
-    // رسالة تأكيد
-    Swal.fire({
-        icon: 'success',
-        title: 'تم التحديث',
-        text: 'تم حفظ الإعدادات بنجاح',
-        timer: 1500,
-        showConfirmButton: false,
-        background: '#161f32',
-        color: '#fff'
-    });
 }
 
 // تحديث الشعار في جميع الصفحات
@@ -146,12 +122,10 @@ async function generateRequestNumber(type) {
     const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
     
     try {
-        // الحصول على آخر رقم مسلسل لهذا النوع والسنة
         const snapshot = await db.collection("Requests")
             .where("type", "==", type)
             .get();
         
-        // تصفية الطلبات التي تنتمي للسنة الحالية
         const thisYearRequests = snapshot.docs.filter(doc => {
             const data = doc.data();
             if (!data.createdAt) return false;
@@ -161,7 +135,6 @@ async function generateRequestNumber(type) {
             return docYear === year;
         });
         
-        // الحصول على أعلى رقم مسلسل
         let maxSerial = 0;
         thisYearRequests.forEach(doc => {
             const refId = doc.data().refId;
@@ -176,13 +149,11 @@ async function generateRequestNumber(type) {
             }
         });
         
-        // الرقم المسلسل الجديد
         const newSerial = (maxSerial + 1).toString().padStart(4, '0');
         return `${prefix}-${newSerial}-${year}`;
         
     } catch (error) {
         console.error("Error generating request number:", error);
-        // في حالة الخطأ، نستخدم طريقة بديلة
         const timestamp = Date.now().toString().slice(-6);
         return `${prefix}-${timestamp}-${year}`;
     }
