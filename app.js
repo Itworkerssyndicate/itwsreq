@@ -164,10 +164,9 @@ async function generateRequestCard(data) {
             
             <div style="text-align: center; margin-bottom: 20px; position: relative; z-index: 2;">
                 <img src="${logo}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00d2ff; box-shadow: 0 0 30px #00d2ff; margin-bottom: 10px;">
-                <h2 style="margin: 5px 0; color: #00d2ff; text-shadow: 0 0 15px #00d2ff;">نقابة المهندسين المصرية</h2>
-                <p style="color: #94a3b8;">شعبة تكنولوجيا المعلومات</p>
-                <h3 style="color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
-                <p style="color: #94a3b8;">النقيب العام</p>
+                <h2 style="margin: 5px 0; color: #00d2ff; text-shadow: 0 0 15px #00d2ff;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <p style="color: #94a3b8;">بوابة الشكاوي والمقترحات</p>
+                <h3 style="color: white; margin: 5px 0;">نقيب المعلومات</h3>
             </div>
 
             <div style="
@@ -211,7 +210,7 @@ async function generateRequestCard(data) {
                     margin: 20px 0;
                     border-radius: 2px;
                 "></div>
-                <p style="color: #94a3b8; font-size: 12px;">هذا الكارت معتمد من نقابة المهندسين المصرية</p>
+                <p style="color: #94a3b8; font-size: 12px;">هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات</p>
                 <p style="color: #00d2ff; font-size: 10px;">يمكنك متابعة طلبك عبر رقم الطلب</p>
             </div>
         </div>
