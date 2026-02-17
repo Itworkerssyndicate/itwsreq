@@ -1,420 +1,291 @@
 let currentFilter = 'all';
 let allRequests = [];
 let unsubscribe;
-let currentDeleteId = null; // لتخزين ID الطلب المراد حذفه
+let currentDeleteId = null;
 
-function setActiveNav(buttonId) {
-    document.querySelectorAll('.admin-nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.getElementById(buttonId)?.classList.add('active');
+function setActiveNav(id) {
+    document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
 }
 
 function loadData(filter) {
     currentFilter = filter;
+    setActiveNav(filter === 'all' ? 'nav-all' : filter === 'شكوى' ? 'nav-complaint' : 'nav-suggestion');
     
-    if(filter === 'all') setActiveNav('nav-all');
-    else if(filter === 'شكوى') setActiveNav('nav-complaint');
-    else if(filter === 'اقتراح') setActiveNav('nav-suggestion');
-
     if (unsubscribe) unsubscribe();
-
-    unsubscribe = db.collection("Requests")
-        .orderBy("createdAt", "desc")
-        .onSnapshot(snap => {
-            allRequests = [];
-            snap.forEach(doc => {
-                const d = doc.data();
-                if (d.createdAt && d.createdAt.toDate) {
-                    d.createdAtDate = d.createdAt.toDate();
-                }
-                allRequests.push(d);
-            });
-            performSearch();
+    
+    unsubscribe = db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
+        allRequests = [];
+        snap.forEach(doc => {
+            const d = doc.data();
+            if (d.createdAt?.toDate) d.createdAtDate = d.createdAt.toDate();
+            allRequests.push(d);
         });
+        performSearch();
+    });
 }
 
 function performSearch() {
-    const searchRef = document.getElementById('search-ref')?.value.toLowerCase().trim() || '';
-    const searchName = document.getElementById('search-name')?.value.toLowerCase().trim() || '';
-    const searchNid = document.getElementById('search-nid')?.value.trim() || '';
-    const searchMember = document.getElementById('search-member')?.value.trim() || '';
-    const searchSpecificMember = document.getElementById('search-specific-member')?.value.trim() || '';
-    const searchDateFrom = document.getElementById('search-date-from')?.value || '';
-    const searchDateTo = document.getElementById('search-date-to')?.value || '';
-    const searchType = document.getElementById('search-type')?.value || 'all';
-    const searchStatus = document.getElementById('search-status')?.value || 'all';
-    const searchMemberType = document.getElementById('search-member-type')?.value || 'all';
-
-    let filteredRequests = allRequests.filter(req => {
+    const fields = {
+        ref: document.getElementById('search-ref')?.value.toLowerCase().trim() || '',
+        name: document.getElementById('search-name')?.value.toLowerCase().trim() || '',
+        nid: document.getElementById('search-nid')?.value.trim() || '',
+        member: document.getElementById('search-member')?.value.trim() || '',
+        specificMember: document.getElementById('search-specific-member')?.value.trim() || '',
+        dateFrom: document.getElementById('search-date-from')?.value || '',
+        dateTo: document.getElementById('search-date-to')?.value || '',
+        type: document.getElementById('search-type')?.value || 'all',
+        status: document.getElementById('search-status')?.value || 'all',
+        memberType: document.getElementById('search-member-type')?.value || 'all'
+    };
+    
+    const filtered = allRequests.filter(req => {
         if (currentFilter !== 'all' && req.type !== currentFilter) return false;
-        if (searchType !== 'all' && req.type !== searchType) return false;
-        if (searchStatus !== 'all' && req.status !== searchStatus) return false;
+        if (fields.type !== 'all' && req.type !== fields.type) return false;
+        if (fields.status !== 'all' && req.status !== fields.status) return false;
         
-        if (searchMemberType !== 'all') {
-            if (searchMemberType === 'عضو نقابة') {
+        if (fields.memberType !== 'all') {
+            if (fields.memberType === 'عضو نقابة') {
                 if (req.memberType !== 'عضو نقابة') return false;
-                if (searchSpecificMember && !req.memberId?.includes(searchSpecificMember)) return false;
-            } else if (searchMemberType === 'غير عضو' && req.memberType !== 'غير عضو') return false;
+                if (fields.specificMember && !req.memberId?.includes(fields.specificMember)) return false;
+            } else if (req.memberType !== 'غير عضو') return false;
         }
-
-        if (searchRef && !req.refId?.toLowerCase().includes(searchRef)) return false;
-        if (searchName && !req.name?.toLowerCase().includes(searchName)) return false;
-        if (searchNid && !req.nid?.includes(searchNid)) return false;
-        if (searchMember && !req.memberId?.includes(searchMember)) return false;
-
-        if (searchDateFrom || searchDateTo) {
-            const reqDate = req.createdAtDate || (req.createdAt ? new Date(req.createdAt) : null);
-            if (reqDate) {
-                const reqDateStr = reqDate.toISOString().split('T')[0];
-                if (searchDateFrom && reqDateStr < searchDateFrom) return false;
-                if (searchDateTo && reqDateStr > searchDateTo) return false;
+        
+        if (fields.ref && !req.refId?.toLowerCase().includes(fields.ref)) return false;
+        if (fields.name && !req.name?.toLowerCase().includes(fields.name)) return false;
+        if (fields.nid && !req.nid?.includes(fields.nid)) return false;
+        if (fields.member && !req.memberId?.includes(fields.member)) return false;
+        
+        if (fields.dateFrom || fields.dateTo) {
+            const d = req.createdAtDate || (req.createdAt ? new Date(req.createdAt) : null);
+            if (d) {
+                const ds = d.toISOString().split('T')[0];
+                if (fields.dateFrom && ds < fields.dateFrom) return false;
+                if (fields.dateTo && ds > fields.dateTo) return false;
             }
         }
-
+        
         return true;
     });
-
-    document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
-    renderRequests(filteredRequests);
+    
+    document.getElementById('results-count').textContent = `${filtered.length} نتيجة`;
+    renderRequests(filtered);
 }
 
 function resetSearch() {
-    document.getElementById('search-ref').value = '';
-    document.getElementById('search-name').value = '';
-    document.getElementById('search-nid').value = '';
-    document.getElementById('search-member').value = '';
-    document.getElementById('search-specific-member').value = '';
-    document.getElementById('search-date-from').value = '';
-    document.getElementById('search-date-to').value = '';
-    document.getElementById('search-type').value = 'all';
-    document.getElementById('search-status').value = 'all';
-    document.getElementById('search-member-type').value = 'all';
+    ['ref', 'name', 'nid', 'member', 'specific-member', 'date-from', 'date-to'].forEach(id => 
+        document.getElementById(`search-${id}`).value = '');
+    ['type', 'status', 'member-type'].forEach(id => 
+        document.getElementById(`search-${id}`).value = 'all');
     document.getElementById('member-id-search-field').style.display = 'none';
     performSearch();
 }
 
 function toggleMemberSearch() {
-    const memberType = document.getElementById('search-member-type').value;
-    const memberField = document.getElementById('member-id-search-field');
-    memberField.style.display = memberType === 'عضو نقابة' ? 'block' : 'none';
-    if (memberType !== 'عضو نقابة') document.getElementById('search-specific-member').value = '';
+    const mt = document.getElementById('search-member-type').value;
+    const f = document.getElementById('member-id-search-field');
+    f.style.display = mt === 'عضو نقابة' ? 'block' : 'none';
+    if (mt !== 'عضو نقابة') document.getElementById('search-specific-member').value = '';
     performSearch();
 }
 
 function toggleSearch() {
-    const searchBody = document.getElementById('search-body');
-    const searchArrow = document.getElementById('search-arrow');
-    const searchHeader = document.querySelector('.search-header');
+    const body = document.getElementById('search-body');
+    const arrow = document.getElementById('search-arrow');
+    const header = document.querySelector('.search-header');
     
-    if (searchBody.style.display === 'none' || !searchBody.style.display) {
-        searchBody.style.display = 'block';
-        searchArrow.style.transform = 'rotate(180deg)';
-        searchHeader.classList.add('active');
+    if (body.style.display !== 'block') {
+        body.style.display = 'block';
+        arrow.style.transform = 'rotate(180deg)';
+        header.classList.add('active');
     } else {
-        searchBody.style.display = 'none';
-        searchArrow.style.transform = 'rotate(0)';
-        searchHeader.classList.remove('active');
+        body.style.display = 'none';
+        arrow.style.transform = 'rotate(0)';
+        header.classList.remove('active');
     }
-}
-
-function formatText(text) {
-    if (!text) return '';
-    return text.replace(/\s+/g, ' ').trim().split('').join(' ').replace(/\s+/g, ' ');
 }
 
 function renderRequests(requests) {
-    let html = "";
+    let html = '';
     
-    requests.forEach(d => {
-        const createdDate = d.createdAtDate ? 
-            d.createdAtDate.toLocaleDateString('ar-EG') : 
-            (d.createdAt ? new Date(d.createdAt).toLocaleDateString('ar-EG') : 'غير محدد');
-        
-        const createdTime = d.createdAtDate ? 
-            d.createdAtDate.toLocaleTimeString('ar-EG') : 
-            (d.createdAt ? new Date(d.createdAt).toLocaleTimeString('ar-EG') : '');
-        
-        const membershipHtml = d.memberType === 'عضو نقابة' 
-            ? `<span class="membership-badge member">عضو</span> ${d.memberId}`
-            : `<span class="membership-badge non-member">غير عضو</span>`;
+    requests.forEach(r => {
+        const date = r.createdAtDate ? r.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
+        const time = r.createdAtDate ? r.createdAtDate.toLocaleTimeString('ar-EG') : '';
+        const member = r.memberType === 'عضو نقابة' 
+            ? `<span class="membership-badge" style="background:rgba(0,210,255,0.2); color:var(--primary);">عضو</span> ${r.memberId}`
+            : `<span class="membership-badge" style="background:rgba(148,163,184,0.2); color:var(--text-muted);">غير عضو</span>`;
         
         html += `
         <tr>
-            <td><div>${createdDate}</div><small style="color:var(--text-muted);">${createdTime}</small></td>
-            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:2px !important;">${d.refId}</span></td>
-            <td><div><strong>${formatText(d.name)}</strong><br><small>${formatText(d.job)}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
-            <td>${membershipHtml}</td>
-            <td>${d.gov}</td>
-            <td><span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></td>
-            <td><span class="status-badge status-${d.status.replace(/ /g, '\\ ')}">${d.status}</span></td>
-            <td><button class="action-btn" onclick="manageReq('${d.refId}')"><i class="fas fa-cog"></i></button></td>
+            <td><div>${date}</div><small style="color:var(--text-muted);">${time}</small></td>
+            <td style="color:var(--primary); direction:ltr;">${r.refId}</td>
+            <td><div><strong>${r.name}</strong><br><small>${r.job}</small><br><small style="color:var(--primary);">${r.phone}</small></div></td>
+            <td>${member}</td>
+            <td>${r.gov}</td>
+            <td><span class="type-badge" style="background:${r.type === 'شكوى' ? 'rgba(255,71,87,0.2)' : 'rgba(0,255,136,0.2)'}; color:${r.type === 'شكوى' ? 'var(--danger)' : 'var(--success)'};">${r.type}</span></td>
+            <td><span class="status-badge" style="background:${getStatusColor(r.status)}">${r.status}</span></td>
+            <td><button class="action-btn" onclick="manageReq('${r.refId}')"><i class="fas fa-cog"></i></button></td>
         </tr>`;
     });
     
-    if(html === '') {
-        html = '<tr><td colspan="8" style="text-align:center; padding:30px;">لا توجد بيانات</td></tr>';
-    }
-    
-    document.getElementById('admin-tbody').innerHTML = html;
+    document.getElementById('admin-tbody').innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:30px;">لا توجد بيانات</td></tr>';
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'تم الاستلام': 'rgba(255,165,2,0.2)',
+        'قيد المراجعة': 'rgba(0,210,255,0.2)',
+        'جاري التنفيذ': 'rgba(58,123,213,0.2)',
+        'تم الحل': 'rgba(0,255,136,0.2)',
+        'تم الإغلاق النهائي': 'rgba(255,71,87,0.2)',
+        'تمت القراءة': 'rgba(0,210,255,0.2)',
+        'لم يقرأ': 'rgba(255,165,2,0.2)'
+    };
+    return colors[status] || 'rgba(148,163,184,0.2)';
 }
 
 function exportToPDF() {
-    const element = document.getElementById('main-table');
-    html2pdf().from(element).save('تقرير_الطلبات.pdf');
+    html2pdf().from(document.getElementById('main-table')).save('تقرير_الطلبات.pdf');
 }
 
 async function manageReq(id) {
-    try {
-        const snap = await db.collection("Requests").doc(id).get();
-        if(!snap.exists) return;
-        showRequestModal(snap.data());
-    } catch(error) {
-        console.error(error);
-    }
+    const snap = await db.collection("Requests").doc(id).get();
+    if (snap.exists) showRequestModal(snap.data());
 }
 
-// فتح نافذة الحذف المنفصلة
 function openDeleteModal(id) {
     currentDeleteId = id;
     document.getElementById('delete-modal').style.display = 'flex';
-    document.getElementById('delete-modal').classList.add('show');
-    document.getElementById('delete-password').value = '';
     document.getElementById('delete-password').focus();
 }
 
-// إغلاق نافذة الحذف
 function closeDeleteModal() {
     document.getElementById('delete-modal').style.display = 'none';
-    document.getElementById('delete-modal').classList.remove('show');
     currentDeleteId = null;
 }
 
-// تأكيد الحذف
 async function confirmDelete() {
     const pass = document.getElementById('delete-password').value;
-    
     if (pass === '11111@') {
-        try {
-            await db.collection("Requests").doc(currentDeleteId).delete();
-            Swal.fire({
-                icon: 'success',
-                title: 'تم',
-                text: 'تم الحذف',
-                background: '#161f32',
-                color: '#fff'
-            });
-            closeDeleteModal();
-        } catch(error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ',
-                background: '#161f32',
-                color: '#fff'
-            });
-        }
+        await db.collection("Requests").doc(currentDeleteId).delete();
+        Swal.fire({ icon: 'success', title: 'تم', text: 'تم الحذف', background: '#161f32', color: '#fff' });
+        closeDeleteModal();
     } else {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'كلمة السر خطأ',
-            background: '#161f32',
-            color: '#fff'
-        });
+        Swal.fire({ icon: 'error', title: 'خطأ', text: 'كلمة السر خطأ', background: '#161f32', color: '#fff' });
     }
 }
 
 function showRequestModal(d) {
-    const stages = d.tracking.map(t => t.status);
-    const finalStage = "تم الإغلاق النهائي";
-    const allStages = [...stages, finalStage];
-    const currentIdx = allStages.indexOf(d.status);
-    // من اليمين للشمال: نبدأ من 0% عند أول مرحلة وصولاً لـ 100% عند آخر مرحلة
-    const progressPercent = allStages.length > 0 ? (currentIdx / (allStages.length - 1)) * 100 : 0;
-
-    // تحديد حقل إدخال الحالة حسب نوع الطلب
-    let statusInput = '';
-    if (d.type === 'شكوى') {
-        // للشكوى: حقل نصي مفتوح
-        statusInput = `
-            <div class="input-group">
-                <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
-                <input type="text" id="new-stage-name" class="neon-border" placeholder="اكتب اسم المرحلة..." style="margin-bottom:10px;">
-            </div>
-        `;
-    } else {
-        // للاقتراح: اختيار من قائمة
-        statusInput = `
-            <div class="input-group">
-                <label><i class="fas fa-tag"></i> الحالة الجديدة</label>
-                <select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
-                    <option value="">-- اختر الحالة --</option>
-                    <option value="تمت القراءة">تمت القراءة</option>
-                    <option value="لم يقرأ">لم يقرأ</option>
-                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
-                </select>
-            </div>
-        `;
-    }
-
-    const modalHtml = `
+    const stages = [...d.tracking.map(t => t.status), "تم الإغلاق النهائي"];
+    const currentIdx = stages.indexOf(d.status);
+    const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
+    
+    const statusInput = d.type === 'شكوى' 
+        ? `<input type="text" id="new-stage-name" class="neon-border" placeholder="اسم المرحلة الجديدة" style="margin-bottom:10px;">`
+        : `<select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
+            <option value="">اختر الحالة</option>
+            <option value="تمت القراءة">تمت القراءة</option>
+            <option value="لم يقرأ">لم يقرأ</option>
+            <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+           </select>`;
+    
+    const html = `
         <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="color:var(--primary); font-size:20px;">إدارة الطلب</h3>
+            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">
+                <h3 style="color:var(--primary);">إدارة الطلب</h3>
                 <button class="action-btn delete" onclick="openDeleteModal('${d.refId}')"><i class="fas fa-trash"></i></button>
             </div>
             
-            <div style="background:rgba(0,0,0,0.3); padding:20px; border-radius:15px; margin-bottom:20px;">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; font-size:14px;">
-                    <div><span style="color:#94a3b8;">الاسم :</span> ${formatText(d.name)}</div>
+            <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:15px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><span style="color:#94a3b8;">الاسم :</span> ${d.name}</div>
                     <div><span style="color:#94a3b8;">الرقم القومي :</span> ${d.nid}</div>
                     <div><span style="color:#94a3b8;">الهاتف :</span> ${d.phone}</div>
                     <div><span style="color:#94a3b8;">المحافظة :</span> ${d.gov}</div>
                     <div><span style="color:#94a3b8;">نوع المقدم :</span> ${d.memberType}</div>
                     <div><span style="color:#94a3b8;">رقم العضوية :</span> ${d.memberId}</div>
-                    <div><span style="color:#94a3b8;">المهنة :</span> ${formatText(d.job)}</div>
-                    <div><span style="color:#94a3b8;">نوع الطلب :</span> <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></div>
                 </div>
-                <div style="margin-top:15px;"><span style="color:#94a3b8;">العنوان :</span> ${formatText(d.address)}</div>
-                <div style="margin-top:15px;"><span style="color:#94a3b8;">التفاصيل :</span> ${formatText(d.details)}</div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان :</span> ${d.address}</div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${d.details}</div>
             </div>
-
-            <!-- التراك المائي الأفقي من اليمين للشمال -->
-            <div class="track-container" style="margin:25px 0;">
+            
+            <div class="track-container" style="margin:20px 0;">
                 <div class="track-water">
-                    <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
+                    <div class="water-fill-horizontal" style="width: ${progress}%;"></div>
                 </div>
                 <div class="track-bar-horizontal">
-                    ${allStages.map((stage, index) => {
-                        const isActive = index <= currentIdx;
-                        return `
-                            <div class="track-point">
-                                <div class="dot ${isActive ? 'active' : 'inactive'}">
-                                    ${isActive ? '<i class="fas fa-check"></i>' : ''}
-                                </div>
-                                <span class="dot-label">${stage}</span>
-                            </div>
-                        `;
-                    }).join('')}
+                    ${stages.map((s, i) => `
+                        <div class="track-point">
+                            <div class="dot ${i <= currentIdx ? 'active' : ''}">${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}</div>
+                            <span class="dot-label">${s}</span>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
-
-            <div style="margin:20px 0;">
-                <h4 style="font-size:16px; margin-bottom:12px;">المسار الزمني</h4>
+            
+            <div style="margin:15px 0;">
+                <h4>المسار الزمني</h4>
                 ${d.tracking.slice().reverse().map(t => `
-                    <div class="timeline-card ${t.isFinal ? 'final' : ''}">
+                    <div class="timeline-card">
                         <div class="timeline-header"><h4>${t.status}</h4><span>${t.time}</span></div>
                         <p>${t.comment}</p>
                     </div>
                 `).join('')}
             </div>
-
-            <div style="border-top:1px solid var(--border); padding-top:20px;">
-                <h4 style="font-size:16px; margin-bottom:15px;">تحديث جديد</h4>
+            
+            <div style="border-top:1px solid var(--border); padding-top:15px;">
+                <h4 style="margin-bottom:10px;">تحديث جديد</h4>
                 ${statusInput}
-                <div class="input-group">
-                    <label><i class="fas fa-comment"></i> تعليق المرحلة السابقة</label>
-                    <textarea id="status-comment" class="neon-border" placeholder="اكتب تعليقك هنا..." rows="3" style="margin-bottom:10px;"></textarea>
-                </div>
-                <div style="display:flex; gap:10px;">
-                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">تحديث</button>
-                </div>
+                <textarea id="status-comment" class="neon-border" placeholder="تعليق" rows="2" style="margin-bottom:10px;"></textarea>
+                <button class="btn-main" onclick="updateRequestStatus('${d.refId}')">تحديث</button>
             </div>
         </div>
     `;
-
-    document.getElementById('modal-content-area').innerHTML = modalHtml;
+    
+    document.getElementById('modal-content-area').innerHTML = html;
     document.getElementById('request-modal').style.display = 'flex';
-    document.getElementById('request-modal').classList.add('show');
 }
 
 async function updateRequestStatus(refId) {
     const newStage = document.getElementById('new-stage-name').value.trim();
     const comment = document.getElementById('status-comment').value.trim();
     
-    if(!newStage || !comment) {
-        return Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'املأ جميع الحقول',
-            background: '#161f32',
-            color: '#fff'
-        });
+    if (!newStage || !comment) {
+        return Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ الحقول', background: '#161f32', color: '#fff' });
     }
-
-    try {
-        await db.collection("Requests").doc(refId).update({
+    
+    await db.collection("Requests").doc(refId).update({
+        status: newStage,
+        tracking: firebase.firestore.FieldValue.arrayUnion({
             status: newStage,
-            tracking: firebase.firestore.FieldValue.arrayUnion({
-                status: newStage,
-                comment: comment,
-                time: new Date().toLocaleString('ar-EG'),
-                isFinal: newStage === 'تم الإغلاق النهائي'
-            })
-        });
-
-        Swal.fire({
-            icon: 'success',
-            title: 'تم',
-            text: 'تم تحديث الحالة',
-            background: '#161f32',
-            color: '#fff'
-        });
-        closeModal();
-    } catch(error) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'حدث خطأ',
-            background: '#161f32',
-            color: '#fff'
-        });
-    }
+            comment,
+            time: new Date().toLocaleString('ar-EG'),
+            isFinal: newStage === 'تم الإغلاق النهائي'
+        })
+    });
+    
+    Swal.fire({ icon: 'success', title: 'تم', text: 'تم التحديث', background: '#161f32', color: '#fff' });
+    closeModal();
 }
 
 async function resetSystem() {
     const { value: pass } = await Swal.fire({
         title: '⚠️ تحذير',
-        html: 'حذف جميع البيانات نهائياً',
+        text: 'حذف جميع البيانات',
         input: 'password',
-        inputPlaceholder: 'كلمة السر',
         showCancelButton: true,
-        confirmButtonColor: '#ff4757',
         background: '#161f32',
-        color: '#fff',
-        inputAttributes: { 
-            style: 'direction:ltr;',
-            autocomplete: 'off'
-        },
-        allowOutsideClick: false,
-        allowEscapeKey: false
+        color: '#fff'
     });
-
+    
     if (pass === '11111@') {
-        try {
-            const snapshot = await db.collection("Requests").get();
-            const batch = db.batch();
-            snapshot.docs.forEach(doc => batch.delete(doc.ref));
-            await batch.commit();
-            localStorage.setItem('system_reset_done', 'true');
-            Swal.fire({
-                icon: 'success',
-                title: 'تم',
-                text: 'تمت تهيئة النظام',
-                background: '#161f32',
-                color: '#fff'
-            });
-            document.getElementById('reset-system-section').style.display = 'none';
-        } catch(error) {
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ',
-                background: '#161f32',
-                color: '#fff'
-            });
-        }
+        const snap = await db.collection("Requests").get();
+        const batch = db.batch();
+        snap.docs.forEach(d => batch.delete(d.ref));
+        await batch.commit();
+        localStorage.setItem('system_reset_done', 'true');
+        Swal.fire({ icon: 'success', title: 'تم', text: 'تمت التهيئة', background: '#161f32', color: '#fff' });
+        document.getElementById('reset-system-section').style.display = 'none';
     }
 }
 
@@ -432,6 +303,19 @@ function toggleSettings() {
     }
 }
 
+function autoSaveSettings() {
+    setTimeout(() => {
+        saveSettings({
+            logoUrl: document.getElementById('logo-url')?.value,
+            servicesUrl: document.getElementById('services-url')?.value,
+            servicesText: document.getElementById('services-text')?.value,
+            showServices: document.getElementById('show-services-btn')?.checked,
+            complaintPrefix: document.getElementById('complaint-prefix')?.value,
+            suggestionPrefix: document.getElementById('suggestion-prefix')?.value
+        });
+    }, 500);
+}
+
 function logout() {
     localStorage.removeItem('admin');
     window.location.href = 'index.html';
@@ -439,23 +323,15 @@ function logout() {
 
 function closeModal() {
     document.getElementById('request-modal').style.display = 'none';
-    document.getElementById('request-modal').classList.remove('show');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadData('all');
-    const savedLogo = getSavedLogo();
-    const adminLogo = document.getElementById('admin-logo');
-    if(adminLogo) adminLogo.src = savedLogo;
+    document.getElementById('admin-logo').src = getSavedLogo();
     document.getElementById('search-body').style.display = 'none';
-    
-    // التحقق من ظهور زر التهيئة
-    const resetDone = localStorage.getItem('system_reset_done');
-    if (resetDone === 'true') {
+    if (localStorage.getItem('system_reset_done') === 'true') {
         document.getElementById('reset-system-section').style.display = 'none';
     }
 });
 
-window.addEventListener('beforeunload', () => {
-    if (unsubscribe) unsubscribe();
-});
+window.addEventListener('beforeunload', () => unsubscribe?.());
