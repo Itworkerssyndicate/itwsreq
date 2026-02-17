@@ -44,9 +44,9 @@ body {
 /* تحسين الخطوط والتباعد */
 h1, h2, h3, h4, h5, h6, p, span, div, label, input, textarea, select, button, td, th {
     font-family: 'Tajawal', 'Cairo', sans-serif;
-    letter-spacing: 0.2px;
-    word-spacing: 2px;
-    line-height: 1.7;
+    letter-spacing: 0.3px;
+    word-spacing: 3px;
+    line-height: 1.8;
 }
 
 /* السماح بالكتابة */
@@ -338,37 +338,37 @@ input:focus, textarea:focus, select:focus {
 .header-subtitle {
     display: block;
     color: var(--text-muted);
-    font-size: 16px;
+    font-size: 18px;
     margin-bottom: 8px;
     letter-spacing: 1px;
     word-spacing: 4px;
 }
 
 .header-title {
-    font-size: 26px;
+    font-size: 28px;
     font-weight: 900;
     color: var(--primary);
     text-shadow: 0 0 15px var(--primary-glow);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     line-height: 1.5;
     letter-spacing: 1.5px;
-    word-spacing: 5px;
+    word-spacing: 6px;
 }
 
 .header-role {
     display: block;
     color: var(--text-muted);
-    font-size: 18px;
+    font-size: 20px;
     margin-bottom: 5px;
-    word-spacing: 3px;
+    word-spacing: 4px;
 }
 
 .header-name {
     display: block;
     color: var(--text);
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
-    word-spacing: 4px;
+    word-spacing: 5px;
 }
 
 /* زر موقع الخدمات */
@@ -388,7 +388,7 @@ input:focus, textarea:focus, select:focus {
     overflow: hidden;
     animation: services-pulse 2s infinite;
     border: 1px solid rgba(255,255,255,0.2);
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .services-btn::before {
@@ -403,7 +403,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .services-btn i {
-    font-size: 18px;
+    font-size: 20px;
     position: relative;
     z-index: 2;
 }
@@ -439,7 +439,7 @@ input:focus, textarea:focus, select:focus {
     position: relative;
     overflow: hidden;
     border: 1px solid var(--border);
-    font-size: 14px;
+    font-size: 15px;
     backdrop-filter: blur(10px);
 }
 
@@ -462,7 +462,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .btn-nav i {
-    font-size: 16px;
+    font-size: 18px;
     transition: all 0.3s;
     position: relative;
     z-index: 2;
@@ -563,7 +563,7 @@ input:focus, textarea:focus, select:focus {
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    font-size: 14px;
+    font-size: 15px;
     color: var(--text-muted);
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -584,7 +584,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--text);
     outline: none;
     transition: all 0.3s;
-    font-size: 14px;
+    font-size: 15px;
     backdrop-filter: blur(5px);
     font-family: 'Tajawal', sans-serif;
     letter-spacing: 0.5px;
@@ -611,7 +611,7 @@ input:focus, textarea:focus, select:focus {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: var(--text);
     font-weight: 700;
-    font-size: 15px;
+    font-size: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -622,7 +622,7 @@ input:focus, textarea:focus, select:focus {
     transition: all 0.3s;
     border: 1px solid transparent;
     letter-spacing: 0.5px;
-    word-spacing: 3px;
+    word-spacing: 4px;
 }
 
 .btn-main::before {
@@ -646,7 +646,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .btn-main i {
-    font-size: 18px;
+    font-size: 20px;
     transition: all 0.3s;
 }
 
@@ -739,14 +739,14 @@ input:focus, textarea:focus, select:focus {
 }
 
 .search-field label {
-    font-size: 12px;
+    font-size: 13px;
     word-spacing: 2px;
 }
 
 .search-field input,
 .search-field select {
     padding: 10px;
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .search-actions {
@@ -758,7 +758,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .search-results-count {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--primary);
     font-weight: 600;
     padding: 5px 12px;
@@ -805,14 +805,14 @@ input:focus, textarea:focus, select:focus {
 
 .admin-sidebar-header h2 {
     color: var(--primary);
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
     margin-bottom: 5px;
 }
 
 .admin-subtitle {
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .admin-nav {
@@ -825,7 +825,7 @@ input:focus, textarea:focus, select:focus {
     margin-bottom: 8px;
     justify-content: flex-start;
     padding: 12px 15px;
-    font-size: 14px;
+    font-size: 15px;
 }
 
 .admin-nav-btn i {
@@ -859,7 +859,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .admin-header h1 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
     color: var(--primary);
     display: flex;
@@ -895,7 +895,7 @@ input:focus, textarea:focus, select:focus {
 
 #main-table th {
     padding: 12px 10px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--primary);
     text-align: right;
@@ -905,7 +905,7 @@ input:focus, textarea:focus, select:focus {
 
 #main-table td {
     padding: 10px;
-    font-size: 12px;
+    font-size: 13px;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
     white-space: nowrap;
@@ -936,7 +936,7 @@ input:focus, textarea:focus, select:focus {
 .status-badge {
     padding: 4px 8px;
     border-radius: 20px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     display: inline-block;
 }
@@ -987,7 +987,7 @@ input:focus, textarea:focus, select:focus {
 .type-badge {
     padding: 4px 8px;
     border-radius: 20px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 700;
     display: inline-block;
 }
@@ -1008,7 +1008,7 @@ input:focus, textarea:focus, select:focus {
 .membership-badge {
     padding: 3px 6px;
     border-radius: 10px;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 600;
     display: inline-block;
     margin-left: 5px;
@@ -1030,9 +1030,9 @@ input:focus, textarea:focus, select:focus {
 .action-btn {
     background: transparent;
     border: 1px solid var(--border);
-    width: 30px;
-    height: 30px;
-    border-radius: 6px;
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
     color: var(--text);
     cursor: pointer;
     margin: 0 2px;
@@ -1123,7 +1123,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 .settings-section h5 {
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 10px;
     display: flex;
     align-items: center;
@@ -1138,7 +1138,7 @@ input:focus, textarea:focus, select:focus {
     padding: 8px;
     background: rgba(0,255,136,0.1);
     border-radius: 8px;
-    font-size: 12px;
+    font-size: 13px;
     color: var(--success);
     margin-top: 10px;
     animation: fadeInOut 2s ease;
@@ -1198,12 +1198,12 @@ input:focus, textarea:focus, select:focus {
     position: sticky;
     top: 0;
     float: left;
-    font-size: 24px;
+    font-size: 28px;
     font-weight: bold;
     color: var(--text-muted);
     cursor: pointer;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1223,7 +1223,7 @@ input:focus, textarea:focus, select:focus {
 .track-container {
     position: relative;
     width: 100%;
-    height: 100px;
+    height: 120px;
     margin: 30px 0;
     padding: 0;
     direction: ltr; /* لتغيير الاتجاه */
@@ -1236,9 +1236,10 @@ input:focus, textarea:focus, select:focus {
     right: 0;
     bottom: 0;
     background: rgba(30, 41, 59, 0.5);
-    border-radius: 50px;
+    border-radius: 60px;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 20px var(--primary-glow);
 }
 
 .water-fill-horizontal {
@@ -1248,8 +1249,9 @@ input:focus, textarea:focus, select:focus {
     bottom: 0;
     width: 0%;
     background: linear-gradient(90deg, var(--secondary), var(--primary));
-    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 20px var(--primary-glow);
+    transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 30px var(--primary-glow);
+    z-index: 1;
 }
 
 .water-fill-horizontal::before {
@@ -1259,8 +1261,9 @@ input:focus, textarea:focus, select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: water-flow 2s linear infinite;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    animation: water-flow 2.5s linear infinite;
+    z-index: 2;
 }
 
 @keyframes water-flow {
@@ -1274,8 +1277,8 @@ input:focus, textarea:focus, select:focus {
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    z-index: 2;
-    padding: 0 15px;
+    z-index: 3;
+    padding: 0 20px;
     direction: rtl; /* النصوص بالعربي */
 }
 
@@ -1289,63 +1292,66 @@ input:focus, textarea:focus, select:focus {
 }
 
 .dot {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background: var(--card-solid);
     border: 3px solid var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 16px;
     transition: all 0.3s;
     z-index: 3;
     position: relative;
     color: var(--text);
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    margin-bottom: 5px;
 }
 
 .dot i {
-    font-size: 16px;
+    font-size: 18px;
     color: var(--text);
 }
 
 .dot.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     border-color: var(--text);
-    box-shadow: 0 0 30px var(--primary-glow);
-    transform: scale(1.15);
+    box-shadow: 0 0 40px var(--primary-glow);
+    transform: scale(1.2);
 }
 
 .dot.inactive {
-    opacity: 0.6;
+    opacity: 0.7;
     border-color: var(--text-muted);
-    background: rgba(30, 41, 59, 0.8);
+    background: rgba(30, 41, 59, 0.9);
 }
 
 .dot-label {
     margin-top: 12px;
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-muted);
     font-weight: 600;
     text-align: center;
     background: var(--card);
-    padding: 5px 10px;
-    border-radius: 20px;
+    padding: 6px 12px;
+    border-radius: 25px;
     border: 1px solid var(--border);
-    max-width: 130px;
+    max-width: 150px;
     white-space: normal;
     word-break: break-word;
     line-height: 1.5;
     letter-spacing: 0.3px;
-    word-spacing: 2px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    word-spacing: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    z-index: 4;
 }
 
 .dot.active + .dot-label {
     color: var(--primary);
     border-color: var(--primary);
-    box-shadow: 0 0 15px var(--primary-glow);
+    box-shadow: 0 0 20px var(--primary-glow);
+    background: rgba(0,210,255,0.1);
 }
 
 /* المسار الزمني */
@@ -1353,9 +1359,9 @@ input:focus, textarea:focus, select:focus {
     background: rgba(255,255,255,0.03);
     border-right: 4px solid var(--primary);
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     margin-bottom: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
 }
 
 .timeline-card.final {
@@ -1374,30 +1380,30 @@ input:focus, textarea:focus, select:focus {
 
 .timeline-header h4 {
     color: var(--primary);
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.3px;
     word-spacing: 3px;
 }
 
 .timeline-header span {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--text-muted);
     background: var(--card);
-    padding: 4px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     border: 1px solid var(--border);
 }
 
 .timeline-card p {
-    font-size: 12px;
+    font-size: 13px;
     color: var(--text-muted);
     line-height: 1.8;
     margin-top: 8px;
-    padding-right: 12px;
+    padding-right: 15px;
     border-right: 2px dashed var(--border);
     letter-spacing: 0.3px;
-    word-spacing: 3px;
+    word-spacing: 4px;
 }
 
 /* تحسينات للجوال */
@@ -1423,11 +1429,11 @@ input:focus, textarea:focus, select:focus {
     }
     
     .header-title {
-        font-size: 22px;
+        font-size: 24px;
     }
     
     .header-name {
-        font-size: 18px;
+        font-size: 20px;
     }
     
     .responsive-grid {
@@ -1440,17 +1446,17 @@ input:focus, textarea:focus, select:focus {
     }
     
     .track-container {
-        height: 80px;
+        height: 100px;
     }
     
     .dot {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
     }
     
     .dot-label {
-        font-size: 10px;
-        padding: 4px 8px;
-        max-width: 100px;
+        font-size: 11px;
+        padding: 5px 10px;
+        max-width: 120px;
     }
 }
