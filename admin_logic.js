@@ -117,6 +117,11 @@ function toggleSearch() {
     }
 }
 
+function formatText(text) {
+    if (!text) return '';
+    return text.replace(/\s+/g, ' ').trim();
+}
+
 function renderRequests(requests) {
     let html = "";
     
@@ -136,8 +141,8 @@ function renderRequests(requests) {
         html += `
         <tr>
             <td><div>${createdDate}</div><small style="color:var(--text-muted);">${createdTime}</small></td>
-            <td><span style="color:var(--primary); direction:ltr; display:inline-block;">${d.refId}</span></td>
-            <td><div><strong>${d.name}</strong><br><small>${d.job}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
+            <td><span style="color:var(--primary); direction:ltr; display:inline-block; letter-spacing:1px;">${d.refId}</span></td>
+            <td><div><strong>${formatText(d.name)}</strong><br><small>${formatText(d.job)}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
             <td>${membershipHtml}</td>
             <td>${d.gov}</td>
             <td><span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></td>
@@ -151,18 +156,6 @@ function renderRequests(requests) {
     }
     
     document.getElementById('admin-tbody').innerHTML = html;
-}
-
-function getStatusIcon(status) {
-    switch(status) {
-        case 'تم الاستلام': return 'fa-inbox';
-        case 'قيد المراجعة': return 'fa-search';
-        case 'جاري التنفيذ': return 'fa-cogs';
-        case 'تم الحل': return 'fa-check-circle';
-        case 'تمت القراءة': return 'fa-check';
-        case 'لم يقرأ': return 'fa-eye-slash';
-        default: return 'fa-circle';
-    }
 }
 
 function exportToPDF() {
@@ -185,51 +178,57 @@ function showRequestModal(d) {
     const finalStage = "تم الإغلاق النهائي";
     const allStages = [...stages, finalStage];
     const currentIdx = allStages.indexOf(d.status);
-    const progressPercent = allStages.length > 0 ? ((currentIdx + 1) / allStages.length) * 100 : 0;
+    // من اليمين للشمال: نبدأ من 0% عند أول مرحلة وصولاً لـ 100% عند آخر مرحلة
+    const progressPercent = allStages.length > 0 ? (currentIdx / (allStages.length - 1)) * 100 : 0;
 
-    // تنسيق النص مع مسافات
-    const formatText = (text) => {
-        return text.replace(/([^\s])/g, '$1 ').trim();
-    };
-
-    // تحديد الحقول الإضافية حسب نوع الطلب
-    let statusOptions = '';
+    // تحديد حقل إدخال الحالة حسب نوع الطلب
+    let statusInput = '';
     if (d.type === 'شكوى') {
-        statusOptions = `
-            <option value="قيد المراجعة">قيد المراجعة</option>
-            <option value="جاري التنفيذ">جاري التنفيذ</option>
-            <option value="تم الحل">تم الحل</option>
+        // للشكوى: حقل نصي مفتوح
+        statusInput = `
+            <div class="input-group">
+                <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
+                <input type="text" id="new-stage-name" class="neon-border" placeholder="اكتب اسم المرحلة..." style="margin-bottom:10px;">
+            </div>
         `;
     } else {
-        statusOptions = `
-            <option value="تمت القراءة">تمت القراءة</option>
-            <option value="لم يقرأ">لم يقرأ</option>
+        // للاقتراح: اختيار من قائمة
+        statusInput = `
+            <div class="input-group">
+                <label><i class="fas fa-tag"></i> الحالة الجديدة</label>
+                <select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
+                    <option value="">-- اختر الحالة --</option>
+                    <option value="تمت القراءة">تمت القراءة</option>
+                    <option value="لم يقرأ">لم يقرأ</option>
+                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                </select>
+            </div>
         `;
     }
 
     const modalHtml = `
         <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h3 style="color:var(--primary);">إدارة الطلب</h3>
+                <h3 style="color:var(--primary); font-size:18px;">إدارة الطلب</h3>
                 <button class="action-btn delete" onclick="deleteReqFromModal('${d.refId}')"><i class="fas fa-trash"></i></button>
             </div>
             
             <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:15px;">
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:13px;">
                     <div><span style="color:#94a3b8;">الاسم :</span> ${formatText(d.name)}</div>
                     <div><span style="color:#94a3b8;">الرقم القومي :</span> ${d.nid}</div>
                     <div><span style="color:#94a3b8;">الهاتف :</span> ${d.phone}</div>
                     <div><span style="color:#94a3b8;">المحافظة :</span> ${d.gov}</div>
                     <div><span style="color:#94a3b8;">نوع المقدم :</span> ${d.memberType}</div>
                     <div><span style="color:#94a3b8;">رقم العضوية :</span> ${d.memberId}</div>
-                    <div><span style="color:#94a3b8;">المهنة :</span> ${d.job}</div>
+                    <div><span style="color:#94a3b8;">المهنة :</span> ${formatText(d.job)}</div>
                     <div><span style="color:#94a3b8;">نوع الطلب :</span> <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></div>
                 </div>
                 <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان :</span> ${formatText(d.address)}</div>
                 <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${formatText(d.details)}</div>
             </div>
 
-            <!-- التراك المائي الأفقي -->
+            <!-- التراك المائي الأفقي من اليمين للشمال -->
             <div class="track-container" style="margin:20px 0;">
                 <div class="track-water">
                     <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
@@ -250,7 +249,7 @@ function showRequestModal(d) {
             </div>
 
             <div style="margin:15px 0;">
-                <h4 style="font-size:13px; margin-bottom:10px;">المسار الزمني</h4>
+                <h4 style="font-size:14px; margin-bottom:10px;">المسار الزمني</h4>
                 ${d.tracking.slice().reverse().map(t => `
                     <div class="timeline-card ${t.isFinal ? 'final' : ''}">
                         <div class="timeline-header"><h4>${t.status}</h4><span>${t.time}</span></div>
@@ -260,13 +259,12 @@ function showRequestModal(d) {
             </div>
 
             <div style="border-top:1px solid var(--border); padding-top:15px;">
-                <h4 style="font-size:13px; margin-bottom:10px;">تحديث جديد</h4>
-                <select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
-                    <option value="">-- اختر الحالة الجديدة --</option>
-                    ${statusOptions}
-                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
-                </select>
-                <textarea id="status-comment" class="neon-border" placeholder="تعليق إغلاق المرحلة السابقة" rows="2" style="margin-bottom:10px;"></textarea>
+                <h4 style="font-size:14px; margin-bottom:10px;">تحديث جديد</h4>
+                ${statusInput}
+                <div class="input-group">
+                    <label><i class="fas fa-comment"></i> تعليق المرحلة السابقة</label>
+                    <textarea id="status-comment" class="neon-border" placeholder="اكتب تعليقك هنا..." rows="2" style="margin-bottom:10px;"></textarea>
+                </div>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">تحديث</button>
                 </div>
@@ -284,7 +282,13 @@ async function updateRequestStatus(refId) {
     const comment = document.getElementById('status-comment').value.trim();
     
     if(!newStage || !comment) {
-        return Swal.fire('خطأ', 'املأ جميع الحقول', 'error');
+        return Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'املأ جميع الحقول',
+            background: '#161f32',
+            color: '#fff'
+        });
     }
 
     try {
@@ -307,7 +311,13 @@ async function updateRequestStatus(refId) {
         });
         closeModal();
     } catch(error) {
-        Swal.fire('خطأ', 'حدث خطأ', 'error');
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'حدث خطأ',
+            background: '#161f32',
+            color: '#fff'
+        });
     }
 }
 
@@ -323,10 +333,8 @@ async function deleteReqFromModal(id) {
             style: 'direction:ltr;',
             autocomplete: 'off'
         },
-        didOpen: () => {
-            // منع إغلاق النافذة عند النقر خارجها
-            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
-        }
+        allowOutsideClick: false,
+        allowEscapeKey: false
     });
 
     if (pass === '11111@') {
@@ -341,7 +349,13 @@ async function deleteReqFromModal(id) {
             });
             closeModal();
         } catch(error) {
-            Swal.fire('خطأ', 'حدث خطأ', 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ',
+                background: '#161f32',
+                color: '#fff'
+            });
         }
     } else if(pass) {
         Swal.fire({
@@ -368,9 +382,8 @@ async function resetSystem() {
             style: 'direction:ltr;',
             autocomplete: 'off'
         },
-        didOpen: () => {
-            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
-        }
+        allowOutsideClick: false,
+        allowEscapeKey: false
     });
 
     if (pass === '11111@') {
@@ -389,7 +402,13 @@ async function resetSystem() {
             });
             document.getElementById('reset-system-section').style.display = 'none';
         } catch(error) {
-            Swal.fire('خطأ', 'حدث خطأ', 'error');
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ',
+                background: '#161f32',
+                color: '#fff'
+            });
         }
     }
 }
@@ -408,8 +427,6 @@ function toggleSettings() {
     }
 }
 
-// دالة الحفظ التلقائي متوفرة من config.js
-
 function logout() {
     localStorage.removeItem('admin');
     window.location.href = 'index.html';
@@ -426,6 +443,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminLogo = document.getElementById('admin-logo');
     if(adminLogo) adminLogo.src = savedLogo;
     document.getElementById('search-body').style.display = 'none';
+    
+    // التحقق من ظهور زر التهيئة
+    const resetDone = localStorage.getItem('system_reset_done');
+    if (resetDone === 'true') {
+        document.getElementById('reset-system-section').style.display = 'none';
+    }
 });
 
 window.addEventListener('beforeunload', () => {
