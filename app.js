@@ -129,6 +129,7 @@ async function handleSubmit() {
 // تنسيق النص مع مسافات
 function formatText(text) {
     if (!text) return '';
+    // إضافة مسافات بين الكلمات وتنظيف النص
     return text.replace(/\s+/g, ' ').trim();
 }
 
@@ -146,44 +147,43 @@ async function generateRequestCard(data) {
             border-radius: 20px;
             color: white;
             font-family: 'Tajawal', 'Cairo', sans-serif;
-            max-width: 380px;
+            max-width: 400px;
             margin: 0 auto;
             border: 2px solid #00d2ff;
             direction: rtl;
-            letter-spacing: 0.5px;
-            line-height: 1.8;
+            box-shadow: 0 10px 30px rgba(0,210,255,0.3);
         ">
             <div style="text-align: center; margin-bottom: 25px;">
-                <img src="${logo}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 15px; box-shadow: 0 0 30px #00d2ff;">
-                <h2 style="font-size: 22px; color: #00d2ff; margin-bottom: 8px; font-weight: 900; letter-spacing: 1px;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <h3 style="font-size: 18px; color: white; margin-bottom: 5px; font-weight: 700;">المهندس / محمود جميل</h3>
-                <p style="color: #94a3b8; font-size: 14px;">النقيب العام</p>
+                <img src="${logo}" style="width: 110px; height: 110px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 15px; box-shadow: 0 0 30px #00d2ff;">
+                <h2 style="font-size: 24px; color: #00d2ff; margin-bottom: 8px; font-weight: 900; letter-spacing: 1.5px; word-spacing: 6px;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 style="font-size: 20px; color: white; margin-bottom: 5px; font-weight: 700; letter-spacing: 0.5px; word-spacing: 4px;">المهندس / محمود جميل</h3>
+                <p style="color: #94a3b8; font-size: 16px; word-spacing: 3px;">النقيب العام</p>
             </div>
 
-            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(0,210,255,0.2);">
-                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 15px; margin: 20px 0; border: 1px solid rgba(0,210,255,0.3);">
+                <div style="font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
                     <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span> 
                     <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px;">${data.refId}</span>
                 </div>
-                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <div style="font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
                     <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span> 
-                    <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700;">${data.type}</span>
+                    <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700; word-spacing: 3px;">${data.type}</span>
                 </div>
-                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <div style="font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
                     <span style="color: #94a3b8; font-weight: 600;">صاحب الطلب :</span> 
-                    <span style="color: white; font-weight: 600;">${formatText(data.name)}</span>
+                    <span style="color: white; font-weight: 600; word-spacing: 4px;">${formatText(data.name)}</span>
                 </div>
-                <div style="font-size: 15px; margin-bottom: 12px; display: flex; justify-content: space-between;">
+                <div style="font-size: 16px; margin-bottom: 15px; display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
                     <span style="color: #94a3b8; font-weight: 600;">رقم العضوية :</span> 
-                    <span style="color: white; font-weight: 600;">${data.memberId !== 'غير عضو' ? data.memberId : 'غير عضو'}</span>
+                    <span style="color: white; font-weight: 600; word-spacing: 3px;">${data.memberId !== 'غير عضو' ? data.memberId : 'غير عضو'}</span>
                 </div>
-                <div style="font-size: 15px; display: flex; justify-content: space-between;">
+                <div style="font-size: 16px; display: flex; justify-content: space-between; padding: 5px 0;">
                     <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span> 
-                    <span style="color: white; font-weight: 600;">${date} - ${time}</span>
+                    <span style="color: white; font-weight: 600; word-spacing: 3px;">${date} - ${time}</span>
                 </div>
             </div>
 
-            <div style="text-align: center; font-size: 13px; color: #94a3b8; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
+            <div style="text-align: center; font-size: 14px; color: #94a3b8; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px; word-spacing: 3px;">
                 هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
             </div>
         </div>
@@ -191,13 +191,13 @@ async function generateRequestCard(data) {
 
     const result = await Swal.fire({
         title: 'تم حفظ الطلب بنجاح',
-        html: `<div style="color:#00d2ff; margin-bottom:20px; font-size:18px; direction:ltr; font-weight:700;">${data.refId}</div>${cardHTML}`,
+        html: `<div style="color:#00d2ff; margin-bottom:20px; font-size:20px; direction:ltr; font-weight:700; letter-spacing:2px;">${data.refId}</div>${cardHTML}`,
         showCancelButton: true,
         confirmButtonText: 'تحميل الكارت',
         cancelButtonText: 'إغلاق',
         background: '#161f32',
         color: '#fff',
-        width: '450px',
+        width: '480px',
         allowOutsideClick: false,
         allowEscapeKey: false
     });
@@ -219,7 +219,13 @@ async function generateRequestCard(data) {
                 link.click();
             } catch(error) {
                 console.error('Error generating image:', error);
-                Swal.fire('خطأ', 'حدث خطأ في تحميل الكارت', 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تحميل الكارت',
+                    background: '#161f32',
+                    color: '#fff'
+                });
             }
         }
     }
@@ -287,8 +293,8 @@ function renderTrack(d) {
                     <i class="fas fa-qrcode" style="color:white; font-size:18px;"></i>
                 </div>
                 <div>
-                    <h4 style="color:var(--primary); font-size:14px; direction:ltr;">${d.refId}</h4>
-                    <p style="color:var(--text-muted); font-size:11px;">${formatText(d.name)}</p>
+                    <h4 style="color:var(--primary); font-size:14px; direction:ltr; letter-spacing:1px;">${d.refId}</h4>
+                    <p style="color:var(--text-muted); font-size:11px; word-spacing:2px;">${formatText(d.name)}</p>
                 </div>
             </div>
 
