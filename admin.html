@@ -262,10 +262,22 @@
     </main>
 
     <!-- نافذة إدارة الطلب -->
-    <div id="request-modal" class="modal">
+    <div id="request-modal" class="modal" style="z-index: 2000;">
         <div class="modal-content glass-effect">
             <span class="close" onclick="closeModal()">&times;</span>
             <div id="modal-content-area" class="modal-scroll"></div>
+        </div>
+    </div>
+
+    <!-- نافذة الحذف المنفصلة (تظهر فوق كل شيء) -->
+    <div id="delete-modal" class="delete-modal" style="display: none; z-index: 3000;">
+        <div class="delete-modal-content glass-effect">
+            <h3 style="color: var(--danger); margin-bottom: 15px;">حذف الطلب</h3>
+            <input type="password" id="delete-password" class="neon-border" placeholder="كلمة السر" style="width: 100%; margin-bottom: 15px; direction: ltr;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-main" onclick="confirmDelete()" style="background: var(--danger);">تأكيد الحذف</button>
+                <button class="btn-nav" onclick="closeDeleteModal()">إلغاء</button>
+            </div>
         </div>
     </div>
 
