@@ -170,6 +170,7 @@ async function confirmDelete() {
         await db.collection("Requests").doc(currentDeleteId).delete();
         Swal.fire({ icon: 'success', title: 'تم', text: 'تم الحذف', background: '#161f32', color: '#fff' });
         closeDeleteModal();
+        closeModal();
     } else {
         Swal.fire({ icon: 'error', title: 'خطأ', text: 'كلمة السر خطأ', background: '#161f32', color: '#fff' });
     }
@@ -209,15 +210,17 @@ function showRequestModal(d) {
                 <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${d.details}</div>
             </div>
             
+            <!-- التراك المائي - خط يتملى -->
             <div class="track-container" style="margin:20px 0;">
-                <div class="track-water">
-                    <div class="water-fill-horizontal" style="width: ${progress}%;"></div>
-                </div>
-                <div class="track-bar-horizontal">
+                <div class="track-line-bg"></div>
+                <div class="track-line-fill" style="width: ${progress}%;"></div>
+                <div class="track-points">
                     ${stages.map((s, i) => `
                         <div class="track-point">
-                            <div class="dot ${i <= currentIdx ? 'active' : ''}">${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}</div>
-                            <span class="dot-label">${s}</span>
+                            <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
+                                ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
+                            </div>
+                            <span class="track-label">${s}</span>
                         </div>
                     `).join('')}
                 </div>
