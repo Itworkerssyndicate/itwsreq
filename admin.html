@@ -6,94 +6,225 @@
     <title>لوحة التحكم - نقابة المهندسين</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body { padding: 0; display: flex; background: #0b1120; }
-        .settings-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
-        }
-        .settings-btn {
-            background: var(--primary);
-            border: none;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(0,210,255,0.5);
-        }
-        .settings-menu {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 15px;
-            width: 250px;
-            display: none;
-        }
-        .settings-menu.show {
-            display: block;
-        }
-    </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;" onselectstart="return false;">
+    <!-- عناصر الخلفية المتحركة -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
     <div class="settings-panel">
         <button class="settings-btn" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
+            <i class="fas fa-cog fa-spin"></i>
+            <div class="btn-glow"></div>
         </button>
-        <div class="settings-menu" id="settings-menu">
-            <h4 style="margin-bottom: 15px;">إعدادات البرنامج</h4>
-            <div class="input-group" style="margin-bottom: 10px;">
-                <label>رابط الشعار (URL)</label>
-                <input type="url" id="logo-url" placeholder="https://example.com/logo.png">
+        <div class="settings-menu glass-effect" id="settings-menu">
+            <div class="settings-menu-header">
+                <i class="fas fa-sliders-h"></i>
+                <h4>إعدادات البرنامج</h4>
             </div>
-            <button class="btn-nav" onclick="updateLogo()" style="width:100%;">
+            
+            <!-- إعدادات الشعار -->
+            <div class="settings-section">
+                <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
+                <div class="input-group">
+                    <label>رابط الشعار (URL)</label>
+                    <input type="url" id="logo-url" placeholder="https://example.com/logo.png" class="neon-border">
+                </div>
+            </div>
+
+            <!-- إعدادات موقع الخدمات -->
+            <div class="settings-section">
+                <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
+                <div class="input-group">
+                    <label>رابط الموقع</label>
+                    <input type="url" id="services-url" placeholder="https://example.com/services" class="neon-border" value="https://services.egeng.org">
+                </div>
+                <div class="input-group">
+                    <label>نص الزر</label>
+                    <input type="text" id="services-text" placeholder="موقع تقديم خدمات النقابة" class="neon-border" value="موقع تقديم خدمات النقابة">
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-services-btn" checked> 
+                        <span>إظهار الزر في شاشة تقديم الطلبات</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- إعدادات الترقيم -->
+            <div class="settings-section">
+                <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
+                <div class="input-group">
+                    <label>بادئة الشكاوى</label>
+                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ">
+                </div>
+                <div class="input-group">
+                    <label>بادئة المقترحات</label>
+                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP">
+                </div>
+            </div>
+
+            <button class="btn-nav" onclick="updateSettings()" style="width:100%; margin-top:10px;">
                 <i class="fas fa-save"></i> حفظ التغييرات
             </button>
         </div>
     </div>
 
-    <aside style="width:280px; background:#161f32; padding:20px; height:100vh; border-left:1px solid var(--border);">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <img src="https://via.placeholder.com/100x100?text=Logo" alt="شعار النقابة" id="admin-logo" style="width:100px; height:100px; border-radius:50%; margin-bottom:10px;">
-            <h2 style="color:var(--primary);">لوحة التحكم</h2>
+    <aside class="admin-sidebar glass-effect">
+        <div class="admin-sidebar-header">
+            <div class="admin-logo-container">
+                <img src="https://via.placeholder.com/100x100?text=Logo" alt="شعار النقابة" id="admin-logo" class="admin-logo">
+                <div class="admin-logo-glow"></div>
+            </div>
+            <h2>لوحة التحكم</h2>
+            <p class="admin-subtitle">نظام إدارة الطلبات</p>
         </div>
         
-        <button class="btn-nav" style="width:100%; margin-bottom:10px;" onclick="loadData('all')">
-            <i class="fas fa-list"></i> كل الطلبات
-        </button>
-        <button class="btn-nav" style="width:100%; margin-bottom:10px;" onclick="loadData('شكوى')">
-            <i class="fas fa-exclamation-triangle"></i> سجل الشكاوى
-        </button>
-        <button class="btn-nav" style="width:100%; margin-bottom:10px;" onclick="loadData('اقتراح')">
-            <i class="fas fa-lightbulb"></i> سجل المقترحات
-        </button>
+        <nav class="admin-nav">
+            <button class="btn-nav admin-nav-btn active" onclick="loadData('all')" id="nav-all">
+                <i class="fas fa-list"></i> 
+                <span>كل الطلبات</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="btn-nav admin-nav-btn" onclick="loadData('شكوى')" id="nav-complaint">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <span>سجل الشكاوى</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="btn-nav admin-nav-btn" onclick="loadData('اقتراح')" id="nav-suggestion">
+                <i class="fas fa-lightbulb"></i> 
+                <span>سجل المقترحات</span>
+                <div class="btn-glow"></div>
+            </button>
+        </nav>
         
-        <button class="btn-main" style="background:#ff4757; margin-top:50px;" onclick="location.href='index.html'">
-            <i class="fas fa-sign-out-alt"></i> خروج آمن
+        <button class="btn-main admin-logout-btn" onclick="location.href='index.html'">
+            <i class="fas fa-sign-out-alt"></i> 
+            <span>خروج آمن</span>
+            <div class="btn-main-glow"></div>
         </button>
     </aside>
 
-    <main style="flex:1; padding:30px; overflow-y:auto;">
-        <header style="display:flex; justify-content:space-between; margin-bottom:30px;">
+    <main class="admin-main">
+        <header class="admin-header glass-effect">
             <h1><i class="fas fa-database"></i> سجل البيانات الشامل</h1>
-            <button class="btn-nav" onclick="window.print()">
-                <i class="fas fa-print"></i> تصدير للطباعة
-            </button>
+            <div class="admin-header-actions">
+                <button class="btn-nav" onclick="exportToPDF()">
+                    <i class="fas fa-file-pdf"></i> تصدير PDF
+                </button>
+                <button class="btn-nav" onclick="window.print()">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+            </div>
         </header>
 
-        <div class="admin-table-container">
-            <table>
+        <!-- شريط البحث المتقدم -->
+        <div class="advanced-search glass-effect">
+            <div class="search-header" onclick="toggleSearch()">
+                <i class="fas fa-search"></i>
+                <span>بحث متقدم</span>
+                <i class="fas fa-chevron-down" id="search-arrow"></i>
+            </div>
+            
+            <div class="search-body" id="search-body">
+                <div class="search-grid">
+                    <!-- بحث برقم الشكوى -->
+                    <div class="search-field">
+                        <label><i class="fas fa-hashtag"></i> رقم الطلب</label>
+                        <input type="text" id="search-ref" class="neon-border" placeholder="مثال: REQ-0001-2024" oninput="performSearch()">
+                    </div>
+
+                    <!-- بحث بالاسم -->
+                    <div class="search-field">
+                        <label><i class="fas fa-user"></i> الاسم</label>
+                        <input type="text" id="search-name" class="neon-border" placeholder="بحث بالاسم..." oninput="performSearch()">
+                    </div>
+
+                    <!-- بحث بالرقم القومي -->
+                    <div class="search-field">
+                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                        <input type="text" id="search-nid" class="neon-border" placeholder="بحث بالرقم القومي..." oninput="performSearch()">
+                    </div>
+
+                    <!-- بحث برقم العضوية -->
+                    <div class="search-field">
+                        <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
+                        <input type="text" id="search-member" class="neon-border" placeholder="بحث برقم العضوية..." oninput="performSearch()">
+                    </div>
+
+                    <!-- بحث بالتاريخ من -->
+                    <div class="search-field">
+                        <label><i class="fas fa-calendar"></i> من تاريخ</label>
+                        <input type="date" id="search-date-from" class="neon-border" onchange="performSearch()">
+                    </div>
+
+                    <!-- بحث بالتاريخ إلى -->
+                    <div class="search-field">
+                        <label><i class="fas fa-calendar"></i> إلى تاريخ</label>
+                        <input type="date" id="search-date-to" class="neon-border" onchange="performSearch()">
+                    </div>
+
+                    <!-- تصفية بالنوع -->
+                    <div class="search-field">
+                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
+                        <select id="search-type" class="neon-border" onchange="performSearch()">
+                            <option value="all">الكل</option>
+                            <option value="شكوى">شكوى</option>
+                            <option value="اقتراح">اقتراح</option>
+                        </select>
+                    </div>
+
+                    <!-- تصفية بالحالة -->
+                    <div class="search-field">
+                        <label><i class="fas fa-circle"></i> الحالة</label>
+                        <select id="search-status" class="neon-border" onchange="performSearch()">
+                            <option value="all">الكل</option>
+                            <option value="تم الاستلام">تم الاستلام</option>
+                            <option value="قيد المراجعة">قيد المراجعة</option>
+                            <option value="جاري التنفيذ">جاري التنفيذ</option>
+                            <option value="تم الحل">تم الحل</option>
+                        </select>
+                    </div>
+
+                    <!-- تصفية بنوع المقدم -->
+                    <div class="search-field">
+                        <label><i class="fas fa-id-card"></i> نوع المقدم</label>
+                        <select id="search-member-type" class="neon-border" onchange="toggleMemberSearch()">
+                            <option value="all">الكل</option>
+                            <option value="عضو نقابة">عضو نقابة</option>
+                            <option value="غير عضو">غير عضو</option>
+                        </select>
+                    </div>
+
+                    <!-- حقل بحث إضافي لرقم العضوية (يظهر عند اختيار عضو نقابة) -->
+                    <div class="search-field" id="member-id-search-field" style="display: none;">
+                        <label><i class="fas fa-qrcode"></i> بحث برقم العضوية</label>
+                        <input type="text" id="search-specific-member" class="neon-border" placeholder="ادخل رقم العضوية..." oninput="performSearch()">
+                    </div>
+                </div>
+
+                <div class="search-actions">
+                    <button class="btn-nav" onclick="resetSearch()">
+                        <i class="fas fa-undo"></i> إعادة ضبط
+                    </button>
+                    <span class="search-results-count" id="results-count">0 نتيجة</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="admin-table-container glass-effect">
+            <table id="main-table">
                 <thead>
                     <tr>
                         <th>التاريخ</th>
-                        <th>الكود</th>
+                        <th>رقم الطلب</th>
                         <th>صاحب الطلب</th>
+                        <th>رقم العضوية</th>
                         <th>المحافظة</th>
                         <th>النوع</th>
                         <th>الحالة</th>
@@ -102,9 +233,11 @@
                 </thead>
                 <tbody id="admin-tbody">
                     <tr>
-                        <td colspan="7" style="text-align:center; padding:50px;">
-                            <i class="fas fa-spinner fa-spin" style="font-size:30px;"></i>
-                            <p>جاري تحميل البيانات...</p>
+                        <td colspan="8" class="loading-row">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p>جاري تحميل البيانات...</p>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
@@ -113,10 +246,10 @@
     </main>
 
     <!-- نافذة إدارة الطلب -->
-    <div id="request-modal" class="modal" style="display:none;">
-        <div class="modal-content" style="max-width: 800px;">
+    <div id="request-modal" class="modal">
+        <div class="modal-content glass-effect">
             <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modal-content-area"></div>
+            <div id="modal-content-area" class="modal-scroll"></div>
         </div>
     </div>
 
@@ -124,6 +257,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="config.js"></script>
     <script src="admin_logic.js"></script>
 </body>
