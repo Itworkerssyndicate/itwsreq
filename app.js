@@ -73,6 +73,12 @@ async function handleSubmit() {
     try {
         const refId = await generateRequestNumber(type);
         
+        // تحديد الحالة الابتدائية حسب نوع الطلب
+        let initialStatus = "تم الاستلام";
+        if (type === 'اقتراح') {
+            initialStatus = "لم يقرأ";
+        }
+        
         const data = {
             refId,
             name,
@@ -85,11 +91,11 @@ async function handleSubmit() {
             details,
             memberType,
             memberId,
-            status: "تم الاستلام",
+            status: initialStatus,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             tracking: [{
-                status: "تم الاستلام",
-                comment: "تم استلام طلبك بنجاح وجاري العرض على الإدارة",
+                status: initialStatus,
+                comment: type === 'شكوى' ? "تم استلام شكواك بنجاح" : "تم استلام اقتراحك بنجاح",
                 time: new Date().toLocaleString('ar-EG'),
                 isFinal: false
             }]
@@ -99,6 +105,7 @@ async function handleSubmit() {
         
         await generateRequestCard(data);
         
+        // مسح الحقول
         document.getElementById('u-name').value = '';
         document.getElementById('u-nid').value = '';
         document.getElementById('u-phone').value = '';
@@ -126,32 +133,54 @@ async function generateRequestCard(data) {
     const time = now.toLocaleTimeString('ar-EG');
     const logo = getSavedLogo();
 
+    // تنسيق النص مع مسافات
+    const formatText = (text) => {
+        return text.replace(/([^\s])/g, '$1 ').trim();
+    };
+
     const cardHTML = `
         <div id="request-card" style="
             background: linear-gradient(135deg, #161f32, #0b1120);
-            padding: 20px;
-            border-radius: 15px;
+            padding: 25px;
+            border-radius: 20px;
             color: white;
             font-family: 'Cairo', sans-serif;
-            max-width: 350px;
+            max-width: 380px;
             margin: 0 auto;
             border: 2px solid #00d2ff;
+            direction: rtl;
         ">
-            <div style="text-align: center; margin-bottom: 15px;">
-                <img src="${logo}" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 10px;">
-                <h2 style="font-size: 18px; color: #00d2ff;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <h3 style="font-size: 14px; color: white;">المهندس / محمود جميل</h3>
-                <p style="color: #94a3b8; font-size: 12px;">النقيب العام</p>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="${logo}" style="width: 90px; height: 90px; border-radius: 50%; border: 3px solid #00d2ff; margin-bottom: 15px;">
+                <h2 style="font-size: 20px; color: #00d2ff; margin-bottom: 5px; letter-spacing: 1px;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 style="font-size: 16px; color: white; margin-bottom: 5px;">المهندس / محمود جميل</h3>
+                <p style="color: #94a3b8; font-size: 13px;">النقيب العام</p>
             </div>
 
-            <div style="background: rgba(0,210,255,0.1); padding: 15px; border-radius: 10px; margin: 10px 0;">
-                <div style="font-size: 12px; margin-bottom: 5px;"><span style="color: #94a3b8;">رقم الطلب:</span> <span style="color: #00d2ff;">${data.refId}</span></div>
-                <div style="font-size: 12px; margin-bottom: 5px;"><span style="color: #94a3b8;">نوع الطلب:</span> <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'};">${data.type}</span></div>
-                <div style="font-size: 12px; margin-bottom: 5px;"><span style="color: #94a3b8;">صاحب الطلب:</span> <span>${data.name}</span></div>
-                <div style="font-size: 12px;"><span style="color: #94a3b8;">التاريخ:</span> <span>${date} ${time}</span></div>
+            <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 15px; margin: 15px 0;">
+                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">رقم الطلب :</span> 
+                    <span style="color: #00d2ff; font-weight: bold; direction: ltr; letter-spacing: 1px;">${data.refId}</span>
+                </div>
+                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">نوع الطلب :</span> 
+                    <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: bold;">${data.type}</span>
+                </div>
+                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">صاحب الطلب :</span> 
+                    <span style="color: white;">${formatText(data.name)}</span>
+                </div>
+                <div style="font-size: 14px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">الحالة :</span> 
+                    <span style="color: ${data.type === 'شكوى' ? '#ffa502' : '#ffa502'};">${data.status}</span>
+                </div>
+                <div style="font-size: 14px; display: flex; justify-content: space-between;">
+                    <span style="color: #94a3b8;">التاريخ :</span> 
+                    <span style="color: white;">${date} ${time}</span>
+                </div>
             </div>
 
-            <div style="text-align: center; font-size: 10px; color: #94a3b8;">
+            <div style="text-align: center; font-size: 12px; color: #94a3b8; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
                 هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
             </div>
         </div>
@@ -159,13 +188,17 @@ async function generateRequestCard(data) {
 
     const { value: accept } = await Swal.fire({
         title: 'تم حفظ الطلب',
-        html: `<div style="color:#00d2ff; margin-bottom:10px;">${data.refId}</div>${cardHTML}`,
+        html: `<div style="color:#00d2ff; margin-bottom:15px; font-size:18px; direction:ltr;">${data.refId}</div>${cardHTML}`,
         showCancelButton: true,
         confirmButtonText: 'تحميل الكارت',
         cancelButtonText: 'إغلاق',
         background: '#161f32',
         color: '#fff',
-        width: '400px'
+        width: '450px',
+        didOpen: () => {
+            // منع إغلاق النافذة عند النقر خارجها
+            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
+        }
     });
 
     if(accept) {
@@ -239,7 +272,7 @@ function renderTrack(d) {
     const allStages = [...stages, finalStage];
     const currentStatus = d.status;
     const currentIdx = allStages.indexOf(currentStatus);
-    const pct = allStages.length > 1 ? ((currentIdx + 1) / allStages.length) * 100 : 100;
+    const progressPercent = allStages.length > 0 ? ((currentIdx + 1) / allStages.length) * 100 : 0;
 
     let html = `
         <div class="card glass-effect" style="margin-top:15px;">
@@ -248,26 +281,25 @@ function renderTrack(d) {
                     <i class="fas fa-qrcode" style="color:white; font-size:18px;"></i>
                 </div>
                 <div>
-                    <h4 style="color:var(--primary); font-size:14px;">${d.refId}</h4>
+                    <h4 style="color:var(--primary); font-size:14px; direction:ltr;">${d.refId}</h4>
                     <p style="color:var(--text-muted); font-size:11px;">${d.name}</p>
                 </div>
             </div>
 
+            <!-- التراك المائي الأفقي -->
             <div class="track-container">
                 <div class="track-water">
-                    <div class="water-fill" style="height:${pct}%"></div>
+                    <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
                 </div>
-                <div class="track-bar">
+                <div class="track-bar-horizontal">
                     ${allStages.map((stage, index) => {
                         const isActive = index <= currentIdx;
-                        const isFinalStage = stage === "تم الإغلاق النهائي";
                         return `
                             <div class="track-point">
                                 <div class="dot ${isActive ? 'active' : 'inactive'}">
                                     ${isActive ? '<i class="fas fa-check"></i>' : ''}
                                 </div>
                                 <span class="dot-label">${stage}</span>
-                                ${index < allStages.length - 1 ? '<div class="line"></div>' : ''}
                             </div>
                         `;
                     }).join('')}
@@ -290,10 +322,6 @@ function renderTrack(d) {
     
     document.getElementById('track-result-box').innerHTML = html;
     document.getElementById('track-result-box').style.display = 'block';
-    
-    setTimeout(() => {
-        document.querySelector('.water-fill').style.transition = 'height 1.5s ease';
-    }, 100);
 }
 
 // دخول الادمن
