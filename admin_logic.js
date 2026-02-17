@@ -1,71 +1,39 @@
 let currentFilter = 'all';
-let allRequests = []; // تخزين جميع الطلبات للبحث المباشر
-let unsubscribe; // دالة إلغاء الاستماع للتحديثات المباشرة
+let allRequests = [];
+let unsubscribe;
 
-// تبديل حالة الأزرار النشطة
 function setActiveNav(buttonId) {
     document.querySelectorAll('.admin-nav-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    
-    const activeBtn = document.getElementById(buttonId);
-    if(activeBtn) {
-        activeBtn.classList.add('active');
-        
-        // إضافة تأثير نبض للزر النشط
-        activeBtn.style.animation = 'none';
-        activeBtn.offsetHeight;
-        activeBtn.style.animation = 'active-pulse 2s infinite';
-    }
+    document.getElementById(buttonId)?.classList.add('active');
 }
 
-// تحميل البيانات مع تحديث مباشر
 function loadData(filter) {
     currentFilter = filter;
     
-    // تحديث الزر النشط
     if(filter === 'all') setActiveNav('nav-all');
     else if(filter === 'شكوى') setActiveNav('nav-complaint');
     else if(filter === 'اقتراح') setActiveNav('nav-suggestion');
 
-    // إلغاء الاستماع السابق إذا وجد
-    if (unsubscribe) {
-        unsubscribe();
-    }
+    if (unsubscribe) unsubscribe();
 
-    // استماع مباشر للتحديثات
     unsubscribe = db.collection("Requests")
         .orderBy("createdAt", "desc")
         .onSnapshot(snap => {
             allRequests = [];
             snap.forEach(doc => {
                 const d = doc.data();
-                // تحويل التاريخ إذا كان موجوداً
                 if (d.createdAt && d.createdAt.toDate) {
                     d.createdAtDate = d.createdAt.toDate();
                 }
                 allRequests.push(d);
             });
-            
-            // تطبيق الفلترة والبحث الحالي
             performSearch();
-            
-        }, error => {
-            console.error("Error loading data:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ في تحميل البيانات',
-                confirmButtonText: 'حسناً',
-                background: '#161f32',
-                color: '#fff'
-            });
         });
 }
 
-// تنفيذ البحث المتقدم
 function performSearch() {
-    // الحصول على قيم البحث
     const searchRef = document.getElementById('search-ref')?.value.toLowerCase().trim() || '';
     const searchName = document.getElementById('search-name')?.value.toLowerCase().trim() || '';
     const searchNid = document.getElementById('search-nid')?.value.trim() || '';
@@ -77,82 +45,39 @@ function performSearch() {
     const searchStatus = document.getElementById('search-status')?.value || 'all';
     const searchMemberType = document.getElementById('search-member-type')?.value || 'all';
 
-    // تصفية الطلبات
     let filteredRequests = allRequests.filter(req => {
-        // فلترة حسب النوع (شكوى/اقتراح) من الأزرار الجانبية
-        if (currentFilter !== 'all' && req.type !== currentFilter) {
-            return false;
-        }
-
-        // فلترة حسب نوع الطلب من البحث
-        if (searchType !== 'all' && req.type !== searchType) {
-            return false;
-        }
-
-        // فلترة حسب الحالة
-        if (searchStatus !== 'all' && req.status !== searchStatus) {
-            return false;
-        }
-
-        // فلترة حسب نوع المقدم
+        if (currentFilter !== 'all' && req.type !== currentFilter) return false;
+        if (searchType !== 'all' && req.type !== searchType) return false;
+        if (searchStatus !== 'all' && req.status !== searchStatus) return false;
+        
         if (searchMemberType !== 'all') {
             if (searchMemberType === 'عضو نقابة') {
                 if (req.memberType !== 'عضو نقابة') return false;
-                // إذا كان فيه بحث برقم عضوية محدد
-                if (searchSpecificMember && !req.memberId?.includes(searchSpecificMember)) {
-                    return false;
-                }
-            } else if (searchMemberType === 'غير عضو' && req.memberType !== 'غير عضو') {
-                return false;
-            }
+                if (searchSpecificMember && !req.memberId?.includes(searchSpecificMember)) return false;
+            } else if (searchMemberType === 'غير عضو' && req.memberType !== 'غير عضو') return false;
         }
 
-        // فلترة حسب رقم الطلب
-        if (searchRef && !req.refId?.toLowerCase().includes(searchRef)) {
-            return false;
-        }
+        if (searchRef && !req.refId?.toLowerCase().includes(searchRef)) return false;
+        if (searchName && !req.name?.toLowerCase().includes(searchName)) return false;
+        if (searchNid && !req.nid?.includes(searchNid)) return false;
+        if (searchMember && !req.memberId?.includes(searchMember)) return false;
 
-        // فلترة حسب الاسم
-        if (searchName && !req.name?.toLowerCase().includes(searchName)) {
-            return false;
-        }
-
-        // فلترة حسب الرقم القومي
-        if (searchNid && !req.nid?.includes(searchNid)) {
-            return false;
-        }
-
-        // فلترة حسب رقم العضوية العام
-        if (searchMember && !req.memberId?.includes(searchMember)) {
-            return false;
-        }
-
-        // فلترة حسب التاريخ
         if (searchDateFrom || searchDateTo) {
             const reqDate = req.createdAtDate || (req.createdAt ? new Date(req.createdAt) : null);
             if (reqDate) {
                 const reqDateStr = reqDate.toISOString().split('T')[0];
-                
-                if (searchDateFrom && reqDateStr < searchDateFrom) {
-                    return false;
-                }
-                if (searchDateTo && reqDateStr > searchDateTo) {
-                    return false;
-                }
+                if (searchDateFrom && reqDateStr < searchDateFrom) return false;
+                if (searchDateTo && reqDateStr > searchDateTo) return false;
             }
         }
 
         return true;
     });
 
-    // تحديث عدد النتائج
     document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
-
-    // عرض النتائج
     renderRequests(filteredRequests);
 }
 
-// إعادة ضبط البحث
 function resetSearch() {
     document.getElementById('search-ref').value = '';
     document.getElementById('search-name').value = '';
@@ -164,28 +89,18 @@ function resetSearch() {
     document.getElementById('search-type').value = 'all';
     document.getElementById('search-status').value = 'all';
     document.getElementById('search-member-type').value = 'all';
-    
     document.getElementById('member-id-search-field').style.display = 'none';
-    
     performSearch();
 }
 
-// تبديل ظهور حقل بحث العضوية المحدد
 function toggleMemberSearch() {
     const memberType = document.getElementById('search-member-type').value;
     const memberField = document.getElementById('member-id-search-field');
-    
-    if (memberType === 'عضو نقابة') {
-        memberField.style.display = 'block';
-    } else {
-        memberField.style.display = 'none';
-        document.getElementById('search-specific-member').value = '';
-    }
-    
+    memberField.style.display = memberType === 'عضو نقابة' ? 'block' : 'none';
+    if (memberType !== 'عضو نقابة') document.getElementById('search-specific-member').value = '';
     performSearch();
 }
 
-// تبديل ظهور شريط البحث
 function toggleSearch() {
     const searchBody = document.getElementById('search-body');
     const searchArrow = document.getElementById('search-arrow');
@@ -202,7 +117,6 @@ function toggleSearch() {
     }
 }
 
-// عرض الطلبات في الجدول
 function renderRequests(requests) {
     let html = "";
     
@@ -215,68 +129,30 @@ function renderRequests(requests) {
             d.createdAtDate.toLocaleTimeString('ar-EG') : 
             (d.createdAt ? new Date(d.createdAt).toLocaleTimeString('ar-EG') : '');
         
-        // تحديد نوع العضوية وعرضها بشكل مناسب
         const membershipHtml = d.memberType === 'عضو نقابة' 
-            ? `<span class="membership-badge member">عضو</span> <span style="color:var(--primary);">${d.memberId}</span>`
+            ? `<span class="membership-badge member">عضو</span> ${d.memberId}`
             : `<span class="membership-badge non-member">غير عضو</span>`;
         
         html += `
-        <tr style="animation: fadeInRow 0.3s ease;">
-            <td>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-weight:600;">${createdDate}</span>
-                    <small style="color:var(--text-muted);">${createdTime}</small>
-                </div>
-            </td>
-            <td><strong style="color:var(--primary); direction: ltr; display: inline-block;">${d.refId}</strong></td>
-            <td>
-                <div style="display:flex; flex-direction:column; gap:3px;">
-                    <strong>${d.name}</strong>
-                    <small style="color:var(--text-muted);">${d.job}</small>
-                    <small style="color:var(--primary);">${d.phone}</small>
-                </div>
-            </td>
+        <tr>
+            <td><div>${createdDate}</div><small style="color:var(--text-muted);">${createdTime}</small></td>
+            <td><span style="color:var(--primary); direction:ltr; display:inline-block;">${d.refId}</span></td>
+            <td><div><strong>${d.name}</strong><br><small>${d.job}</small><br><small style="color:var(--primary);">${d.phone}</small></div></td>
             <td>${membershipHtml}</td>
             <td>${d.gov}</td>
-            <td>
-                <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">
-                    <i class="fas ${d.type === 'شكوى' ? 'fa-exclamation-triangle' : 'fa-lightbulb'}"></i>
-                    ${d.type}
-                </span>
-            </td>
-            <td>
-                <span class="status-badge status-${d.status}">
-                    <i class="fas ${getStatusIcon(d.status)}"></i>
-                    ${d.status}
-                </span>
-            </td>
-            <td>
-                <div style="display:flex; gap:5px; justify-content: center;">
-                    <button class="action-btn" onclick="manageReq('${d.refId}')" title="إدارة">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <button class="action-btn" onclick="printRequestCard('${d.refId}')" title="طباعة">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </div>
-            </td>
+            <td><span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></td>
+            <td><span class="status-badge status-${d.status}">${d.status}</span></td>
+            <td><button class="action-btn" onclick="manageReq('${d.refId}')"><i class="fas fa-cog"></i></button></td>
         </tr>`;
     });
     
     if(html === '') {
-        html = `
-        <tr>
-            <td colspan="8" style="text-align:center; padding:50px;">
-                <i class="fas fa-folder-open" style="font-size:50px; color:var(--primary); margin-bottom:15px;"></i>
-                <p style="color:var(--text-muted);">لا توجد بيانات للعرض</p>
-            </td>
-        </tr>`;
+        html = '<tr><td colspan="8" style="text-align:center; padding:30px;">لا توجد بيانات</td></tr>';
     }
     
     document.getElementById('admin-tbody').innerHTML = html;
 }
 
-// الحصول على أيقونة الحالة
 function getStatusIcon(status) {
     switch(status) {
         case 'تم الاستلام': return 'fa-inbox';
@@ -287,174 +163,77 @@ function getStatusIcon(status) {
     }
 }
 
-// تصدير إلى PDF
 function exportToPDF() {
     const element = document.getElementById('main-table');
-    const opt = {
-        margin: 1,
-        filename: 'تقرير_الطلبات.pdf',
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, backgroundColor: '#161f32' },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
-    };
-    
-    html2pdf().set(opt).from(element).save();
+    html2pdf().from(element).save('تقرير_الطلبات.pdf');
 }
 
-// إدارة الطلب
 async function manageReq(id) {
     try {
         const snap = await db.collection("Requests").doc(id).get();
-        if(!snap.exists) {
-            Swal.fire('خطأ', 'الطلب غير موجود', 'error');
-            return;
-        }
-        
-        const d = snap.data();
-        showRequestModal(d);
+        if(!snap.exists) return;
+        showRequestModal(snap.data());
     } catch(error) {
-        console.error("Error managing request:", error);
-        Swal.fire('خطأ', 'حدث خطأ في جلب البيانات', 'error');
+        console.error(error);
     }
 }
 
-// عرض نافذة إدارة الطلب
 function showRequestModal(d) {
     const stages = d.tracking.map(t => t.status);
-    const currentIdx = stages.indexOf(d.status);
-    const pct = stages.length > 1 ? (currentIdx / (stages.length - 1)) * 100 : 100;
+    const finalStage = "تم الإغلاق النهائي";
+    const allStages = [...stages, finalStage];
+    const currentIdx = allStages.indexOf(d.status);
+    const pct = allStages.length > 1 ? ((currentIdx + 1) / allStages.length) * 100 : 100;
 
     const modalHtml = `
-        <div class="request-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="color:var(--primary); display:flex; align-items:center; gap:10px;">
-                    <i class="fas fa-clipboard-list"></i>
-                    إدارة الطلب
-                </h3>
-                <button class="action-btn delete" onclick="deleteReqFromModal('${d.refId}')" title="حذف">
-                    <i class="fas fa-trash"></i>
-                </button>
+        <div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <h3 style="color:var(--primary);">إدارة الطلب</h3>
+                <button class="action-btn delete" onclick="deleteReqFromModal('${d.refId}')"><i class="fas fa-trash"></i></button>
             </div>
             
-            <div style="background:rgba(0,210,255,0.1); padding:10px; border-radius:10px; margin-bottom:20px; text-align:center;">
-                <span style="color:var(--primary); font-weight:bold; direction:ltr; display:inline-block;">${d.refId}</span>
+            <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:15px;">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
+                    <div><span style="color:#94a3b8;">الاسم:</span> ${d.name}</div>
+                    <div><span style="color:#94a3b8;">الرقم القومي:</span> ${d.nid}</div>
+                    <div><span style="color:#94a3b8;">الهاتف:</span> ${d.phone}</div>
+                    <div><span style="color:#94a3b8;">المحافظة:</span> ${d.gov}</div>
+                    <div><span style="color:#94a3b8;">نوع المقدم:</span> ${d.memberType}</div>
+                    <div><span style="color:#94a3b8;">رقم العضوية:</span> ${d.memberId}</div>
+                </div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان:</span> ${d.address}</div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل:</span> ${d.details}</div>
             </div>
-            
-            <!-- بيانات مقدم الطلب -->
-            <div style="background:rgba(0,0,0,0.2); padding:20px; border-radius:15px; margin-bottom:20px;">
-                <h4 style="color:var(--primary); margin-bottom:15px;">
-                    <i class="fas fa-user"></i> بيانات مقدم الطلب
-                </h4>
-                <div class="request-info" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-user"></i> الاسم</div>
-                        <div class="info-value">${d.name}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-id-card"></i> الرقم القومي</div>
-                        <div class="info-value">${d.nid}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-phone"></i> الهاتف</div>
-                        <div class="info-value">${d.phone}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-map-marker-alt"></i> المحافظة</div>
-                        <div class="info-value">${d.gov}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-id-card"></i> نوع المقدم</div>
-                        <div class="info-value">${d.memberType || 'غير محدد'}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-qrcode"></i> رقم العضوية</div>
-                        <div class="info-value">${d.memberId || '-'}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-briefcase"></i> المهنة</div>
-                        <div class="info-value">${d.job}</div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label"><i class="fas fa-tag"></i> نوع الطلب</div>
-                        <div class="info-value">
-                            <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">
-                                ${d.type}
-                            </span>
+
+            <div class="track-container" style="margin:20px 0;">
+                <div class="track-water"><div class="water-fill" style="height:${pct}%"></div></div>
+                <div class="track-bar">
+                    ${allStages.map((stage, index) => `
+                        <div class="track-point">
+                            <div class="dot ${index <= currentIdx ? 'active' : 'inactive'}">${index <= currentIdx ? '<i class="fas fa-check"></i>' : ''}</div>
+                            <span class="dot-label">${stage}</span>
                         </div>
-                    </div>
-                </div>
-                <div style="margin-top:15px; padding:15px; background:rgba(0,0,0,0.2); border-radius:10px;">
-                    <div class="info-label"><i class="fas fa-map-pin"></i> العنوان</div>
-                    <p style="margin-top:5px; color:var(--text);">${d.address || 'غير محدد'}</p>
-                </div>
-                <div style="margin-top:15px; padding:15px; background:rgba(0,0,0,0.2); border-radius:10px;">
-                    <div class="info-label"><i class="fas fa-edit"></i> تفاصيل الطلب</div>
-                    <p style="margin-top:10px; color:var(--text); line-height:1.6;">${d.details}</p>
+                    `).join('')}
                 </div>
             </div>
 
-            <!-- التراك المائي -->
-            <div style="margin-bottom:30px;">
-                <h4 style="color:var(--primary); margin-bottom:15px;">
-                    <i class="fas fa-water"></i> مسار الطلب
-                </h4>
-                <div class="track-container">
-                    <div class="track-water">
-                        <div class="water-fill" style="height:${pct}%"></div>
-                    </div>
-                    <div class="track-bar">
-                        ${stages.map((stage, index) => `
-                            <div class="track-point">
-                                <div class="dot ${index <= currentIdx ? 'active' : ''}">
-                                    ${index <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
-                                </div>
-                                <span class="dot-label">${stage}</span>
-                                ${index < stages.length - 1 ? '<div class="line"></div>' : ''}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>
-
-            <!-- المسار الزمني -->
-            <div style="margin-bottom:30px;">
-                <h4 style="color:var(--primary); margin-bottom:15px;">
-                    <i class="fas fa-history"></i> المسار الزمني
-                </h4>
+            <div style="margin:15px 0;">
+                <h4 style="font-size:13px; margin-bottom:10px;">المسار الزمني</h4>
                 ${d.tracking.slice().reverse().map(t => `
                     <div class="timeline-card ${t.isFinal ? 'final' : ''}">
-                        <div class="timeline-header">
-                            <h4>${t.status}</h4>
-                            <span>${t.time}</span>
-                        </div>
+                        <div class="timeline-header"><h4>${t.status}</h4><span>${t.time}</span></div>
                         <p>${t.comment}</p>
                     </div>
                 `).join('')}
             </div>
 
-            <!-- إضافة حالة جديدة -->
-            <div style="border-top:2px solid var(--primary); padding-top:20px;">
-                <h4 style="color:var(--primary); margin-bottom:20px;">
-                    <i class="fas fa-plus-circle"></i> إضافة تحديث جديد
-                </h4>
-                <div class="input-group">
-                    <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
-                    <input type="text" id="new-stage-name" class="neon-border" placeholder="اكتب اسم المرحلة...">
-                </div>
-                <div class="input-group">
-                    <label><i class="fas fa-comment"></i> تعليق لإغلاق المرحلة السابقة</label>
-                    <textarea id="status-comment" rows="3" class="neon-border" placeholder="اكتب تعليقك هنا..."></textarea>
-                </div>
-                <div style="display:flex; gap:10px; margin-top:20px; flex-wrap: wrap;">
-                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2; min-width: 150px;">
-                        <i class="fas fa-save"></i> تحديث الحالة
-                    </button>
-                    <button class="btn-nav" onclick="printRequestCard('${d.refId}')" style="flex:1; min-width: 100px;">
-                        <i class="fas fa-print"></i> طباعة
-                    </button>
-                    <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; min-width: 100px; background:var(--danger);">
-                        <i class="fas fa-lock"></i> إغلاق نهائي
-                    </button>
+            <div style="border-top:1px solid var(--border); padding-top:15px;">
+                <h4 style="font-size:13px; margin-bottom:10px;">تحديث جديد</h4>
+                <input type="text" id="new-stage-name" class="neon-border" placeholder="اسم المرحلة الجديدة" style="margin-bottom:10px;">
+                <textarea id="status-comment" class="neon-border" placeholder="تعليق إغلاق المرحلة السابقة" rows="2" style="margin-bottom:10px;"></textarea>
+                <div style="display:flex; gap:10px;">
+                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">تحديث</button>
+                    <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; background:var(--danger);">إغلاق</button>
                 </div>
             </div>
         </div>
@@ -465,24 +244,13 @@ function showRequestModal(d) {
     document.getElementById('request-modal').classList.add('show');
 }
 
-// تحديث حالة الطلب
 async function updateRequestStatus(refId) {
     const newStage = document.getElementById('new-stage-name').value.trim();
     const comment = document.getElementById('status-comment').value.trim();
     
     if(!newStage || !comment) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'برجاء إدخال اسم المرحلة والتعليق',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
-        return;
+        return Swal.fire('خطأ', 'املأ جميع الحقول', 'error');
     }
-
-    const isFinal = newStage.includes('إغلاق') || newStage.includes('نهائي') || newStage.includes('تم الحل');
 
     try {
         await db.collection("Requests").doc(refId).update({
@@ -491,389 +259,102 @@ async function updateRequestStatus(refId) {
                 status: newStage,
                 comment: comment,
                 time: new Date().toLocaleString('ar-EG'),
-                isFinal: isFinal
+                isFinal: false
             })
         });
 
-        Swal.fire({
-            icon: 'success',
-            title: 'تم التحديث',
-            text: 'تم تحديث حالة الطلب بنجاح',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
-
+        Swal.fire('تم', 'تم تحديث الحالة', 'success');
         closeModal();
-        // لا حاجة لإعادة تحميل البيانات بسبب التحديث المباشر
     } catch(error) {
-        console.error("Error updating status:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'حدث خطأ في تحديث الحالة',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
+        Swal.fire('خطأ', 'حدث خطأ', 'error');
     }
 }
 
-// إغلاق الطلب (الحل النهائي)
 async function closeRequest(refId) {
-    const { value: finalComment } = await Swal.fire({
-        title: 'إغلاق الطلب نهائياً',
-        text: 'اكتب القرار النهائي للطلب',
+    const { value: comment } = await Swal.fire({
+        title: 'إغلاق الطلب',
         input: 'textarea',
-        inputPlaceholder: 'اكتب القرار النهائي هنا...',
+        inputPlaceholder: 'القرار النهائي',
         showCancelButton: true,
-        confirmButtonText: 'إغلاق',
-        cancelButtonText: 'إلغاء',
         background: '#161f32',
-        color: '#fff',
-        inputAttributes: {
-            'class': 'neon-border',
-            'style': 'width:100%; margin-top:10px;'
-        }
+        color: '#fff'
     });
 
-    if(finalComment) {
+    if(comment) {
         try {
             await db.collection("Requests").doc(refId).update({
                 status: 'تم الإغلاق النهائي',
                 tracking: firebase.firestore.FieldValue.arrayUnion({
                     status: 'تم الإغلاق النهائي',
-                    comment: finalComment,
+                    comment: comment,
                     time: new Date().toLocaleString('ar-EG'),
                     isFinal: true
                 })
             });
-
-            Swal.fire({
-                icon: 'success',
-                title: 'تم الإغلاق',
-                text: 'تم إغلاق الطلب نهائياً',
-                confirmButtonText: 'حسناً',
-                background: '#161f32',
-                color: '#fff'
-            });
-
+            Swal.fire('تم', 'تم إغلاق الطلب', 'success');
             closeModal();
         } catch(error) {
-            console.error("Error closing request:", error);
-            Swal.fire('خطأ', 'حدث خطأ في إغلاق الطلب', 'error');
+            Swal.fire('خطأ', 'حدث خطأ', 'error');
         }
     }
 }
 
-// حذف الطلب من داخل الكارت
 async function deleteReqFromModal(id) {
     const { value: pass } = await Swal.fire({
-        title: '⚠️ حذف الطلب',
-        text: 'هل أنت متأكد من حذف هذا الطلب؟',
+        title: 'حذف الطلب',
         input: 'password',
-        inputPlaceholder: 'كلمة سر الحذف',
+        inputPlaceholder: 'كلمة السر',
         showCancelButton: true,
-        confirmButtonText: 'حذف',
-        cancelButtonText: 'إلغاء',
-        confirmButtonColor: '#ff4757',
         background: '#161f32',
         color: '#fff',
-        inputAttributes: {
-            'class': 'neon-border',
-            'style': 'direction: ltr; width:100%;'
-        }
+        inputAttributes: { style: 'direction:ltr;' }
     });
 
     if (pass === '11111@') {
         try {
             await db.collection("Requests").doc(id).delete();
-            Swal.fire({
-                icon: 'success',
-                title: 'تم الحذف',
-                text: 'تم حذف الطلب بنجاح',
-                confirmButtonText: 'حسناً',
-                background: '#161f32',
-                color: '#fff'
-            });
+            Swal.fire('تم', 'تم الحذف', 'success');
             closeModal();
         } catch(error) {
-            console.error("Error deleting request:", error);
-            Swal.fire('خطأ', 'حدث خطأ في حذف الطلب', 'error');
+            Swal.fire('خطأ', 'حدث خطأ', 'error');
         }
     } else if(pass) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'كلمة السر غير صحيحة',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
+        Swal.fire('خطأ', 'كلمة السر خطأ', 'error');
     }
 }
 
-// تهيئة النظام (حذف كل البيانات والبدء من جديد)
 async function resetSystem() {
     const { value: pass } = await Swal.fire({
-        title: '⚠️ تحذير شديد الخطورة ⚠️',
-        html: '<p style="color:#ff4757;">أنت على وشك حذف جميع البيانات نهائياً والبدء من جديد بترقيم يبدأ من 1</p><p style="color:#94a3b8; margin-top:10px;">هذا الإجراء لا يمكن التراجع عنه</p>',
+        title: '⚠️ تحذير',
+        html: 'حذف جميع البيانات نهائياً',
         input: 'password',
-        inputPlaceholder: 'كلمة سر التهيئة',
+        inputPlaceholder: 'كلمة السر',
         showCancelButton: true,
-        confirmButtonText: 'نعم، قم بتهيئة النظام',
-        cancelButtonText: 'إلغاء',
         confirmButtonColor: '#ff4757',
         background: '#161f32',
         color: '#fff',
-        inputAttributes: {
-            'class': 'neon-border',
-            'style': 'direction: ltr; width:100%;'
-        }
+        inputAttributes: { style: 'direction:ltr;' }
     });
 
     if (pass === '11111@') {
         try {
-            // حذف جميع المستندات في مجموعة Requests
             const snapshot = await db.collection("Requests").get();
             const batch = db.batch();
-            snapshot.docs.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
+            snapshot.docs.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
-            
-            // تخزين أن التهيئة تمت
             localStorage.setItem('system_reset_done', 'true');
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'تمت تهيئة النظام',
-                text: 'تم حذف جميع البيانات بنجاح. النظام الآن جاهز للبدء من جديد مع ترقيم يبدأ من 1',
-                confirmButtonText: 'حسناً',
-                background: '#161f32',
-                color: '#fff'
-            });
-            
-            // إخفاء الزر بعد التهيئة
+            Swal.fire('تم', 'تمت تهيئة النظام', 'success');
             document.getElementById('reset-system-section').style.display = 'none';
-            
         } catch(error) {
-            console.error("Error resetting system:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'خطأ',
-                text: 'حدث خطأ في تهيئة النظام',
-                confirmButtonText: 'حسناً',
-                background: '#161f32',
-                color: '#fff'
-            });
+            Swal.fire('خطأ', 'حدث خطأ', 'error');
         }
-    } else if(pass) {
-        Swal.fire({
-            icon: 'error',
-            title: 'خطأ',
-            text: 'كلمة السر غير صحيحة',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
     }
 }
 
-// طباعة كارت الطلب
-async function printRequestCard(refId) {
-    try {
-        const snap = await db.collection("Requests").doc(refId).get();
-        if(!snap.exists) return;
-        
-        const d = snap.data();
-        const logo = getSavedLogo();
-        
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html dir="rtl">
-            <head>
-                <title>طلب رقم ${d.refId}</title>
-                <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-                <style>
-                    body {
-                        font-family: 'Cairo', sans-serif;
-                        background: #0b1120;
-                        color: white;
-                        padding: 20px;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        min-height: 100vh;
-                        margin: 0;
-                    }
-                    .print-card {
-                        background: linear-gradient(135deg, #161f32, #0b1120);
-                        padding: 40px;
-                        border-radius: 30px;
-                        max-width: 450px;
-                        width: 100%;
-                        border: 2px solid #00d2ff;
-                        box-shadow: 0 0 50px rgba(0,210,255,0.3);
-                    }
-                    .header {
-                        text-align: center;
-                        margin-bottom: 30px;
-                    }
-                    .logo {
-                        width: 120px;
-                        height: 120px;
-                        border-radius: 50%;
-                        border: 3px solid #00d2ff;
-                        box-shadow: 0 0 30px #00d2ff;
-                        margin-bottom: 15px;
-                    }
-                    .title {
-                        color: #00d2ff;
-                        font-size: 24px;
-                        font-weight: 900;
-                        margin: 5px 0;
-                    }
-                    .subtitle {
-                        color: #94a3b8;
-                        font-size: 16px;
-                    }
-                    .info-box {
-                        background: rgba(0,210,255,0.1);
-                        padding: 25px;
-                        border-radius: 20px;
-                        margin: 20px 0;
-                        border: 1px solid rgba(0,210,255,0.3);
-                    }
-                    .info-row {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-bottom: 15px;
-                        padding: 5px 0;
-                        border-bottom: 1px solid rgba(255,255,255,0.1);
-                    }
-                    .info-label {
-                        color: #94a3b8;
-                        font-size: 14px;
-                    }
-                    .info-value {
-                        color: white;
-                        font-weight: 600;
-                        font-size: 14px;
-                    }
-                    .ref-id {
-                        color: #00d2ff;
-                        font-size: 20px;
-                        font-weight: 900;
-                        text-align: center;
-                        margin: 20px 0;
-                        direction: ltr;
-                    }
-                    .footer {
-                        text-align: center;
-                        margin-top: 30px;
-                        padding-top: 20px;
-                        border-top: 2px solid #00d2ff;
-                    }
-                    .footer-text {
-                        color: #94a3b8;
-                        font-size: 12px;
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="print-card">
-                    <div class="header">
-                        <img src="${logo}" class="logo">
-                        <h1 class="title">نقابة تكنولوجيا المعلومات والبرمجيات</h1>
-                        <p class="subtitle">بوابة الشكاوي والمقترحات</p>
-                        <h2 class="title" style="font-size: 20px;">النقيب العام</h2>
-                        <h3 style="color: #00d2ff; margin-top:5px;">المهندس / محمود جميل</h3>
-                    </div>
-                    
-                    <div class="ref-id">${d.refId}</div>
-                    
-                    <div class="info-box">
-                        <div class="info-row">
-                            <span class="info-label">نوع الطلب:</span>
-                            <span class="info-value" style="color: ${d.type === 'شكوى' ? '#ff4757' : '#00ff88'}">${d.type}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">الاسم:</span>
-                            <span class="info-value">${d.name}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">الرقم القومي:</span>
-                            <span class="info-value">${d.nid}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">نوع المقدم:</span>
-                            <span class="info-value">${d.memberType || 'غير محدد'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">رقم العضوية:</span>
-                            <span class="info-value">${d.memberId || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">الهاتف:</span>
-                            <span class="info-value">${d.phone}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">المحافظة:</span>
-                            <span class="info-value">${d.gov}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">العنوان:</span>
-                            <span class="info-value">${d.address || '-'}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">المهنة:</span>
-                            <span class="info-value">${d.job}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">الحالة:</span>
-                            <span class="info-value">${d.status}</span>
-                        </div>
-                        <div class="info-row">
-                            <span class="info-label">تاريخ التقديم:</span>
-                            <span class="info-value">${new Date().toLocaleDateString('ar-EG')}</span>
-                        </div>
-                    </div>
-
-                    <div class="info-box">
-                        <div class="info-label" style="margin-bottom: 10px;">تفاصيل الطلب:</div>
-                        <p style="color: white; line-height: 1.6;">${d.details}</p>
-                    </div>
-                    
-                    <div class="footer">
-                        <p class="footer-text">هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات</p>
-                        <p class="footer-text">يمكنك متابعة طلبك عبر رقم الطلب</p>
-                    </div>
-                </div>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-        printWindow.print();
-    } catch(error) {
-        console.error("Error printing request:", error);
-        Swal.fire('خطأ', 'حدث خطأ في طباعة الطلب', 'error');
-    }
-}
-
-// إغلاق النافذة المنبثقة
-function closeModal() {
-    document.getElementById('request-modal').style.display = 'none';
-    document.getElementById('request-modal').classList.remove('show');
-}
-
-// إعدادات البرنامج
 function toggleSettings() {
     const menu = document.getElementById('settings-menu');
     menu.classList.toggle('show');
     
-    // تعبئة الحقول بالقيم الحالية
     if (menu.classList.contains('show')) {
         document.getElementById('logo-url').value = getSavedLogo();
         document.getElementById('services-url').value = getServicesUrl();
@@ -881,70 +362,40 @@ function toggleSettings() {
         document.getElementById('show-services-btn').checked = shouldShowServices();
         document.getElementById('complaint-prefix').value = getComplaintPrefix();
         document.getElementById('suggestion-prefix').value = getSuggestionPrefix();
-        
-        // التحقق من ظهور زر التهيئة
-        const resetDone = localStorage.getItem('system_reset_done');
-        if (resetDone === 'true') {
-            document.getElementById('reset-system-section').style.display = 'none';
-        }
     }
 }
 
-// تحديث الإعدادات
 function updateSettings() {
-    const settings = {
+    saveSettings({
         logoUrl: document.getElementById('logo-url').value,
         servicesUrl: document.getElementById('services-url').value,
         servicesText: document.getElementById('services-text').value,
         showServices: document.getElementById('show-services-btn').checked,
         complaintPrefix: document.getElementById('complaint-prefix').value,
         suggestionPrefix: document.getElementById('suggestion-prefix').value
-    };
-    
-    // حفظ الإعدادات
-    saveSettings(settings);
-    
+    });
     document.getElementById('settings-menu').classList.remove('show');
+    Swal.fire('تم', 'تم حفظ الإعدادات', 'success');
 }
 
-// تسجيل الخروج
 function logout() {
     localStorage.removeItem('admin');
     window.location.href = 'index.html';
 }
 
-// إضافة أنيميشن للصفوف
-const style = document.createElement('style');
-style.innerHTML = `
-    @keyframes fadeInRow {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-`;
-document.head.appendChild(style);
+function closeModal() {
+    document.getElementById('request-modal').style.display = 'none';
+    document.getElementById('request-modal').classList.remove('show');
+}
 
-// تحميل البيانات عند بدء التشغيل
 document.addEventListener('DOMContentLoaded', () => {
     loadData('all');
-    
-    // تطبيق الشعار المحفوظ
     const savedLogo = getSavedLogo();
     const adminLogo = document.getElementById('admin-logo');
     if(adminLogo) adminLogo.src = savedLogo;
-    
-    // إخفاء شريط البحث في البداية
     document.getElementById('search-body').style.display = 'none';
-    
-    // التحقق من حالة زر التهيئة
-    const resetDone = localStorage.getItem('system_reset_done');
-    if (resetDone === 'true') {
-        document.getElementById('reset-system-section').style.display = 'none';
-    }
 });
 
-// تنظيف الاستماع عند مغادرة الصفحة
 window.addEventListener('beforeunload', () => {
-    if (unsubscribe) {
-        unsubscribe();
-    }
+    if (unsubscribe) unsubscribe();
 });
