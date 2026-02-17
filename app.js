@@ -117,7 +117,14 @@ async function handleSubmit() {
     }
 }
 
-// دالة إنشاء الكارت مع حل مشكلة اللوجو
+// دالة تنسيق النص مع مسافات واضحة
+function formatTextForCard(text) {
+    if (!text) return '';
+    // إضافة مسافات بين الكلمات وتنظيف النص
+    return text.replace(/\s+/g, ' ').trim();
+}
+
+// دالة إنشاء الكارت مع حل مشكلة الحروف
 async function generateRequestCard(data) {
     const logo = getSavedLogo();
     const now = new Date();
@@ -127,50 +134,57 @@ async function generateRequestCard(data) {
     const container = document.getElementById('request-card-container');
     container.innerHTML = '';
     
+    // إنشاء عنصر الكارت بخصائص محسنة للخطوط
     const card = document.createElement('div');
     card.style.cssText = `
-        width: 500px;
-        padding: 40px;
+        width: 550px;
+        padding: 45px;
         background: linear-gradient(135deg, #161f32, #0b1120);
-        border-radius: 30px;
+        border-radius: 35px;
         border: 4px solid #00d2ff;
-        font-family: 'Tajawal', sans-serif;
+        font-family: 'Tajawal', 'Cairo', sans-serif;
         color: white;
         text-align: center;
         direction: rtl;
         box-shadow: 0 20px 40px rgba(0,210,255,0.4);
+        line-height: 2.2;
+        letter-spacing: 0.8px;
+        word-spacing: 6px;
     `;
     
+    // تحسين عرض الصورة
     const logoImg = document.createElement('img');
     logoImg.src = logo;
-    logoImg.style.cssText = 'width: 130px; height: 130px; border-radius: 50%; border: 4px solid #00d2ff; margin-bottom: 15px; object-fit: cover; display: block; margin-left: auto; margin-right: auto;';
+    logoImg.style.cssText = 'width: 140px; height: 140px; border-radius: 50%; border: 4px solid #00d2ff; margin-bottom: 20px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 30px #00d2ff;';
     
+    // محتوى الكارت بخطوط محسنة ومسافات واضحة
     const contentDiv = document.createElement('div');
+    contentDiv.style.cssText = 'font-family: \'Tajawal\', sans-serif;';
     contentDiv.innerHTML = `
-        <h2 style="font-size: 26px; color: #00d2ff; margin: 5px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات</h2>
-        <h3 style="font-size: 20px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
-        <p style="color: #94a3b8; font-size: 16px; margin-bottom: 20px;">النقيب العام</p>
+        <h2 style="font-size: 30px; color: #00d2ff; margin: 10px 0; font-weight: 900; letter-spacing: 1.5px; word-spacing: 8px; line-height: 1.6;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+        <h3 style="font-size: 24px; color: white; margin: 8px 0; font-weight: 700; letter-spacing: 1px; word-spacing: 6px;">المهندس / محمود جميل</h3>
+        <p style="color: #94a3b8; font-size: 20px; margin-bottom: 25px; word-spacing: 5px;">النقيب العام</p>
         
-        <div style="background: rgba(0,210,255,0.1); padding: 20px; border-radius: 20px; margin: 20px 0;">
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span style="color: #94a3b8;">رقم الطلب :</span>
-                <span style="color: #00d2ff; font-weight: 700; direction: ltr;">${data.refId}</span>
+        <div style="background: rgba(0,210,255,0.15); padding: 25px; border-radius: 25px; margin: 25px 0; border: 1px solid rgba(0,210,255,0.3);">
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+                <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span>
+                <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px;">${data.refId}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span style="color: #94a3b8;">نوع الطلب :</span>
-                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'};">${data.type}</span>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+                <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span>
+                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700;">${data.type}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span style="color: #94a3b8;">صاحب الطلب :</span>
-                <span>${data.name}</span>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 18px;">
+                <span style="color: #94a3b8; font-weight: 600;">صاحب الطلب :</span>
+                <span style="font-weight: 600;">${formatTextForCard(data.name)}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                <span style="color: #94a3b8;">تاريخ التقديم :</span>
-                <span>${date} - ${time}</span>
+            <div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 18px;">
+                <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span>
+                <span style="font-weight: 600;">${date} - ${time}</span>
             </div>
         </div>
         
-        <div style="color: #94a3b8; font-size: 14px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <div style="color: #94a3b8; font-size: 16px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.15); margin-top: 20px; word-spacing: 4px;">
             هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
         </div>
     `;
@@ -179,24 +193,40 @@ async function generateRequestCard(data) {
     card.appendChild(contentDiv);
     container.appendChild(card);
     
+    // دالة تصوير الكارت بجودة عالية
     const captureCard = async () => {
         try {
             const canvas = await html2canvas(card, {
-                scale: 3,
+                scale: 4,
                 backgroundColor: '#161f32',
                 logging: false,
-                windowWidth: 550,
-                windowHeight: 750,
+                windowWidth: 600,
+                windowHeight: 800,
                 allowTaint: true,
-                useCORS: true
+                useCORS: true,
+                letterRendering: true,
+                foreignObjectRendering: false,
+                onclone: (clonedDoc, element) => {
+                    // تحسين الخطوط في النسخة المستنسخة
+                    const style = clonedDoc.createElement('style');
+                    style.innerHTML = `
+                        * { 
+                            font-family: 'Tajawal', 'Cairo', sans-serif !important;
+                            letter-spacing: 0.8px !important;
+                            word-spacing: 6px !important;
+                            line-height: 2.2 !important;
+                        }
+                    `;
+                    clonedDoc.head.appendChild(style);
+                }
             });
             
             const result = await Swal.fire({
                 title: 'تم حفظ الطلب',
-                html: `<div style="color:#00d2ff; font-size:20px; margin-bottom:15px;">${data.refId}</div>`,
+                html: `<div style="color:#00d2ff; font-size:20px; margin-bottom:15px; letter-spacing:2px;">${data.refId}</div>`,
                 imageUrl: canvas.toDataURL('image/png'),
-                imageWidth: 400,
-                imageHeight: canvas.height * 400 / canvas.width,
+                imageWidth: 450,
+                imageHeight: canvas.height * 450 / canvas.width,
                 showCancelButton: true,
                 confirmButtonText: 'تحميل',
                 cancelButtonText: 'إغلاق',
@@ -224,12 +254,13 @@ async function generateRequestCard(data) {
         container.innerHTML = '';
     };
     
+    // انتظار تحميل الصورة
     if (logoImg.complete) {
         captureCard();
     } else {
         logoImg.onload = captureCard;
         logoImg.onerror = () => {
-            logoImg.src = 'https://via.placeholder.com/130x130?text=Logo';
+            logoImg.src = 'https://via.placeholder.com/140x140?text=Logo';
             setTimeout(captureCard, 100);
         };
     }
