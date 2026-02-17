@@ -1,7 +1,6 @@
 let currentFilter = 'all';
 let allRequests = []; // تخزين جميع الطلبات للبحث المباشر
 let unsubscribe; // دالة إلغاء الاستماع للتحديثات المباشرة
-let systemResetDone = false; // للتأكد من أن زر التهيئة يستخدم مرة واحدة فقط
 
 // تبديل حالة الأزرار النشطة
 function setActiveNav(buttonId) {
@@ -212,9 +211,23 @@ function renderRequests(requests) {
             d.createdAtDate.toLocaleDateString('ar-EG') : 
             (d.createdAt ? new Date(d.createdAt).toLocaleDateString('ar-EG') : 'غير محدد');
         
+        const createdTime = d.createdAtDate ? 
+            d.createdAtDate.toLocaleTimeString('ar-EG') : 
+            (d.createdAt ? new Date(d.createdAt).toLocaleTimeString('ar-EG') : '');
+        
+        // تحديد نوع العضوية وعرضها بشكل مناسب
+        const membershipHtml = d.memberType === 'عضو نقابة' 
+            ? `<span class="membership-badge member">عضو</span> <span style="color:var(--primary);">${d.memberId}</span>`
+            : `<span class="membership-badge non-member">غير عضو</span>`;
+        
         html += `
         <tr style="animation: fadeInRow 0.3s ease;">
-            <td style="font-weight:600;">${createdDate}</td>
+            <td>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-weight:600;">${createdDate}</span>
+                    <small style="color:var(--text-muted);">${createdTime}</small>
+                </div>
+            </td>
             <td><strong style="color:var(--primary); direction: ltr; display: inline-block;">${d.refId}</strong></td>
             <td>
                 <div style="display:flex; flex-direction:column; gap:3px;">
@@ -223,7 +236,7 @@ function renderRequests(requests) {
                     <small style="color:var(--primary);">${d.phone}</small>
                 </div>
             </td>
-            <td>${d.memberId !== 'غير عضو' ? d.memberId : '-'}</td>
+            <td>${membershipHtml}</td>
             <td>${d.gov}</td>
             <td>
                 <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">
@@ -241,9 +254,6 @@ function renderRequests(requests) {
                 <div style="display:flex; gap:5px; justify-content: center;">
                     <button class="action-btn" onclick="manageReq('${d.refId}')" title="إدارة">
                         <i class="fas fa-cog"></i>
-                    </button>
-                    <button class="action-btn delete" onclick="deleteReq('${d.refId}')" title="حذف">
-                        <i class="fas fa-trash"></i>
                     </button>
                     <button class="action-btn" onclick="printRequestCard('${d.refId}')" title="طباعة">
                         <i class="fas fa-print"></i>
@@ -316,10 +326,19 @@ function showRequestModal(d) {
 
     const modalHtml = `
         <div class="request-card">
-            <h3 style="color:var(--primary); margin-bottom:20px; display:flex; align-items:center; gap:10px;">
-                <i class="fas fa-clipboard-list"></i>
-                إدارة الطلب - <span style="direction: ltr;">${d.refId}</span>
-            </h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color:var(--primary); display:flex; align-items:center; gap:10px;">
+                    <i class="fas fa-clipboard-list"></i>
+                    إدارة الطلب
+                </h3>
+                <button class="action-btn delete" onclick="deleteReqFromModal('${d.refId}')" title="حذف">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            
+            <div style="background:rgba(0,210,255,0.1); padding:10px; border-radius:10px; margin-bottom:20px; text-align:center;">
+                <span style="color:var(--primary); font-weight:bold; direction:ltr; display:inline-block;">${d.refId}</span>
+            </div>
             
             <!-- بيانات مقدم الطلب -->
             <div style="background:rgba(0,0,0,0.2); padding:20px; border-radius:15px; margin-bottom:20px;">
@@ -420,11 +439,11 @@ function showRequestModal(d) {
                 </h4>
                 <div class="input-group">
                     <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
-                    <input type="text" id="new-stage-name" class="neon-border" placeholder="مثال: تم التواصل مع العضو" value="${getNextStage(d.status)}">
+                    <input type="text" id="new-stage-name" class="neon-border" placeholder="اكتب اسم المرحلة...">
                 </div>
                 <div class="input-group">
-                    <label><i class="fas fa-comment"></i> تعليق / قرار</label>
-                    <textarea id="status-comment" rows="3" class="neon-border" placeholder="اكتب تفاصيل التحديث..."></textarea>
+                    <label><i class="fas fa-comment"></i> تعليق لإغلاق المرحلة السابقة</label>
+                    <textarea id="status-comment" rows="3" class="neon-border" placeholder="اكتب تعليقك هنا..."></textarea>
                 </div>
                 <div style="display:flex; gap:10px; margin-top:20px; flex-wrap: wrap;">
                     <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2; min-width: 150px;">
@@ -434,7 +453,7 @@ function showRequestModal(d) {
                         <i class="fas fa-print"></i> طباعة
                     </button>
                     <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; min-width: 100px; background:var(--danger);">
-                        <i class="fas fa-lock"></i> إغلاق
+                        <i class="fas fa-lock"></i> إغلاق نهائي
                     </button>
                 </div>
             </div>
@@ -444,17 +463,6 @@ function showRequestModal(d) {
     document.getElementById('modal-content-area').innerHTML = modalHtml;
     document.getElementById('request-modal').style.display = 'flex';
     document.getElementById('request-modal').classList.add('show');
-}
-
-// الحصول على المرحلة التالية المقترحة
-function getNextStage(currentStatus) {
-    const stages = {
-        'تم الاستلام': 'قيد المراجعة',
-        'قيد المراجعة': 'جاري التنفيذ',
-        'جاري التنفيذ': 'تم الحل',
-        'تم الحل': 'تم الإغلاق النهائي'
-    };
-    return stages[currentStatus] || 'تحديث جديد';
 }
 
 // تحديث حالة الطلب
@@ -558,23 +566,26 @@ async function closeRequest(refId) {
     }
 }
 
-// حذف الطلب مع إخفاء الباسورد
-async function deleteReq(id) {
-    // إنشاء عنصر input من نوع password مباشرة بدون ظهور الباسورد
+// حذف الطلب من داخل الكارت
+async function deleteReqFromModal(id) {
     const { value: pass } = await Swal.fire({
-        title: 'حذف الطلب',
-        html: '<input type="password" id="delete-password" class="swal2-input" placeholder="كلمة سر الحذف" style="direction: ltr;">',
+        title: '⚠️ حذف الطلب',
+        text: 'هل أنت متأكد من حذف هذا الطلب؟',
+        input: 'password',
+        inputPlaceholder: 'كلمة سر الحذف',
         showCancelButton: true,
         confirmButtonText: 'حذف',
         cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#ff4757',
         background: '#161f32',
         color: '#fff',
-        preConfirm: () => {
-            return document.getElementById('delete-password').value;
+        inputAttributes: {
+            'class': 'neon-border',
+            'style': 'direction: ltr; width:100%;'
         }
     });
 
-    if(pass === '11111@') {
+    if (pass === '11111@') {
         try {
             await db.collection("Requests").doc(id).delete();
             Swal.fire({
@@ -585,6 +596,7 @@ async function deleteReq(id) {
                 background: '#161f32',
                 color: '#fff'
             });
+            closeModal();
         } catch(error) {
             console.error("Error deleting request:", error);
             Swal.fire('خطأ', 'حدث خطأ في حذف الطلب', 'error');
@@ -601,27 +613,13 @@ async function deleteReq(id) {
     }
 }
 
-// تهيئة النظام (حذف كل البيانات)
+// تهيئة النظام (حذف كل البيانات والبدء من جديد)
 async function resetSystem() {
-    // التحقق من أن الزر لم يستخدم من قبل
-    if (systemResetDone) {
-        Swal.fire({
-            icon: 'info',
-            title: 'تم التهيئة مسبقاً',
-            text: 'هذا الزر يستخدم لمرة واحدة فقط وتم استخدامه بالفعل',
-            confirmButtonText: 'حسناً',
-            background: '#161f32',
-            color: '#fff'
-        });
-        document.getElementById('reset-system-section').style.display = 'none';
-        return;
-    }
-
     const { value: pass } = await Swal.fire({
         title: '⚠️ تحذير شديد الخطورة ⚠️',
-        text: 'أنت على وشك حذف جميع البيانات نهائياً من النظام. هذا الإجراء لا يمكن التراجع عنه.',
+        html: '<p style="color:#ff4757;">أنت على وشك حذف جميع البيانات نهائياً والبدء من جديد بترقيم يبدأ من 1</p><p style="color:#94a3b8; margin-top:10px;">هذا الإجراء لا يمكن التراجع عنه</p>',
         input: 'password',
-        inputPlaceholder: 'ادخل كلمة سر التهيئة 11111@',
+        inputPlaceholder: 'كلمة سر التهيئة',
         showCancelButton: true,
         confirmButtonText: 'نعم، قم بتهيئة النظام',
         cancelButtonText: 'إلغاء',
@@ -644,18 +642,20 @@ async function resetSystem() {
             });
             await batch.commit();
             
-            // إخفاء الزر بشكل دائم
-            systemResetDone = true;
-            document.getElementById('reset-system-section').style.display = 'none';
+            // تخزين أن التهيئة تمت
+            localStorage.setItem('system_reset_done', 'true');
             
             Swal.fire({
                 icon: 'success',
                 title: 'تمت تهيئة النظام',
-                text: 'تم حذف جميع البيانات بنجاح. النظام الآن جاهز للاستخدام الجديد.',
+                text: 'تم حذف جميع البيانات بنجاح. النظام الآن جاهز للبدء من جديد مع ترقيم يبدأ من 1',
                 confirmButtonText: 'حسناً',
                 background: '#161f32',
                 color: '#fff'
             });
+            
+            // إخفاء الزر بعد التهيئة
+            document.getElementById('reset-system-section').style.display = 'none';
             
         } catch(error) {
             console.error("Error resetting system:", error);
@@ -788,7 +788,8 @@ async function printRequestCard(refId) {
                         <img src="${logo}" class="logo">
                         <h1 class="title">نقابة تكنولوجيا المعلومات والبرمجيات</h1>
                         <p class="subtitle">بوابة الشكاوي والمقترحات</p>
-                        <h2 class="title" style="font-size: 20px;">نقيب المعلومات</h2>
+                        <h2 class="title" style="font-size: 20px;">النقيب العام</h2>
+                        <h3 style="color: #00d2ff; margin-top:5px;">المهندس / محمود جميل</h3>
                     </div>
                     
                     <div class="ref-id">${d.refId}</div>
@@ -805,6 +806,10 @@ async function printRequestCard(refId) {
                         <div class="info-row">
                             <span class="info-label">الرقم القومي:</span>
                             <span class="info-value">${d.nid}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">نوع المقدم:</span>
+                            <span class="info-value">${d.memberType || 'غير محدد'}</span>
                         </div>
                         <div class="info-row">
                             <span class="info-label">رقم العضوية:</span>
@@ -876,6 +881,12 @@ function toggleSettings() {
         document.getElementById('show-services-btn').checked = shouldShowServices();
         document.getElementById('complaint-prefix').value = getComplaintPrefix();
         document.getElementById('suggestion-prefix').value = getSuggestionPrefix();
+        
+        // التحقق من ظهور زر التهيئة
+        const resetDone = localStorage.getItem('system_reset_done');
+        if (resetDone === 'true') {
+            document.getElementById('reset-system-section').style.display = 'none';
+        }
     }
 }
 
@@ -892,15 +903,6 @@ function updateSettings() {
     
     // حفظ الإعدادات
     saveSettings(settings);
-    
-    Swal.fire({
-        icon: 'success',
-        title: 'تم التحديث',
-        text: 'تم حفظ الإعدادات بنجاح',
-        confirmButtonText: 'حسناً',
-        background: '#161f32',
-        color: '#fff'
-    });
     
     document.getElementById('settings-menu').classList.remove('show');
 }
@@ -936,7 +938,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // التحقق من حالة زر التهيئة
     const resetDone = localStorage.getItem('system_reset_done');
     if (resetDone === 'true') {
-        systemResetDone = true;
         document.getElementById('reset-system-section').style.display = 'none';
     }
 });
