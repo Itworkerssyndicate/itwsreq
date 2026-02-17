@@ -141,7 +141,7 @@ function renderRequests(requests) {
             <td>${membershipHtml}</td>
             <td>${d.gov}</td>
             <td><span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></td>
-            <td><span class="status-badge status-${d.status}">${d.status}</span></td>
+            <td><span class="status-badge status-${d.status.replace(/ /g, '\\ ')}">${d.status}</span></td>
             <td><button class="action-btn" onclick="manageReq('${d.refId}')"><i class="fas fa-cog"></i></button></td>
         </tr>`;
     });
@@ -159,6 +159,8 @@ function getStatusIcon(status) {
         case 'قيد المراجعة': return 'fa-search';
         case 'جاري التنفيذ': return 'fa-cogs';
         case 'تم الحل': return 'fa-check-circle';
+        case 'تمت القراءة': return 'fa-check';
+        case 'لم يقرأ': return 'fa-eye-slash';
         default: return 'fa-circle';
     }
 }
@@ -183,7 +185,27 @@ function showRequestModal(d) {
     const finalStage = "تم الإغلاق النهائي";
     const allStages = [...stages, finalStage];
     const currentIdx = allStages.indexOf(d.status);
-    const pct = allStages.length > 1 ? ((currentIdx + 1) / allStages.length) * 100 : 100;
+    const progressPercent = allStages.length > 0 ? ((currentIdx + 1) / allStages.length) * 100 : 0;
+
+    // تنسيق النص مع مسافات
+    const formatText = (text) => {
+        return text.replace(/([^\s])/g, '$1 ').trim();
+    };
+
+    // تحديد الحقول الإضافية حسب نوع الطلب
+    let statusOptions = '';
+    if (d.type === 'شكوى') {
+        statusOptions = `
+            <option value="قيد المراجعة">قيد المراجعة</option>
+            <option value="جاري التنفيذ">جاري التنفيذ</option>
+            <option value="تم الحل">تم الحل</option>
+        `;
+    } else {
+        statusOptions = `
+            <option value="تمت القراءة">تمت القراءة</option>
+            <option value="لم يقرأ">لم يقرأ</option>
+        `;
+    }
 
     const modalHtml = `
         <div>
@@ -194,26 +216,36 @@ function showRequestModal(d) {
             
             <div style="background:rgba(0,0,0,0.2); padding:15px; border-radius:10px; margin-bottom:15px;">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; font-size:12px;">
-                    <div><span style="color:#94a3b8;">الاسم:</span> ${d.name}</div>
-                    <div><span style="color:#94a3b8;">الرقم القومي:</span> ${d.nid}</div>
-                    <div><span style="color:#94a3b8;">الهاتف:</span> ${d.phone}</div>
-                    <div><span style="color:#94a3b8;">المحافظة:</span> ${d.gov}</div>
-                    <div><span style="color:#94a3b8;">نوع المقدم:</span> ${d.memberType}</div>
-                    <div><span style="color:#94a3b8;">رقم العضوية:</span> ${d.memberId}</div>
+                    <div><span style="color:#94a3b8;">الاسم :</span> ${formatText(d.name)}</div>
+                    <div><span style="color:#94a3b8;">الرقم القومي :</span> ${d.nid}</div>
+                    <div><span style="color:#94a3b8;">الهاتف :</span> ${d.phone}</div>
+                    <div><span style="color:#94a3b8;">المحافظة :</span> ${d.gov}</div>
+                    <div><span style="color:#94a3b8;">نوع المقدم :</span> ${d.memberType}</div>
+                    <div><span style="color:#94a3b8;">رقم العضوية :</span> ${d.memberId}</div>
+                    <div><span style="color:#94a3b8;">المهنة :</span> ${d.job}</div>
+                    <div><span style="color:#94a3b8;">نوع الطلب :</span> <span class="type-badge ${d.type === 'شكوى' ? 'complaint' : 'suggestion'}">${d.type}</span></div>
                 </div>
-                <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان:</span> ${d.address}</div>
-                <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل:</span> ${d.details}</div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">العنوان :</span> ${formatText(d.address)}</div>
+                <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${formatText(d.details)}</div>
             </div>
 
+            <!-- التراك المائي الأفقي -->
             <div class="track-container" style="margin:20px 0;">
-                <div class="track-water"><div class="water-fill" style="height:${pct}%"></div></div>
-                <div class="track-bar">
-                    ${allStages.map((stage, index) => `
-                        <div class="track-point">
-                            <div class="dot ${index <= currentIdx ? 'active' : 'inactive'}">${index <= currentIdx ? '<i class="fas fa-check"></i>' : ''}</div>
-                            <span class="dot-label">${stage}</span>
-                        </div>
-                    `).join('')}
+                <div class="track-water">
+                    <div class="water-fill-horizontal" style="width: ${progressPercent}%;"></div>
+                </div>
+                <div class="track-bar-horizontal">
+                    ${allStages.map((stage, index) => {
+                        const isActive = index <= currentIdx;
+                        return `
+                            <div class="track-point">
+                                <div class="dot ${isActive ? 'active' : 'inactive'}">
+                                    ${isActive ? '<i class="fas fa-check"></i>' : ''}
+                                </div>
+                                <span class="dot-label">${stage}</span>
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             </div>
 
@@ -229,11 +261,14 @@ function showRequestModal(d) {
 
             <div style="border-top:1px solid var(--border); padding-top:15px;">
                 <h4 style="font-size:13px; margin-bottom:10px;">تحديث جديد</h4>
-                <input type="text" id="new-stage-name" class="neon-border" placeholder="اسم المرحلة الجديدة" style="margin-bottom:10px;">
+                <select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
+                    <option value="">-- اختر الحالة الجديدة --</option>
+                    ${statusOptions}
+                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                </select>
                 <textarea id="status-comment" class="neon-border" placeholder="تعليق إغلاق المرحلة السابقة" rows="2" style="margin-bottom:10px;"></textarea>
                 <div style="display:flex; gap:10px;">
                     <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2;">تحديث</button>
-                    <button class="btn-nav" onclick="closeRequest('${d.refId}')" style="flex:1; background:var(--danger);">إغلاق</button>
                 </div>
             </div>
         </div>
@@ -259,43 +294,20 @@ async function updateRequestStatus(refId) {
                 status: newStage,
                 comment: comment,
                 time: new Date().toLocaleString('ar-EG'),
-                isFinal: false
+                isFinal: newStage === 'تم الإغلاق النهائي'
             })
         });
 
-        Swal.fire('تم', 'تم تحديث الحالة', 'success');
+        Swal.fire({
+            icon: 'success',
+            title: 'تم',
+            text: 'تم تحديث الحالة',
+            background: '#161f32',
+            color: '#fff'
+        });
         closeModal();
     } catch(error) {
         Swal.fire('خطأ', 'حدث خطأ', 'error');
-    }
-}
-
-async function closeRequest(refId) {
-    const { value: comment } = await Swal.fire({
-        title: 'إغلاق الطلب',
-        input: 'textarea',
-        inputPlaceholder: 'القرار النهائي',
-        showCancelButton: true,
-        background: '#161f32',
-        color: '#fff'
-    });
-
-    if(comment) {
-        try {
-            await db.collection("Requests").doc(refId).update({
-                status: 'تم الإغلاق النهائي',
-                tracking: firebase.firestore.FieldValue.arrayUnion({
-                    status: 'تم الإغلاق النهائي',
-                    comment: comment,
-                    time: new Date().toLocaleString('ar-EG'),
-                    isFinal: true
-                })
-            });
-            Swal.fire('تم', 'تم إغلاق الطلب', 'success');
-            closeModal();
-        } catch(error) {
-            Swal.fire('خطأ', 'حدث خطأ', 'error');
-        }
     }
 }
 
@@ -307,19 +319,38 @@ async function deleteReqFromModal(id) {
         showCancelButton: true,
         background: '#161f32',
         color: '#fff',
-        inputAttributes: { style: 'direction:ltr;' }
+        inputAttributes: { 
+            style: 'direction:ltr;',
+            autocomplete: 'off'
+        },
+        didOpen: () => {
+            // منع إغلاق النافذة عند النقر خارجها
+            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
+        }
     });
 
     if (pass === '11111@') {
         try {
             await db.collection("Requests").doc(id).delete();
-            Swal.fire('تم', 'تم الحذف', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: 'تم',
+                text: 'تم الحذف',
+                background: '#161f32',
+                color: '#fff'
+            });
             closeModal();
         } catch(error) {
             Swal.fire('خطأ', 'حدث خطأ', 'error');
         }
     } else if(pass) {
-        Swal.fire('خطأ', 'كلمة السر خطأ', 'error');
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'كلمة السر خطأ',
+            background: '#161f32',
+            color: '#fff'
+        });
     }
 }
 
@@ -333,7 +364,13 @@ async function resetSystem() {
         confirmButtonColor: '#ff4757',
         background: '#161f32',
         color: '#fff',
-        inputAttributes: { style: 'direction:ltr;' }
+        inputAttributes: { 
+            style: 'direction:ltr;',
+            autocomplete: 'off'
+        },
+        didOpen: () => {
+            Swal.getPopup().addEventListener('click', (e) => e.stopPropagation());
+        }
     });
 
     if (pass === '11111@') {
@@ -343,7 +380,13 @@ async function resetSystem() {
             snapshot.docs.forEach(doc => batch.delete(doc.ref));
             await batch.commit();
             localStorage.setItem('system_reset_done', 'true');
-            Swal.fire('تم', 'تمت تهيئة النظام', 'success');
+            Swal.fire({
+                icon: 'success',
+                title: 'تم',
+                text: 'تمت تهيئة النظام',
+                background: '#161f32',
+                color: '#fff'
+            });
             document.getElementById('reset-system-section').style.display = 'none';
         } catch(error) {
             Swal.fire('خطأ', 'حدث خطأ', 'error');
@@ -365,18 +408,7 @@ function toggleSettings() {
     }
 }
 
-function updateSettings() {
-    saveSettings({
-        logoUrl: document.getElementById('logo-url').value,
-        servicesUrl: document.getElementById('services-url').value,
-        servicesText: document.getElementById('services-text').value,
-        showServices: document.getElementById('show-services-btn').checked,
-        complaintPrefix: document.getElementById('complaint-prefix').value,
-        suggestionPrefix: document.getElementById('suggestion-prefix').value
-    });
-    document.getElementById('settings-menu').classList.remove('show');
-    Swal.fire('تم', 'تم حفظ الإعدادات', 'success');
-}
+// دالة الحفظ التلقائي متوفرة من config.js
 
 function logout() {
     localStorage.removeItem('admin');
