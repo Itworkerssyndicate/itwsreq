@@ -9,29 +9,29 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-function showTab(t, btn) {
+function showTab(t, b) {
     document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + t).style.display = 'block';
-    btn.classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+    document.getElementById('view-' + t).style.display = 'block';
+    b.classList.add('active');
 }
 
-function toggleForm() {
-    const isMember = document.getElementById('u-member').value === 'عضو';
-    document.getElementById('u-mid').style.display = isMember ? 'block' : 'none';
-    document.getElementById('opt-complaint').style.display = isMember ? 'block' : 'none';
-    if(!isMember) document.getElementById('u-type').value = 'اقتراح';
+function toggleMemberLogic() {
+    const isM = document.getElementById('u-member').value === 'عضو';
+    document.getElementById('u-mid').style.display = isM ? 'block' : 'none';
+    document.getElementById('opt-complaint').style.display = isM ? 'block' : 'none';
+    if(!isM) document.getElementById('u-type').value = 'اقتراح';
 }
 
-async function handleSubmit() {
+async function appSubmit() {
     const rid = "REQ-" + Math.floor(100000 + Math.random() * 900000);
     const name = document.getElementById('u-name').value;
     const nid = document.getElementById('u-nid').value;
     
-    if(!name || nid.length < 14) return Swal.fire("خطأ", "برجاء استكمال البيانات", "error");
+    if(!name || nid.length < 14) return Swal.fire("خطأ", "برجاء كتابة الاسم والرقم القومي بدقة", "error");
 
-    const data = {
-        refId: rid, name: name, nid: nid,
+    const docData = {
+        refId: rid, name, nid,
         phone: document.getElementById('u-phone').value,
         gov: document.getElementById('u-gov').value,
         job: document.getElementById('u-job').value,
@@ -42,57 +42,59 @@ async function handleSubmit() {
         details: document.getElementById('u-details').value,
         status: "تم الاستلام",
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        tracking: [{ s: "تم الاستلام", c: "تم استلام طلبك بنجاح", t: new Date().toLocaleString('ar-EG'), final: false }]
+        tracking: [{ s: "تم الاستلام", c: "تم استلام طلبك بنجاح", t: new Date().toLocaleString('ar-EG'), isFinal: false }]
     };
 
-    await db.collection("Requests").doc(rid).set(data);
+    await db.collection("Requests").doc(rid).set(docData);
 
-    // تحميل التذكرة
+    // تذكرة
     document.getElementById('t-name').innerText = name;
     document.getElementById('t-nid').innerText = nid;
     document.getElementById('t-ref').innerText = rid;
-    html2canvas(document.querySelector("#ticket-template")).then(canvas => {
+    html2canvas(document.getElementById('ticket-wrap')).then(canvas => {
         let a = document.createElement('a'); a.download = rid+".png"; a.href = canvas.toDataURL(); a.click();
     });
 
-    Swal.fire("تم بنجاح", "تم حفظ تذكرة المراجعة في جهازك", "success");
+    Swal.fire("تم الإرسال", "تم حفظ تذكرة المراجعة بنجاح", "success");
 }
 
-function handleTrack() {
+function appTrack() {
     const nid = document.getElementById('q-nid').value;
     const rid = document.getElementById('q-ref').value;
-    db.collection("Requests").where("nid","==",nid).where("refId","==",rid).onSnapshot(snap => {
-        if(snap.empty) return Swal.fire("خطأ", "بيانات غير مطابقة", "error");
-        renderTrack(snap.docs[0].data());
+    db.collection("Requests").where("nid", "==", nid).where("refId", "==", rid).onSnapshot(snap => {
+        if(snap.empty) return Swal.fire("عذراً", "لا توجد بيانات مطابقة", "error");
+        renderTrackView(snap.docs[0].data());
     });
 }
 
-function renderTrack(d) {
+function renderTrackView(d) {
     const stages = ["تم الاستلام", "قيد المراجعة", "جاري التنفيذ", "تم الحل"];
     const idx = stages.indexOf(d.status);
+    
     let html = `
         <div class="card">
-            <h3 style="text-align:center; color:var(--primary)">${d.refId}</h3>
-            <div class="water-track">
-                <div class="track-line"><div class="track-fill" style="width:${(idx/3)*100}%"></div></div>
-                ${stages.map((s, i) => `<div class="dot ${i<=idx?'active':''}">✓<div class="dot-label">${s}</div></div>`).join('')}
+            <h3 style="text-align:center; color:var(--cyan); margin-bottom:15px;">${d.refId}</h3>
+            <div class="timeline">
+                <div class="timeline-line"><div class="timeline-progress" style="width:${(idx/3)*100}%"></div></div>
+                ${stages.map((s, i) => `<div class="t-dot ${i<=idx?'active':''}">✓<div class="t-label">${s}</div></div>`).join('')}
             </div>
             <div style="margin-top:50px">
                 ${d.tracking.reverse().map(t => `
-                    <div class="${t.final ? 'final-decision' : ''}" style="border-right:3px solid var(--primary); padding:10px; margin-bottom:10px; background:rgba(255,255,255,0.02)">
-                        ${t.final ? '⭐ <b>قرار نهائي:</b>' : ''} <b>${t.s}</b>
-                        <p style="font-size:12px; color:var(--muted)">${t.c}</p>
-                        <small style="font-size:10px">${t.t}</small>
+                    <div class="track-card ${t.isFinal ? 'final-badge' : ''}">
+                        <div style="display:flex; justify-content:space-between">
+                            <b style="${t.isFinal?'color:var(--cyan)':''}">${t.isFinal?'⭐ قرار نهائي: ':''}${t.s}</b>
+                            <small style="color:var(--muted)">${t.t}</small>
+                        </div>
+                        <p style="font-size:13px; margin-top:5px;">${t.c}</p>
                     </div>
                 `).join('')}
             </div>
         </div>`;
-    document.getElementById('track-result').innerHTML = html;
+    document.getElementById('track-render').innerHTML = html;
 }
 
-function adminLogin() {
+function appLogin() {
     if(document.getElementById('adm-user').value === 'admin' && document.getElementById('adm-pass').value === 'itws@2026') {
-        localStorage.setItem('isAdm', 'true');
-        window.location.href = 'admin.html';
+        localStorage.setItem('isAdmin', 'true'); window.location.href = 'admin.html';
     }
 }
