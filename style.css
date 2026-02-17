@@ -1,43 +1,64 @@
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
 
 :root {
-    --bg: #0b1120; --card: #161f32; --primary: #00d2ff;
-    --accent: #0ea5e9; --text: #ffffff; --muted: #94a3b8;
+    --bg-dark: #0b1120;
+    --card-bg: #161f32;
+    --cyan: #00d2ff;
+    --blue: #0ea5e9;
+    --text: #ffffff;
+    --muted: #94a3b8;
+    --danger: #ff4757;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; user-select: none; }
-body { background: var(--bg); color: var(--text); direction: rtl; padding: 15px; }
 
-.app-container { max-width: 500px; margin: 0 auto; }
+body { background: var(--bg-dark); color: var(--text); direction: rtl; padding: 15px; }
 
-/* الهيدر والأزرار */
-.header { text-align: center; margin-bottom: 25px; }
-.nav-grid { display: grid; grid-template-columns: 1fr 1fr 60px; gap: 10px; margin-bottom: 20px; }
+.container { max-width: 480px; margin: 0 auto; }
+
+/* الهيدر العلوي */
+.header { text-align: center; margin-bottom: 30px; }
+.header h1 { font-size: 26px; font-weight: 900; }
+
+/* أزرار التحكم الرئيسية (Tabs) */
+.nav-grid { display: grid; grid-template-columns: 1fr 1fr 60px; gap: 10px; margin-bottom: 25px; }
 .nav-btn { 
-    background: #1e293b; border: none; padding: 15px; border-radius: 12px; 
+    background: #1e293b; border: none; padding: 14px; border-radius: 12px; 
     color: #fff; cursor: pointer; font-weight: bold; transition: 0.3s;
 }
-.nav-btn.active { background: var(--accent); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
+.nav-btn.active { background: var(--blue); box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4); }
 
-/* الكروت */
-.card { background: var(--card); border: 1px solid rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+/* الكروت والقوائم */
+.card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.05); padding: 22px; border-radius: 20px; margin-bottom: 20px; }
 
-/* التراك المائي (Timeline) */
-.water-track { display: flex; justify-content: space-between; position: relative; margin: 40px 0; }
-.track-line { position: absolute; top: 18px; left: 0; right: 0; height: 4px; background: #1e293b; z-index: 1; }
-.track-fill { position: absolute; top: 0; right: 0; height: 100%; background: var(--primary); transition: 1s; box-shadow: 0 0 10px var(--primary); }
-.dot { width: 36px; height: 36px; border-radius: 50%; background: #1e293b; z-index: 2; border: 4px solid var(--card); display: flex; align-items: center; justify-content: center; position: relative; font-size: 14px; }
-.dot.active { background: var(--primary); border-color: #fff; }
-.dot-label { position: absolute; top: 42px; font-size: 10px; white-space: nowrap; color: var(--muted); }
+input, select, textarea { 
+    width: 100%; padding: 14px; background: #0f172a; border: 1px solid #1e293b; 
+    border-radius: 12px; color: #fff; margin-bottom: 15px; outline: none; font-size: 14px;
+}
+input:focus { border-color: var(--cyan); }
 
-/* القرار النهائي */
-.final-decision { border: 2px solid var(--primary); background: rgba(0, 210, 255, 0.1); padding: 15px; border-radius: 15px; margin-top: 15px; border-style: dashed; }
+/* الـ Timeline (شاشة الاستعلام) */
+.timeline { display: flex; justify-content: space-between; position: relative; margin: 45px 0 30px; }
+.timeline-line { position: absolute; top: 18px; left: 0; right: 0; height: 4px; background: #1e293b; z-index: 1; }
+.timeline-progress { position: absolute; top: 0; right: 0; height: 100%; background: var(--cyan); transition: 1s ease; box-shadow: 0 0 10px var(--cyan); }
+.t-dot { width: 36px; height: 36px; border-radius: 50%; background: #1e293b; z-index: 2; border: 4px solid var(--card-bg); display: flex; align-items: center; justify-content: center; position: relative; font-size: 14px; }
+.t-dot.active { background: var(--cyan); color: #000; border-color: #fff; }
+.t-label { position: absolute; top: 42px; font-size: 11px; white-space: nowrap; color: var(--muted); font-weight: bold; }
 
-/* المدخلات */
-input, select, textarea { width: 100%; padding: 14px; background: #0f172a; border: 1px solid #1e293b; border-radius: 12px; color: #fff; margin-bottom: 12px; outline: none; }
-.btn-main { width: 100%; padding: 16px; border: none; border-radius: 12px; background: var(--accent); color: white; font-weight: bold; cursor: pointer; }
+/* كروت تتبع الحالة */
+.track-card { 
+    border-right: 4px solid var(--cyan); background: rgba(255,255,255,0.02); 
+    padding: 15px; margin-bottom: 12px; border-radius: 0 12px 12px 0; position: relative;
+}
+.final-badge { border: 2px dashed var(--cyan); background: rgba(0, 210, 255, 0.05); }
+
+/* زر الإرسال */
+.btn-submit { width: 100%; padding: 16px; border: none; border-radius: 14px; background: var(--blue); color: #fff; font-weight: 900; cursor: pointer; }
 
 /* الإدارة */
-.admin-table { width: 100%; border-collapse: collapse; color: var(--text); font-size: 12px; }
-.admin-table th { background: rgba(255,255,255,0.05); padding: 10px; text-align: right; }
-.admin-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.admin-table th { background: #1e293b; padding: 12px; text-align: right; }
+.admin-table td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+/* التذكرة للتحميل */
+#ticket-wrap { position: absolute; left: -9999px; background: #fff; color: #000; width: 400px; padding: 30px; text-align: center; border: 8px solid var(--blue); }
