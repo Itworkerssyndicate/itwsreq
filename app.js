@@ -166,7 +166,8 @@ async function generateRequestCard(data) {
                 <img src="${logo}" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #00d2ff; box-shadow: 0 0 30px #00d2ff; margin-bottom: 10px;">
                 <h2 style="margin: 5px 0; color: #00d2ff; text-shadow: 0 0 15px #00d2ff;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
                 <p style="color: #94a3b8;">بوابة الشكاوي والمقترحات</p>
-                <h3 style="color: white; margin: 5px 0;">نقيب المعلومات</h3>
+                <h3 style="color: white; margin: 5px 0;">النقيب العام</h3>
+                <h4 style="color: var(--primary); margin: 5px 0;">المهندس / محمود جميل</h4>
             </div>
 
             <div style="
