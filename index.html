@@ -3,59 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نقابة تكنولوجيا المعلومات</title>
+    <title>بوابة نقابة تكنولوجيا المعلومات</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body oncontextmenu="return false;"> <div class="main-wrapper">
-        <div style="text-align: center;"><img id="app-logo" src="logo.png" style="width: 80px;"></div>
+<body oncontextmenu="return false;" onkeydown="if(event.keyCode==44) return false;">
+
+    <div class="main-wrapper">
+        <div style="text-align: center;"><img id="app-logo-img" src="logo.png" style="width: 80px;"></div>
         <header class="header-box">
-            <span>النقيب العام</span>
+            <span id="app-pres-title">النقيب العام</span>
             <h1 id="app-pres-name">المهندس / محمود جميل</h1>
         </header>
 
-        <nav style="display: flex; gap: 10px; margin-bottom: 20px;">
-            <button class="btn-nav active" onclick="switchView('submit')">تقديم طلب</button>
-            <button class="btn-nav" onclick="switchView('track')">استعلام</button>
-            <button class="btn-nav" onclick="switchView('admin-login')" style="width:50px">👤</button>
+        <nav class="nav-buttons">
+            <button class="btn-nav active" onclick="switchView('submit', this)">➕ تقديم</button>
+            <button class="btn-nav" onclick="switchView('track', this)">🔍 استعلام</button>
+            <button class="btn-nav" onclick="switchView('admin-login', this)" style="max-width:60px">👤</button>
         </nav>
 
         <section id="view-submit" class="view">
             <div class="card">
-                <select id="u-member-type" onchange="toggleMemberField()" style="margin-bottom:10px;">
+                <select id="u-member-type" onchange="toggleMemberField()">
                     <option value="عضو نقابة">عضو نقابة</option>
                     <option value="غير عضو">غير عضو</option>
                 </select>
-                <input type="text" id="u-name" placeholder="الاسم الكامل" style="margin-bottom:10px;">
-                <input type="number" id="u-nid" placeholder="الرقم القومي">
-                <div id="member-id-box"><input type="text" id="u-member-id" placeholder="رقم العضوية" style="margin-top:10px;"></div>
-                <input type="text" id="u-job" placeholder="الوظيفة" style="margin-top:10px;">
-                <select id="u-gov" style="margin-top:10px;"><option>القاهرة</option><option>الجيزة</option></select>
-                <textarea id="u-details" placeholder="التفاصيل" style="margin-top:10px; width:100%"></textarea>
-                <button class="btn-main" onclick="handleSubmit()" style="margin-top:15px; background:var(--primary); color:#fff; width:100%; padding:15px; border:none; border-radius:10px;">إرسال وحفظ التذكرة</button>
+                <div id="member-id-box"><input type="text" id="u-member-id" placeholder="رقم العضوية"></div>
+                <input type="text" id="u-name" placeholder="الاسم الرباعي الكامل">
+                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
+                <input type="number" id="u-phone" placeholder="رقم الهاتف">
+                <input type="text" id="u-job" placeholder="الوظيفة / المهنة">
+                <select id="u-gov">
+                    <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>الدقهلية</option><option>البحر الأحمر</option><option>البحيرة</option><option>الفيوم</option><option>الغربية</option><option>الإسماعيلية</option><option>المنوفية</option><option>المنيا</option><option>القليوبية</option><option>الوادي الجديد</option><option>السويس</option><option>الشرقية</option><option>سوهاج</option><option>جنوب سيناء</option><option>شمال سيناء</option><option>قنا</option><option>كفر الشيخ</option><option>مطروح</option><option>الأقصر</option><option>أسوان</option><option>أسيوط</option><option>بني سويف</option><option>بورسعيد</option><option>دمياط</option>
+                </select>
+                <textarea id="u-address" placeholder="العنوان بالتفصيل"></textarea>
+                <select id="u-req-type">
+                    <option value="شكوى">تقديم شكوى</option>
+                    <option value="اقتراح">تقديم اقتراح</option>
+                </select>
+                <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب..."></textarea>
+                <button class="btn-nav active" style="width:100%; margin-top:10px;" onclick="handleSubmit()">إرسال الطلب وحفظ التذكرة ✅</button>
             </div>
         </section>
 
         <div id="ticket-template">
-            <img src="logo.png" style="width:60px;">
-            <h2 style="margin:10px 0">تذكرة مراجعة طلب</h2>
-            <hr>
-            <p>الاسم: <span id="t-name"></span></p>
-            <p>الرقم القومي: <span id="t-nid"></span></p>
-            <h3 style="color:blue">كود الطلب: <span id="t-ref"></span></h3>
-            <p style="font-size:12px; margin-top:10px;">نقابة تكنولوجيا المعلومات - المهندس محمود جميل</p>
+            <img src="logo.png" style="width:70px;">
+            <h2>نقابة تكنولوجيا المعلومات</h2>
+            <p>النقيب العام: محمود جميل</p>
+            <hr style="margin:10px 0">
+            <p style="text-align:right">الاسم: <b id="t-name"></b></p>
+            <p style="text-align:right">الرقم القومي: <b id="t-nid"></b></p>
+            <h1 style="color:blue; margin:15px 0" id="t-ref"></h1>
+            <p>يرجى الاحتفاظ بهذه التذكرة للاستعلام</p>
         </div>
 
         <section id="view-track" class="view" style="display:none;">
             <div class="card">
                 <input type="number" id="q-nid" placeholder="الرقم القومي">
-                <input type="text" id="q-ref" placeholder="كود الطلب" style="margin-top:10px;">
-                <button class="btn-main" onclick="handleTrack()" style="margin-top:10px; width:100%;">استعلام</button>
+                <input type="text" id="q-ref" placeholder="كود الطلب REQ-xxxx">
+                <button class="btn-nav active" style="width:100%" onclick="handleTrack()">🔍 استعلام عن الحالة</button>
             </div>
             <div id="track-result-box"></div>
         </section>
 
         <section id="view-admin-login" class="view" style="display:none;">
-            <div class="card"><input type="password" id="adm-pass" placeholder="كلمة المرور الإدارة"><button onclick="adminLogin()">دخول</button></div>
+            <div class="card" style="text-align:center;">
+                <h3>دخول الإدارة</h3>
+                <input type="password" id="adm-pass" placeholder="كلمة المرور">
+                <button class="btn-nav active" style="width:100%" onclick="adminLogin()">دخول آمن</button>
+            </div>
         </section>
     </div>
 
