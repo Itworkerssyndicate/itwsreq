@@ -20,7 +20,8 @@ const STORAGE_KEYS = {
     SERVICES_TEXT: 'services_text',
     SHOW_SERVICES: 'show_services',
     COMPLAINT_PREFIX: 'complaint_prefix',
-    SUGGESTION_PREFIX: 'suggestion_prefix'
+    SUGGESTION_PREFIX: 'suggestion_prefix',
+    SYSTEM_RESET_DONE: 'system_reset_done'
 };
 
 // الإعدادات الافتراضية
@@ -96,6 +97,17 @@ function saveSettings(settings) {
     
     // تحديث زر الخدمات
     updateServicesButton();
+    
+    // رسالة تأكيد
+    Swal.fire({
+        icon: 'success',
+        title: 'تم التحديث',
+        text: 'تم حفظ الإعدادات بنجاح',
+        timer: 1500,
+        showConfirmButton: false,
+        background: '#161f32',
+        color: '#fff'
+    });
 }
 
 // تحديث الشعار في جميع الصفحات
