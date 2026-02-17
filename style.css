@@ -1,46 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+// ... Firebase Config (نفسه) ...
+const db = firebase.firestore();
 
-:root {
-    --bg: #0b1120; --card: #161f32; --primary: #00d2ff;
-    --secondary: #3a7bd5; --text: #ffffff; --border: rgba(255,255,255,0.1);
+function showSec(s) {
+    document.getElementById('sec-list').style.display = s==='list'?'block':'none';
+    document.getElementById('sec-config').style.display = s==='config'?'block':'none';
 }
 
-/* منع النسخ والاختيار */
-* { 
-    box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; 
-    user-select: none; -webkit-user-select: none;
+function loadData() {
+    db.collection("Requests").orderBy("createdAt", "desc").onSnapshot(snap => {
+        let h = "";
+        snap.forEach(doc => {
+            const d = doc.data();
+            h += `<tr>
+                <td>${d.name}</td>
+                <td>${d.refId}</td>
+                <td>${d.status}</td>
+                <td><button onclick="manage('${d.refId}')">إدارة</button></td>
+            </tr>`;
+        });
+        document.getElementById('admin-tbody').innerHTML = h;
+    });
 }
 
-body { background: var(--bg); color: var(--text); direction: rtl; padding: 10px; overflow-x: hidden; }
-
-/* منع التصوير عن طريق جعل الشاشة سوداء عند محاولة الطباعة */
-@media print { body { display: none; } }
-
-.main-wrapper { max-width: 500px; margin: 0 auto; position: relative; }
-
-/* الهيدر */
-.header-box { text-align: center; margin-bottom: 20px; }
-.header-box h1 { font-size: 24px; font-weight: 900; }
-.header-box span { color: var(--primary); font-size: 14px; }
-
-/* السلايدر الجانبي للأدمن */
-aside .btn-nav {
-    width: 100%; text-align: right; padding: 12px; border: none; border-radius: 10px;
-    background: transparent; color: #fff; cursor: pointer; margin-bottom: 10px;
-    display: flex; align-items: center; gap: 10px; transition: 0.3s;
+async function saveSettings() {
+    const n = document.getElementById('set-name').value;
+    await db.collection("Settings").doc("general").set({presName: n}, {merge:true});
+    alert("تم التحديث");
 }
-aside .btn-nav:hover, aside .btn-nav.active { background: rgba(0, 210, 255, 0.1); color: var(--primary); }
 
-.card { background: var(--card); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
-
-/* التراك المائي */
-.track-bar { display: flex; justify-content: space-between; align-items: center; position: relative; margin: 40px 0; }
-.track-line { position: absolute; top: 15px; left: 0; right: 0; height: 4px; background: #1e293b; z-index: 1; }
-.track-line-fill { position: absolute; top: 0; right: 0; height: 100%; background: var(--primary); transition: 1s; }
-.dot { width: 32px; height: 32px; border-radius: 50%; background: #1e293b; z-index: 2; border: 3px solid var(--card); display: flex; align-items: center; justify-content: center; }
-.dot.active { background: var(--primary); border-color: #fff; box-shadow: 0 0 10px var(--primary); }
-
-/* ستايل التذكرة المخفية التي ستتحول لصورة */
-#ticket-template {
-    position: absolute; left: -9999px; top: 0; width: 400px; background: #fff; color: #000; padding: 20px; border-radius: 10px; text-align: center;
-}
+loadData();
