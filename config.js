@@ -33,6 +33,9 @@ const DEFAULT_SETTINGS = {
     SUGGESTION_PREFIX: 'REP'
 };
 
+// متغير للتأخير في الحفظ التلقائي
+let autoSaveTimeout;
+
 // الحصول على قيمة إعداد معين
 function getSetting(key, defaultValue) {
     const value = localStorage.getItem(STORAGE_KEYS[key]);
@@ -70,8 +73,8 @@ function getSuggestionPrefix() {
     return getSetting('SUGGESTION_PREFIX', DEFAULT_SETTINGS.SUGGESTION_PREFIX);
 }
 
-// حفظ جميع الإعدادات
-function saveSettings(settings) {
+// حفظ جميع الإعدادات مع رسالة تأكيد
+function saveSettings(settings, showMessage = true) {
     if (settings.logoUrl !== undefined) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logoUrl);
     if (settings.servicesUrl !== undefined) localStorage.setItem(STORAGE_KEYS.SERVICES_URL, settings.servicesUrl);
     if (settings.servicesText !== undefined) localStorage.setItem(STORAGE_KEYS.SERVICES_TEXT, settings.servicesText);
@@ -84,6 +87,51 @@ function saveSettings(settings) {
     
     // تحديث زر الخدمات
     updateServicesButton();
+    
+    // إظهار رسالة تأكيد إذا طُلب ذلك
+    if (showMessage) {
+        showAutoSaveMessage();
+    }
+}
+
+// إظهار رسالة الحفظ التلقائي
+function showAutoSaveMessage() {
+    const messageEl = document.getElementById('auto-save-message');
+    if (messageEl) {
+        messageEl.style.display = 'flex';
+        setTimeout(() => {
+            messageEl.style.display = 'none';
+        }, 2000);
+    }
+}
+
+// الحفظ التلقائي (يتم استدعاؤه عند التغيير)
+function autoSaveSettings() {
+    // إلغاء المؤقت السابق
+    if (autoSaveTimeout) {
+        clearTimeout(autoSaveTimeout);
+    }
+    
+    // تعيين مؤقت جديد للحفظ بعد 500ms من آخر تغيير
+    autoSaveTimeout = setTimeout(() => {
+        const settings = {
+            logoUrl: document.getElementById('logo-url')?.value,
+            servicesUrl: document.getElementById('services-url')?.value,
+            servicesText: document.getElementById('services-text')?.value,
+            showServices: document.getElementById('show-services-btn')?.checked,
+            complaintPrefix: document.getElementById('complaint-prefix')?.value,
+            suggestionPrefix: document.getElementById('suggestion-prefix')?.value
+        };
+        
+        // تصفية القيم غير المعرفة
+        Object.keys(settings).forEach(key => {
+            if (settings[key] === undefined) {
+                delete settings[key];
+            }
+        });
+        
+        saveSettings(settings, true);
+    }, 500);
 }
 
 // تحديث الشعار في جميع الصفحات
