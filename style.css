@@ -141,6 +141,7 @@ input, textarea, select {
     height: 120px;
     border-radius: 50%;
     border: 3px solid var(--primary);
+    object-fit: cover;
 }
 
 .header-titles {
@@ -346,6 +347,7 @@ input, textarea, select {
     border-radius: 50%;
     border: 3px solid var(--primary);
     margin-bottom: 15px;
+    object-fit: cover;
 }
 
 .admin-sidebar-header h2 {
@@ -544,44 +546,45 @@ input, textarea, select {
     color: var(--text-muted);
 }
 
-/* التراك المائي */
+/* التراك المائي - خط أفقي يتملى */
 .track-container {
     position: relative;
     width: 100%;
-    height: 120px;
+    height: 80px;
     margin: 30px 0;
 }
 
-.track-water {
+.track-line-bg {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
     right: 0;
-    bottom: 0;
+    height: 8px;
     background: rgba(30, 41, 59, 0.7);
-    border-radius: 60px;
-    border: 2px solid var(--primary);
-    overflow: hidden;
+    border-radius: 4px;
+    transform: translateY(-50%);
+    border: 1px solid var(--primary);
 }
 
-.water-fill-horizontal {
+.track-line-fill {
     position: absolute;
-    top: 0;
+    top: 50%;
     right: 0;
-    bottom: 0;
+    height: 8px;
     width: 0%;
     background: linear-gradient(90deg, var(--secondary), var(--primary));
-    transition: width 1s;
-    box-shadow: 0 0 30px var(--primary-glow);
+    border-radius: 4px;
+    transform: translateY(-50%);
+    transition: width 1s ease;
+    box-shadow: 0 0 20px var(--primary-glow);
 }
 
-.track-bar-horizontal {
+.track-points {
     position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100%;
-    padding: 0 20px;
+    height: 80px;
     z-index: 2;
 }
 
@@ -590,32 +593,46 @@ input, textarea, select {
     flex-direction: column;
     align-items: center;
     flex: 1;
+    position: relative;
 }
 
-.dot {
-    width: 45px;
-    height: 45px;
+.track-dot {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: var(--card-solid);
     border: 3px solid var(--primary);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 8px;
+    z-index: 3;
+    transition: all 0.3s;
 }
 
-.dot.active {
+.track-dot.active {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     box-shadow: 0 0 30px var(--primary-glow);
-    transform: scale(1.1);
+    transform: scale(1.2);
+    border-color: white;
 }
 
-.dot-label {
-    font-size: 12px;
+.track-dot i {
+    color: white;
+    font-size: 16px;
+}
+
+.track-label {
+    margin-top: 10px;
+    font-size: 11px;
     color: var(--text-muted);
     text-align: center;
-    max-width: 120px;
+    max-width: 100px;
     word-break: break-word;
+    font-weight: 600;
+}
+
+.track-dot.active + .track-label {
+    color: var(--primary);
 }
 
 /* المسار الزمني */
@@ -662,5 +679,15 @@ input, textarea, select {
     
     .responsive-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .track-dot {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .track-label {
+        font-size: 10px;
+        max-width: 80px;
     }
 }
