@@ -167,7 +167,7 @@ function updateServicesButton() {
 // تنسيق النص مع مسافات بين الكلمات
 function formatText(text) {
     if (!text) return '';
-    // إضافة مسافات بعد كل كلمة وتنظيف النص
+    // تنظيف النص وإضافة مسافات مناسبة
     return text.replace(/\s+/g, ' ').trim();
 }
 
