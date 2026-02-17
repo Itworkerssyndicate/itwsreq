@@ -2,32 +2,33 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>إدارة المنظومة</title>
     <link rel="stylesheet" href="style.css">
-    <style>body { max-width: 1000px; margin: 0 auto; }</style>
+    <script>if(!sessionStorage.getItem("isAdmin")) window.location.href="index.html";</script>
 </head>
-<body>
-    <div class="card" style="margin-top:20px">
-        <h2>📋 التقرير العام للطلبات</h2>
-        <table class="admin-table">
-            <thead>
-                <tr>
-                    <th>الوقت</th><th>الاسم</th><th>المحافظة</th><th>الوظيفة</th><th>النوع</th><th>الحالة</th><th>إدارة</th>
-                </tr>
-            </thead>
-            <tbody id="adm-body"></tbody>
-        </table>
-    </div>
+<body class="admin-layout">
+    <aside class="sidebar">
+        <h3 style="color:var(--primary); margin-bottom:20px;">لوحة التحكم</h3>
+        <button class="side-item active" onclick="loadView('all', this)">كل الطلبات</button>
+        <button class="side-item" onclick="loadView('شكوى', this)">الشكاوى</button>
+        <button class="side-item" onclick="loadView('اقتراح', this)">المقترحات</button>
+        <button class="side-item" onclick="showSettings()">الإعدادات</button>
+        <button class="svc-btn" style="margin-top:auto; background:#ff4757;" onclick="sessionStorage.clear(); location.href='index.html'">خروج</button>
+    </aside>
 
-    <div id="adm-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99; padding:20px; overflow-y:auto;">
-        <div class="container">
-            <div class="card" id="modal-data"></div>
-            <button class="btn-submit" style="background:var(--danger)" onclick="document.getElementById('adm-modal').style.display='none'">إغلاق</button>
+    <main class="admin-main">
+        <h2 id="view-title">السجلات الشاملة</h2>
+        <div class="table-card">
+            <table>
+                <thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>النوع</th><th>الحالة</th><th>إجراء</th></tr></thead>
+                <tbody id="tbody"></tbody>
+            </table>
         </div>
-    </div>
+    </main>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="admin_logic.js"></script>
 </body>
 </html>
