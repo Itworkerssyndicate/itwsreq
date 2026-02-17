@@ -3,69 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بوابة الخدمات - ITWS</title>
+    <title>بوابة تكنولوجيا المعلومات</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body oncontextmenu="return false;">
-
-    <div class="app-wrapper">
-        <header class="main-header">
-            <h1 id="pres-name-display">المهندس / محمود جميل</h1>
-            <p>النقيب العام</p>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1 id="ui-pres-name">المهندس / محمود جميل</h1>
+            <p style="color:var(--primary)">النقيب العام</p>
         </header>
 
-        <nav class="navigation-bar">
-            <button class="nav-btn active" onclick="switchSection('submit', this)">تقديم طلب</button>
-            <button class="nav-btn" onclick="switchSection('track', this)">استعلام</button>
-            <button class="nav-btn" onclick="switchSection('admin', this)" style="max-width: 50px;">👤</button>
+        <nav class="nav-grid">
+            <button class="nav-btn active" onclick="showTab('submit', this)">➕ تقديم طلب</button>
+            <button class="nav-btn" onclick="showTab('track', this)">🔍 استعلام</button>
+            <button class="nav-btn" onclick="showTab('login', this)">👤</button>
         </nav>
 
-        <div id="sec-submit" class="app-section">
-            <div class="content-card">
-                <label>نوع العضوية</label>
-                <select id="u-member" class="input-field" onchange="toggleMemberID()">
+        <section id="tab-submit">
+            <div class="card">
+                <select id="u-member" onchange="toggleForm()">
                     <option value="عضو">عضو نقابة</option>
                     <option value="غير عضو">غير عضو</option>
                 </select>
-                <input type="text" id="u-mid" placeholder="رقم العضوية" class="input-field">
-                <input type="text" id="u-name" placeholder="الاسم الكامل" class="input-field">
-                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)" class="input-field">
-                <input type="number" id="u-phone" placeholder="رقم الهاتف" class="input-field">
-                <select id="u-gov" class="input-field">
-                    <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>القليوبية</option><option>الدقهلية</option><option>الغربية</option><option>الشرقية</option><option>المنوفية</option><option>دمياط</option><option>البحيرة</option><option>الإسماعيلية</option><option>بورسعيد</option><option>السويس</option><option>بني سويف</option><option>الفيوم</option><option>المنيا</option><option>أسيوط</option><option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option><option>مطروح</option><option>البحر الأحمر</option><option>الوادي الجديد</option><option>كفر الشيخ</option><option>شمال سيناء</option><option>جنوب سيناء</option>
+                <input type="text" id="u-mid" placeholder="رقم العضوية">
+                <input type="text" id="u-name" placeholder="الاسم الرباعي">
+                <input type="number" id="u-nid" placeholder="الرقم القومي (14 رقم)">
+                <input type="number" id="u-phone" placeholder="رقم الهاتف">
+                <input type="text" id="u-job" placeholder="الوظيفة">
+                <select id="u-gov">
+                    <option>القاهرة</option><option>الجيزة</option><option>الإسكندرية</option><option>البحيرة</option><option>الدقهلية</option><option>الغربية</option><option>المنوفية</option><option>دمياط</option><option>الشرقية</option><option>بورسعيد</option><option>الإسماعيلية</option><option>السويس</option><option>كفر الشيخ</option><option>القليوبية</option><option>بني سويف</option><option>الفيوم</option><option>المنيا</option><option>أسيوط</option><option>سوهاج</option><option>قنا</option><option>الأقصر</option><option>أسوان</option><option>مطروح</option><option>البحر الأحمر</option><option>الوادي الجديد</option><option>شمال سيناء</option><option>جنوب سيناء</option>
                 </select>
-                <textarea id="u-details" rows="3" placeholder="تفاصيل طلبك..." class="input-field"></textarea>
-                <button class="action-btn" onclick="submitNewRequest()">إرسال الطلب وحفظ التذكرة</button>
+                <textarea id="u-address" placeholder="العنوان بالتفصيل"></textarea>
+                <select id="u-type">
+                    <option id="opt-complaint" value="شكوى">تقديم شكوى</option>
+                    <option value="اقتراح">تقديم اقتراح</option>
+                </select>
+                <textarea id="u-details" rows="3" placeholder="تفاصيل الطلب..."></textarea>
+                <button class="btn-main" onclick="handleSubmit()">إرسال الطلب وحفظ التذكرة</button>
             </div>
-        </div>
+        </section>
 
-        <div id="sec-track" class="app-section" style="display:none;">
-            <div class="content-card">
-                <input type="number" id="q-nid" placeholder="الرقم القومي" class="input-field">
-                <input type="text" id="q-ref" placeholder="كود الطلب REQ-xxxxxx" class="input-field">
-                <button class="action-btn" onclick="trackExistingRequest()">استعلام عن المسار</button>
+        <section id="tab-track" style="display:none;">
+            <div class="card">
+                <input type="number" id="q-nid" placeholder="الرقم القومي">
+                <input type="text" id="q-ref" placeholder="كود الطلب REQ-xxxx">
+                <button class="btn-main" onclick="handleTrack()">🔍 استعلام عن الحالة</button>
             </div>
-            <div id="track-display-area"></div>
-        </div>
+            <div id="track-result"></div>
+        </section>
 
-        <div id="sec-admin" class="app-section" style="display:none;">
-            <div class="content-card">
-                <input type="password" id="adm-pass" placeholder="كلمة المرور" class="input-field">
-                <button class="action-btn" onclick="loginToAdmin()">دخول</button>
+        <section id="tab-login" style="display:none;">
+            <div class="card">
+                <input type="text" id="adm-user" placeholder="اسم المستخدم">
+                <input type="password" id="adm-pass" placeholder="كلمة المرور">
+                <button class="btn-main" onclick="adminLogin()">دخول آمن</button>
             </div>
-        </div>
+        </section>
+    </div>
 
-        <div id="ticket-box">
-            <h1 style="color:#0ea5e9; font-size:28px">نقابة تكنولوجيا المعلومات</h1>
-            <p>النقيب العام: محمود جميل</p>
-            <div style="margin:20px 0; padding:15px; background:#f8fafc; border-radius:10px;">
-                <p style="color:#64748b">كود الطلب المرجعي</p>
-                <h2 id="t-ref" style="font-size:32px; color:#000"></h2>
-            </div>
-            <div style="text-align:right;">
-                <p>الاسم: <b id="t-name"></b></p>
-                <p>الرقم القومي: <b id="t-nid"></b></p>
-            </div>
+    <div id="ticket-template" style="position:absolute; left:-9999px; background:#fff; color:#000; width:400px; padding:30px; text-align:center;">
+        <h2 style="color:#0ea5e9">نقابة تكنولوجيا المعلومات</h2>
+        <p>النقيب العام: محمود جميل</p>
+        <hr style="margin:15px 0">
+        <h1 id="t-ref" style="font-size:40px"></h1>
+        <div style="text-align:right; margin-top:20px">
+            <p>الاسم: <b id="t-name"></b></p>
+            <p>الرقم القومي: <b id="t-nid"></b></p>
         </div>
     </div>
 
