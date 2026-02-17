@@ -33,7 +33,7 @@
                 <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
                 <div class="input-group">
                     <label>رابط الشعار (URL)</label>
-                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png">
+                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
             </div>
 
@@ -42,15 +42,15 @@
                 <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
                 <div class="input-group">
                     <label>رابط الموقع</label>
-                    <input type="url" id="services-url" class="neon-border" placeholder="https://example.com/services">
+                    <input type="url" id="services-url" class="neon-border" placeholder="https://example.com/services" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
                 <div class="input-group">
                     <label>نص الزر</label>
-                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة">
+                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
                 <div class="checkbox-group">
                     <label>
-                        <input type="checkbox" id="show-services-btn"> 
+                        <input type="checkbox" id="show-services-btn" onchange="autoSaveSettings()"> 
                         <span>إظهار الزر في شاشة تقديم الطلبات</span>
                     </label>
                 </div>
@@ -61,11 +61,11 @@
                 <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
                 <div class="input-group">
                     <label>بادئة الشكاوى</label>
-                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ">
+                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
                 <div class="input-group">
                     <label>بادئة المقترحات</label>
-                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP">
+                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
             </div>
 
@@ -78,9 +78,11 @@
                 </button>
             </div>
 
-            <button class="btn-main" onclick="updateSettings()" style="margin-top:15px;">
-                <i class="fas fa-save"></i> حفظ التغييرات
-            </button>
+            <!-- رسالة تأكيد الحفظ التلقائي -->
+            <div class="auto-save-message" id="auto-save-message" style="display: none;">
+                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                <span>تم الحفظ تلقائياً</span>
+            </div>
         </div>
     </div>
 
@@ -198,6 +200,8 @@
                             <option value="جاري التنفيذ">جاري التنفيذ</option>
                             <option value="تم الحل">تم الحل</option>
                             <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                            <option value="تمت القراءة">تمت القراءة</option>
+                            <option value="لم يقرأ">لم يقرأ</option>
                         </select>
                     </div>
 
