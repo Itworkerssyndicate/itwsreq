@@ -123,7 +123,7 @@ function formatTextForCard(text) {
     return text.replace(/\s+/g, ' ').trim();
 }
 
-// دالة إنشاء الكارت مع تعديل ظهور رقم الطلب والتاريخ في نفس السطر
+// دالة إنشاء الكارت
 async function generateRequestCard(data) {
     const logo = getSavedLogo();
     const now = new Date();
@@ -153,7 +153,7 @@ async function generateRequestCard(data) {
     logoImg.src = logo;
     logoImg.style.cssText = 'width: 130px; height: 130px; border-radius: 50%; border: 5px solid #00d2ff; margin-bottom: 20px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 40px #00d2ff;';
     
-    // محتوى الكارت مع تعديل ظهور رقم الطلب والتاريخ في نفس السطر
+    // محتوى الكارت
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML = `
         <h2 style="font-size: 28px; color: #00d2ff; margin: 10px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
