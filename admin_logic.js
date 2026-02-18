@@ -3,6 +3,14 @@ let allRequests = [];
 let unsubscribe;
 let currentDeleteId = null;
 
+// التحقق من تسجيل الدخول عند تحميل الصفحة
+(function checkAuth() {
+    const isLoggedIn = localStorage.getItem('admin');
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+        window.location.href = 'index.html';
+    }
+})();
+
 function setActiveNav(id) {
     document.querySelectorAll('.admin-nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(id)?.classList.add('active');
@@ -294,7 +302,7 @@ function showRequestModal(d) {
     document.getElementById('request-modal').style.display = 'flex';
 }
 
-// دالة جديدة لإغلاق الشكوى مع تعليق
+// دالة لإغلاق الشكوى مع تعليق
 async function closeRequestWithComment(refId) {
     const { value: comment } = await Swal.fire({
         title: 'إغلاق الشكوى',
@@ -344,7 +352,7 @@ async function closeRequestWithComment(refId) {
     }
 }
 
-// دالة جديدة لتمييز الاقتراح كمقروء مع تعليق
+// دالة لتمييز الاقتراح كمقروء مع تعليق
 async function markAsReadWithComment(refId) {
     const { value: comment } = await Swal.fire({
         title: 'تمت القراءة',
@@ -362,7 +370,6 @@ async function markAsReadWithComment(refId) {
         }
     });
 
-    // إذا كان المستخدم كتب تعليق أو ترك الحقل فارغ
     const finalComment = comment || 'تمت قراءة الاقتراح';
 
     try {
