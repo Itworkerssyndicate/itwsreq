@@ -1801,3 +1801,30 @@ input:focus, textarea:focus, select:focus {
         border-color: #ddd !important;
     }
 }
+
+/* تنسيقات إضافية لمنع النزول لتحت */
+#request-card-container .track-container,
+#request-card-container .track-points,
+#request-card-container .track-point,
+#request-card-container .track-dot,
+#request-card-container .track-label {
+    all: unset;
+}
+
+#request-card-container div {
+    box-sizing: border-box;
+}
+
+#request-card-container span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#request-card-container [style*="display: flex"] {
+    flex-wrap: nowrap !important;
+}
+
+#request-card-container [style*="white-space: nowrap"] {
+    white-space: nowrap !important;
+    min-width: fit-content;
+}
