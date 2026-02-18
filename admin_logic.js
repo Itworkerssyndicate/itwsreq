@@ -199,10 +199,8 @@ function showRequestModal(d) {
     const currentIdx = stages.indexOf(d.status);
     const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
     
-    // تحديد نوع الإدخال حسب نوع الطلب
     let statusInput = '';
     if (d.type === 'شكوى') {
-        // للشكوى: حقل نصي مفتوح
         statusInput = `
             <div class="input-group">
                 <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
@@ -210,7 +208,6 @@ function showRequestModal(d) {
             </div>
         `;
     } else {
-        // للاقتراح: اختيار من قائمة
         statusInput = `
             <div class="input-group">
                 <label><i class="fas fa-tag"></i> الحالة الجديدة</label>
