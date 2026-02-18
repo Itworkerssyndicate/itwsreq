@@ -112,37 +112,41 @@ function renderRequests(requests) {
         const date = r.createdAtDate ? r.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
         const time = r.createdAtDate ? r.createdAtDate.toLocaleTimeString('ar-EG') : '';
         const member = r.memberType === 'عضو نقابة' 
-            ? `<span class="membership-badge" style="background:rgba(0,210,255,0.2); color:var(--primary);">عضو</span> ${r.memberId}`
-            : `<span class="membership-badge" style="background:rgba(148,163,184,0.2); color:var(--text-muted);">غير عضو</span>`;
+            ? `<span class="membership-badge" style="background:rgba(0,210,255,0.2); color:var(--primary); padding:3px 8px; border-radius:12px; font-size:11px;">عضو</span> ${r.memberId}`
+            : `<span class="membership-badge" style="background:rgba(148,163,184,0.2); color:var(--text-muted); padding:3px 8px; border-radius:12px; font-size:11px;">غير عضو</span>`;
         
         html += `
         <tr>
             <td>
-                <div style="font-weight:600;">${date}</div>
+                <div style="font-weight:600; margin-bottom:4px;">${date}</div>
                 <div style="color:var(--text-muted); font-size:11px;">${time}</div>
             </td>
-            <td style="color:var(--primary); direction:ltr; font-weight:600;">${r.refId}</td>
+            <td style="color:var(--primary); font-weight:600; direction:ltr;">${r.refId}</td>
             <td>
-                <div><strong>${r.name}</strong></div>
-                <div style="color:var(--text-muted); font-size:11px;">${r.job}</div>
+                <div style="font-weight:600; margin-bottom:4px;">${r.name}</div>
+                <div style="color:var(--text-muted); font-size:11px; margin-bottom:2px;">${r.job}</div>
                 <div style="color:var(--primary); font-size:11px;">${r.phone}</div>
             </td>
             <td>${member}</td>
             <td>${r.gov}</td>
             <td>
-                <span class="type-badge" style="background:${r.type === 'شكوى' ? 'rgba(255,71,87,0.2)' : 'rgba(0,255,136,0.2)'}; color:${r.type === 'شكوى' ? 'var(--danger)' : 'var(--success)'};">${r.type}</span>
+                <span class="type-badge" style="background:${r.type === 'شكوى' ? 'rgba(255,71,87,0.2)' : 'rgba(0,255,136,0.2)'}; color:${r.type === 'شكوى' ? 'var(--danger)' : 'var(--success)'}; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600;">${r.type}</span>
             </td>
             <td>
-                <span class="status-badge" style="background:${getStatusColor(r.status)}">${r.status}</span>
+                <span class="status-badge" style="background:${getStatusColor(r.status)}; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600;">${r.status}</span>
             </td>
             <td>
-                <button class="action-btn" onclick="manageReq('${r.refId}')"><i class="fas fa-cog"></i></button>
-                <button class="action-btn delete" onclick="openDeleteModal('${r.refId}')"><i class="fas fa-trash"></i></button>
+                <button class="action-btn" onclick="manageReq('${r.refId}')" style="width:32px; height:32px; border-radius:8px; background:transparent; border:1px solid var(--border); color:var(--text); cursor:pointer; margin:0 2px;">
+                    <i class="fas fa-cog"></i>
+                </button>
+                <button class="action-btn delete" onclick="openDeleteModal('${r.refId}')" style="width:32px; height:32px; border-radius:8px; background:transparent; border:1px solid var(--border); color:var(--text); cursor:pointer; margin:0 2px;">
+                    <i class="fas fa-trash"></i>
+                </button>
             </td>
         </tr>`;
     });
     
-    document.getElementById('admin-tbody').innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:30px;">لا توجد بيانات</td></tr>';
+    document.getElementById('admin-tbody').innerHTML = html || '<tr><td colspan="8" style="text-align:center; padding:40px; color:var(--text-muted);">لا توجد بيانات</td></tr>';
 }
 
 function getStatusColor(status) {
