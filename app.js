@@ -170,7 +170,7 @@ async function generateRequestCard(data) {
                 <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700; font-size: 18px; margin-right: 15px; white-space: nowrap;">${data.type}</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                <span style="color: #94a3b8; font-weight: 600; font-size: 16px; white-space: nowrap;">صاحب الطلب :</span>
+                <span style="color: #94a3b8; font-weight: 600; font-size: 16px; white-space: nowrap;">اسم مقدم الطلب :</span>
                 <span style="font-weight: 600; font-size: 18px; margin-right: 15px; white-space: nowrap;">${data.name}</span>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0;">
