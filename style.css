@@ -1930,3 +1930,97 @@ body {
         font-size: 12px;
     }
 }
+
+
+/* منع التحديد والنسخ في كل الصفحات */
+body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* السماح بالكتابة في الحقول فقط */
+input, textarea, select {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* السماح بالنسخ في خانة رقم الطلب فقط في صفحة الاستعلام */
+#q-ref {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* تنسيق الجدول */
+.admin-table-container {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 15px;
+    background: var(--card);
+}
+
+#main-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+    background: transparent;
+}
+
+#main-table th {
+    padding: 15px 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: right;
+    border-bottom: 2px solid var(--primary);
+    white-space: nowrap;
+    background: rgba(0,210,255,0.05);
+}
+
+#main-table td {
+    padding: 12px;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+#main-table tbody tr:hover {
+    background: rgba(0,210,255,0.05);
+}
+
+/* تنسيق خانات التاريخ والوقت */
+#main-table td:first-child {
+    white-space: nowrap;
+}
+
+#main-table td:first-child div:first-child {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+#main-table td:first-child div:last-child {
+    color: var(--text-muted);
+    font-size: 11px;
+}
+
+/* تنسيق باقي الخانات */
+#main-table td:nth-child(2) {
+    color: var(--primary);
+    font-weight: 600;
+    direction: ltr;
+}
+
+#main-table td:nth-child(3) div {
+    line-height: 1.6;
+}
+
+#main-table td:nth-child(3) div:nth-child(2),
+#main-table td:nth-child(3) div:nth-child(3) {
+    font-size: 11px;
+}
