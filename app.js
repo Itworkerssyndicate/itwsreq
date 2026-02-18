@@ -146,9 +146,9 @@ async function generateRequestCard(data) {
         text-align: center;
         direction: rtl;
         box-shadow: 0 30px 50px rgba(0,210,255,0.5);
-        line-height: 2.5;
-        letter-spacing: 1px;
-        word-spacing: 8px;
+        line-height: 2.2;
+        letter-spacing: 0.8px;
+        word-spacing: 6px;
         font-weight: 500;
     `;
     
@@ -157,29 +157,33 @@ async function generateRequestCard(data) {
     logoImg.src = logo;
     logoImg.style.cssText = 'width: 150px; height: 150px; border-radius: 50%; border: 5px solid #00d2ff; margin-bottom: 25px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 40px #00d2ff;';
     
-    // محتوى الكارت مع ترتيب صحيح لرقم الطلب والتاريخ
+    // محتوى الكارت مع إعادة اسم مقدم الطلب وإصلاح مشكلة النزول لتحت
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML = `
-        <h2 style="font-size: 34px; color: #00d2ff; margin: 15px 0; font-weight: 900; letter-spacing: 2px; word-spacing: 10px; line-height: 1.8;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-        <h3 style="font-size: 28px; color: white; margin: 10px 0; font-weight: 700; letter-spacing: 1.5px; word-spacing: 8px;">المهندس / محمود جميل</h3>
-        <p style="color: #94a3b8; font-size: 22px; margin-bottom: 30px; word-spacing: 6px;">النقيب العام</p>
+        <h2 style="font-size: 34px; color: #00d2ff; margin: 15px 0; font-weight: 900; letter-spacing: 1.5px; word-spacing: 8px; line-height: 1.6;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+        <h3 style="font-size: 28px; color: white; margin: 10px 0; font-weight: 700; letter-spacing: 1px; word-spacing: 6px;">المهندس / محمود جميل</h3>
+        <p style="color: #94a3b8; font-size: 22px; margin-bottom: 30px; word-spacing: 5px;">النقيب العام</p>
         
         <div style="background: rgba(0,210,255,0.15); padding: 30px; border-radius: 30px; margin: 30px 0; border: 2px solid rgba(0,210,255,0.3);">
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 22px;">
-                <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span>
-                <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px; font-size: 24px;">${data.refId}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15);">
+                <span style="color: #94a3b8; font-weight: 600; white-space: nowrap; font-size: 20px;">رقم الطلب :</span>
+                <span style="color: #00d2ff; font-weight: 700; direction: ltr; font-size: 22px; margin-right: 20px; white-space: nowrap;">${data.refId}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 22px;">
-                <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span>
-                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700; font-size: 24px;">${data.type}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15);">
+                <span style="color: #94a3b8; font-weight: 600; white-space: nowrap; font-size: 20px;">نوع الطلب :</span>
+                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700; font-size: 22px; margin-right: 20px; white-space: nowrap;">${data.type}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; font-size: 22px;">
-                <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span>
-                <span style="font-weight: 600; font-size: 22px;">${date} - ${time}</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 2px solid rgba(255,255,255,0.15);">
+                <span style="color: #94a3b8; font-weight: 600; white-space: nowrap; font-size: 20px;">صاحب الطلب :</span>
+                <span style="font-weight: 600; font-size: 22px; margin-right: 20px; white-space: nowrap;">${data.name}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0;">
+                <span style="color: #94a3b8; font-weight: 600; white-space: nowrap; font-size: 20px;">تاريخ التقديم :</span>
+                <span style="font-weight: 600; font-size: 22px; margin-right: 20px; white-space: nowrap;">${date} - ${time}</span>
             </div>
         </div>
         
-        <div style="color: #94a3b8; font-size: 18px; padding-top: 25px; border-top: 2px solid rgba(255,255,255,0.15); margin-top: 25px; word-spacing: 5px;">
+        <div style="color: #94a3b8; font-size: 18px; padding-top: 25px; border-top: 2px solid rgba(255,255,255,0.15); margin-top: 25px; word-spacing: 4px;">
             هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
         </div>
     `;
@@ -199,15 +203,15 @@ async function generateRequestCard(data) {
                 height: card.offsetHeight,
                 style: {
                     'font-family': 'Tajawal, Cairo, sans-serif',
-                    'line-height': '2.5',
-                    'letter-spacing': '1px',
-                    'word-spacing': '8px'
+                    'line-height': '2.2',
+                    'letter-spacing': '0.8px',
+                    'word-spacing': '6px'
                 }
             });
             
             const result = await Swal.fire({
                 title: 'تم حفظ الطلب',
-                html: `<div style="color:#00d2ff; font-size:24px; margin-bottom:20px; letter-spacing:2px;">${data.refId}</div>`,
+                html: `<div style="color:#00d2ff; font-size:24px; margin-bottom:20px; letter-spacing:1px;">${data.refId}</div>`,
                 imageUrl: dataUrl,
                 imageWidth: 500,
                 imageHeight: card.offsetHeight * 500 / 600,
