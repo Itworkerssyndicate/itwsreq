@@ -1460,7 +1460,7 @@ input:focus, textarea:focus, select:focus {
     box-shadow: 0 0 20px var(--danger-glow);
 }
 
-/* التراك المائي - خط أفقي يتملى (معدل) */
+/* التراك المائي - خط أفقي يتملى */
 .track-container {
     position: relative;
     width: 100%;
@@ -1659,6 +1659,54 @@ input:focus, textarea:focus, select:focus {
     word-spacing: 4px;
 }
 
+/* تنسيقات محسنة للكارت مع dom-to-image */
+#request-card-container * {
+    font-family: 'Tajawal', 'Cairo', sans-serif !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* تحسين عرض الصورة في SweetAlert */
+.swal2-image {
+    border-radius: 30px !important;
+    box-shadow: 0 15px 35px rgba(0,210,255,0.4) !important;
+    margin: 20px auto !important;
+    display: block !important;
+    border: 2px solid #00d2ff !important;
+}
+
+.swal2-popup {
+    font-family: 'Tajawal', sans-serif !important;
+    border-radius: 25px !important;
+}
+
+.swal2-title {
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 26px !important;
+    color: #00d2ff !important;
+}
+
+.swal2-confirm {
+    background: linear-gradient(135deg, #00d2ff, #3a7bd5) !important;
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    padding: 12px 30px !important;
+    border-radius: 15px !important;
+}
+
+.swal2-cancel {
+    background: #1e293b !important;
+    font-family: 'Tajawal', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 18px !important;
+    padding: 12px 30px !important;
+    border-radius: 15px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
 /* تحسينات للجوال */
 @media (max-width: 768px) {
     .admin-sidebar {
@@ -1752,38 +1800,4 @@ input:focus, textarea:focus, select:focus {
         color: black !important;
         border-color: #ddd !important;
     }
-}
-/* تنسيقات محسنة للكارت */
-#request-card-container * {
-    font-family: 'Tajawal', 'Cairo', sans-serif !important;
-    letter-spacing: 0.8px !important;
-    word-spacing: 6px !important;
-    line-height: 2.2 !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-}
-
-/* تحسين عرض SweetAlert للصورة */
-.swal2-image {
-    border-radius: 25px !important;
-    box-shadow: 0 10px 30px rgba(0,210,255,0.3) !important;
-    margin-top: 15px !important;
-    margin-bottom: 15px !important;
-}
-
-.swal2-popup {
-    font-family: 'Tajawal', sans-serif !important;
-}
-
-.swal2-title {
-    font-family: 'Tajawal', sans-serif !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px !important;
-}
-
-.swal2-confirm, .swal2-cancel {
-    font-family: 'Tajawal', sans-serif !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
 }
