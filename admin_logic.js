@@ -215,7 +215,6 @@ function showRequestModal(d) {
                     <option value="">-- اختر الحالة --</option>
                     <option value="تمت القراءة">تمت القراءة</option>
                     <option value="لم يقرأ">لم يقرأ</option>
-                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
                 </select>
             </div>
         `;
@@ -270,13 +269,130 @@ function showRequestModal(d) {
                 <h4 style="margin-bottom:10px;">تحديث جديد</h4>
                 ${statusInput}
                 <textarea id="status-comment" class="neon-border" placeholder="تعليق" rows="2" style="margin-bottom:10px;"></textarea>
-                <button class="btn-main" onclick="updateRequestStatus('${d.refId}')">تحديث</button>
+                
+                <div style="display:flex; gap:10px; margin-top:15px; flex-wrap:wrap;">
+                    <!-- زر التحديث العادي -->
+                    <button class="btn-main" onclick="updateRequestStatus('${d.refId}')" style="flex:2; min-width:150px;">
+                        <i class="fas fa-save"></i> تحديث
+                    </button>
+                    
+                    <!-- أزرار إضافية حسب نوع الطلب -->
+                    ${d.type === 'شكوى' 
+                        ? `<button class="btn-main" onclick="closeRequestWithComment('${d.refId}')" style="flex:1; background:var(--danger); min-width:120px;">
+                                <i class="fas fa-lock"></i> إغلاق الشكوى
+                           </button>` 
+                        : `<button class="btn-main" onclick="markAsReadWithComment('${d.refId}')" style="flex:1; background:var(--success); min-width:120px;">
+                                <i class="fas fa-check-circle"></i> تم القراءة
+                           </button>`
+                    }
+                </div>
             </div>
         </div>
     `;
     
     document.getElementById('modal-content-area').innerHTML = html;
     document.getElementById('request-modal').style.display = 'flex';
+}
+
+// دالة جديدة لإغلاق الشكوى مع تعليق
+async function closeRequestWithComment(refId) {
+    const { value: comment } = await Swal.fire({
+        title: 'إغلاق الشكوى',
+        text: 'اكتب تعليق إغلاق الشكوى',
+        input: 'textarea',
+        inputPlaceholder: 'اكتب سبب الإغلاق أو القرار النهائي...',
+        showCancelButton: true,
+        confirmButtonText: 'إغلاق',
+        cancelButtonText: 'إلغاء',
+        background: '#161f32',
+        color: '#fff',
+        inputAttributes: {
+            'class': 'neon-border',
+            'style': 'width:100%; margin-top:10px;'
+        }
+    });
+
+    if (comment) {
+        try {
+            await db.collection("Requests").doc(refId).update({
+                status: 'تم الإغلاق النهائي',
+                tracking: firebase.firestore.FieldValue.arrayUnion({
+                    status: 'تم الإغلاق النهائي',
+                    comment: comment,
+                    time: new Date().toLocaleString('ar-EG'),
+                    isFinal: true
+                })
+            });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'تم',
+                text: 'تم إغلاق الشكوى بنجاح',
+                background: '#161f32',
+                color: '#fff'
+            });
+            closeModal();
+        } catch(error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ',
+                background: '#161f32',
+                color: '#fff'
+            });
+        }
+    }
+}
+
+// دالة جديدة لتمييز الاقتراح كمقروء مع تعليق
+async function markAsReadWithComment(refId) {
+    const { value: comment } = await Swal.fire({
+        title: 'تمت القراءة',
+        text: 'اكتب تعليق (اختياري)',
+        input: 'textarea',
+        inputPlaceholder: 'اكتب أي ملاحظات (يمكنك تركها فارغة)...',
+        showCancelButton: true,
+        confirmButtonText: 'تأكيد',
+        cancelButtonText: 'إلغاء',
+        background: '#161f32',
+        color: '#fff',
+        inputAttributes: {
+            'class': 'neon-border',
+            'style': 'width:100%; margin-top:10px;'
+        }
+    });
+
+    // إذا كان المستخدم كتب تعليق أو ترك الحقل فارغ
+    const finalComment = comment || 'تمت قراءة الاقتراح';
+
+    try {
+        await db.collection("Requests").doc(refId).update({
+            status: 'تمت القراءة',
+            tracking: firebase.firestore.FieldValue.arrayUnion({
+                status: 'تمت القراءة',
+                comment: finalComment,
+                time: new Date().toLocaleString('ar-EG'),
+                isFinal: false
+            })
+        });
+
+        Swal.fire({
+            icon: 'success',
+            title: 'تم',
+            text: 'تم تحديث حالة الاقتراح',
+            background: '#161f32',
+            color: '#fff'
+        });
+        closeModal();
+    } catch(error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'حدث خطأ',
+            background: '#161f32',
+            color: '#fff'
+        });
+    }
 }
 
 async function updateRequestStatus(refId) {
