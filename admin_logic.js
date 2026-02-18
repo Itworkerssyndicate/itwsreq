@@ -491,3 +491,68 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 window.addEventListener('beforeunload', () => unsubscribe?.());
+
+// دالة تهيئة النظام (إعادة الضبط)
+async function resetSystem() {
+    const { value: pass } = await Swal.fire({
+        title: '⚠️ تحذير شديد الخطورة ⚠️',
+        html: '<p style="color:#ff4757;">أنت على وشك حذف جميع البيانات نهائياً</p><p style="color:#94a3b8; margin-top:10px;">هذا الإجراء لا يمكن التراجع عنه</p>',
+        input: 'password',
+        inputPlaceholder: 'كلمة سر التهيئة',
+        showCancelButton: true,
+        confirmButtonText: 'نعم، قم بالتهيئة',
+        cancelButtonText: 'إلغاء',
+        confirmButtonColor: '#ff4757',
+        background: '#161f32',
+        color: '#fff',
+        inputAttributes: {
+            'class': 'neon-border',
+            'style': 'direction:ltr; width:100%;'
+        }
+    });
+
+    if (pass === '11111@') {
+        try {
+            // حذف جميع المستندات في مجموعة Requests
+            const snapshot = await db.collection("Requests").get();
+            const batch = db.batch();
+            snapshot.docs.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            await batch.commit();
+            
+            // تخزين أن التهيئة تمت
+            localStorage.setItem('system_reset_done', 'true');
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'تمت التهيئة',
+                text: 'تم حذف جميع البيانات بنجاح',
+                confirmButtonText: 'حسناً',
+                background: '#161f32',
+                color: '#fff'
+            });
+            
+            // إخفاء الزر بعد التهيئة
+            document.getElementById('reset-system-section').style.display = 'none';
+            
+        } catch(error) {
+            console.error("Error resetting system:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'خطأ',
+                text: 'حدث خطأ في تهيئة النظام',
+                background: '#161f32',
+                color: '#fff'
+            });
+        }
+    } else if(pass) {
+        Swal.fire({
+            icon: 'error',
+            title: 'خطأ',
+            text: 'كلمة السر غير صحيحة',
+            background: '#161f32',
+            color: '#fff'
+        });
+    }
+}
