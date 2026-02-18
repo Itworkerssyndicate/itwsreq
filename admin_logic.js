@@ -199,14 +199,30 @@ function showRequestModal(d) {
     const currentIdx = stages.indexOf(d.status);
     const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
     
-    const statusInput = d.type === 'شكوى' 
-        ? `<input type="text" id="new-stage-name" class="neon-border" placeholder="اسم المرحلة الجديدة" style="margin-bottom:10px;">`
-        : `<select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
-            <option value="">اختر الحالة</option>
-            <option value="تمت القراءة">تمت القراءة</option>
-            <option value="لم يقرأ">لم يقرأ</option>
-            <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
-           </select>`;
+    // تحديد نوع الإدخال حسب نوع الطلب
+    let statusInput = '';
+    if (d.type === 'شكوى') {
+        // للشكوى: حقل نصي مفتوح
+        statusInput = `
+            <div class="input-group">
+                <label><i class="fas fa-tag"></i> اسم المرحلة الجديدة</label>
+                <input type="text" id="new-stage-name" class="neon-border" placeholder="اكتب اسم المرحلة..." style="margin-bottom:10px;">
+            </div>
+        `;
+    } else {
+        // للاقتراح: اختيار من قائمة
+        statusInput = `
+            <div class="input-group">
+                <label><i class="fas fa-tag"></i> الحالة الجديدة</label>
+                <select id="new-stage-name" class="neon-border" style="margin-bottom:10px;">
+                    <option value="">-- اختر الحالة --</option>
+                    <option value="تمت القراءة">تمت القراءة</option>
+                    <option value="لم يقرأ">لم يقرأ</option>
+                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                </select>
+            </div>
+        `;
+    }
     
     const html = `
         <div>
