@@ -117,13 +117,6 @@ async function handleSubmit() {
     }
 }
 
-// دالة تنسيق النص
-function formatTextForCard(text) {
-    if (!text) return '';
-    return text.replace(/\s+/g, ' ').trim();
-}
-
-// دالة إنشاء الكارت
 async function generateRequestCard(data) {
     const logo = getSavedLogo();
     const now = new Date();
@@ -133,7 +126,6 @@ async function generateRequestCard(data) {
     const container = document.getElementById('request-card-container');
     container.innerHTML = '';
     
-    // إنشاء الكارت
     const card = document.createElement('div');
     card.style.cssText = `
         width: 600px;
@@ -148,12 +140,10 @@ async function generateRequestCard(data) {
         box-shadow: 0 30px 50px rgba(0,210,255,0.5);
     `;
     
-    // اللوجو
     const logoImg = document.createElement('img');
     logoImg.src = logo;
     logoImg.style.cssText = 'width: 130px; height: 130px; border-radius: 50%; border: 5px solid #00d2ff; margin-bottom: 20px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 40px #00d2ff;';
     
-    // محتوى الكارت
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML = `
         <h2 style="font-size: 28px; color: #00d2ff; margin: 10px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
@@ -188,7 +178,6 @@ async function generateRequestCard(data) {
     card.appendChild(contentDiv);
     container.appendChild(card);
     
-    // دالة تصوير الكارت
     const captureCard = async () => {
         try {
             const dataUrl = await domtoimage.toPng(card, {
