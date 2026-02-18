@@ -3,238 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات</title>
+    <title>لوحة التحكم - بوابة الشكاوي</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;" onselectstart="return false;">
-    <div class="main-wrapper">
-        <!-- شاشة البداية -->
-        <div class="splash-screen" id="splash-screen">
-            <div class="splash-content">
-                <img src="https://via.placeholder.com/150x150?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
-                <h2 class="splash-title">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
-                <div class="splash-loader">
-                    <div class="loader-bar"></div>
+<body>
+    <!-- عناصر الخلفية المتحركة -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <div class="settings-panel">
+        <button class="settings-btn" onclick="toggleSettings()">
+            <i class="fas fa-cog fa-spin"></i>
+            <div class="btn-glow"></div>
+        </button>
+        <div class="settings-menu glass-effect" id="settings-menu">
+            <div class="settings-menu-header">
+                <i class="fas fa-sliders-h"></i>
+                <h4>إعدادات بوابة الشكاوي</h4>
+            </div>
+            
+            <!-- إعدادات الشعار -->
+            <div class="settings-section">
+                <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
+                <div class="input-group">
+                    <label>رابط الشعار (URL)</label>
+                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
                 </div>
-                <p class="splash-text">جاري تحميل المنصة...</p>
+            </div>
+
+            <!-- إعدادات موقع الخدمات -->
+            <div class="settings-section">
+                <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
+                <div class="input-group">
+                    <label>رابط الموقع</label>
+                    <input type="url" id="services-url" class="neon-border" placeholder="https://example.com/services" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
+                </div>
+                <div class="input-group">
+                    <label>نص الزر</label>
+                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
+                </div>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="show-services-btn" onchange="autoSaveSettings()"> 
+                        <span>إظهار الزر في شاشة تقديم الطلبات</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- إعدادات الترقيم -->
+            <div class="settings-section">
+                <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
+                <div class="input-group">
+                    <label>بادئة الشكاوى</label>
+                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
+                </div>
+                <div class="input-group">
+                    <label>بادئة المقترحات</label>
+                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP" onchange="autoSaveSettings()" onkeyup="autoSaveSettings()">
+                </div>
+            </div>
+
+            <!-- زر تهيئة النظام -->
+            <div class="settings-section" id="reset-system-section">
+                <h5 style="color: var(--danger);"><i class="fas fa-exclamation-triangle"></i> تهيئة النظام</h5>
+                <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 10px;">هذا الزر يحذف جميع البيانات ويبدأ الترقيم من 1</p>
+                <button class="btn-nav" onclick="resetSystem()" style="width:100%; background: var(--danger); color: white;" id="reset-system-btn">
+                    <i class="fas fa-trash-alt"></i> تهيئة النظام وبداية جديدة
+                </button>
+            </div>
+
+            <!-- رسالة تأكيد الحفظ التلقائي -->
+            <div class="auto-save-message" id="auto-save-message" style="display: none;">
+                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                <span>تم الحفظ تلقائياً</span>
             </div>
         </div>
+    </div>
 
-        <!-- المحتوى الرئيسي -->
-        <div class="main-content" id="main-content" style="display: none;">
-            <header class="header-box">
-                <div class="header-content">
-                    <div class="header-logo-container">
-                        <img src="https://via.placeholder.com/120x120?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
+    <aside class="admin-sidebar glass-effect">
+        <div class="admin-sidebar-header">
+            <div class="admin-logo-container">
+                <img src="https://via.placeholder.com/100x100?text=Logo" alt="شعار النقابة" id="admin-logo" class="admin-logo">
+                <div class="admin-logo-glow"></div>
+            </div>
+            <h2>بوابة الشكاوي</h2>
+            <p class="admin-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</p>
+        </div>
+        
+        <nav class="admin-nav">
+            <button class="btn-nav admin-nav-btn active" onclick="loadData('all')" id="nav-all">
+                <i class="fas fa-list"></i> 
+                <span>كل الطلبات</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="btn-nav admin-nav-btn" onclick="loadData('شكوى')" id="nav-complaint">
+                <i class="fas fa-exclamation-triangle"></i> 
+                <span>سجل الشكاوى</span>
+                <div class="btn-glow"></div>
+            </button>
+            <button class="btn-nav admin-nav-btn" onclick="loadData('اقتراح')" id="nav-suggestion">
+                <i class="fas fa-lightbulb"></i> 
+                <span>سجل المقترحات</span>
+                <div class="btn-glow"></div>
+            </button>
+        </nav>
+        
+        <button class="btn-main admin-logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i> 
+            <span>خروج آمن</span>
+            <div class="btn-main-glow"></div>
+        </button>
+    </aside>
+
+    <main class="admin-main">
+        <header class="admin-header glass-effect">
+            <h1><i class="fas fa-database"></i> سجل الشكاوي والمقترحات</h1>
+            <div class="admin-header-actions">
+                <button class="btn-nav" onclick="exportToPDF()">
+                    <i class="fas fa-file-pdf"></i> تصدير PDF
+                </button>
+                <button class="btn-nav" onclick="window.print()">
+                    <i class="fas fa-print"></i> طباعة
+                </button>
+            </div>
+        </header>
+
+        <!-- شريط البحث المتقدم -->
+        <div class="advanced-search glass-effect">
+            <div class="search-header" onclick="toggleSearch()">
+                <i class="fas fa-search"></i>
+                <span>بحث متقدم</span>
+                <i class="fas fa-chevron-down" id="search-arrow"></i>
+            </div>
+            
+            <div class="search-body" id="search-body">
+                <div class="search-grid">
+                    <!-- بحث برقم الشكوى -->
+                    <div class="search-field">
+                        <label><i class="fas fa-hashtag"></i> رقم الطلب</label>
+                        <input type="text" id="search-ref" class="neon-border" placeholder="مثال: REQ-0001-2024" oninput="performSearch()">
                     </div>
-                    <div class="header-titles">
-                        <span class="header-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</span>
-                        <h1 class="header-title">بوابة الشكاوي والمقترحات</h1>
-                        <span class="header-role">النقيب العام</span>
-                        <h2 class="header-name">المهندس / محمود جميل</h2>
+
+                    <!-- بحث بالاسم -->
+                    <div class="search-field">
+                        <label><i class="fas fa-user"></i> الاسم</label>
+                        <input type="text" id="search-name" class="neon-border" placeholder="بحث بالاسم..." oninput="performSearch()">
                     </div>
-                </div>
-            </header>
 
-            <nav class="nav-buttons">
-                <button class="btn-nav active" onclick="switchView('submit')">
-                    <i class="fas fa-plus-circle"></i> 
-                    <span>تقديم طلب</span>
-                    <div class="btn-glow"></div>
-                </button>
-                <button class="btn-nav" onclick="switchView('track')">
-                    <i class="fas fa-search"></i> 
-                    <span>استعلام</span>
-                    <div class="btn-glow"></div>
-                </button>
-                <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')">
-                    <i class="fas fa-user-cog"></i>
-                    <div class="btn-glow"></div>
-                </button>
-            </nav>
+                    <!-- بحث بالرقم القومي -->
+                    <div class="search-field">
+                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                        <input type="text" id="search-nid" class="neon-border" placeholder="بحث بالرقم القومي..." oninput="performSearch()">
+                    </div>
 
-            <!-- شاشة تقديم الطلب -->
-            <section id="view-submit" class="view">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
-                    <!-- زر موقع تقديم الخدمات -->
-                    <a href="#" id="services-link" target="_blank" class="services-btn" style="display: none;">
-                        <i class="fas fa-globe"></i>
-                        <span>موقع تقديم خدمات النقابة</span>
-                        <i class="fas fa-arrow-left"></i>
-                    </a>
+                    <!-- بحث برقم العضوية -->
+                    <div class="search-field">
+                        <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
+                        <input type="text" id="search-member" class="neon-border" placeholder="بحث برقم العضوية..." oninput="performSearch()">
+                    </div>
 
-                    <div class="input-group">
-                        <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
-                        <select id="u-member-type" onchange="toggleMemberField()" class="neon-border">
+                    <!-- بحث بالتاريخ من -->
+                    <div class="search-field">
+                        <label><i class="fas fa-calendar"></i> من تاريخ</label>
+                        <input type="date" id="search-date-from" class="neon-border" onchange="performSearch()">
+                    </div>
+
+                    <!-- بحث بالتاريخ إلى -->
+                    <div class="search-field">
+                        <label><i class="fas fa-calendar"></i> إلى تاريخ</label>
+                        <input type="date" id="search-date-to" class="neon-border" onchange="performSearch()">
+                    </div>
+
+                    <!-- تصفية بالنوع -->
+                    <div class="search-field">
+                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
+                        <select id="search-type" class="neon-border" onchange="performSearch()">
+                            <option value="all">الكل</option>
+                            <option value="شكوى">شكوى</option>
+                            <option value="اقتراح">اقتراح</option>
+                        </select>
+                    </div>
+
+                    <!-- تصفية بالحالة -->
+                    <div class="search-field">
+                        <label><i class="fas fa-circle"></i> الحالة</label>
+                        <select id="search-status" class="neon-border" onchange="performSearch()">
+                            <option value="all">الكل</option>
+                            <option value="تم الاستلام">تم الاستلام</option>
+                            <option value="قيد المراجعة">قيد المراجعة</option>
+                            <option value="جاري التنفيذ">جاري التنفيذ</option>
+                            <option value="تم الحل">تم الحل</option>
+                            <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                            <option value="تمت القراءة">تمت القراءة</option>
+                            <option value="لم يقرأ">لم يقرأ</option>
+                        </select>
+                    </div>
+
+                    <!-- تصفية بنوع المقدم -->
+                    <div class="search-field">
+                        <label><i class="fas fa-id-card"></i> نوع المقدم</label>
+                        <select id="search-member-type" class="neon-border" onchange="toggleMemberSearch()">
+                            <option value="all">الكل</option>
                             <option value="عضو نقابة">عضو نقابة</option>
                             <option value="غير عضو">غير عضو</option>
                         </select>
                     </div>
-                    
-                    <div class="input-group" id="member-id-box">
-                        <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
-                        <input type="text" id="u-member-id" placeholder="ادخل رقم عضويتك" class="neon-border">
-                    </div>
 
-                    <div class="input-group">
-                        <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-border">
+                    <!-- حقل بحث إضافي لرقم العضوية (يظهر عند اختيار عضو نقابة) -->
+                    <div class="search-field" id="member-id-search-field" style="display: none;">
+                        <label><i class="fas fa-qrcode"></i> بحث برقم العضوية</label>
+                        <input type="text" id="search-specific-member" class="neon-border" placeholder="ادخل رقم العضوية..." oninput="performSearch()">
                     </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                    </div>
-
-                    <div class="responsive-grid">
-                        <div class="input-group">
-                            <label><i class="fas fa-phone"></i> رقم الهاتف</label>
-                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
-                            <select id="u-gov" class="neon-border">
-                                <option value="القاهرة">القاهرة</option>
-                                <option value="الجيزة">الجيزة</option>
-                                <option value="الإسكندرية">الإسكندرية</option>
-                                <option value="الدقهلية">الدقهلية</option>
-                                <option value="الشرقية">الشرقية</option>
-                                <option value="القليوبية">القليوبية</option>
-                                <option value="الغربية">الغربية</option>
-                                <option value="المنوفية">المنوفية</option>
-                                <option value="البحيرة">البحيرة</option>
-                                <option value="كفر الشيخ">كفر الشيخ</option>
-                                <option value="دمياط">دمياط</option>
-                                <option value="بورسعيد">بورسعيد</option>
-                                <option value="السويس">السويس</option>
-                                <option value="الإسماعيلية">الإسماعيلية</option>
-                                <option value="الفيوم">الفيوم</option>
-                                <option value="بني سويف">بني سويف</option>
-                                <option value="المنيا">المنيا</option>
-                                <option value="أسيوط">أسيوط</option>
-                                <option value="سوهاج">سوهاج</option>
-                                <option value="قنا">قنا</option>
-                                <option value="الأقصر">الأقصر</option>
-                                <option value="أسوان">أسوان</option>
-                                <option value="البحر الأحمر">البحر الأحمر</option>
-                                <option value="الوادي الجديد">الوادي الجديد</option>
-                                <option value="مطروح">مطروح</option>
-                                <option value="شمال سيناء">شمال سيناء</option>
-                                <option value="جنوب سيناء">جنوب سيناء</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
-                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-border">
-                    </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-briefcase"></i> المهنة الحالية</label>
-                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-border">
-                    </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="u-req-type" class="neon-border">
-                            <option value="شكوى">شكوى</option>
-                            <option value="اقتراح">اقتراح</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
-                        <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك هنا..." class="neon-border"></textarea>
-                    </div>
-
-                    <button class="btn-main" onclick="handleSubmit()">
-                        <i class="fas fa-paper-plane"></i> 
-                        <span>إرسال الطلب وحفظ الوصل</span>
-                        <div class="btn-main-glow"></div>
-                    </button>
-                </div>
-            </section>
-
-            <!-- شاشة الاستعلام -->
-            <section id="view-track" class="view" style="display:none;">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    <div class="input-group">
-                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="q-type" class="neon-border">
-                            <option value="شكوى">شكوى</option>
-                            <option value="اقتراح">اقتراح</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label><i class="fas fa-qrcode"></i> كود الطلب</label>
-                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2024" class="neon-border">
-                    </div>
-
-                    <button class="btn-main" onclick="handleTrack()">
-                        <i class="fas fa-search"></i> 
-                        <span>استعلام عن المسار</span>
-                        <div class="btn-main-glow"></div>
-                    </button>
                 </div>
 
-                <div id="track-result-box" style="display:none;"></div>
-            </section>
-
-            <!-- شاشة دخول الادمن -->
-            <section id="view-admin-login" class="view" style="display:none;">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    <div class="admin-login-icon">
-                        <i class="fas fa-user-shield"></i>
-                    </div>
-                    <h3 style="text-align:center; margin-bottom:20px; color:var(--primary);">دخول المنظومة</h3>
-                    <div class="input-group">
-                        <input type="text" id="adm-user" placeholder="اسم المستخدم" class="neon-border" autocomplete="off">
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="adm-pass" placeholder="كلمة المرور" class="neon-border" autocomplete="off">
-                    </div>
-                    <button class="btn-main" onclick="adminLogin()">
-                        <i class="fas fa-sign-in-alt"></i> 
-                        <span>دخول</span>
-                        <div class="btn-main-glow"></div>
+                <div class="search-actions">
+                    <button class="btn-nav" onclick="resetSearch()">
+                        <i class="fas fa-undo"></i> إعادة ضبط
                     </button>
+                    <span class="search-results-count" id="results-count">0 نتيجة</span>
                 </div>
-            </section>
+            </div>
         </div>
 
-        <!-- عناصر الخلفية المتحركة -->
-        <div class="floating-elements">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
+        <div class="admin-table-container glass-effect">
+            <div class="table-responsive">
+                <table id="main-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ والوقت</th>
+                            <th>رقم الطلب</th>
+                            <th>صاحب الطلب</th>
+                            <th>نوع العضوية</th>
+                            <th>المحافظة</th>
+                            <th>النوع</th>
+                            <th>الحالة</th>
+                            <th>إدارة</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-tbody">
+                        <tr>
+                            <td colspan="8" class="loading-row">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>جاري تحميل البيانات...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- نافذة إدارة الطلب -->
+    <div id="request-modal" class="modal" style="z-index: 2000;">
+        <div class="modal-content glass-effect">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-content-area" class="modal-scroll"></div>
         </div>
     </div>
 
-    <!-- عنصر الكارت المخفي للتصدير -->
-    <div id="request-card-container" style="position: absolute; left: -9999px; top: 0; width: 600px;"></div>
+    <!-- نافذة الحذف المنفصلة -->
+    <div id="delete-modal" class="delete-modal" style="display: none; z-index: 3000;">
+        <div class="delete-modal-content glass-effect">
+            <h3 style="color: var(--danger); margin-bottom: 15px;">حذف الطلب</h3>
+            <input type="password" id="delete-password" class="neon-border" placeholder="كلمة السر" style="width: 100%; margin-bottom: 15px; direction: ltr;">
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-main" onclick="confirmDelete()" style="background: var(--danger);">تأكيد الحذف</button>
+                <button class="btn-nav" onclick="closeDeleteModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script src="admin_logic.js"></script>
 </body>
 </html>
