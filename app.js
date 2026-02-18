@@ -123,7 +123,7 @@ function formatTextForCard(text) {
     return text.replace(/\s+/g, ' ').trim();
 }
 
-// دالة إنشاء الكارت مع dom-to-image
+// دالة إنشاء الكارت مع حل مشكلة رقم الطلب والتاريخ
 async function generateRequestCard(data) {
     const logo = getSavedLogo();
     const now = new Date();
@@ -157,7 +157,7 @@ async function generateRequestCard(data) {
     logoImg.src = logo;
     logoImg.style.cssText = 'width: 150px; height: 150px; border-radius: 50%; border: 5px solid #00d2ff; margin-bottom: 25px; object-fit: cover; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 0 40px #00d2ff;';
     
-    // محتوى الكارت بخطوط كبيرة وواضحة
+    // محتوى الكارت مع ترتيب صحيح لرقم الطلب والتاريخ
     const contentDiv = document.createElement('div');
     contentDiv.innerHTML = `
         <h2 style="font-size: 34px; color: #00d2ff; margin: 15px 0; font-weight: 900; letter-spacing: 2px; word-spacing: 10px; line-height: 1.8;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
@@ -165,21 +165,17 @@ async function generateRequestCard(data) {
         <p style="color: #94a3b8; font-size: 22px; margin-bottom: 30px; word-spacing: 6px;">النقيب العام</p>
         
         <div style="background: rgba(0,210,255,0.15); padding: 30px; border-radius: 30px; margin: 30px 0; border: 2px solid rgba(0,210,255,0.3);">
-            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 22px;">
                 <span style="color: #94a3b8; font-weight: 600;">رقم الطلب :</span>
-                <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px;">${data.refId}</span>
+                <span style="color: #00d2ff; font-weight: 700; direction: ltr; letter-spacing: 2px; font-size: 24px;">${data.refId}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 22px;">
                 <span style="color: #94a3b8; font-weight: 600;">نوع الطلب :</span>
-                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700;">${data.type}</span>
+                <span style="color: ${data.type === 'شكوى' ? '#ff4757' : '#00ff88'}; font-weight: 700; font-size: 24px;">${data.type}</span>
             </div>
-            <div style="display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 2px solid rgba(255,255,255,0.15); font-size: 20px;">
-                <span style="color: #94a3b8; font-weight: 600;">صاحب الطلب :</span>
-                <span style="font-weight: 600;">${formatTextForCard(data.name)}</span>
-            </div>
-            <div style="display: flex; justify-content: space-between; padding: 15px 0; font-size: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px 0; font-size: 22px;">
                 <span style="color: #94a3b8; font-weight: 600;">تاريخ التقديم :</span>
-                <span style="font-weight: 600;">${date} - ${time}</span>
+                <span style="font-weight: 600; font-size: 22px;">${date} - ${time}</span>
             </div>
         </div>
         
@@ -211,7 +207,7 @@ async function generateRequestCard(data) {
             
             const result = await Swal.fire({
                 title: 'تم حفظ الطلب',
-                html: `<div style="color:#00d2ff; font-size:22px; margin-bottom:20px; letter-spacing:2px;">${data.refId}</div>`,
+                html: `<div style="color:#00d2ff; font-size:24px; margin-bottom:20px; letter-spacing:2px;">${data.refId}</div>`,
                 imageUrl: dataUrl,
                 imageWidth: 500,
                 imageHeight: card.offsetHeight * 500 / 600,
@@ -243,7 +239,7 @@ async function generateRequestCard(data) {
                 
                 const result = await Swal.fire({
                     title: 'تم حفظ الطلب',
-                    html: `<div style="color:#00d2ff; font-size:22px; margin-bottom:20px;">${data.refId}</div>`,
+                    html: `<div style="color:#00d2ff; font-size:24px; margin-bottom:20px;">${data.refId}</div>`,
                     imageUrl: canvas.toDataURL('image/png'),
                     imageWidth: 500,
                     imageHeight: canvas.height * 500 / canvas.width,
