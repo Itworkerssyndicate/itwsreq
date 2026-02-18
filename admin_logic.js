@@ -117,14 +117,28 @@ function renderRequests(requests) {
         
         html += `
         <tr>
-            <td><div>${date}</div><small style="color:var(--text-muted);">${time}</small></td>
-            <td style="color:var(--primary); direction:ltr;">${r.refId}</td>
-            <td><div><strong>${r.name}</strong><br><small>${r.job}</small><br><small style="color:var(--primary);">${r.phone}</small></div></td>
+            <td>
+                <div style="font-weight:600;">${date}</div>
+                <div style="color:var(--text-muted); font-size:11px;">${time}</div>
+            </td>
+            <td style="color:var(--primary); direction:ltr; font-weight:600;">${r.refId}</td>
+            <td>
+                <div><strong>${r.name}</strong></div>
+                <div style="color:var(--text-muted); font-size:11px;">${r.job}</div>
+                <div style="color:var(--primary); font-size:11px;">${r.phone}</div>
+            </td>
             <td>${member}</td>
             <td>${r.gov}</td>
-            <td><span class="type-badge" style="background:${r.type === 'شكوى' ? 'rgba(255,71,87,0.2)' : 'rgba(0,255,136,0.2)'}; color:${r.type === 'شكوى' ? 'var(--danger)' : 'var(--success)'};">${r.type}</span></td>
-            <td><span class="status-badge" style="background:${getStatusColor(r.status)}">${r.status}</span></td>
-            <td><button class="action-btn" onclick="manageReq('${r.refId}')"><i class="fas fa-cog"></i></button></td>
+            <td>
+                <span class="type-badge" style="background:${r.type === 'شكوى' ? 'rgba(255,71,87,0.2)' : 'rgba(0,255,136,0.2)'}; color:${r.type === 'شكوى' ? 'var(--danger)' : 'var(--success)'};">${r.type}</span>
+            </td>
+            <td>
+                <span class="status-badge" style="background:${getStatusColor(r.status)}">${r.status}</span>
+            </td>
+            <td>
+                <button class="action-btn" onclick="manageReq('${r.refId}')"><i class="fas fa-cog"></i></button>
+                <button class="action-btn delete" onclick="openDeleteModal('${r.refId}')"><i class="fas fa-trash"></i></button>
+            </td>
         </tr>`;
     });
     
@@ -210,7 +224,6 @@ function showRequestModal(d) {
                 <div style="margin-top:10px;"><span style="color:#94a3b8;">التفاصيل :</span> ${d.details}</div>
             </div>
             
-            <!-- التراك المائي - خط يتملى -->
             <div class="track-container" style="margin:20px 0;">
                 <div class="track-line-bg"></div>
                 <div class="track-line-fill" style="width: ${progress}%;"></div>
