@@ -3,31 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات</title>
+    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05</title>
+    
+    <!-- ملفات CSS -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2300ffff'/><text x='50' y='70' font-size='50' text-anchor='middle' fill='%23030514' font-family='Arial' font-weight='bold'>ن</text></svg>">
 </head>
 <body>
-    <div class="main-wrapper">
-        <!-- شاشة البداية -->
-        <div class="splash-screen" id="splash-screen">
-            <div class="splash-content">
-                <img src="https://via.placeholder.com/150x150?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
-                <h2 class="splash-title">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
-                <div class="splash-loader">
-                    <div class="loader-bar"></div>
+    <!-- ==================== جزيئات متطايرة ==================== -->
+    <div class="particles-container" id="particles-container"></div>
+
+    <!-- ==================== شاشة البداية ==================== -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-content">
+            <img src="https://via.placeholder.com/200x200?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
+            <h1 class="splash-title">نقابة تكنولوجيا المعلومات والبرمجيات</h1>
+            <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+            <p class="splash-text">جاري تحميل المنصة المتطورة...</p>
+        </div>
+    </div>
+
+    <!-- ==================== عناصر الخلفية المتحركة ==================== -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+
+    <!-- ==================== زر الإعدادات ==================== -->
+    <div class="settings-panel">
+        <button class="settings-btn" id="settings-btn" onclick="toggleSettings()">
+            <i class="fas fa-cog"></i>
+        </button>
+        <div class="settings-menu" id="settings-menu">
+            <div class="settings-menu-header">
+                <i class="fas fa-sliders-h"></i>
+                <h4>إعدادات المنصة</h4>
+            </div>
+            
+            <!-- إعدادات الشعار -->
+            <div class="settings-section">
+                <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
+                <div class="input-group">
+                    <label>رابط الشعار (URL)</label>
+                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png" value="https://via.placeholder.com/200x200?text=Logo">
                 </div>
-                <p class="splash-text">جاري تحميل المنصة...</p>
+            </div>
+
+            <!-- إعدادات موقع الخدمات -->
+            <div class="settings-section">
+                <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
+                <div class="input-group">
+                    <label>رابط الموقع</label>
+                    <input type="url" id="services-url" class="neon-border" placeholder="https://services.egeng.org" value="https://services.egeng.org">
+                </div>
+                <div class="input-group">
+                    <label>نص الزر</label>
+                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة" value="موقع تقديم خدمات النقابة">
+                </div>
+                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+                    <input type="checkbox" id="show-services-btn" checked style="width: 18px; height: 18px; accent-color: var(--neon-cyan);">
+                    <label for="show-services-btn" style="color: #fff;">إظهار الزر في شاشة تقديم الطلبات</label>
+                </div>
+            </div>
+
+            <!-- إعدادات الترقيم -->
+            <div class="settings-section">
+                <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
+                <div class="input-group">
+                    <label>بادئة الشكاوى</label>
+                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ">
+                </div>
+                <div class="input-group">
+                    <label>بادئة المقترحات</label>
+                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP">
+                </div>
+            </div>
+
+            <!-- أزرار الإعدادات -->
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-main" onclick="saveSettings()" style="padding: 12px; font-size: 14px;">
+                    <i class="fas fa-save"></i> حفظ الإعدادات
+                </button>
+                <button class="btn-nav" onclick="resetSettings()" style="padding: 12px; font-size: 14px;">
+                    <i class="fas fa-undo"></i> إعادة ضبط
+                </button>
+            </div>
+
+            <!-- رسالة الحفظ التلقائي -->
+            <div class="auto-save-message" id="auto-save-message" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <span>تم الحفظ تلقائياً</span>
             </div>
         </div>
+    </div>
 
-        <!-- المحتوى الرئيسي -->
+    <!-- ==================== الحاوية الرئيسية ==================== -->
+    <div class="main-wrapper">
         <div class="main-content" id="main-content" style="display: none;">
-            <header class="header-box">
+            
+            <!-- ==================== الهيدر ==================== -->
+            <header class="header-box glass-effect">
                 <div class="header-content">
                     <div class="header-logo-container">
-                        <img src="https://via.placeholder.com/120x120?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
+                        <img src="https://via.placeholder.com/180x180?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
                     </div>
                     <div class="header-titles">
                         <span class="header-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</span>
@@ -38,58 +125,64 @@
                 </div>
             </header>
 
+            <!-- ==================== أزرار التنقل ==================== -->
             <nav class="nav-buttons">
-                <button class="btn-nav active" onclick="switchView('submit')">
+                <button class="btn-nav active" onclick="switchView('submit')" id="btn-submit">
                     <i class="fas fa-plus-circle"></i> 
                     <span>تقديم طلب</span>
                     <div class="btn-glow"></div>
                 </button>
-                <button class="btn-nav" onclick="switchView('track')">
+                <button class="btn-nav" onclick="switchView('track')" id="btn-track">
                     <i class="fas fa-search"></i> 
-                    <span>استعلام</span>
+                    <span>استعلام عن طلب</span>
                     <div class="btn-glow"></div>
                 </button>
-                <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')">
+                <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')" id="btn-admin">
                     <i class="fas fa-user-cog"></i>
                     <div class="btn-glow"></div>
                 </button>
             </nav>
 
-            <!-- شاشة تقديم الطلب -->
+            <!-- ==================== شاشة تقديم الطلب ==================== -->
             <section id="view-submit" class="view">
                 <div class="card glass-effect">
                     <div class="card-glow"></div>
                     
                     <!-- زر موقع تقديم الخدمات -->
-                    <a href="#" id="services-link" target="_blank" class="services-btn" style="display: none;">
+                    <a href="https://services.egeng.org" id="services-link" target="_blank" class="services-btn">
                         <i class="fas fa-globe"></i>
                         <span>موقع تقديم خدمات النقابة</span>
                         <i class="fas fa-arrow-left"></i>
                     </a>
 
+                    <!-- نوع مقدم الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
-                        <select id="u-member-type" onchange="toggleMemberField()" class="neon-border">
+                        <select id="u-member-type" class="neon-border" onchange="toggleMemberField()">
                             <option value="عضو نقابة">عضو نقابة</option>
                             <option value="غير عضو">غير عضو</option>
                         </select>
                     </div>
                     
+                    <!-- رقم العضوية (يظهر للأعضاء فقط) -->
                     <div class="input-group" id="member-id-box">
                         <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
                         <input type="text" id="u-member-id" placeholder="ادخل رقم عضويتك" class="neon-border">
                     </div>
 
+                    <!-- الاسم الكامل -->
                     <div class="input-group">
                         <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-border">
+                        <input type="text" id="u-name" placeholder="الاسم ثلاثي (مثال: محمد أحمد علي)" class="neon-border">
                     </div>
 
+                    <!-- الرقم القومي -->
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم (مثال: 12345678901234)" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
 
+                    <!-- شبكة الهاتف والمحافظة -->
                     <div class="responsive-grid">
                         <div class="input-group">
                             <label><i class="fas fa-phone"></i> رقم الهاتف</label>
@@ -129,16 +222,19 @@
                         </div>
                     </div>
 
+                    <!-- العنوان بالتفصيل -->
                     <div class="input-group">
                         <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
                         <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-border">
                     </div>
 
+                    <!-- المهنة الحالية -->
                     <div class="input-group">
                         <label><i class="fas fa-briefcase"></i> المهنة الحالية</label>
-                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-border">
+                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات - مطور ويب - معلم" class="neon-border">
                     </div>
 
+                    <!-- نوع الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
                         <select id="u-req-type" class="neon-border">
@@ -147,11 +243,13 @@
                         </select>
                     </div>
 
+                    <!-- تفاصيل الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
-                        <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك هنا..." class="neon-border"></textarea>
+                        <textarea id="u-details" rows="5" placeholder="اكتب تفاصيل طلبك هنا بأقصى دقة ممكنة..." class="neon-border"></textarea>
                     </div>
 
+                    <!-- زر الإرسال -->
                     <button class="btn-main" onclick="handleSubmit()">
                         <i class="fas fa-paper-plane"></i> 
                         <span>إرسال الطلب وحفظ الوصل</span>
@@ -160,15 +258,24 @@
                 </div>
             </section>
 
-            <!-- شاشة الاستعلام -->
+            <!-- ==================== شاشة الاستعلام ==================== -->
             <section id="view-track" class="view" style="display:none;">
                 <div class="card glass-effect">
                     <div class="card-glow"></div>
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <i class="fas fa-search" style="font-size: 50px; color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan);"></i>
+                        <h3 style="color: #fff; margin-top: 10px;">استعلام عن طلب</h3>
+                        <p style="color: rgba(255,255,255,0.6);">أدخل بيانات الطلب لمتابعة المسار الزمني</p>
+                    </div>
+
+                    <!-- الرقم القومي -->
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي (14 رقم)" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     
+                    <!-- نوع الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
                         <select id="q-type" class="neon-border">
@@ -177,11 +284,13 @@
                         </select>
                     </div>
 
+                    <!-- كود الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-qrcode"></i> كود الطلب</label>
-                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2024" class="neon-border">
+                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="neon-border">
                     </div>
 
+                    <!-- زر الاستعلام -->
                     <button class="btn-main" onclick="handleTrack()">
                         <i class="fas fa-search"></i> 
                         <span>استعلام عن المسار</span>
@@ -189,51 +298,301 @@
                     </button>
                 </div>
 
+                <!-- مكان عرض نتيجة الاستعلام -->
                 <div id="track-result-box" style="display:none;"></div>
             </section>
 
-            <!-- شاشة دخول الادمن -->
+            <!-- ==================== شاشة دخول الادمن ==================== -->
             <section id="view-admin-login" class="view" style="display:none;">
                 <div class="card glass-effect">
                     <div class="card-glow"></div>
-                    <div class="admin-login-icon">
-                        <i class="fas fa-user-shield"></i>
+                    
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="width: 100px; height: 100px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 50px var(--neon-cyan);">
+                            <i class="fas fa-user-shield" style="font-size: 50px; color: #fff;"></i>
+                        </div>
+                        <h3 style="color: var(--neon-cyan); font-size: 24px;">دخول المنظومة</h3>
+                        <p style="color: rgba(255,255,255,0.6);">لوحة التحكم الخاصة بالمشرفين</p>
                     </div>
-                    <h3 style="text-align:center; margin-bottom:20px; color:var(--primary);">دخول المنظومة</h3>
+
+                    <!-- اسم المستخدم -->
                     <div class="input-group">
                         <input type="text" id="adm-user" placeholder="اسم المستخدم" class="neon-border">
                     </div>
+
+                    <!-- كلمة المرور -->
                     <div class="input-group">
                         <input type="password" id="adm-pass" placeholder="كلمة المرور" class="neon-border">
                     </div>
+
+                    <!-- زر الدخول -->
                     <button class="btn-main" onclick="adminLogin()">
                         <i class="fas fa-sign-in-alt"></i> 
                         <span>دخول</span>
                         <div class="btn-main-glow"></div>
                     </button>
+
+                    <!-- تذكير -->
+                    <p style="text-align: center; margin-top: 20px; color: rgba(255,255,255,0.4); font-size: 12px;">
+                        <i class="fas fa-info-circle"></i> بيانات الدخول الافتراضية: admin / itws@2026
+                    </p>
                 </div>
             </section>
         </div>
-
-        <!-- عناصر الخلفية المتحركة -->
-        <div class="floating-elements">
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-            <div class="floating-element"></div>
-        </div>
     </div>
 
-    <!-- عنصر الكارت المخفي للتصدير -->
+    <!-- ==================== عنصر الكارت المخفي للتصدير ==================== -->
     <div id="request-card-container" style="position: absolute; left: -9999px; top: 0; width: 650px;"></div>
 
+    <!-- ==================== Footer Note ==================== -->
+    <div class="footer-note">
+        <span>نقابة تكنولوجيا المعلومات والبرمجيات</span> © 2026 - جميع الحقوق محفوظة
+    </div>
+
+    <!-- ==================== مكتبات خارجية ==================== -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+
+    <!-- ==================== ملفات JavaScript ==================== -->
+    <script>
+        // ==================== إنشاء الجزيئات المتطايرة ====================
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            if (!container) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // موقع عشوائي
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // حجم عشوائي
+                const size = 1 + Math.random() * 4;
+                
+                // مدة الحركة العشوائية
+                const duration = 10 + Math.random() * 20;
+                
+                // تأخير عشوائي
+                const delay = Math.random() * 10;
+                
+                particle.style.cssText = `
+                    left: ${left}%;
+                    top: ${top}%;
+                    width: ${size}px;
+                    height: ${size}px;
+                    animation-duration: ${duration}s;
+                    animation-delay: -${delay}s;
+                    background: ${i % 3 === 0 ? 'var(--neon-cyan)' : i % 3 === 1 ? 'var(--neon-purple)' : 'var(--neon-pink)'};
+                `;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // ==================== إخفاء شاشة البداية ====================
+        window.addEventListener('load', function() {
+            // إنشاء الجزيئات
+            createParticles();
+            
+            // إخفاء شاشة البداية بعد 3 ثواني
+            setTimeout(function() {
+                const splash = document.getElementById('splash-screen');
+                const mainContent = document.getElementById('main-content');
+                if (splash) splash.style.display = 'none';
+                if (mainContent) mainContent.style.display = 'block';
+            }, 3000);
+        });
+
+        // ==================== تبديل المشاهد ====================
+        function switchView(view) {
+            // إخفاء كل المشاهد
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            
+            // إزالة active من كل الأزرار
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+            
+            // إظهار المشهد المطلوب
+            document.getElementById('view-' + view).style.display = 'block';
+            
+            // تفعيل الزر المناسب
+            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
+            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
+            else if (view === 'admin-login') document.getElementById('btn-admin').classList.add('active');
+        }
+
+        // ==================== إظهار/إخفاء حقل العضوية ====================
+        function toggleMemberField() {
+            const type = document.getElementById('u-member-type').value;
+            const mBox = document.getElementById('member-id-box');
+            
+            if (type === 'عضو نقابة') {
+                mBox.style.display = 'block';
+            } else {
+                mBox.style.display = 'none';
+            }
+        }
+
+        // ==================== حفظ الإعدادات ====================
+        function saveSettings() {
+            const logoUrl = document.getElementById('logo-url').value;
+            const servicesUrl = document.getElementById('services-url').value;
+            const servicesText = document.getElementById('services-text').value;
+            const showServices = document.getElementById('show-services-btn').checked;
+            const complaintPrefix = document.getElementById('complaint-prefix').value;
+            const suggestionPrefix = document.getElementById('suggestion-prefix').value;
+            
+            // حفظ في localStorage
+            localStorage.setItem('logo_url', logoUrl);
+            localStorage.setItem('services_url', servicesUrl);
+            localStorage.setItem('services_text', servicesText);
+            localStorage.setItem('show_services', showServices);
+            localStorage.setItem('complaint_prefix', complaintPrefix);
+            localStorage.setItem('suggestion_prefix', suggestionPrefix);
+            
+            // تحديث الشعارات
+            document.getElementById('splash-logo').src = logoUrl;
+            document.getElementById('header-main-logo').src = logoUrl;
+            
+            // تحديث زر الخدمات
+            const servicesBtn = document.getElementById('services-link');
+            if (showServices) {
+                servicesBtn.style.display = 'flex';
+                servicesBtn.href = servicesUrl;
+                servicesBtn.querySelector('span').textContent = servicesText;
+            } else {
+                servicesBtn.style.display = 'none';
+            }
+            
+            // إظهار رسالة الحفظ
+            const msg = document.getElementById('auto-save-message');
+            msg.style.display = 'flex';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 2000);
+        }
+
+        // ==================== إعادة ضبط الإعدادات ====================
+        function resetSettings() {
+            document.getElementById('logo-url').value = 'https://via.placeholder.com/200x200?text=Logo';
+            document.getElementById('services-url').value = 'https://services.egeng.org';
+            document.getElementById('services-text').value = 'موقع تقديم خدمات النقابة';
+            document.getElementById('show-services-btn').checked = true;
+            document.getElementById('complaint-prefix').value = 'REQ';
+            document.getElementById('suggestion-prefix').value = 'REP';
+            
+            saveSettings();
+        }
+
+        // ==================== إظهار/إخفاء قائمة الإعدادات ====================
+        function toggleSettings() {
+            const menu = document.getElementById('settings-menu');
+            menu.classList.toggle('show');
+            
+            // تحميل الإعدادات المحفوظة عند الفتح
+            if (menu.classList.contains('show')) {
+                document.getElementById('logo-url').value = localStorage.getItem('logo_url') || 'https://via.placeholder.com/200x200?text=Logo';
+                document.getElementById('services-url').value = localStorage.getItem('services_url') || 'https://services.egeng.org';
+                document.getElementById('services-text').value = localStorage.getItem('services_text') || 'موقع تقديم خدمات النقابة';
+                document.getElementById('show-services-btn').checked = localStorage.getItem('show_services') !== 'false';
+                document.getElementById('complaint-prefix').value = localStorage.getItem('complaint_prefix') || 'REQ';
+                document.getElementById('suggestion-prefix').value = localStorage.getItem('suggestion_prefix') || 'REP';
+            }
+        }
+
+        // ==================== تحميل الإعدادات المحفوظة عند بدء التشغيل ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // تحميل الشعار المحفوظ
+            const savedLogo = localStorage.getItem('logo_url');
+            if (savedLogo) {
+                document.getElementById('splash-logo').src = savedLogo;
+                document.getElementById('header-main-logo').src = savedLogo;
+            }
+            
+            // تحميل إعدادات الخدمات
+            const servicesUrl = localStorage.getItem('services_url');
+            const servicesText = localStorage.getItem('services_text');
+            const showServices = localStorage.getItem('show_services') !== 'false';
+            
+            const servicesBtn = document.getElementById('services-link');
+            if (showServices && servicesUrl) {
+                servicesBtn.style.display = 'flex';
+                servicesBtn.href = servicesUrl;
+                if (servicesText) {
+                    servicesBtn.querySelector('span').textContent = servicesText;
+                }
+            } else {
+                servicesBtn.style.display = 'none';
+            }
+            
+            // تفعيل المشهد الافتراضي
+            switchView('submit');
+            
+            // إخفاء حقل العضوية إذا كان غير عضو افتراضياً
+            if (document.getElementById('u-member-type').value === 'غير عضو') {
+                document.getElementById('member-id-box').style.display = 'none';
+            }
+        });
+
+        // ==================== دوال Firebase (سيتم استكمالها في ملف منفصل) ====================
+        async function handleSubmit() {
+            // هذه الدالة سيتم استكمالها في ملف app.js
+            Swal.fire({
+                icon: 'info',
+                title: 'تنبيه',
+                text: 'سيتم ربط Firebase قريباً',
+                background: 'rgba(3,5,20,0.9)',
+                color: '#fff',
+                confirmButtonColor: 'var(--neon-cyan)'
+            });
+        }
+
+        function handleTrack() {
+            Swal.fire({
+                icon: 'info',
+                title: 'تنبيه',
+                text: 'سيتم ربط Firebase قريباً',
+                background: 'rgba(3,5,20,0.9)',
+                color: '#fff',
+                confirmButtonColor: 'var(--neon-cyan)'
+            });
+        }
+
+        function adminLogin() {
+            const username = document.getElementById('adm-user').value;
+            const password = document.getElementById('adm-pass').value;
+            
+            if (username === 'admin' && password === 'itws@2026') {
+                localStorage.setItem('admin', 'true');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'مرحباً بك',
+                    text: 'جاري تحويلك إلى لوحة التحكم',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    background: 'rgba(3,5,20,0.9)',
+                    color: '#fff'
+                }).then(() => {
+                    window.location.href = 'admin.html';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في الدخول',
+                    text: 'اسم المستخدم أو كلمة المرور غير صحيحة',
+                    background: 'rgba(3,5,20,0.9)',
+                    color: '#fff',
+                    confirmButtonColor: 'var(--neon-cyan)'
+                });
+            }
+        }
+    </script>
+
+    <!-- ==================== ملفات المشروع الخارجية ==================== -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
