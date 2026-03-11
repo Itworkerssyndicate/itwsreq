@@ -769,7 +769,7 @@
             <div class="splash-loader">
                 <div class="loader-bar"></div>
             </div>
-            <div class="splash-version">VR 2.05.2026 | نسخة البوابة</div>
+            <div class="splash-version">VR 2.05.2026 | الإصدار الماسي</div>
         </div>
     </div>
 
@@ -795,13 +795,13 @@
 
         <!-- أزرار التنقل -->
         <div class="nav-buttons">
-            <button class="nav-btn active" onclick="switchView('submit')">
+            <button class="nav-btn active" onclick="switchView('submit')" id="btn-submit">
                 <i class="fas fa-plus-circle"></i> تقديم طلب
             </button>
-            <button class="nav-btn" onclick="switchView('track')">
+            <button class="nav-btn" onclick="switchView('track')" id="btn-track">
                 <i class="fas fa-search"></i> استعلام
             </button>
-            <button class="nav-btn" onclick="switchView('admin-login')">
+            <button class="nav-btn" onclick="switchView('admin-login')" id="btn-admin">
                 <i class="fas fa-user-cog"></i>
             </button>
         </div>
@@ -811,7 +811,7 @@
             <div class="luxury-card">
                 <div class="card-glow"></div>
                 
-                <a href="#" id="services-link" class="services-banner">
+                <a href="#" id="services-link" class="services-banner" style="display: none;">
                     <i class="fas fa-globe"></i>
                     <span>موقع تقديم خدمات النقابة</span>
                     <i class="fas fa-arrow-left"></i>
@@ -1007,13 +1007,171 @@
     <!-- عنصر الكارت المخفي -->
     <div id="request-card-container" style="position: absolute; left: -9999px; top: 0; width: 650px;"></div>
 
-    <!-- SweetAlert2 -->
+    <!-- Firebase و SweetAlert و dom-to-image -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     
     <script>
-        // إنشاء الجزيئات
+        // ==================== تهيئة Firebase ====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
+            authDomain: "itwsreq.firebaseapp.com",
+            projectId: "itwsreq",
+            storageBucket: "itwsreq.firebasestorage.app",
+            messagingSenderId: "417900842360",
+            appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
+            measurementId: "G-P3YQFRSBMM"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ==================== متغيرات عامة ====================
+        const STORAGE_KEYS = {
+            LOGO_URL: 'union_logo_url',
+            SERVICES_URL: 'services_url',
+            SERVICES_TEXT: 'services_text',
+            SHOW_SERVICES: 'show_services',
+            COMPLAINT_PREFIX: 'complaint_prefix',
+            SUGGESTION_PREFIX: 'suggestion_prefix'
+        };
+
+        const DEFAULT_SETTINGS = {
+            LOGO_URL: 'https://via.placeholder.com/200x200?text=Logo',
+            SERVICES_URL: 'https://services.egeng.org',
+            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
+            SHOW_SERVICES: true,
+            COMPLAINT_PREFIX: 'REQ',
+            SUGGESTION_PREFIX: 'REP'
+        };
+
+        // ==================== دوال الإعدادات ====================
+        function getSetting(key, defaultValue) {
+            const value = localStorage.getItem(key);
+            return value !== null ? value : defaultValue;
+        }
+
+        function getSavedLogo() {
+            return getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+        }
+
+        function getServicesUrl() {
+            return getSetting(STORAGE_KEYS.SERVICES_URL, DEFAULT_SETTINGS.SERVICES_URL);
+        }
+
+        function getServicesText() {
+            return getSetting(STORAGE_KEYS.SERVICES_TEXT, DEFAULT_SETTINGS.SERVICES_TEXT);
+        }
+
+        function shouldShowServices() {
+            const value = localStorage.getItem(STORAGE_KEYS.SHOW_SERVICES);
+            return value === null ? DEFAULT_SETTINGS.SHOW_SERVICES : value === 'true';
+        }
+
+        function getComplaintPrefix() {
+            return getSetting(STORAGE_KEYS.COMPLAINT_PREFIX, DEFAULT_SETTINGS.COMPLAINT_PREFIX);
+        }
+
+        function getSuggestionPrefix() {
+            return getSetting(STORAGE_KEYS.SUGGESTION_PREFIX, DEFAULT_SETTINGS.SUGGESTION_PREFIX);
+        }
+
+        function updateServicesButton() {
+            const servicesBtn = document.getElementById('services-link');
+            if (!servicesBtn) return;
+            
+            const showServices = shouldShowServices();
+            const servicesUrl = getServicesUrl();
+            const servicesText = getServicesText();
+            
+            if (showServices && servicesUrl) {
+                servicesBtn.style.display = 'flex';
+                servicesBtn.href = servicesUrl;
+                const span = servicesBtn.querySelector('span');
+                if (span) span.textContent = servicesText;
+            } else {
+                servicesBtn.style.display = 'none';
+            }
+        }
+
+        // ==================== دوال مساعدة ====================
+        function validateNationalID(nid) {
+            return /^\d{14}$/.test(nid);
+        }
+
+        function validatePhone(phone) {
+            return /^01[0-2,5]{1}[0-9]{8}$/.test(phone);
+        }
+
+        function getCurrentArabicDate() {
+            const now = new Date();
+            return now.toLocaleDateString('ar-EG', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function getCurrentArabicTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('ar-EG', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        async function generateRequestNumber(type) {
+            const year = new Date().getFullYear();
+            const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
+            
+            try {
+                const snapshot = await db.collection("Requests")
+                    .where("type", "==", type)
+                    .get();
+                
+                const thisYearRequests = snapshot.docs.filter(doc => {
+                    const data = doc.data();
+                    if (!data.createdAt) return false;
+                    const docYear = data.createdAt.toDate ? 
+                        data.createdAt.toDate().getFullYear() : 
+                        new Date(data.createdAt).getFullYear();
+                    return docYear === year;
+                });
+                
+                let maxSerial = 0;
+                thisYearRequests.forEach(doc => {
+                    const refId = doc.data().refId;
+                    if (refId) {
+                        const parts = refId.split('-');
+                        if (parts.length >= 2) {
+                            const serial = parseInt(parts[1]);
+                            if (!isNaN(serial) && serial > maxSerial) {
+                                maxSerial = serial;
+                            }
+                        }
+                    }
+                });
+                
+                const newSerial = (maxSerial + 1).toString().padStart(4, '0');
+                return `${prefix}-${newSerial}-${year}`;
+                
+            } catch (error) {
+                console.error("خطأ في إنشاء رقم الطلب:", error);
+                const timestamp = Date.now().toString().slice(-6);
+                return `${prefix}-${timestamp}-${year}`;
+            }
+        }
+
+        // ==================== إنشاء الجزيئات ====================
         function createParticles() {
             const container = document.getElementById('particles');
+            if (!container) return;
+            
             for (let i = 0; i < 30; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
@@ -1025,7 +1183,7 @@
             }
         }
 
-        // شاشة البداية
+        // ==================== شاشة البداية ====================
         window.addEventListener('load', function() {
             createParticles();
             setTimeout(function() {
@@ -1034,59 +1192,559 @@
             }, 3000);
         });
 
-        // تبديل المشاهد
+        // ==================== تبديل المشاهد ====================
         function switchView(view) {
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('view-' + view).style.display = 'block';
             
-            if (view === 'submit') document.querySelectorAll('.nav-btn')[0].classList.add('active');
-            else if (view === 'track') document.querySelectorAll('.nav-btn')[1].classList.add('active');
-            else if (view === 'admin-login') document.querySelectorAll('.nav-btn')[2].classList.add('active');
+            if (view === 'submit') {
+                document.getElementById('btn-submit').classList.add('active');
+            } else if (view === 'track') {
+                document.getElementById('btn-track').classList.add('active');
+            } else if (view === 'admin-login') {
+                document.getElementById('btn-admin').classList.add('active');
+            }
         }
 
-        // حقل العضوية
+        // ==================== حقل العضوية ====================
         function toggleMemberField() {
             const type = document.getElementById('u-member-type').value;
-            document.getElementById('member-id-box').style.display = type === 'عضو نقابة' ? 'block' : 'none';
-        }
-
-        // دوال مؤقتة
-        function handleSubmit() {
-            Swal.fire({
-                icon: 'info',
-                title: 'جاري التفعيل',
-                text: 'سيتم ربط Firebase قريباً',
-                background: '#030514',
-                color: '#fff',
-                confirmButtonColor: '#00ffff'
-            });
-        }
-
-        function handleTrack() {
-            Swal.fire({
-                icon: 'info',
-                title: 'جاري التفعيل',
-                text: 'سيتم ربط Firebase قريباً',
-                background: '#030514',
-                color: '#fff',
-                confirmButtonColor: '#00ffff'
-            });
-        }
-
-        function adminLogin() {
-            const user = document.getElementById('adm-user').value;
-            const pass = document.getElementById('adm-pass').value;
+            const mBox = document.getElementById('member-id-box');
+            const typeSelect = document.getElementById('u-req-type');
             
-            if (user === 'admin' && pass === 'itws@2026') {
+            if (type === 'عضو نقابة') {
+                mBox.style.display = 'block';
+                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            } else {
+                mBox.style.display = 'none';
+                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
+            }
+        }
+
+        // ==================== تحميل الإعدادات ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedLogo = getSavedLogo();
+            document.getElementById('splash-logo').src = savedLogo;
+            document.getElementById('header-logo').src = savedLogo;
+            
+            updateServicesButton();
+            
+            switchView('submit');
+            
+            if (document.getElementById('u-member-type').value === 'غير عضو') {
+                document.getElementById('member-id-box').style.display = 'none';
+            }
+        });
+
+        // ==================== دوال تقديم الطلب ====================
+        function validateSubmitForm() {
+            const name = document.getElementById('u-name')?.value.trim();
+            const nid = document.getElementById('u-nid')?.value.trim();
+            const phone = document.getElementById('u-phone')?.value.trim();
+            const gov = document.getElementById('u-gov')?.value;
+            const address = document.getElementById('u-address')?.value.trim();
+            const job = document.getElementById('u-job')?.value.trim();
+            const type = document.getElementById('u-req-type')?.value;
+            const details = document.getElementById('u-details')?.value.trim();
+            const memberType = document.getElementById('u-member-type')?.value;
+            const memberId = document.getElementById('u-member-id')?.value.trim() || "غير عضو";
+
+            if (!name || !nid || !phone || !gov || !address || !job || !details) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'برجاء ملء جميع البيانات المطلوبة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            if (name.split(' ').length < 2) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'برجاء إدخال الاسم ثلاثياً على الأقل',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            if (!validateNationalID(nid)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'الرقم القومي يجب أن يكون 14 رقماً',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            if (!validatePhone(phone)) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'رقم الهاتف غير صحيح (يجب أن يبدأ بـ 01 ويتكون من 11 رقم)',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            if (memberType === 'عضو نقابة' && !memberId) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'برجاء إدخال رقم العضوية',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            if (details.length < 10) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'التفاصيل يجب أن تكون على الأقل 10 حروف',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return null;
+            }
+
+            return {
+                name, nid, phone, gov, address, job, type, details, memberType, memberId
+            };
+        }
+
+        async function generateRequestCard(data) {
+            const logo = getSavedLogo();
+            const date = getCurrentArabicDate();
+            const time = getCurrentArabicTime();
+            
+            const container = document.getElementById('request-card-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const card = document.createElement('div');
+            card.style.cssText = `
+                width: 600px;
+                padding: 40px;
+                background: linear-gradient(135deg, #0a0f1f, #030514);
+                border-radius: 40px;
+                border: 5px solid #00ffff;
+                font-family: 'Tajawal', 'Cairo', sans-serif;
+                color: white;
+                text-align: center;
+                direction: rtl;
+                box-shadow: 0 30px 50px rgba(0,255,255,0.5);
+                position: relative;
+                overflow: hidden;
+            `;
+            
+            const glow = document.createElement('div');
+            glow.style.cssText = `
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(0,255,255,0.2), transparent 70%);
+                animation: rotate 15s linear infinite;
+                pointer-events: none;
+            `;
+            card.appendChild(glow);
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes rotate {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            card.appendChild(style);
+            
+            const logoImg = document.createElement('img');
+            logoImg.src = logo;
+            logoImg.style.cssText = `
+                width: 130px;
+                height: 130px;
+                border-radius: 50%;
+                border: 4px solid #00ffff;
+                margin-bottom: 20px;
+                object-fit: cover;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                box-shadow: 0 0 40px #00ffff;
+                position: relative;
+                z-index: 2;
+            `;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.style.cssText = `position: relative; z-index: 2;`;
+            
+            const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
+            
+            contentDiv.innerHTML = `
+                <h2 style="font-size: 28px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 style="font-size: 22px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
+                <p style="color: rgba(255,255,255,0.6); font-size: 18px; margin-bottom: 25px;">النقيب العام</p>
+                
+                <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 25px; margin: 20px 0; border: 2px solid rgba(0,255,255,0.3);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">رقم الطلب :</span>
+                        <span style="color: #00ffff; font-weight: 700; direction: ltr; font-size: 20px;">${data.refId}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">نوع الطلب :</span>
+                        <span style="color: ${typeColor}; font-weight: 700; font-size: 20px;">${data.type}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">اسم مقدم الطلب :</span>
+                        <span style="font-weight: 600; font-size: 20px;">${data.name}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">تاريخ التقديم :</span>
+                        <span style="font-weight: 600; font-size: 20px;">${date} - ${time}</span>
+                    </div>
+                </div>
+                
+                <div style="color: rgba(255,255,255,0.4); font-size: 14px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
+                    هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
+                </div>
+                <div style="color: #00ffff; font-size: 12px; margin-top: 10px; font-family: 'Orbitron', monospace;">
+                    VR 2.05.2026
+                </div>
+            `;
+            
+            card.appendChild(logoImg);
+            card.appendChild(contentDiv);
+            container.appendChild(card);
+            
+            try {
+                if (typeof domtoimage !== 'undefined') {
+                    const dataUrl = await domtoimage.toPng(card, {
+                        quality: 1,
+                        bgcolor: '#030514',
+                        width: 600,
+                        height: card.offsetHeight
+                    });
+                    
+                    const result = await Swal.fire({
+                        title: '✅ تم حفظ الطلب بنجاح',
+                        html: `
+                            <div style="text-align: center;">
+                                <div style="color: #00ffff; font-size: 28px; margin-bottom: 15px; font-weight: 900;">${data.refId}</div>
+                                <p style="color: rgba(255,255,255,0.8); margin-bottom: 10px;">يمكنك تحميل الكارت الآن</p>
+                            </div>
+                        `,
+                        imageUrl: dataUrl,
+                        imageWidth: 500,
+                        imageHeight: card.offsetHeight * 500 / 600,
+                        showCancelButton: true,
+                        confirmButtonText: '📥 تحميل الكارت',
+                        cancelButtonText: '❌ إغلاق',
+                        confirmButtonColor: '#00ffff',
+                        cancelButtonColor: 'rgba(255,255,255,0.2)',
+                        background: '#030514',
+                        color: '#fff',
+                        allowOutsideClick: false
+                    });
+                    
+                    if (result.isConfirmed) {
+                        const link = document.createElement('a');
+                        link.download = `طلب_${data.refId}.png`;
+                        link.href = dataUrl;
+                        link.click();
+                    }
+                }
+                else if (typeof html2canvas !== 'undefined') {
+                    const canvas = await html2canvas(card, {
+                        scale: 2,
+                        backgroundColor: '#030514'
+                    });
+                    
+                    const result = await Swal.fire({
+                        title: '✅ تم حفظ الطلب بنجاح',
+                        html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`,
+                        imageUrl: canvas.toDataURL('image/png'),
+                        imageWidth: 500,
+                        imageHeight: canvas.height * 500 / canvas.width,
+                        showCancelButton: true,
+                        confirmButtonText: '📥 تحميل الكارت',
+                        cancelButtonText: '❌ إغلاق',
+                        background: '#030514',
+                        confirmButtonColor: '#00ffff'
+                    });
+                    
+                    if (result.isConfirmed) {
+                        const link = document.createElement('a');
+                        link.download = `طلب_${data.refId}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    }
+                }
+                else {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم حفظ الطلب',
+                        html: `<div style="color: #00ffff; font-size: 24px;">${data.refId}</div>`,
+                        background: '#030514',
+                        confirmButtonColor: '#00ffff'
+                    });
+                }
+            } catch (error) {
+                console.error('خطأ في إنشاء الكارت:', error);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم حفظ الطلب',
+                    html: `<div style="color: #00ffff; font-size: 24px;">${data.refId}</div>`,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 1000);
+        }
+
+        function clearSubmitForm() {
+            const fields = ['u-name', 'u-nid', 'u-phone', 'u-address', 'u-job', 'u-details', 'u-member-id'];
+            fields.forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.value = '';
+            });
+            
+            document.getElementById('u-member-type').value = 'عضو نقابة';
+            document.getElementById('u-gov').value = 'القاهرة';
+            document.getElementById('u-req-type').innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            document.getElementById('member-id-box').style.display = 'block';
+        }
+
+        async function handleSubmit() {
+            const formData = validateSubmitForm();
+            if (!formData) return;
+
+            try {
+                Swal.fire({
+                    title: 'جاري حفظ الطلب',
+                    text: 'الرجاء الانتظار...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: '#030514',
+                    color: '#fff'
+                });
+
+                const refId = await generateRequestNumber(formData.type);
+                
+                const initialStatus = formData.type === 'شكوى' ? "تم الاستلام" : "لم يقرأ";
+                
+                const requestData = {
+                    refId,
+                    ...formData,
+                    status: initialStatus,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    tracking: [{
+                        status: initialStatus,
+                        comment: formData.type === 'شكوى' 
+                            ? "تم استلام شكواك بنجاح، وسيتم مراجعتها من قبل اللجنة المختصة" 
+                            : "تم استلام اقتراحك بنجاح، شكراً لمشاركتك",
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: false
+                    }]
+                };
+
+                await db.collection("Requests").doc(refId).set(requestData);
+                
+                Swal.close();
+                
+                await generateRequestCard(requestData);
+                
+                clearSubmitForm();
+                
+            } catch (error) {
+                console.error("خطأ في تقديم الطلب:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في حفظ الطلب، برجاء المحاولة مرة أخرى',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+
+        // ==================== دوال الاستعلام ====================
+        async function handleTrack() {
+            const nid = document.getElementById('q-nid')?.value.trim();
+            const ref = document.getElementById('q-ref')?.value.trim();
+            const type = document.getElementById('q-type')?.value;
+
+            if (!nid || !ref || !type) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'برجاء إدخال جميع البيانات',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+
+            try {
+                Swal.fire({
+                    title: 'جاري البحث',
+                    text: 'الرجاء الانتظار...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading(),
+                    background: '#030514',
+                    color: '#fff'
+                });
+
+                const snapshot = await db.collection("Requests")
+                    .where("nid", "==", nid)
+                    .where("refId", "==", ref)
+                    .where("type", "==", type)
+                    .get();
+
+                Swal.close();
+
+                if (snapshot.empty) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'عذراً',
+                        text: 'لا يوجد طلب بهذه البيانات',
+                        background: '#030514',
+                        confirmButtonColor: '#00ffff'
+                    });
+                    return;
+                }
+                
+                const requestData = snapshot.docs[0].data();
+                
+                if (requestData.createdAt && requestData.createdAt.toDate) {
+                    requestData.createdAtDate = requestData.createdAt.toDate();
+                }
+                
+                renderTrackResult(requestData);
+                
+            } catch (error) {
+                console.error("خطأ في الاستعلام:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في الاستعلام، برجاء المحاولة مرة أخرى',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+
+        function renderTrackResult(data) {
+            const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
+            const currentIdx = stages.indexOf(data.status);
+            const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
+            
+            let dateStr = 'غير محدد';
+            if (data.createdAtDate) {
+                dateStr = data.createdAtDate.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            }
+            
+            let timelineHtml = '';
+            if (data.tracking && data.tracking.length > 0) {
+                timelineHtml = data.tracking.slice().reverse().map(t => `
+                    <div style="background: rgba(255,255,255,0.02); border-right: 3px solid var(--neon-cyan); padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: var(--neon-cyan); font-weight: 600;">${t.status}</span>
+                            <span style="color: rgba(255,255,255,0.4); font-size: 11px;">${t.time}</span>
+                        </div>
+                        <p style="color: rgba(255,255,255,0.7); font-size: 12px;">${t.comment}</p>
+                    </div>
+                `).join('');
+            }
+
+            const html = `
+                <div class="luxury-card" style="margin-top: 20px;">
+                    <div class="card-glow"></div>
+                    
+                    <div style="display: flex; align-items: center; gap: 20px; margin-bottom: 20px;">
+                        <div style="width: 70px; height: 70px; background: var(--gradient-royal); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-qrcode" style="font-size: 35px; color: #fff;"></i>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--neon-cyan); font-size: 24px;">${data.refId}</h3>
+                            <p style="color: rgba(255,255,255,0.7);">${data.name}</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div><span style="color: rgba(255,255,255,0.5);">النوع:</span> ${data.type}</div>
+                            <div><span style="color: rgba(255,255,255,0.5);">الحالة:</span> ${data.status}</div>
+                            <div><span style="color: rgba(255,255,255,0.5);">تاريخ التقديم:</span> ${dateStr}</div>
+                            <div><span style="color: rgba(255,255,255,0.5);">المحافظة:</span> ${data.gov}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="track-container" style="margin: 30px 0;">
+                        <div style="position: relative; width: 100%; height: 100px;">
+                            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; transform: translateY(-50%);"></div>
+                            <div style="position: absolute; top: 50%; right: 0; height: 6px; width: ${progress}%; background: var(--gradient-royal); border-radius: 3px; transform: translateY(-50%); transition: width 1s ease; box-shadow: 0 0 20px var(--neon-cyan); z-index: 2;"></div>
+                            <div style="position: relative; display: flex; justify-content: space-between; height: 100px; z-index: 3;">
+                                ${stages.map((s, i) => `
+                                    <div style="display: flex; flex-direction: column; align-items: center; flex: 1;">
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg-deep); border: 2px solid var(--neon-cyan); display: flex; align-items: center; justify-content: center; margin-bottom: 8px; ${i <= currentIdx ? 'background: var(--gradient-royal); box-shadow: 0 0 30px var(--neon-cyan); transform: scale(1.1); border-color: #fff;' : ''}">
+                                            ${i <= currentIdx ? '<i class="fas fa-check" style="color: #fff; font-size: 16px;"></i>' : ''}
+                                        </div>
+                                        <span style="font-size: 11px; color: #fff; text-align: center; background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 15px;">${s}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">المسار الزمني</h4>
+                    <div style="max-height: 300px; overflow-y: auto;">
+                        ${timelineHtml}
+                    </div>
+                </div>
+            `;
+            
+            const resultBox = document.getElementById('track-result-box');
+            if (resultBox) {
+                resultBox.innerHTML = html;
+                resultBox.style.display = 'block';
+                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // ==================== دخول الأدمن ====================
+        function adminLogin() {
+            const username = document.getElementById('adm-user')?.value.trim();
+            const password = document.getElementById('adm-pass')?.value.trim();
+            
+            if (username === 'admin' && password === 'itws@2026') {
                 localStorage.setItem('admin', 'true');
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'مرحباً بك',
-                    text: 'جاري تحويلك للوحة التحكم',
+                    text: 'جاري تحويلك إلى لوحة التحكم',
                     timer: 1500,
                     showConfirmButton: false,
-                    background: '#030514'
+                    background: '#030514',
+                    color: '#fff'
                 }).then(() => {
                     window.location.href = 'admin.html';
                 });
@@ -1094,20 +1752,12 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
-                    text: 'بيانات الدخول غير صحيحة',
+                    text: 'اسم المستخدم أو كلمة المرور غير صحيحة',
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
             }
         }
-
-        // تحميل أولي
-        document.addEventListener('DOMContentLoaded', function() {
-            switchView('submit');
-            if (document.getElementById('u-member-type')?.value === 'غير عضو') {
-                document.getElementById('member-id-box').style.display = 'none';
-            }
-        });
     </script>
 </body>
 </html>
