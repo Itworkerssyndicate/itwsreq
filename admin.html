@@ -54,6 +54,15 @@
             --neon-orange: #f97316;
             --neon-orange-glow: rgba(249, 115, 22, 0.7);
             
+            /* ألوان خاصة للحالات */
+            --status-تم-الاستلام: #f97316;
+            --status-قيد-المراجعة: #3b82f6;
+            --status-جاري-التنفيذ: #a855f7;
+            --status-تم-الحل: #10b981;
+            --status-تم-الإغلاق-النهائي: #ef4444;
+            --status-تمت-القراءة: #00ffff;
+            --status-لم-يقرأ: #f97316;
+            
             /* التدرجات الفاخرة */
             --gradient-royal: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
             --gradient-diamond: linear-gradient(45deg, #3b82f6, #00ffff, #a855f7);
@@ -761,11 +770,54 @@
             display: inline-block;
         }
 
-        /* ألوان عشوائية للحالات المختلفة */
-        .status-badge[data-status] {
-            background: rgba(var(--color), 0.2);
-            color: rgb(var(--color));
-            border: 1px solid rgb(var(--color));
+        /* ألوان ثابتة للحالات المعروفة */
+        .status-badge[data-status="تم الاستلام"] {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+
+        .status-badge[data-status="قيد المراجعة"] {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+
+        .status-badge[data-status="جاري التنفيذ"] {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            border: 1px solid #a855f7;
+        }
+
+        .status-badge[data-status="تم الحل"] {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .status-badge[data-status="تم الإغلاق النهائي"] {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .status-badge[data-status="تمت القراءة"] {
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            border: 1px solid #00ffff;
+        }
+
+        .status-badge[data-status="لم يقرأ"] {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+
+        /* للحالات التانية (ألوان عشوائية) */
+        .status-badge[data-generic="true"] {
+            background: rgba(var(--status-r), var(--status-g), var(--status-b), 0.2);
+            color: rgb(var(--status-r), var(--status-g), var(--status-b));
+            border: 1px solid rgb(var(--status-r), var(--status-g), var(--status-b));
         }
 
         .type-badge {
@@ -830,6 +882,31 @@
             border-color: var(--neon-red);
             color: var(--neon-red);
             box-shadow: 0 5px 15px var(--neon-red);
+        }
+
+        /* ===== أزرار التحميل ===== */
+        .load-more-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 15px;
+            color: var(--neon-cyan);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .load-more-btn:hover {
+            background: rgba(0,255,255,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+
+        .load-more-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* ===== النوافذ المنبثقة ===== */
@@ -1112,6 +1189,9 @@
                 <button class="action-btn" onclick="window.print()">
                     <i class="fas fa-print"></i> طباعة
                 </button>
+                <button class="action-btn" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i> تحديث
+                </button>
                 <button class="action-btn" onclick="toggleSidebar()" style="display: none;" id="menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -1216,7 +1296,7 @@
             </div>
         </div>
 
-        <!-- جدول البيانات (بينات حقيقية من Firebase) -->
+        <!-- جدول البيانات مع Pagination -->
         <div class="table-card">
             <div class="table-responsive">
                 <table id="main-table">
@@ -1241,6 +1321,23 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            
+            <!-- أزرار التحميل -->
+            <div style="display: flex; justify-content: center; gap: 10px; padding: 20px;">
+                <button class="load-more-btn" id="prev-page" onclick="prevPage()" style="display: none;">
+                    <i class="fas fa-chevron-right"></i> الصفحة السابقة
+                </button>
+                <span id="page-info" style="color: var(--neon-cyan); padding: 10px; display: none;"></span>
+                <button class="load-more-btn" id="next-page" onclick="nextPage()" style="display: none;">
+                    التالية <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            
+            <div style="display: flex; justify-content: center; padding: 0 20px 20px;">
+                <button class="load-more-btn" id="load-more" onclick="loadMore()" style="display: none;">
+                    <i class="fas fa-arrow-down"></i> تحميل المزيد
+                </button>
             </div>
         </div>
 
@@ -1331,6 +1428,19 @@
         // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        
+        // تفعيل التخزين المؤقت
+        db.settings({
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
+        });
+        db.enablePersistence()
+            .catch((err) => {
+                if (err.code == 'failed-precondition') {
+                    console.log('❌ التخزين المؤقت مش متاح');
+                } else if (err.code == 'unimplemented') {
+                    console.log('❌ المتصفح مش بيدعم التخزين المؤقت');
+                }
+            });
 
         // ==================== متغيرات عامة ====================
         let allRequests = [];
@@ -1339,7 +1449,24 @@
         let unsubscribe = null;
         let currentRequestId = null;
         let currentDeleteId = null;
-        let allStatuses = new Set(); // لتخزين جميع الحالات المختلفة
+        let allStatuses = new Set();
+        
+        // متغيرات Pagination
+        let lastVisible = null;
+        let firstVisible = null;
+        let currentPage = 1;
+        const pageSize = 50;
+        let totalCount = 0;
+        let isLoading = false;
+        
+        // Cache
+        let requestsCache = {
+            all: [],
+            شكوى: [],
+            اقتراح: []
+        };
+        let cacheTimestamp = 0;
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 دقائق
 
         // ==================== دوال الإعدادات ====================
         function getSetting(key, defaultValue) {
@@ -1352,7 +1479,7 @@
             const container = document.getElementById('particles');
             if (!container) return;
             
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 20; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random() * 100 + '%';
@@ -1423,37 +1550,152 @@
             window.location.href = 'index.html';
         }
 
-        // ==================== تحميل البيانات الحقيقية من Firebase ====================
-        function loadData(filter) {
+        // ==================== تحميل البيانات بسرعة (مع Cache) ====================
+        async function loadData(filter) {
             currentFilter = filter;
             
             if (filter === 'all') setActiveNav('nav-all');
             else if (filter === 'شكوى') setActiveNav('nav-complaint');
             else if (filter === 'اقتراح') setActiveNav('nav-suggestion');
 
+            // إلغاء الاشتراك القديم
             if (unsubscribe) {
                 unsubscribe();
+                unsubscribe = null;
             }
 
+            // إظهار مؤشر التحميل
             document.getElementById('admin-tbody').innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 50px;">
                         <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px; display: block;"></i>
-                        <p style="color: rgba(255,255,255,0.6);">جاري تحميل البيانات من Firebase...</p>
+                        <p style="color: rgba(255,255,255,0.6);">جاري تحميل البيانات...</p>
                     </td>
                 </tr>
             `;
 
-            unsubscribe = db.collection("Requests")
-                .orderBy("createdAt", "desc")
-                .onSnapshot(snapshot => {
-                    allRequests = [];
-                    allStatuses.clear();
+            // إخفاء أزرار التحميل
+            document.getElementById('load-more').style.display = 'none';
+            document.getElementById('prev-page').style.display = 'none';
+            document.getElementById('next-page').style.display = 'none';
+            document.getElementById('page-info').style.display = 'none';
+
+            try {
+                // محاولة استخدام الكاش أولاً
+                const now = Date.now();
+                if (requestsCache[filter] && requestsCache[filter].length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
+                    console.log('✅ استخدام البيانات من الكاش');
+                    allRequests = [...requestsCache[filter]];
+                    updateStats();
+                    filterData();
+                    return;
+                }
+
+                console.log('🔄 تحميل بيانات جديدة من Firebase');
+                
+                // بناء الاستعلام مع Pagination
+                let query = db.collection("Requests")
+                    .orderBy("createdAt", "desc")
+                    .limit(pageSize);
+                
+                if (filter !== 'all') {
+                    query = query.where("type", "==", filter);
+                }
+
+                // استعلام واحد سريع
+                const snapshot = await query.get();
+                
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                firstVisible = snapshot.docs[0];
+                
+                // معالجة البيانات
+                allRequests = [];
+                allStatuses.clear();
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
                     
+                    if (data.createdAt && data.createdAt.toDate) {
+                        data.createdAtDate = data.createdAt.toDate();
+                    } else if (data.createdAt) {
+                        data.createdAtDate = new Date(data.createdAt);
+                    } else {
+                        data.createdAtDate = new Date();
+                    }
+                    
+                    if (data.status) {
+                        allStatuses.add(data.status);
+                    }
+                    
+                    if (data.tracking && Array.isArray(data.tracking)) {
+                        data.tracking.forEach(t => {
+                            if (t.status) allStatuses.add(t.status);
+                        });
+                    }
+                    
+                    allRequests.push({
+                        id: doc.id,
+                        ...data
+                    });
+                });
+                
+                // حفظ في الكاش
+                requestsCache[filter] = [...allRequests];
+                cacheTimestamp = now;
+                
+                // تحديث واجهة المستخدم
+                updateStatusFilterOptions();
+                updateStats();
+                
+                // عرض أزرار التحميل إذا كان في بيانات أكثر
+                if (snapshot.docs.length === pageSize) {
+                    document.getElementById('load-more').style.display = 'block';
+                }
+                
+                filterData();
+                
+            } catch (error) {
+                console.error("Error loading data:", error);
+                document.getElementById('admin-tbody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 50px; color: var(--neon-red);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
+                            <p>حدث خطأ في تحميل البيانات</p>
+                            <button class="action-btn" onclick="loadData('${filter}')" style="margin-top: 15px;">
+                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ==================== تحميل المزيد من البيانات ====================
+        async function loadMore() {
+            if (isLoading || !lastVisible) return;
+            
+            isLoading = true;
+            document.getElementById('load-more').innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
+            
+            try {
+                let query = db.collection("Requests")
+                    .orderBy("createdAt", "desc")
+                    .startAfter(lastVisible)
+                    .limit(pageSize);
+                
+                if (currentFilter !== 'all') {
+                    query = query.where("type", "==", currentFilter);
+                }
+                
+                const snapshot = await query.get();
+                
+                if (snapshot.docs.length > 0) {
+                    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                    
+                    const newRequests = [];
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         
-                        // تحويل التاريخ
                         if (data.createdAt && data.createdAt.toDate) {
                             data.createdAtDate = data.createdAt.toDate();
                         } else if (data.createdAt) {
@@ -1462,44 +1704,41 @@
                             data.createdAtDate = new Date();
                         }
                         
-                        // جمع جميع الحالات المختلفة
                         if (data.status) {
                             allStatuses.add(data.status);
                         }
                         
-                        // جمع الحالات من التتبع
-                        if (data.tracking && Array.isArray(data.tracking)) {
-                            data.tracking.forEach(t => {
-                                if (t.status) allStatuses.add(t.status);
-                            });
-                        }
-                        
-                        allRequests.push({
+                        newRequests.push({
                             id: doc.id,
                             ...data
                         });
                     });
                     
-                    // تحديث قائمة الحالات في البحث
+                    allRequests = [...allRequests, ...newRequests];
+                    requestsCache[currentFilter] = [...allRequests];
+                    
                     updateStatusFilterOptions();
-                    
-                    // تحديث الإحصائيات
                     updateStats();
-                    
-                    // تطبيق الفلتر وعرض البيانات
                     filterData();
-                    
-                }, error => {
-                    console.error("Error loading data:", error);
-                    document.getElementById('admin-tbody').innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 50px; color: var(--neon-red);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
-                                <p>حدث خطأ في تحميل البيانات</p>
-                            </td>
-                        </tr>
-                    `;
+                }
+                
+                if (snapshot.docs.length < pageSize) {
+                    document.getElementById('load-more').style.display = 'none';
+                }
+                
+            } catch (error) {
+                console.error("Error loading more:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تحميل المزيد من البيانات',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
                 });
+            } finally {
+                isLoading = false;
+                document.getElementById('load-more').innerHTML = '<i class="fas fa-arrow-down"></i> تحميل المزيد';
+            }
         }
 
         // ==================== تحديث قائمة الحالات في البحث ====================
@@ -1507,6 +1746,7 @@
             const statusSelect = document.getElementById('search-status');
             if (!statusSelect) return;
             
+            const currentValue = statusSelect.value;
             const sortedStatuses = Array.from(allStatuses).sort();
             
             let options = '<option value="all">الكل</option>';
@@ -1515,6 +1755,7 @@
             });
             
             statusSelect.innerHTML = options;
+            statusSelect.value = currentValue;
         }
 
         // ==================== تحديث الإحصائيات ====================
@@ -1538,12 +1779,6 @@
         function filterData() {
             let filtered = allRequests;
             
-            // تطبيق فلتر النوع
-            if (currentFilter !== 'all') {
-                filtered = filtered.filter(r => r.type === currentFilter);
-            }
-
-            // تطبيق فلتر البحث
             const searchRef = document.getElementById('search-ref')?.value.toLowerCase().trim() || '';
             const searchName = document.getElementById('search-name')?.value.toLowerCase().trim() || '';
             const searchNid = document.getElementById('search-nid')?.value.trim() || '';
@@ -1629,11 +1864,10 @@
                 const typeClass = r.type === 'شكوى' ? 'complaint' : 'suggestion';
                 const typeText = r.type === 'شكوى' ? 'شكوى' : 'اقتراح';
 
-                // لون عشوائي للحالة بناءً على نص الحالة
-                const statusHash = r.status ? r.status.split('').reduce((a, b) => a + b.charCodeAt(0), 0) : 0;
-                const rColor = (statusHash * 123) % 255;
-                const gColor = (statusHash * 456) % 255;
-                const bColor = (statusHash * 789) % 255;
+                // استخدام data-status للحصول على اللون المناسب
+                const statusSpan = r.status ? 
+                    `<span class="status-badge" data-status="${r.status}">${r.status}</span>` : 
+                    '<span>غير محدد</span>';
 
                 html += `
                 <tr>
@@ -1650,11 +1884,7 @@
                     <td>${memberType}</td>
                     <td>${r.gov || 'غير محدد'}</td>
                     <td><span class="type-badge ${typeClass}">${typeText}</span></td>
-                    <td>
-                        <span class="status-badge" style="background: rgba(${rColor}, ${gColor}, ${bColor}, 0.2); color: rgb(${rColor}, ${gColor}, ${bColor}); border: 1px solid rgb(${rColor}, ${gColor}, ${bColor});">
-                            ${r.status || 'غير محدد'}
-                        </span>
-                    </td>
+                    <td>${statusSpan}</td>
                     <td>
                         <button class="action-btn-small" onclick="manageReq('${r.refId}')" title="إدارة الطلب">
                             <i class="fas fa-cog"></i>
@@ -1716,7 +1946,6 @@
                 timelineHtml = '<p style="color: rgba(255,255,255,0.5); text-align: center;">لا يوجد مسار زمني</p>';
             }
 
-            // الحالة الحالية
             const currentStatus = d.status || 'غير محدد';
 
             const html = `
@@ -1752,7 +1981,7 @@
                     
                     <div class="search-field" style="margin-bottom: 15px;">
                         <label>اسم المرحلة الجديدة</label>
-                        <input type="text" id="new-status-name" class="luxury-input" placeholder="اكتب اسم المرحلة...">
+                        <input type="text" id="new-status-name" class="luxury-input" placeholder="اكتب اسم المرحلة..." value="${d.type === 'شكوى' ? 'قيد المراجعة' : ''}">
                     </div>
                     
                     <div class="search-field" style="margin-bottom: 15px;">
@@ -1820,6 +2049,22 @@
                     })
                 });
 
+                // تحديث الكاش
+                const requestIndex = allRequests.findIndex(r => r.refId === refId);
+                if (requestIndex !== -1) {
+                    allRequests[requestIndex].status = newStatus;
+                    if (!allRequests[requestIndex].tracking) {
+                        allRequests[requestIndex].tracking = [];
+                    }
+                    allRequests[requestIndex].tracking.push({
+                        status: newStatus,
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: newStatus === 'تم الإغلاق النهائي'
+                    });
+                    requestsCache[currentFilter] = [...allRequests];
+                }
+
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -1829,6 +2074,8 @@
                 });
 
                 closeModal();
+                filterData();
+                
             } catch (error) {
                 console.error("Error updating status:", error);
                 Swal.fire({
@@ -1878,6 +2125,22 @@
                     })
                 });
 
+                // تحديث الكاش
+                const requestIndex = allRequests.findIndex(r => r.refId === currentRequestId);
+                if (requestIndex !== -1) {
+                    allRequests[requestIndex].status = 'تم الإغلاق النهائي';
+                    if (!allRequests[requestIndex].tracking) {
+                        allRequests[requestIndex].tracking = [];
+                    }
+                    allRequests[requestIndex].tracking.push({
+                        status: 'تم الإغلاق النهائي',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: true
+                    });
+                    requestsCache[currentFilter] = [...allRequests];
+                }
+
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الإغلاق',
@@ -1888,6 +2151,8 @@
 
                 closeCloseModal();
                 closeModal();
+                filterData();
+                
             } catch (error) {
                 console.error("Error closing request:", error);
                 Swal.fire({
@@ -1926,6 +2191,22 @@
                     })
                 });
 
+                // تحديث الكاش
+                const requestIndex = allRequests.findIndex(r => r.refId === currentRequestId);
+                if (requestIndex !== -1) {
+                    allRequests[requestIndex].status = 'تمت القراءة';
+                    if (!allRequests[requestIndex].tracking) {
+                        allRequests[requestIndex].tracking = [];
+                    }
+                    allRequests[requestIndex].tracking.push({
+                        status: 'تمت القراءة',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: false
+                    });
+                    requestsCache[currentFilter] = [...allRequests];
+                }
+
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -1936,6 +2217,8 @@
 
                 closeReadModal();
                 closeModal();
+                filterData();
+                
             } catch (error) {
                 console.error("Error marking as read:", error);
                 Swal.fire({
@@ -1980,6 +2263,10 @@
             try {
                 await db.collection("Requests").doc(currentDeleteId).delete();
                 
+                // تحديث الكاش
+                allRequests = allRequests.filter(r => r.refId !== currentDeleteId);
+                requestsCache[currentFilter] = [...allRequests];
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الحذف',
@@ -1990,6 +2277,9 @@
 
                 closeDeleteModal();
                 closeModal();
+                updateStats();
+                filterData();
+                
             } catch (error) {
                 console.error("Error deleting request:", error);
                 Swal.fire({
@@ -2016,6 +2306,12 @@
                 background: '#030514',
                 confirmButtonColor: '#00ffff'
             });
+        }
+
+        // ==================== تحديث البيانات يدوياً ====================
+        function refreshData() {
+            cacheTimestamp = 0; // مسح الكاش
+            loadData(currentFilter);
         }
 
         // ==================== إدارة المستخدمين ====================
