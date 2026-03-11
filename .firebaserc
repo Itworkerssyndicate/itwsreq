@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "itwsreq"
+  },
+  "targets": {
+    "itwsreq": {
+      "hosting": {
+        "main": [
+          "itwsreq"
+        ]
+      }
+    }
+  }
+}
