@@ -1,0 +1,66 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ==================== قواعد عامة ====================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        firestore.get(/databases/(default)/documents/Users/$(request.auth.uid)).data.role == 'super_admin';
+    }
+    
+    // ==================== مجلد الصور الشخصية ====================
+    match /avatars/{userId}/{fileName} {
+      // قراءة الصور الشخصية (للجميع)
+      allow read: if true;
+      
+      // رفع الصور الشخصية (للمستخدم نفسه)
+      allow write: if isAuthenticated() && userId == request.auth.uid && (
+        request.resource.contentType.matches('image/.*') &&
+        request.resource.size < 5 * 1024 * 1024 // 5MB كحد أقصى
+      );
+      
+      // حذف الصور الشخصية (للمستخدم أو الأدمن)
+      allow delete: if isAuthenticated() && (userId == request.auth.uid || isAdmin());
+    }
+    
+    // ==================== مجلد مرفقات الطلبات ====================
+    match /request-attachments/{requestId}/{fileName} {
+      // قراءة المرفقات (للمشاهدين)
+      allow read: if isAuthenticated();
+      
+      // رفع المرفقات (لأي شخص يقدم طلب)
+      allow write: if (
+        request.resource.contentType.matches('application/pdf|image/.*') &&
+        request.resource.size < 10 * 1024 * 1024 // 10MB كحد أقصى
+      );
+    }
+    
+    // ==================== مجلد التقارير ====================
+    match /reports/{reportId}/{fileName} {
+      // قراءة التقارير (للمراجعين)
+      allow read: if isAuthenticated();
+      
+      // إنشاء تقارير (للمشرفين فقط)
+      allow write: if isAdmin();
+    }
+    
+    // ==================== مجلد النسخ الاحتياطية ====================
+    match /backups/{backupId}/{fileName} {
+      // الوصول للنسخ الاحتياطية (للمشرفين فقط)
+      allow read, write: if isAdmin();
+    }
+    
+    // ==================== منع الملفات الضارة ====================
+    match /{allPaths=**} {
+      // منع أنواع الملفات الخطيرة
+      allow write: if !request.resource.contentType.matches('application/x-executable|application/x-msdownload|text/html|application/javascript');
+      
+      // التحقق من حجم الملفات
+      allow write: if request.resource.size < 50 * 1024 * 1024; // 50MB كحد أقصى عام
+    }
+  }
+}
