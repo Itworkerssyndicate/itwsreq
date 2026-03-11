@@ -719,6 +719,69 @@
             color: #fff;
         }
 
+        /* ===== تخصيص SweetAlert ===== */
+        .swal2-popup {
+            background: var(--bg-deep) !important;
+            border: 2px solid var(--neon-cyan) !important;
+            border-radius: 40px !important;
+            box-shadow: var(--shadow-neon) !important;
+            padding: 30px !important;
+        }
+
+        .swal2-title {
+            color: var(--neon-cyan) !important;
+            font-size: 28px !important;
+            font-weight: 900 !important;
+            text-shadow: 0 0 20px var(--neon-cyan) !important;
+        }
+
+        .swal2-html-container {
+            color: #fff !important;
+            font-size: 16px !important;
+        }
+
+        .swal2-image {
+            border-radius: 30px !important;
+            border: 3px solid var(--neon-cyan) !important;
+            box-shadow: 0 0 40px var(--neon-cyan) !important;
+            margin: 20px auto !important;
+        }
+
+        .swal2-confirm {
+            background: var(--gradient-royal) !important;
+            border-radius: 30px !important;
+            font-weight: 800 !important;
+            padding: 12px 30px !important;
+            font-size: 16px !important;
+            box-shadow: 0 0 20px var(--neon-cyan) !important;
+            transition: all 0.3s !important;
+        }
+
+        .swal2-confirm:hover {
+            transform: translateY(-3px) scale(1.05) !important;
+            box-shadow: 0 0 40px var(--neon-cyan) !important;
+        }
+
+        .swal2-cancel {
+            background: rgba(255,255,255,0.1) !important;
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            border-radius: 30px !important;
+            font-weight: 700 !important;
+            padding: 12px 30px !important;
+            font-size: 16px !important;
+            color: #fff !important;
+            transition: all 0.3s !important;
+        }
+
+        .swal2-cancel:hover {
+            background: rgba(255,255,255,0.2) !important;
+            transform: translateY(-3px) !important;
+        }
+
+        .swal2-timer-progress-bar {
+            background: var(--gradient-royal) !important;
+        }
+
         /* ===== تحسينات الجوال ===== */
         @media (max-width: 1024px) {
             .form-grid {
@@ -1331,6 +1394,7 @@
             
             container.innerHTML = '';
             
+            // إنشاء الكارت
             const card = document.createElement('div');
             card.style.cssText = `
                 width: 600px;
@@ -1347,6 +1411,7 @@
                 overflow: hidden;
             `;
             
+            // خلفية متحركة
             const glow = document.createElement('div');
             glow.style.cssText = `
                 position: absolute;
@@ -1369,6 +1434,7 @@
             `;
             card.appendChild(style);
             
+            // الشعار
             const logoImg = document.createElement('img');
             logoImg.src = logo;
             logoImg.style.cssText = `
@@ -1386,39 +1452,42 @@
                 z-index: 2;
             `;
             
+            // المحتوى - بشكل مرتب ومنظم
             const contentDiv = document.createElement('div');
             contentDiv.style.cssText = `position: relative; z-index: 2;`;
             
             const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
             
             contentDiv.innerHTML = `
-                <h2 style="font-size: 28px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <h3 style="font-size: 22px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
-                <p style="color: rgba(255,255,255,0.6); font-size: 18px; margin-bottom: 25px;">النقيب العام</p>
+                <div style="margin-bottom: 20px;">
+                    <h2 style="font-size: 32px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; font-weight: 900; line-height: 1.4;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                    <h3 style="font-size: 24px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 20px; margin-bottom: 25px;">النقيب العام</p>
+                </div>
                 
-                <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 25px; margin: 20px 0; border: 2px solid rgba(0,255,255,0.3);">
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">رقم الطلب :</span>
-                        <span style="color: #00ffff; font-weight: 700; direction: ltr; font-size: 20px;">${data.refId}</span>
+                <div style="background: rgba(0,255,255,0.1); padding: 25px; border-radius: 30px; margin: 20px 0; border: 2px solid rgba(0,255,255,0.3);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 20px; min-width: 130px; text-align: right;">رقم الطلب :</span>
+                        <span style="color: #00ffff; font-weight: 700; direction: ltr; font-size: 22px; text-align: left; flex: 1;">${data.refId}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">نوع الطلب :</span>
-                        <span style="color: ${typeColor}; font-weight: 700; font-size: 20px;">${data.type}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 20px; min-width: 130px; text-align: right;">نوع الطلب :</span>
+                        <span style="color: ${typeColor}; font-weight: 700; font-size: 22px; text-align: left; flex: 1;">${data.type}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">اسم مقدم الطلب :</span>
-                        <span style="font-weight: 600; font-size: 20px;">${data.name}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 20px; min-width: 130px; text-align: right;">اسم مقدم الطلب :</span>
+                        <span style="font-weight: 600; font-size: 22px; text-align: left; flex: 1;">${data.name}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">تاريخ التقديم :</span>
-                        <span style="font-weight: 600; font-size: 20px;">${date} - ${time}</span>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 0;">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 20px; min-width: 130px; text-align: right;">تاريخ التقديم :</span>
+                        <span style="font-weight: 600; font-size: 22px; text-align: left; flex: 1;">${date} - ${time}</span>
                     </div>
                 </div>
                 
-                <div style="color: rgba(255,255,255,0.4); font-size: 14px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
+                <div style="color: rgba(255,255,255,0.4); font-size: 16px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px;">
                     هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
                 </div>
-                <div style="color: #00ffff; font-size: 12px; margin-top: 10px; font-family: 'Orbitron', monospace;">
+                <div style="color: #00ffff; font-size: 14px; margin-top: 15px; font-family: 'Orbitron', monospace; letter-spacing: 1px;">
                     VR 2.05.2026
                 </div>
             `;
@@ -1439,9 +1508,12 @@
                     const result = await Swal.fire({
                         title: '✅ تم حفظ الطلب بنجاح',
                         html: `
-                            <div style="text-align: center;">
-                                <div style="color: #00ffff; font-size: 28px; margin-bottom: 15px; font-weight: 900;">${data.refId}</div>
-                                <p style="color: rgba(255,255,255,0.8); margin-bottom: 10px;">يمكنك تحميل الكارت الآن</p>
+                            <div style="text-align: center; padding: 10px;">
+                                <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 20px; margin-bottom: 15px;">
+                                    <span style="color: #00ffff; font-size: 32px; font-weight: 900; letter-spacing: 1px; display: block;">${data.refId}</span>
+                                </div>
+                                <p style="color: rgba(255,255,255,0.9); font-size: 18px; margin-bottom: 10px;">🎉 تم حفظ طلبك بنجاح</p>
+                                <p style="color: rgba(255,255,255,0.7); font-size: 16px;">يمكنك تحميل كارت الطلب الآن</p>
                             </div>
                         `,
                         imageUrl: dataUrl,
@@ -1449,12 +1521,16 @@
                         imageHeight: card.offsetHeight * 500 / 600,
                         showCancelButton: true,
                         confirmButtonText: '📥 تحميل الكارت',
-                        cancelButtonText: '❌ إغلاق',
+                        cancelButtonText: '🔒 إغلاق',
                         confirmButtonColor: '#00ffff',
                         cancelButtonColor: 'rgba(255,255,255,0.2)',
                         background: '#030514',
                         color: '#fff',
-                        allowOutsideClick: false
+                        allowOutsideClick: false,
+                        customClass: {
+                            confirmButton: 'swal2-confirm',
+                            cancelButton: 'swal2-cancel'
+                        }
                     });
                     
                     if (result.isConfirmed) {
@@ -1472,15 +1548,21 @@
                     
                     const result = await Swal.fire({
                         title: '✅ تم حفظ الطلب بنجاح',
-                        html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`,
+                        html: `
+                            <div style="text-align: center;">
+                                <div style="color: #00ffff; font-size: 28px; margin: 10px;">${data.refId}</div>
+                                <p>يمكنك تحميل الكارت الآن</p>
+                            </div>
+                        `,
                         imageUrl: canvas.toDataURL('image/png'),
                         imageWidth: 500,
                         imageHeight: canvas.height * 500 / canvas.width,
                         showCancelButton: true,
                         confirmButtonText: '📥 تحميل الكارت',
-                        cancelButtonText: '❌ إغلاق',
+                        cancelButtonText: '🔒 إغلاق',
                         background: '#030514',
-                        confirmButtonColor: '#00ffff'
+                        confirmButtonColor: '#00ffff',
+                        cancelButtonColor: 'rgba(255,255,255,0.2)'
                     });
                     
                     if (result.isConfirmed) {
@@ -1494,7 +1576,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'تم حفظ الطلب',
-                        html: `<div style="color: #00ffff; font-size: 24px;">${data.refId}</div>`,
+                        html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`,
                         background: '#030514',
                         confirmButtonColor: '#00ffff'
                     });
@@ -1504,7 +1586,7 @@
                 Swal.fire({
                     icon: 'success',
                     title: 'تم حفظ الطلب',
-                    html: `<div style="color: #00ffff; font-size: 24px;">${data.refId}</div>`,
+                    html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
@@ -1697,7 +1779,7 @@
                         </div>
                     </div>
                     
-                    <div class="track-container" style="margin: 30px 0;">
+                    <div style="margin: 30px 0;">
                         <div style="position: relative; width: 100%; height: 100px;">
                             <div style="position: absolute; top: 50%; left: 0; right: 0; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; transform: translateY(-50%);"></div>
                             <div style="position: absolute; top: 50%; right: 0; height: 6px; width: ${progress}%; background: var(--gradient-royal); border-radius: 3px; transform: translateY(-50%); transition: width 1s ease; box-shadow: 0 0 20px var(--neon-cyan); z-index: 2;"></div>
