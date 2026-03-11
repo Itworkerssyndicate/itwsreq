@@ -761,46 +761,11 @@
             display: inline-block;
         }
 
-        .status-تم\ الاستلام {
-            background: rgba(249,115,22,0.2);
-            color: var(--neon-orange);
-            border: 1px solid var(--neon-orange);
-        }
-
-        .status-قيد\ المراجعة {
-            background: rgba(59,130,246,0.2);
-            color: var(--neon-blue);
-            border: 1px solid var(--neon-blue);
-        }
-
-        .status-جاري\ التنفيذ {
-            background: rgba(168,85,247,0.2);
-            color: var(--neon-purple);
-            border: 1px solid var(--neon-purple);
-        }
-
-        .status-تم\ الحل {
-            background: rgba(16,185,129,0.2);
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
-        }
-
-        .status-تم\ الإغلاق\ النهائي {
-            background: rgba(239,68,68,0.2);
-            color: var(--neon-red);
-            border: 1px solid var(--neon-red);
-        }
-
-        .status-تمت\ القراءة {
-            background: rgba(0,255,255,0.2);
-            color: var(--neon-cyan);
-            border: 1px solid var(--neon-cyan);
-        }
-
-        .status-لم\ يقرأ {
-            background: rgba(249,115,22,0.2);
-            color: var(--neon-orange);
-            border: 1px solid var(--neon-orange);
+        /* ألوان عشوائية للحالات المختلفة */
+        .status-badge[data-status] {
+            background: rgba(var(--color), 0.2);
+            color: rgb(var(--color));
+            border: 1px solid rgb(var(--color));
         }
 
         .type-badge {
@@ -897,9 +862,9 @@
             border: 2px solid var(--neon-cyan);
             border-radius: 30px;
             padding: 30px;
-            max-width: 800px;
+            max-width: 900px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
             box-shadow: var(--shadow-neon);
         }
@@ -951,6 +916,58 @@
         .close:hover {
             background: var(--neon-red);
             transform: rotate(90deg);
+        }
+
+        /* ===== تخصيص SweetAlert ===== */
+        .swal2-popup {
+            background: var(--bg-deep) !important;
+            border: 2px solid var(--neon-cyan) !important;
+            border-radius: 40px !important;
+            box-shadow: var(--shadow-neon) !important;
+        }
+
+        .swal2-title {
+            color: var(--neon-cyan) !important;
+        }
+
+        .swal2-confirm {
+            background: var(--gradient-royal) !important;
+            border-radius: 30px !important;
+        }
+
+        .swal2-cancel {
+            background: rgba(255,255,255,0.1) !important;
+            border-radius: 30px !important;
+        }
+
+        /* ===== المسار الزمني ===== */
+        .timeline-card {
+            background: rgba(255,255,255,0.02);
+            border-right: 3px solid var(--neon-cyan);
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .timeline-status {
+            color: var(--neon-cyan);
+            font-weight: 600;
+        }
+
+        .timeline-time {
+            color: rgba(255,255,255,0.4);
+            font-size: 11px;
+        }
+
+        .timeline-comment {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
         }
 
         /* ===== تحسينات الجوال ===== */
@@ -1186,13 +1203,7 @@
                         <label>الحالة</label>
                         <select id="search-status" onchange="performSearch()">
                             <option value="all">الكل</option>
-                            <option value="تم الاستلام">تم الاستلام</option>
-                            <option value="قيد المراجعة">قيد المراجعة</option>
-                            <option value="جاري التنفيذ">جاري التنفيذ</option>
-                            <option value="تم الحل">تم الحل</option>
-                            <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
-                            <option value="تمت القراءة">تمت القراءة</option>
-                            <option value="لم يقرأ">لم يقرأ</option>
+                            <!-- الحالات هتتولد ديناميكياً من البيانات -->
                         </select>
                     </div>
                 </div>
@@ -1266,6 +1277,40 @@
         </div>
     </div>
 
+    <!-- نافذة إغلاق الشكوى -->
+    <div id="close-request-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" onclick="closeCloseModal()">&times;</span>
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-lock" style="font-size: 60px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--neon-red); margin-bottom: 20px;">إغلاق الشكوى</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">سيتم إضافة حالة "تم الإغلاق النهائي" إلى المسار الزمني</p>
+                <textarea id="close-comment" class="luxury-input" rows="3" placeholder="اكتب سبب الإغلاق أو القرار النهائي..." style="margin-bottom: 20px;"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button class="action-btn" onclick="confirmCloseRequest()" style="background: var(--gradient-danger); flex: 2;">تأكيد الإغلاق</button>
+                    <button class="action-btn" onclick="closeCloseModal()" style="flex: 1;">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تمييز كمقروء -->
+    <div id="read-request-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close" onclick="closeReadModal()">&times;</span>
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-check-circle" style="font-size: 60px; color: var(--neon-green); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--neon-green); margin-bottom: 20px;">تمييز كمقروء</h3>
+                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">سيتم إضافة حالة "تمت القراءة" إلى المسار الزمني</p>
+                <textarea id="read-comment" class="luxury-input" rows="3" placeholder="اكتب أي ملاحظات (اختياري)..." style="margin-bottom: 20px;"></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button class="action-btn" onclick="confirmReadRequest()" style="background: var(--gradient-success); flex: 2;">تأكيد</button>
+                    <button class="action-btn" onclick="closeReadModal()" style="flex: 1;">إلغاء</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase و SweetAlert -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1292,11 +1337,21 @@
         let filteredRequests = [];
         let currentFilter = 'all';
         let unsubscribe = null;
+        let currentRequestId = null;
         let currentDeleteId = null;
+        let allStatuses = new Set(); // لتخزين جميع الحالات المختلفة
+
+        // ==================== دوال الإعدادات ====================
+        function getSetting(key, defaultValue) {
+            const value = localStorage.getItem(key);
+            return value !== null ? value : defaultValue;
+        }
 
         // ==================== إنشاء الجزيئات ====================
         function createParticles() {
             const container = document.getElementById('particles');
+            if (!container) return;
+            
             for (let i = 0; i < 30; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
@@ -1329,13 +1384,13 @@
         }
 
         function loadSettings() {
-            document.getElementById('logo-url').value = localStorage.getItem('logo_url') || 'https://via.placeholder.com/120x120?text=Logo';
-            document.getElementById('services-url').value = localStorage.getItem('services_url') || 'https://services.egeng.org';
-            document.getElementById('services-text').value = localStorage.getItem('services_text') || 'موقع تقديم خدمات النقابة';
-            document.getElementById('show-services').checked = localStorage.getItem('show_services') !== 'false';
-            document.getElementById('complaint-prefix').value = localStorage.getItem('complaint_prefix') || 'REQ';
-            document.getElementById('suggestion-prefix').value = localStorage.getItem('suggestion_prefix') || 'REP';
-            document.getElementById('admin-logo').src = localStorage.getItem('logo_url') || 'https://via.placeholder.com/120x120?text=Logo';
+            document.getElementById('logo-url').value = getSetting('logo_url', 'https://via.placeholder.com/120x120?text=Logo');
+            document.getElementById('services-url').value = getSetting('services_url', 'https://services.egeng.org');
+            document.getElementById('services-text').value = getSetting('services_text', 'موقع تقديم خدمات النقابة');
+            document.getElementById('show-services').checked = getSetting('show_services', 'true') === 'true';
+            document.getElementById('complaint-prefix').value = getSetting('complaint_prefix', 'REQ');
+            document.getElementById('suggestion-prefix').value = getSetting('suggestion_prefix', 'REP');
+            document.getElementById('admin-logo').src = getSetting('logo_url', 'https://via.placeholder.com/120x120?text=Logo');
         }
 
         function saveSettings() {
@@ -1372,17 +1427,14 @@
         function loadData(filter) {
             currentFilter = filter;
             
-            // تفعيل الزر المناسب
             if (filter === 'all') setActiveNav('nav-all');
             else if (filter === 'شكوى') setActiveNav('nav-complaint');
             else if (filter === 'اقتراح') setActiveNav('nav-suggestion');
 
-            // إلغاء الاشتراك السابق لو موجود
             if (unsubscribe) {
                 unsubscribe();
             }
 
-            // عرض حالة التحميل
             document.getElementById('admin-tbody').innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 50px;">
@@ -1392,13 +1444,15 @@
                 </tr>
             `;
 
-            // الاستماع للتغييرات في Firebase
             unsubscribe = db.collection("Requests")
                 .orderBy("createdAt", "desc")
                 .onSnapshot(snapshot => {
                     allRequests = [];
+                    allStatuses.clear();
+                    
                     snapshot.forEach(doc => {
                         const data = doc.data();
+                        
                         // تحويل التاريخ
                         if (data.createdAt && data.createdAt.toDate) {
                             data.createdAtDate = data.createdAt.toDate();
@@ -1407,17 +1461,34 @@
                         } else {
                             data.createdAtDate = new Date();
                         }
+                        
+                        // جمع جميع الحالات المختلفة
+                        if (data.status) {
+                            allStatuses.add(data.status);
+                        }
+                        
+                        // جمع الحالات من التتبع
+                        if (data.tracking && Array.isArray(data.tracking)) {
+                            data.tracking.forEach(t => {
+                                if (t.status) allStatuses.add(t.status);
+                            });
+                        }
+                        
                         allRequests.push({
                             id: doc.id,
                             ...data
                         });
                     });
                     
+                    // تحديث قائمة الحالات في البحث
+                    updateStatusFilterOptions();
+                    
                     // تحديث الإحصائيات
                     updateStats();
                     
                     // تطبيق الفلتر وعرض البيانات
                     filterData();
+                    
                 }, error => {
                     console.error("Error loading data:", error);
                     document.getElementById('admin-tbody').innerHTML = `
@@ -1431,15 +1502,30 @@
                 });
         }
 
+        // ==================== تحديث قائمة الحالات في البحث ====================
+        function updateStatusFilterOptions() {
+            const statusSelect = document.getElementById('search-status');
+            if (!statusSelect) return;
+            
+            const sortedStatuses = Array.from(allStatuses).sort();
+            
+            let options = '<option value="all">الكل</option>';
+            sortedStatuses.forEach(status => {
+                options += `<option value="${status}">${status}</option>`;
+            });
+            
+            statusSelect.innerHTML = options;
+        }
+
         // ==================== تحديث الإحصائيات ====================
         function updateStats() {
             const total = allRequests.length;
             const complaints = allRequests.filter(r => r.type === 'شكوى').length;
             const suggestions = allRequests.filter(r => r.type === 'اقتراح').length;
             const pending = allRequests.filter(r => 
-                r.status === 'تم الاستلام' || 
-                r.status === 'قيد المراجعة' || 
-                r.status === 'لم يقرأ'
+                r.status !== 'تم الحل' && 
+                r.status !== 'تم الإغلاق النهائي' && 
+                r.status !== 'تمت القراءة'
             ).length;
 
             document.getElementById('total-count').textContent = total;
@@ -1450,8 +1536,9 @@
 
         // ==================== فلترة البيانات حسب البحث ====================
         function filterData() {
-            // تطبيق فلتر النوع (all, شكوى, اقتراح)
             let filtered = allRequests;
+            
+            // تطبيق فلتر النوع
             if (currentFilter !== 'all') {
                 filtered = filtered.filter(r => r.type === currentFilter);
             }
@@ -1467,25 +1554,13 @@
             const searchStatus = document.getElementById('search-status')?.value || 'all';
 
             filtered = filtered.filter(r => {
-                // فلتر رقم الطلب
                 if (searchRef && !r.refId?.toLowerCase().includes(searchRef)) return false;
-                
-                // فلتر الاسم
                 if (searchName && !r.name?.toLowerCase().includes(searchName)) return false;
-                
-                // فلتر الرقم القومي
                 if (searchNid && !r.nid?.includes(searchNid)) return false;
-                
-                // فلتر رقم العضوية
                 if (searchMember && !r.memberId?.includes(searchMember)) return false;
-                
-                // فلتر النوع
                 if (searchType !== 'all' && r.type !== searchType) return false;
-                
-                // فلتر الحالة
                 if (searchStatus !== 'all' && r.status !== searchStatus) return false;
                 
-                // فلتر التاريخ
                 if (searchDateFrom || searchDateTo) {
                     const rDate = r.createdAtDate;
                     if (rDate) {
@@ -1508,11 +1583,7 @@
             const body = document.getElementById('search-body');
             const arrow = document.getElementById('search-arrow');
             body.classList.toggle('show');
-            if (body.classList.contains('show')) {
-                arrow.style.transform = 'rotate(180deg)';
-            } else {
-                arrow.style.transform = 'rotate(0)';
-            }
+            arrow.style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
         }
 
         function performSearch() {
@@ -1548,25 +1619,21 @@
             let html = '';
             
             requests.forEach(r => {
-                // تنسيق التاريخ
-                let dateStr = 'غير محدد';
-                let timeStr = '';
-                if (r.createdAtDate) {
-                    dateStr = r.createdAtDate.toLocaleDateString('ar-EG');
-                    timeStr = r.createdAtDate.toLocaleTimeString('ar-EG');
-                }
+                const dateStr = r.createdAtDate ? r.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
+                const timeStr = r.createdAtDate ? r.createdAtDate.toLocaleTimeString('ar-EG') : '';
 
-                // نوع العضوية
                 const memberType = r.memberType === 'عضو نقابة' 
                     ? `<span class="membership-badge member">عضو ${r.memberId ? '- ' + r.memberId : ''}</span>`
                     : `<span class="membership-badge non-member">غير عضو</span>`;
 
-                // نوع الطلب
                 const typeClass = r.type === 'شكوى' ? 'complaint' : 'suggestion';
                 const typeText = r.type === 'شكوى' ? 'شكوى' : 'اقتراح';
 
-                // الحالة
-                const statusClass = r.status?.replace(/\s+/g, '-') || '';
+                // لون عشوائي للحالة بناءً على نص الحالة
+                const statusHash = r.status ? r.status.split('').reduce((a, b) => a + b.charCodeAt(0), 0) : 0;
+                const rColor = (statusHash * 123) % 255;
+                const gColor = (statusHash * 456) % 255;
+                const bColor = (statusHash * 789) % 255;
 
                 html += `
                 <tr>
@@ -1583,7 +1650,11 @@
                     <td>${memberType}</td>
                     <td>${r.gov || 'غير محدد'}</td>
                     <td><span class="type-badge ${typeClass}">${typeText}</span></td>
-                    <td><span class="status-badge status-${statusClass}">${r.status || 'غير محدد'}</span></td>
+                    <td>
+                        <span class="status-badge" style="background: rgba(${rColor}, ${gColor}, ${bColor}, 0.2); color: rgb(${rColor}, ${gColor}, ${bColor}); border: 1px solid rgb(${rColor}, ${gColor}, ${bColor});">
+                            ${r.status || 'غير محدد'}
+                        </span>
+                    </td>
                     <td>
                         <button class="action-btn-small" onclick="manageReq('${r.refId}')" title="إدارة الطلب">
                             <i class="fas fa-cog"></i>
@@ -1627,24 +1698,26 @@
 
         // ==================== عرض نافذة إدارة الطلب ====================
         function showRequestModal(d) {
-            // تنسيق المسار الزمني
-            const stages = [...(d.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
-            const currentIdx = stages.indexOf(d.status);
+            currentRequestId = d.refId;
             
+            // تنسيق المسار الزمني
             let timelineHtml = '';
             if (d.tracking && d.tracking.length > 0) {
                 timelineHtml = d.tracking.slice().reverse().map(t => `
-                    <div class="timeline-card" style="background: rgba(255,255,255,0.02); border-right: 3px solid var(--neon-cyan); padding: 12px; margin-bottom: 8px; border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="color: var(--neon-cyan); font-weight: 600;">${t.status}</span>
-                            <span style="color: rgba(255,255,255,0.4); font-size: 11px;">${t.time}</span>
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <span class="timeline-status">${t.status}</span>
+                            <span class="timeline-time">${t.time}</span>
                         </div>
-                        <p style="color: rgba(255,255,255,0.7); font-size: 12px;">${t.comment}</p>
+                        <div class="timeline-comment">${t.comment}</div>
                     </div>
                 `).join('');
             } else {
-                timelineHtml = '<p style="color: rgba(255,255,255,0.5);">لا يوجد مسار زمني</p>';
+                timelineHtml = '<p style="color: rgba(255,255,255,0.5); text-align: center;">لا يوجد مسار زمني</p>';
             }
+
+            // الحالة الحالية
+            const currentStatus = d.status || 'غير محدد';
 
             const html = `
                 <div>
@@ -1655,46 +1728,53 @@
                         </button>
                     </div>
                     
-                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 20px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div><span style="color: rgba(255,255,255,0.5);">الاسم:</span> ${d.name}</div>
                             <div><span style="color: rgba(255,255,255,0.5);">الرقم القومي:</span> ${d.nid}</div>
                             <div><span style="color: rgba(255,255,255,0.5);">الهاتف:</span> ${d.phone}</div>
                             <div><span style="color: rgba(255,255,255,0.5);">المحافظة:</span> ${d.gov}</div>
                             <div><span style="color: rgba(255,255,255,0.5);">النوع:</span> ${d.type}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">الحالة:</span> ${d.status}</div>
+                            <div><span style="color: rgba(255,255,255,0.5);">الحالة الحالية:</span> ${currentStatus}</div>
                         </div>
-                        <div style="margin-top: 10px;">
+                        <div style="margin-top: 15px;">
                             <span style="color: rgba(255,255,255,0.5);">التفاصيل:</span>
-                            <p style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 5px;">${d.details}</p>
+                            <p style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 8px;">${d.details}</p>
                         </div>
                     </div>
 
-                    <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">المسار الزمني</h4>
-                    <div style="max-height: 200px; overflow-y: auto; margin-bottom: 20px;">
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 15px;">المسار الزمني</h4>
+                    <div style="max-height: 300px; overflow-y: auto; margin-bottom: 30px;">
                         ${timelineHtml}
                     </div>
 
-                    <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">تحديث الحالة</h4>
-                    <div class="search-field" style="margin-bottom: 10px;">
-                        <label>الحالة الجديدة</label>
-                        <select id="new-status" class="luxury-input">
-                            <option value="تم الاستلام">تم الاستلام</option>
-                            <option value="قيد المراجعة">قيد المراجعة</option>
-                            <option value="جاري التنفيذ">جاري التنفيذ</option>
-                            <option value="تم الحل">تم الحل</option>
-                            <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
-                            ${d.type === 'اقتراح' ? '<option value="تمت القراءة">تمت القراءة</option><option value="لم يقرأ">لم يقرأ</option>' : ''}
-                        </select>
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 15px;">تحديث الحالة</h4>
+                    
+                    <div class="search-field" style="margin-bottom: 15px;">
+                        <label>اسم المرحلة الجديدة</label>
+                        <input type="text" id="new-status-name" class="luxury-input" placeholder="اكتب اسم المرحلة...">
                     </div>
+                    
                     <div class="search-field" style="margin-bottom: 15px;">
                         <label>تعليق</label>
                         <textarea id="status-comment" class="luxury-input" rows="3" placeholder="اكتب تعليقك هنا..."></textarea>
                     </div>
 
-                    <button class="action-btn" onclick="updateRequestStatus('${d.refId}')" style="width: 100%; justify-content: center;">
-                        <i class="fas fa-save"></i> تحديث الحالة
-                    </button>
+                    <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
+                        <button class="action-btn" onclick="updateRequestStatus('${d.refId}')" style="flex: 2; background: var(--gradient-royal);">
+                            <i class="fas fa-save"></i> تحديث الحالة
+                        </button>
+                        
+                        ${d.type === 'شكوى' ? `
+                            <button class="action-btn" onclick="openCloseModal('${d.refId}')" style="flex: 1; background: var(--gradient-danger);">
+                                <i class="fas fa-lock"></i> إغلاق الشكوى
+                            </button>
+                        ` : `
+                            <button class="action-btn" onclick="openReadModal('${d.refId}')" style="flex: 1; background: var(--gradient-success);">
+                                <i class="fas fa-check-circle"></i> تمت القراءة
+                            </button>
+                        `}
+                    </div>
                 </div>
             `;
 
@@ -1704,14 +1784,14 @@
 
         // ==================== تحديث حالة الطلب ====================
         async function updateRequestStatus(refId) {
-            const newStatus = document.getElementById('new-status')?.value;
+            const newStatus = document.getElementById('new-status-name')?.value.trim();
             const comment = document.getElementById('status-comment')?.value.trim();
 
             if (!newStatus) {
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
-                    text: 'اختر الحالة الجديدة',
+                    text: 'اكتب اسم المرحلة الجديدة',
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
@@ -1751,6 +1831,113 @@
                 closeModal();
             } catch (error) {
                 console.error("Error updating status:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تحديث الحالة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+
+        // ==================== إغلاق الشكوى ====================
+        function openCloseModal(refId) {
+            currentRequestId = refId;
+            document.getElementById('close-request-modal').style.display = 'flex';
+            document.getElementById('close-comment').value = '';
+        }
+
+        function closeCloseModal() {
+            document.getElementById('close-request-modal').style.display = 'none';
+            currentRequestId = null;
+        }
+
+        async function confirmCloseRequest() {
+            const comment = document.getElementById('close-comment')?.value.trim();
+            
+            if (!comment) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'اكتب سبب الإغلاق',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+
+            try {
+                await db.collection("Requests").doc(currentRequestId).update({
+                    status: 'تم الإغلاق النهائي',
+                    tracking: firebase.firestore.FieldValue.arrayUnion({
+                        status: 'تم الإغلاق النهائي',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: true
+                    })
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الإغلاق',
+                    text: 'تم إغلاق الشكوى بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+
+                closeCloseModal();
+                closeModal();
+            } catch (error) {
+                console.error("Error closing request:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في إغلاق الشكوى',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+
+        // ==================== تمييز كمقروء ====================
+        function openReadModal(refId) {
+            currentRequestId = refId;
+            document.getElementById('read-request-modal').style.display = 'flex';
+            document.getElementById('read-comment').value = '';
+        }
+
+        function closeReadModal() {
+            document.getElementById('read-request-modal').style.display = 'none';
+            currentRequestId = null;
+        }
+
+        async function confirmReadRequest() {
+            const comment = document.getElementById('read-comment')?.value.trim() || 'تمت قراءة الاقتراح';
+
+            try {
+                await db.collection("Requests").doc(currentRequestId).update({
+                    status: 'تمت القراءة',
+                    tracking: firebase.firestore.FieldValue.arrayUnion({
+                        status: 'تمت القراءة',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: false
+                    })
+                });
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم التحديث',
+                    text: 'تم تمييز الاقتراح كمقروء',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+
+                closeReadModal();
+                closeModal();
+            } catch (error) {
+                console.error("Error marking as read:", error);
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
@@ -1836,7 +2023,7 @@
             Swal.fire({
                 icon: 'info',
                 title: 'إدارة المستخدمين',
-                text: 'قريباً',
+                text: 'سيتم فتح شاشة إدارة المستخدمين قريباً',
                 background: '#030514',
                 confirmButtonColor: '#00ffff'
             });
