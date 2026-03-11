@@ -1,3 +1,7 @@
+// =====================================================================
+// VR 2.05 - تهيئة Firebase والإعدادات
+// =====================================================================
+
 // تهيئة Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
@@ -25,7 +29,7 @@ const STORAGE_KEYS = {
 
 // الإعدادات الافتراضية
 const DEFAULT_SETTINGS = {
-    LOGO_URL: 'https://via.placeholder.com/150x150?text=Logo',
+    LOGO_URL: 'https://via.placeholder.com/200x200?text=Logo',
     SERVICES_URL: 'https://services.egeng.org',
     SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
     SHOW_SERVICES: true,
@@ -36,44 +40,62 @@ const DEFAULT_SETTINGS = {
 // متغير للتأخير في الحفظ التلقائي
 let autoSaveTimeout;
 
-// الحصول على قيمة إعداد معين
+// ==================== دوال الإعدادات ====================
+
+/**
+ * الحصول على قيمة إعداد معين
+ */
 function getSetting(key, defaultValue) {
     const value = localStorage.getItem(STORAGE_KEYS[key]);
     return value !== null ? value : defaultValue;
 }
 
-// الحصول على رابط الشعار المحفوظ
+/**
+ * الحصول على رابط الشعار المحفوظ
+ */
 function getSavedLogo() {
     return getSetting('LOGO_URL', DEFAULT_SETTINGS.LOGO_URL);
 }
 
-// الحصول على رابط موقع الخدمات
+/**
+ * الحصول على رابط موقع الخدمات
+ */
 function getServicesUrl() {
     return getSetting('SERVICES_URL', DEFAULT_SETTINGS.SERVICES_URL);
 }
 
-// الحصول على نص زر الخدمات
+/**
+ * الحصول على نص زر الخدمات
+ */
 function getServicesText() {
     return getSetting('SERVICES_TEXT', DEFAULT_SETTINGS.SERVICES_TEXT);
 }
 
-// هل يتم إظهار زر الخدمات
+/**
+ * هل يتم إظهار زر الخدمات
+ */
 function shouldShowServices() {
     const value = localStorage.getItem(STORAGE_KEYS.SHOW_SERVICES);
     return value === null ? DEFAULT_SETTINGS.SHOW_SERVICES : value === 'true';
 }
 
-// الحصول على بادئة الشكاوى
+/**
+ * الحصول على بادئة الشكاوى
+ */
 function getComplaintPrefix() {
     return getSetting('COMPLAINT_PREFIX', DEFAULT_SETTINGS.COMPLAINT_PREFIX);
 }
 
-// الحصول على بادئة المقترحات
+/**
+ * الحصول على بادئة المقترحات
+ */
 function getSuggestionPrefix() {
     return getSetting('SUGGESTION_PREFIX', DEFAULT_SETTINGS.SUGGESTION_PREFIX);
 }
 
-// حفظ جميع الإعدادات مع رسالة تأكيد
+/**
+ * حفظ جميع الإعدادات
+ */
 function saveSettings(settings, showMessage = true) {
     if (settings.logoUrl !== undefined) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logoUrl);
     if (settings.servicesUrl !== undefined) localStorage.setItem(STORAGE_KEYS.SERVICES_URL, settings.servicesUrl);
@@ -94,7 +116,9 @@ function saveSettings(settings, showMessage = true) {
     }
 }
 
-// إظهار رسالة الحفظ التلقائي
+/**
+ * إظهار رسالة الحفظ التلقائي
+ */
 function showAutoSaveMessage() {
     const messageEl = document.getElementById('auto-save-message');
     if (messageEl) {
@@ -105,7 +129,9 @@ function showAutoSaveMessage() {
     }
 }
 
-// الحفظ التلقائي (يتم استدعاؤه عند التغيير)
+/**
+ * الحفظ التلقائي (يتم استدعاؤه عند التغيير)
+ */
 function autoSaveSettings() {
     // إلغاء المؤقت السابق
     if (autoSaveTimeout) {
@@ -134,7 +160,9 @@ function autoSaveSettings() {
     }, 500);
 }
 
-// تحديث الشعار في جميع الصفحات
+/**
+ * تحديث الشعار في جميع الصفحات
+ */
 function updateAllLogos(url) {
     const splashLogo = document.getElementById('splash-logo');
     const headerLogo = document.getElementById('header-main-logo');
@@ -145,7 +173,9 @@ function updateAllLogos(url) {
     if (adminLogo) adminLogo.src = url;
 }
 
-// تحديث زر الخدمات
+/**
+ * تحديث زر الخدمات
+ */
 function updateServicesButton() {
     const servicesBtn = document.getElementById('services-link');
     if (!servicesBtn) return;
@@ -164,13 +194,17 @@ function updateServicesButton() {
     }
 }
 
-// تنسيق النص مع مسافات بين الكلمات
+/**
+ * تنسيق النص مع مسافات بين الكلمات
+ */
 function formatText(text) {
     if (!text) return '';
     return text.replace(/\s+/g, ' ').trim();
 }
 
-// إنشاء رقم طلب متسلسل
+/**
+ * إنشاء رقم طلب متسلسل
+ */
 async function generateRequestNumber(type) {
     const year = new Date().getFullYear();
     const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
@@ -212,16 +246,6 @@ async function generateRequestNumber(type) {
         return `${prefix}-${timestamp}-${year}`;
     }
 }
-
-// إخفاء شاشة البداية بعد التحميل
-window.addEventListener('load', function() {
-    setTimeout(function() {
-        const splash = document.getElementById('splash-screen');
-        const mainContent = document.getElementById('main-content');
-        if (splash) splash.style.display = 'none';
-        if (mainContent) mainContent.style.display = 'block';
-    }, 3000);
-});
 
 // تطبيق الإعدادات المحفوظة عند التحميل
 document.addEventListener('DOMContentLoaded', function() {
