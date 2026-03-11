@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05</title>
+    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05.2026</title>
     
     <!-- الخطوط -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -18,53 +18,40 @@
     
     <style>
         /* =====================================================================
-           VR 2.05 - نقابة تكنولوجيا المعلومات والبرمجيات
-           =====================================================================
-           الإصدار: 2.05 (النسخة المذهلة)
-           المصمم: المهندس/ محمود جميل
-           التاريخ: 2026
+           VR 2.05.2026 - نقابة تكنولوجيا المعلومات والبرمجيات
+           الإصدار الماسي - النسخة النهائية
            ===================================================================== */
 
-        /* ========================== المتغيرات الرئيسية ========================== */
         :root {
-            /* الألوان الأساسية */
-            --bg-primary: #030514;
-            --bg-secondary: #0a0f1f;
-            --bg-tertiary: #111827;
-            --bg-dark: #000212;
+            /* الألوان الأساسية - درجة أولى فاخرة */
+            --bg-deep: #030514;
+            --bg-dark: #0a0f1f;
+            --bg-card: rgba(15, 23, 42, 0.4);
+            --bg-card-hover: rgba(15, 23, 42, 0.6);
             
-            /* ألوان النيون الرئيسية */
+            /* النيون الفاخر */
             --neon-cyan: #00ffff;
             --neon-cyan-glow: rgba(0, 255, 255, 0.7);
-            --neon-cyan-glow-light: rgba(0, 255, 255, 0.3);
-            
-            --neon-blue: #3b82f6;
-            --neon-blue-glow: rgba(59, 130, 246, 0.7);
+            --neon-cyan-soft: rgba(0, 255, 255, 0.3);
             
             --neon-purple: #a855f7;
             --neon-purple-glow: rgba(168, 85, 247, 0.7);
+            --neon-purple-soft: rgba(168, 85, 247, 0.3);
             
             --neon-pink: #ec4899;
             --neon-pink-glow: rgba(236, 72, 153, 0.7);
             
-            /* ألوان إضافية */
-            --neon-green: #10b981;
-            --neon-green-glow: rgba(16, 185, 129, 0.7);
-            --neon-red: #ef4444;
-            --neon-red-glow: rgba(239, 68, 68, 0.7);
-            --neon-orange: #f97316;
-            --neon-orange-glow: rgba(249, 115, 22, 0.7);
+            --neon-blue: #3b82f6;
+            --neon-blue-glow: rgba(59, 130, 246, 0.7);
             
-            /* تدرجات */
-            --gradient-primary: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            --gradient-secondary: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-            --gradient-warm: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
-            --gradient-rainbow: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            /* التدرجات الفاخرة */
+            --gradient-royal: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+            --gradient-diamond: linear-gradient(45deg, #3b82f6, #00ffff, #a855f7);
+            --gradient-silver: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             
             /* الظلال */
-            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
+            --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
+            --shadow-neon: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
             
             /* المسافات */
             --space-xs: 4px;
@@ -73,76 +60,25 @@
             --space-lg: 24px;
             --space-xl: 32px;
             --space-2xl: 40px;
-            
-            /* أحجام الخطوط */
-            --text-xs: 12px;
-            --text-sm: 14px;
-            --text-md: 16px;
-            --text-lg: 18px;
-            --text-xl: 20px;
-            --text-2xl: 24px;
-            --text-3xl: 30px;
-            --text-4xl: 36px;
-            
-            /* مدة الحركات */
-            --transition-normal: 0.3s;
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* ========================== إعادة تعيين الأنماط ========================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tajawal', 'Cairo', 'Space Grotesk', sans-serif;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
         }
 
         body {
-            background: var(--bg-primary);
-            color: #ffffff;
+            background: var(--bg-deep);
+            color: #fff;
             direction: rtl;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            line-height: 1.6;
-            font-size: var(--text-md);
         }
 
-        /* منع النسخ مع الحفاظ على الماوس ظاهر */
-        *:not(input):not(textarea):not(select) {
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-            cursor: default !important;
-        }
-
-        input, textarea, select {
-            -webkit-user-select: text !important;
-            -moz-user-select: text !important;
-            -ms-user-select: text !important;
-            user-select: text !important;
-            pointer-events: auto !important;
-            cursor: text !important;
-            transition: all var(--transition-normal) var(--ease-smooth) !important;
-        }
-
-        button, .btn-nav, .btn-main, .action-btn, .settings-btn, .close, 
-        [role="button"], .btn, .nav-btn, .services-btn {
-            cursor: pointer !important;
-        }
-
-        a, a * {
-            cursor: pointer !important;
-        }
-
-        /* ========================== الخلفية الكونية ========================== */
+        /* ===== خلفية كونية فاخرة ===== */
         body::before {
             content: '';
             position: fixed;
@@ -151,16 +87,16 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 40%);
-            animation: cosmicDrift 30s ease-in-out infinite alternate;
+                radial-gradient(circle at 20% 30%, var(--neon-cyan-soft) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, var(--neon-purple-soft) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.2) 0%, transparent 50%);
+            animation: cosmicWave 20s ease infinite;
             z-index: -2;
-            pointer-events: none;
         }
 
-        @keyframes cosmicDrift {
-            0% { opacity: 0.5; }
-            100% { opacity: 1; }
+        @keyframes cosmicWave {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
         }
 
         body::after {
@@ -171,14 +107,19 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
-            background-size: 60px 60px;
+                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 30s linear infinite;
             z-index: -1;
-            pointer-events: none;
         }
 
-        /* عناصر عائمة */
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* ===== عناصر عائمة فاخرة ===== */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -192,24 +133,24 @@
         .floating-element {
             position: absolute;
             border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.1;
-            animation: float 20s infinite alternate;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: floatLuxury 15s infinite alternate;
         }
 
         .floating-element:nth-child(1) {
-            width: 500px;
-            height: 500px;
-            top: -150px;
-            right: -150px;
+            width: 600px;
+            height: 600px;
+            top: -200px;
+            right: -200px;
             background: var(--neon-cyan);
         }
 
         .floating-element:nth-child(2) {
-            width: 600px;
-            height: 600px;
-            bottom: -200px;
-            left: -200px;
+            width: 700px;
+            height: 700px;
+            bottom: -250px;
+            left: -250px;
             background: var(--neon-purple);
         }
 
@@ -217,17 +158,17 @@
             width: 400px;
             height: 400px;
             top: 40%;
-            left: 10%;
+            left: 20%;
             background: var(--neon-pink);
         }
 
-        @keyframes float {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(30px, 30px); }
+        @keyframes floatLuxury {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, -50px) scale(1.1); }
         }
 
-        /* جزيئات متطايرة */
-        .particles-container {
+        /* ===== جزيئات متطايرة ===== */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -235,60 +176,51 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
-            overflow: hidden;
         }
 
         .particle {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            width: 4px;
+            height: 4px;
+            background: var(--gradient-royal);
             border-radius: 50%;
-            animation: particleFloat 15s linear infinite;
+            animation: particleFloat 20s linear infinite;
             opacity: 0.4;
             box-shadow: 0 0 15px var(--neon-cyan);
         }
 
         @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) translateX(0) rotate(0deg);
-                opacity: 0.4;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100px) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) translateX(0); opacity: 0.4; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
 
-        /* ========================== شاشة البداية ========================== */
+        /* ===== شاشة البداية ===== */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #030514, #0a0f1f);
+            background: var(--bg-deep);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            animation: splashFadeOut 0.8s ease-in-out 3s forwards;
+            animation: splashFade 1s ease 3s forwards;
         }
 
-        @keyframes splashFadeOut {
-            0% { opacity: 1; visibility: visible; }
-            100% { opacity: 0; visibility: hidden; }
+        @keyframes splashFade {
+            to { opacity: 0; visibility: hidden; }
         }
 
         .splash-content {
             text-align: center;
-            max-width: 90%;
-            animation: splashFloat 3s ease-in-out infinite;
+            animation: splashFloat 3s ease infinite;
         }
 
         @keyframes splashFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
         }
 
         .splash-logo {
@@ -296,244 +228,255 @@
             height: 180px;
             border-radius: 50%;
             border: 4px solid var(--neon-cyan);
-            box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
-            animation: splashLogoPulse 2s ease-in-out infinite;
+            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
             margin-bottom: 25px;
             object-fit: cover;
         }
 
-        @keyframes splashLogoPulse {
-            0%, 100% { box-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple); }
-            50% { box-shadow: 0 0 50px var(--neon-cyan), 0 0 90px var(--neon-purple); }
-        }
-
         .splash-title {
-            font-size: var(--text-4xl);
+            font-size: 36px;
             font-weight: 900;
-            background: var(--gradient-primary);
+            background: var(--gradient-royal);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 10px;
-            text-shadow: 0 0 20px var(--neon-cyan);
         }
 
         .splash-subtitle {
-            font-size: var(--text-xl);
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            color: rgba(255,255,255,0.8);
             margin-bottom: 30px;
         }
 
         .splash-loader {
             width: 250px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
+            background: rgba(255,255,255,0.1);
             margin: 20px auto;
             overflow: hidden;
-            position: relative;
+            border-radius: 2px;
         }
 
         .loader-bar {
             width: 40%;
             height: 100%;
-            background: var(--gradient-primary);
-            position: absolute;
-            top: 0;
-            left: -40%;
-            animation: loaderMove 1.5s ease-in-out infinite;
+            background: var(--gradient-royal);
+            animation: loaderMove 1.5s ease infinite;
         }
 
         @keyframes loaderMove {
-            0% { left: -40%; }
-            100% { left: 100%; }
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
         }
 
-        .splash-text {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: var(--text-md);
-            animation: textPulse 1.5s ease-in-out infinite;
+        .splash-version {
+            margin-top: 20px;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px var(--neon-cyan);
+            font-size: 14px;
+            letter-spacing: 2px;
         }
 
-        @keyframes textPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-        }
-
-        /* ========================== الحاوية الرئيسية ========================== */
+        /* ===== الحاوية الرئيسية ===== */
         .main-wrapper {
-            max-width: 650px;
+            max-width: 1300px;
             margin: 0 auto;
             position: relative;
             z-index: 10;
-            padding: var(--space-lg);
-            width: 100%;
+            padding: 20px;
         }
 
-        .main-content {
+        /* ===== الهيدر الفاخر ===== */
+        .luxury-header {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px;
+            padding: 30px;
+            margin-bottom: 30px;
             position: relative;
-            z-index: 11;
-            width: 100%;
-            animation: contentFadeIn 0.8s var(--ease-smooth);
+            overflow: hidden;
+            box-shadow: var(--shadow-3d);
         }
 
-        @keyframes contentFadeIn {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
+        .luxury-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--neon-cyan-soft), transparent 70%);
+            animation: headerGlow 10s linear infinite;
         }
 
-        /* ========================== تأثير الزجاج ========================== */
-        .glass-effect {
-            background: rgba(15, 23, 42, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            transition: all var(--transition-normal) var(--ease-smooth);
-        }
-
-        .glass-effect:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--neon-cyan);
-        }
-
-        /* ========================== الهيدر ========================== */
-        .header-box {
-            margin-bottom: var(--space-2xl);
-            padding: var(--space-2xl);
-            background: rgba(15, 23, 42, 0.3);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
+        @keyframes headerGlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .header-content {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: var(--space-lg);
+            gap: 30px;
+            position: relative;
+            z-index: 2;
         }
 
-        .header-main-logo {
-            width: 160px;
-            height: 160px;
+        .logo-wrapper {
+            position: relative;
+        }
+
+        .logo-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
+            animation: logoPulse 3s ease infinite;
+            z-index: -1;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .header-logo {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             border: 4px solid var(--neon-cyan);
-            box-shadow: 0 0 30px var(--neon-cyan);
             object-fit: cover;
-            animation: logoGlow 3s infinite;
         }
 
-        @keyframes logoGlow {
-            0%, 100% { box-shadow: 0 0 30px var(--neon-cyan); }
-            50% { box-shadow: 0 0 50px var(--neon-purple); }
+        .header-text {
+            flex: 1;
         }
 
-        .header-titles {
-            text-align: center;
-        }
-
-        .header-subtitle {
+        .header-sub {
+            color: var(--neon-cyan);
+            font-size: 18px;
+            margin-bottom: 5px;
             display: block;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: var(--text-lg);
-            margin-bottom: var(--space-xs);
-        }
-
-        .header-title {
-            font-size: var(--text-4xl);
-            font-weight: 900;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            margin-bottom: var(--space-xs);
             text-shadow: 0 0 20px var(--neon-cyan);
         }
 
-        .header-role {
-            display: block;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: var(--text-xl);
-            margin-bottom: var(--space-xs);
+        .header-title {
+            font-size: 42px;
+            font-weight: 900;
+            background: var(--gradient-royal);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
         }
 
         .header-name {
-            display: block;
-            font-size: var(--text-2xl);
-            font-weight: 800;
+            font-size: 24px;
             color: #fff;
             text-shadow: 0 0 15px var(--neon-pink);
         }
 
-        /* ========================== أزرار التنقل ========================== */
-        .nav-buttons {
-            display: flex;
-            gap: var(--space-md);
-            margin-bottom: var(--space-2xl);
+        .version-badge {
+            background: var(--gradient-silver);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
+            font-size: 16px;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
         }
 
-        .btn-nav {
+        /* ===== أزرار التنقل ===== */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
             flex: 1;
-            padding: var(--space-md) var(--space-lg);
+            padding: 18px;
             border: none;
             border-radius: 20px;
-            background: rgba(15, 23, 42, 0.4);
+            background: var(--bg-card);
             color: #fff;
-            cursor: pointer;
             font-weight: 700;
-            font-size: var(--text-md);
+            font-size: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-sm);
-            transition: all var(--transition-normal) var(--ease-smooth);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 10px;
+            cursor: pointer;
             backdrop-filter: blur(10px);
-        }
-
-        .btn-nav:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 20px var(--neon-cyan);
-            border-color: var(--neon-cyan);
-        }
-
-        .btn-nav.active {
-            background: var(--gradient-primary);
-            border-color: transparent;
-            box-shadow: 0 0 30px var(--neon-cyan);
-        }
-
-        .btn-nav i {
-            font-size: var(--text-lg);
-            transition: transform var(--transition-normal);
-        }
-
-        .btn-nav:hover i {
-            transform: rotate(360deg);
-        }
-
-        .btn-nav.btn-admin-icon {
-            flex: 0.3;
-            min-width: 70px;
-        }
-
-        /* ========================== الكروت ========================== */
-        .card {
-            padding: var(--space-2xl);
-            border-radius: 30px;
-            margin-bottom: var(--space-xl);
-            background: rgba(15, 23, 42, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all var(--transition-normal) var(--ease-smooth);
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .card:hover {
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--neon-cyan-soft), transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s;
+        }
+
+        .nav-btn:hover::before {
+            transform: scale(1);
+        }
+
+        .nav-btn:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--neon-cyan);
+            box-shadow: var(--shadow-neon);
+            border-color: var(--neon-cyan);
+        }
+
+        .nav-btn.active {
+            background: var(--gradient-royal);
+            border-color: transparent;
+            box-shadow: var(--shadow-neon);
+        }
+
+        .nav-btn i {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .nav-btn:hover i {
+            transform: rotate(360deg);
+        }
+
+        /* ===== بطاقات فاخرة ===== */
+        .luxury-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 40px;
+            padding: 30px;
+            box-shadow: var(--shadow-3d);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .luxury-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-neon), var(--shadow-3d);
         }
 
         .card-glow {
@@ -542,698 +485,464 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(0, 255, 255, 0.1), transparent 70%);
-            animation: glowRotate 15s linear infinite;
+            background: radial-gradient(circle, var(--neon-cyan-soft), transparent 70%);
+            animation: cardRotate 15s linear infinite;
             pointer-events: none;
         }
 
-        @keyframes glowRotate {
+        @keyframes cardRotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
-        /* ========================== الحقول ========================== */
+        .card-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 0 20px var(--neon-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== Grid مذهل ===== */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .grid-full {
+            grid-column: span 3;
+        }
+
+        .grid-double {
+            grid-column: span 2;
+        }
+
+        /* ===== الحقول ===== */
         .input-group {
-            margin-bottom: var(--space-lg);
+            margin-bottom: 0;
         }
 
         .input-group label {
             display: block;
-            margin-bottom: var(--space-xs);
-            font-size: var(--text-md);
-            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 8px;
+            color: rgba(255,255,255,0.8);
             font-weight: 600;
+            font-size: 14px;
         }
 
         .input-group label i {
             color: var(--neon-cyan);
-            margin-left: var(--space-xs);
+            margin-left: 5px;
         }
 
-        .neon-border {
+        .luxury-input {
             width: 100%;
-            padding: var(--space-md) var(--space-lg);
-            background: rgba(3, 5, 20, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.08);
+            padding: 14px 18px;
+            background: rgba(3, 5, 20, 0.6);
+            border: 2px solid rgba(255,255,255,0.1);
             border-radius: 15px;
             color: #fff;
+            font-size: 15px;
             outline: none;
-            transition: all var(--transition-normal) var(--ease-smooth);
-            font-size: var(--text-md);
+            transition: all 0.3s ease;
         }
 
-        .neon-border:focus {
+        .luxury-input:focus {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px var(--neon-cyan);
+            box-shadow: 0 0 25px var(--neon-cyan);
             transform: translateY(-2px);
-            background: rgba(3, 5, 20, 0.7);
+            background: rgba(3, 5, 20, 0.8);
         }
 
-        .neon-border:hover {
+        .luxury-input:hover {
             border-color: var(--neon-purple);
         }
 
-        .responsive-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: var(--space-md);
+        select.luxury-input {
+            cursor: pointer;
         }
 
-        /* ========================== الزر الرئيسي ========================== */
-        .btn-main {
+        textarea.luxury-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        /* ===== زر فاخر ===== */
+        .luxury-button {
             width: 100%;
-            padding: var(--space-lg) var(--space-xl);
+            padding: 18px;
             border: none;
             border-radius: 20px;
-            background: var(--gradient-primary);
+            background: var(--gradient-royal);
             color: #fff;
             font-weight: 800;
-            font-size: var(--text-lg);
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-md);
-            transition: all var(--transition-normal) var(--ease-bounce);
-            margin-top: var(--space-lg);
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            margin-top: 10px;
         }
 
-        .btn-main:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
+        .luxury-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+            transform: scale(0);
+            transition: transform 0.5s;
         }
 
-        .btn-main i {
-            font-size: var(--text-xl);
-            transition: transform var(--transition-normal) var(--ease-bounce);
+        .luxury-button:hover::before {
+            transform: scale(1);
         }
 
-        .btn-main:hover i {
+        .luxury-button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-neon);
+        }
+
+        .luxury-button i {
+            font-size: 22px;
+            transition: transform 0.5s;
+        }
+
+        .luxury-button:hover i {
             transform: rotate(360deg);
         }
 
-        /* ========================== زر الخدمات ========================== */
-        .services-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-md);
-            padding: var(--space-md) var(--space-xl);
-            background: var(--gradient-warm);
+        /* ===== خدمات ===== */
+        .services-banner {
+            background: var(--gradient-royal);
             border-radius: 30px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
             color: #fff;
-            text-decoration: none;
             font-weight: 700;
-            margin-bottom: var(--space-xl);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            transition: all var(--transition-normal) var(--ease-smooth);
+            font-size: 16px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .services-btn:hover {
+        .services-banner:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px var(--neon-orange);
+            box-shadow: var(--shadow-neon);
         }
 
-        /* ========================== زر الإعدادات ========================== */
-        .settings-panel {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1000;
+        .services-banner i {
+            font-size: 20px;
+            animation: iconWiggle 2s infinite;
         }
 
-        .settings-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            border: none;
-            color: #fff;
-            font-size: var(--text-2xl);
-            cursor: pointer;
-            box-shadow: 0 0 30px var(--neon-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all var(--transition-normal) var(--ease-bounce);
+        @keyframes iconWiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
         }
 
-        .settings-btn:hover {
-            transform: rotate(90deg) scale(1.1);
-            box-shadow: 0 0 50px var(--neon-cyan);
-        }
-
-        .settings-menu {
-            position: absolute;
-            top: 70px;
-            left: 0;
-            width: 350px;
-            background: rgba(3, 5, 20, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: var(--space-xl);
-            backdrop-filter: blur(20px);
-            display: none;
-            z-index: 1001;
-        }
-
-        .settings-menu.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .settings-menu-header {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            margin-bottom: var(--space-lg);
-            padding-bottom: var(--space-md);
-            border-bottom: 2px solid rgba(0, 255, 255, 0.3);
-        }
-
-        .settings-menu-header i {
-            font-size: var(--text-2xl);
-            color: var(--neon-cyan);
-        }
-
-        .settings-menu-header h4 {
-            font-size: var(--text-xl);
-            color: var(--neon-cyan);
-        }
-
-        .settings-section {
-            margin-bottom: var(--space-xl);
-            padding: var(--space-md);
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-        }
-
-        .settings-section h5 {
-            font-size: var(--text-md);
-            margin-bottom: var(--space-md);
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: var(--neon-cyan);
-        }
-
-        .auto-save-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-sm);
-            background: rgba(16, 185, 129, 0.15);
-            border-radius: 10px;
-            font-size: var(--text-sm);
-            color: var(--neon-green);
-            margin-top: var(--space-md);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            animation: saveMessage 2s ease;
-        }
-
-        @keyframes saveMessage {
-            0% { opacity: 0; transform: scale(0.9); }
-            20% { opacity: 1; transform: scale(1); }
-            80% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0.9); }
-        }
-
-        /* ========================== المسار الزمني ========================== */
+        /* ===== المسار الزمني ===== */
         .track-container {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .track-progress {
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            margin: 30px 0;
             position: relative;
-            width: 100%;
-            height: 100px;
-            margin: var(--space-2xl) 0;
         }
 
-        .track-line-bg {
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
+        .track-fill {
+            height: 100%;
+            background: var(--gradient-royal);
             border-radius: 3px;
-            transform: translateY(-50%);
-        }
-
-        .track-line-fill {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            height: 6px;
             width: 0%;
-            background: var(--gradient-primary);
-            border-radius: 3px;
-            transform: translateY(-50%);
             transition: width 1s ease;
-            box-shadow: 0 0 20px var(--neon-cyan);
-            z-index: 2;
         }
 
         .track-points {
-            position: relative;
             display: flex;
             justify-content: space-between;
-            height: 100px;
-            z-index: 3;
+            margin-top: -20px;
         }
 
-        .track-point {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .point {
+            text-align: center;
             flex: 1;
         }
 
-        .track-dot {
+        .point-dot {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--bg-secondary);
+            background: var(--bg-deep);
             border: 2px solid var(--neon-cyan);
+            margin: 0 auto 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: var(--space-xs);
             transition: all 0.3s;
         }
 
-        .track-dot.active {
-            background: var(--gradient-primary);
-            box-shadow: 0 0 30px var(--neon-cyan);
+        .point-dot.active {
+            background: var(--gradient-royal);
+            box-shadow: var(--shadow-neon);
             transform: scale(1.1);
-            border-color: #fff;
         }
 
-        .track-dot i {
+        .point-label {
+            font-size: 12px;
             color: #fff;
-            font-size: 16px;
         }
 
-        .track-label {
-            font-size: var(--text-xs);
-            color: #fff;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 4px 8px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 100px;
+        /* ===== تحسينات الجوال ===== */
+        @media (max-width: 1024px) {
+            .form-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-full, .grid-double {
+                grid-column: span 2;
+            }
         }
 
-        .timeline-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-right: 3px solid var(--neon-cyan);
-            padding: var(--space-md);
-            border-radius: 10px;
-            margin-bottom: var(--space-sm);
-            transition: all var(--transition-normal);
-        }
-
-        .timeline-card:hover {
-            transform: translateX(-3px);
-            background: rgba(0, 255, 255, 0.05);
-        }
-
-        .timeline-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-xs);
-        }
-
-        .timeline-header h4 {
-            color: var(--neon-cyan);
-            font-size: var(--text-sm);
-        }
-
-        .timeline-header span {
-            font-size: var(--text-xs);
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        .timeline-card p {
-            font-size: var(--text-xs);
-            color: rgba(255, 255, 255, 0.8);
-            padding-right: var(--space-sm);
-            border-right: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-
-        /* ========================== التمرير ========================== */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient-primary);
-            border-radius: 10px;
-        }
-
-        /* ========================== تحسينات الجوال ========================== */
         @media (max-width: 768px) {
-            .main-wrapper {
-                padding: var(--space-sm);
-            }
-
-            .nav-buttons {
-                flex-direction: column;
-            }
-
-            .btn-nav.btn-admin-icon {
-                flex: 1;
-            }
-
-            .header-main-logo {
-                width: 130px;
-                height: 130px;
-            }
-
-            .header-title {
-                font-size: var(--text-3xl);
-            }
-
-            .responsive-grid {
+            .form-grid {
                 grid-template-columns: 1fr;
             }
-
-            .settings-menu {
-                width: 300px;
-                left: 5px;
+            .grid-full, .grid-double {
+                grid-column: span 1;
             }
-
-            .track-dot {
-                width: 35px;
-                height: 35px;
+            .header-content {
+                flex-direction: column;
+                text-align: center;
             }
-
-            .track-label {
-                font-size: 10px;
-                max-width: 80px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .splash-logo {
-                width: 150px;
-                height: 150px;
-            }
-
-            .header-main-logo {
-                width: 110px;
-                height: 110px;
-            }
-
             .header-title {
-                font-size: var(--text-2xl);
+                font-size: 32px;
             }
-
-            .card {
-                padding: var(--space-lg);
-            }
-
-            .track-dot {
-                width: 30px;
-                height: 30px;
-            }
-
-            .track-label {
-                font-size: 9px;
-                max-width: 70px;
+            .version-badge {
+                margin-top: 15px;
             }
         }
-
-        /* ========================== منع الطباعة ========================== */
-        @media print {
-            * { display: none !important; }
-            body::before {
-                content: "لا يمكن طباعة هذه الصفحة";
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: var(--bg-primary);
-                color: var(--neon-red);
-                font-size: 24px;
-                z-index: 999999;
-            }
-        }
-
-        /* ========================== نهاية الأنماط ========================== */
     </style>
 </head>
 <body>
-    <!-- ==================== جزيئات متطايرة ==================== -->
-    <div class="particles-container" id="particles-container"></div>
+    <!-- جزيئات -->
+    <div class="particles" id="particles"></div>
 
-    <!-- ==================== عناصر الخلفية المتحركة ==================== -->
+    <!-- عناصر عائمة -->
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
         <div class="floating-element"></div>
     </div>
 
-    <!-- ==================== زر الإعدادات ==================== -->
-    <div class="settings-panel">
-        <button class="settings-btn" id="settings-btn" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
-        <div class="settings-menu" id="settings-menu">
-            <div class="settings-menu-header">
-                <i class="fas fa-sliders-h"></i>
-                <h4>إعدادات المنصة</h4>
-            </div>
-            
-            <div class="settings-section">
-                <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
-                <div class="input-group">
-                    <label>رابط الشعار (URL)</label>
-                    <input type="url" id="logo-url" class="neon-border" placeholder="https://example.com/logo.png" value="https://via.placeholder.com/200x200?text=Logo">
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h5><i class="fas fa-globe"></i> موقع تقديم الخدمات</h5>
-                <div class="input-group">
-                    <label>رابط الموقع</label>
-                    <input type="url" id="services-url" class="neon-border" placeholder="https://services.egeng.org" value="https://services.egeng.org">
-                </div>
-                <div class="input-group">
-                    <label>نص الزر</label>
-                    <input type="text" id="services-text" class="neon-border" placeholder="موقع تقديم خدمات النقابة" value="موقع تقديم خدمات النقابة">
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                    <input type="checkbox" id="show-services-btn" checked style="width: 18px; height: 18px; accent-color: var(--neon-cyan);">
-                    <label for="show-services-btn" style="color: #fff;">إظهار الزر</label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
-                <div class="input-group">
-                    <label>بادئة الشكاوى</label>
-                    <input type="text" id="complaint-prefix" class="neon-border" value="REQ">
-                </div>
-                <div class="input-group">
-                    <label>بادئة المقترحات</label>
-                    <input type="text" id="suggestion-prefix" class="neon-border" value="REP">
-                </div>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-main" onclick="saveSettings()" style="padding: 12px; font-size: 14px;">
-                    <i class="fas fa-save"></i> حفظ
-                </button>
-                <button class="btn-nav" onclick="resetSettings()" style="padding: 12px; font-size: 14px;">
-                    <i class="fas fa-undo"></i> إعادة ضبط
-                </button>
-            </div>
-
-            <div class="auto-save-message" id="auto-save-message" style="display: none;">
-                <i class="fas fa-check-circle"></i> <span>تم الحفظ</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ==================== شاشة البداية ==================== -->
+    <!-- شاشة البداية -->
     <div class="splash-screen" id="splash-screen">
         <div class="splash-content">
-            <img src="https://via.placeholder.com/200x200?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
-            <h1 class="splash-title">نقابة تكنولوجيا المعلومات والبرمجيات</h1>
+            <img src="https://via.placeholder.com/180x180?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
+            <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
             <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
             <div class="splash-loader">
                 <div class="loader-bar"></div>
             </div>
-            <p class="splash-text">جاري تحميل المنصة المتطورة...</p>
+            <div class="splash-version">VR 2.05.2026 | نسخة البوابة</div>
         </div>
     </div>
 
-    <!-- ==================== الحاوية الرئيسية ==================== -->
-    <div class="main-wrapper">
-        <div class="main-content" id="main-content" style="display: none;">
-            
-            <!-- ==================== الهيدر ==================== -->
-            <header class="header-box glass-effect">
-                <div class="header-content">
-                    <div class="header-logo-container">
-                        <img src="https://via.placeholder.com/180x180?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
-                    </div>
-                    <div class="header-titles">
-                        <span class="header-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</span>
-                        <h1 class="header-title">بوابة الشكاوي والمقترحات</h1>
-                        <span class="header-role">النقيب العام</span>
-                        <h2 class="header-name">المهندس / محمود جميل</h2>
-                    </div>
+    <!-- المحتوى الرئيسي -->
+    <div class="main-wrapper" id="main-content" style="display: none;">
+        
+        <!-- الهيدر الفاخر -->
+        <div class="luxury-header">
+            <div class="header-content">
+                <div class="logo-wrapper">
+                    <img src="https://via.placeholder.com/150x150?text=Logo" alt="شعار" class="header-logo" id="header-logo">
                 </div>
-            </header>
+                <div class="header-text">
+                    <span class="header-sub">نقابة تكنولوجيا المعلومات والبرمجيات</span>
+                    <h1 class="header-title">بوابة الشكاوي والمقترحات</h1>
+                    <span class="header-name">المهندس / محمود جميل</span>
+                </div>
+                <div class="version-badge">
+                    <i class="fas fa-crown"></i> VR 2.05.2026
+                </div>
+            </div>
+        </div>
 
-            <!-- ==================== أزرار التنقل ==================== -->
-            <nav class="nav-buttons">
-                <button class="btn-nav active" onclick="switchView('submit')" id="btn-submit">
-                    <i class="fas fa-plus-circle"></i> <span>تقديم طلب</span>
-                </button>
-                <button class="btn-nav" onclick="switchView('track')" id="btn-track">
-                    <i class="fas fa-search"></i> <span>استعلام</span>
-                </button>
-                <button class="btn-nav btn-admin-icon" onclick="switchView('admin-login')" id="btn-admin">
-                    <i class="fas fa-user-cog"></i>
-                </button>
-            </nav>
+        <!-- أزرار التنقل -->
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="switchView('submit')">
+                <i class="fas fa-plus-circle"></i> تقديم طلب
+            </button>
+            <button class="nav-btn" onclick="switchView('track')">
+                <i class="fas fa-search"></i> استعلام
+            </button>
+            <button class="nav-btn" onclick="switchView('admin-login')">
+                <i class="fas fa-user-cog"></i>
+            </button>
+        </div>
 
-            <!-- ==================== شاشة تقديم الطلب ==================== -->
-            <section id="view-submit" class="view">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
-                    <a href="https://services.egeng.org" id="services-link" target="_blank" class="services-btn">
-                        <i class="fas fa-globe"></i> <span>موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
-                    </a>
+        <!-- شاشة تقديم الطلب -->
+        <section id="view-submit" class="view">
+            <div class="luxury-card">
+                <div class="card-glow"></div>
+                
+                <a href="#" id="services-link" class="services-banner">
+                    <i class="fas fa-globe"></i>
+                    <span>موقع تقديم خدمات النقابة</span>
+                    <i class="fas fa-arrow-left"></i>
+                </a>
 
+                <h2 class="card-title">
+                    <i class="fas fa-pen"></i> نموذج تقديم طلب
+                </h2>
+
+                <div class="form-grid">
+                    <!-- نوع مقدم الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
-                        <select id="u-member-type" class="neon-border" onchange="toggleMemberField()">
+                        <select id="u-member-type" class="luxury-input" onchange="toggleMemberField()">
                             <option value="عضو نقابة">عضو نقابة</option>
                             <option value="غير عضو">غير عضو</option>
                         </select>
                     </div>
-                    
+
+                    <!-- رقم العضوية -->
                     <div class="input-group" id="member-id-box">
                         <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
-                        <input type="text" id="u-member-id" placeholder="ادخل رقم عضويتك" class="neon-border">
+                        <input type="text" id="u-member-id" placeholder="رقم العضوية" class="luxury-input">
                     </div>
 
+                    <!-- الاسم -->
                     <div class="input-group">
                         <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-border">
+                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="luxury-input">
                     </div>
 
+                    <!-- الرقم القومي -->
                     <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="luxury-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
 
-                    <div class="responsive-grid">
-                        <div class="input-group">
-                            <label><i class="fas fa-phone"></i> رقم الهاتف</label>
-                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                        </div>
-                        <div class="input-group">
-                            <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
-                            <select id="u-gov" class="neon-border">
-                                <option value="القاهرة">القاهرة</option>
-                                <option value="الجيزة">الجيزة</option>
-                                <option value="الإسكندرية">الإسكندرية</option>
-                                <option value="الدقهلية">الدقهلية</option>
-                                <option value="البحر الأحمر">البحر الأحمر</option>
-                                <option value="البحيرة">البحيرة</option>
-                                <option value="الفيوم">الفيوم</option>
-                                <option value="الغربية">الغربية</option>
-                                <option value="الإسماعيلية">الإسماعيلية</option>
-                                <option value="المنوفية">المنوفية</option>
-                                <option value="المنيا">المنيا</option>
-                                <option value="القليوبية">القليوبية</option>
-                                <option value="الوادي الجديد">الوادي الجديد</option>
-                                <option value="السويس">السويس</option>
-                                <option value="أسوان">أسوان</option>
-                                <option value="أسيوط">أسيوط</option>
-                                <option value="بني سويف">بني سويف</option>
-                                <option value="بورسعيد">بورسعيد</option>
-                                <option value="جنوب سيناء">جنوب سيناء</option>
-                                <option value="دمياط">دمياط</option>
-                                <option value="سوهاج">سوهاج</option>
-                                <option value="شمال سيناء">شمال سيناء</option>
-                                <option value="قنا">قنا</option>
-                                <option value="كفر الشيخ">كفر الشيخ</option>
-                                <option value="مطروح">مطروح</option>
-                                <option value="الأقصر">الأقصر</option>
-                                <option value="حلوان">حلوان</option>
-                                <option value="6 أكتوبر">6 أكتوبر</option>
-                                </select>
-                                <div>
-
+                    <!-- الهاتف -->
                     <div class="input-group">
+                        <label><i class="fas fa-phone"></i> الهاتف</label>
+                        <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="luxury-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+
+                    <!-- المحافظة -->
+                    <div class="input-group">
+                        <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
+                        <select id="u-gov" class="luxury-input">
+                            <option value="القاهرة">القاهرة</option>
+                            <option value="الجيزة">الجيزة</option>
+                            <option value="الإسكندرية">الإسكندرية</option>
+                            <option value="الدقهلية">الدقهلية</option>
+                            <option value="البحر الأحمر">البحر الأحمر</option>
+                            <option value="البحيرة">البحيرة</option>
+                            <option value="الفيوم">الفيوم</option>
+                            <option value="الغربية">الغربية</option>
+                            <option value="الإسماعيلية">الإسماعيلية</option>
+                            <option value="المنوفية">المنوفية</option>
+                            <option value="المنيا">المنيا</option>
+                            <option value="القليوبية">القليوبية</option>
+                            <option value="الوادي الجديد">الوادي الجديد</option>
+                            <option value="السويس">السويس</option>
+                            <option value="أسوان">أسوان</option>
+                            <option value="أسيوط">أسيوط</option>
+                            <option value="بني سويف">بني سويف</option>
+                            <option value="بورسعيد">بورسعيد</option>
+                            <option value="جنوب سيناء">جنوب سيناء</option>
+                            <option value="دمياط">دمياط</option>
+                            <option value="سوهاج">سوهاج</option>
+                            <option value="شمال سيناء">شمال سيناء</option>
+                            <option value="قنا">قنا</option>
+                            <option value="كفر الشيخ">كفر الشيخ</option>
+                            <option value="مطروح">مطروح</option>
+                            <option value="الأقصر">الأقصر</option>
+                            <option value="حلوان">حلوان</option>
+                            <option value="6 أكتوبر">6 أكتوبر</option>
+                        </select>
+                    </div>
+
+                    <!-- العنوان -->
+                    <div class="input-group grid-double">
                         <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
-                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-border">
+                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="luxury-input">
                     </div>
 
+                    <!-- المهنة -->
                     <div class="input-group">
-                        <label><i class="fas fa-briefcase"></i> المهنة الحالية</label>
-                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-border">
+                        <label><i class="fas fa-briefcase"></i> المهنة</label>
+                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="luxury-input">
                     </div>
 
+                    <!-- نوع الطلب -->
                     <div class="input-group">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="u-req-type" class="neon-border">
+                        <select id="u-req-type" class="luxury-input">
                             <option value="شكوى">شكوى</option>
                             <option value="اقتراح">اقتراح</option>
                         </select>
                     </div>
 
-                    <div class="input-group">
+                    <!-- التفاصيل - تمتد على 3 أعمدة -->
+                    <div class="input-group grid-full">
                         <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
-                        <textarea id="u-details" rows="5" placeholder="اكتب تفاصيل طلبك هنا..." class="neon-border"></textarea>
+                        <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك هنا..." class="luxury-input"></textarea>
                     </div>
-
-                    <button class="btn-main" onclick="handleSubmit()">
-                        <i class="fas fa-paper-plane"></i> <span>إرسال الطلب وحفظ الوصل</span>
-                    </button>
                 </div>
-            </section>
 
-            <!-- ==================== شاشة الاستعلام ==================== -->
-            <section id="view-track" class="view" style="display:none;">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <i class="fas fa-search" style="font-size: 50px; color: var(--neon-cyan); text-shadow: 0 0 30px var(--neon-cyan);"></i>
-                        <h3 style="color: #fff; margin-top: 10px;">استعلام عن طلب</h3>
-                    </div>
+                <!-- زر الإرسال -->
+                <button class="luxury-button" onclick="handleSubmit()">
+                    <i class="fas fa-paper-plane"></i>
+                    إرسال الطلب وحفظ الوصل
+                </button>
+            </div>
+        </section>
 
-                    <div class="input-group">
+        <!-- شاشة الاستعلام -->
+        <section id="view-track" class="view" style="display: none;">
+            <div class="luxury-card">
+                <div class="card-glow"></div>
+                <h2 class="card-title">
+                    <i class="fas fa-search"></i> استعلام عن طلب
+                </h2>
+
+                <div class="form-grid">
+                    <div class="input-group grid-full">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي" class="neon-border" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="q-nid" placeholder="ادخل الرقم القومي" class="luxury-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
-                    
-                    <div class="input-group">
+
+                    <div class="input-group grid-double">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="q-type" class="neon-border">
+                        <select id="q-type" class="luxury-input">
                             <option value="شكوى">شكوى</option>
                             <option value="اقتراح">اقتراح</option>
                         </select>
@@ -1241,59 +950,70 @@
 
                     <div class="input-group">
                         <label><i class="fas fa-qrcode"></i> كود الطلب</label>
-                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="neon-border">
+                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="luxury-input">
                     </div>
-
-                    <button class="btn-main" onclick="handleTrack()">
-                        <i class="fas fa-search"></i> <span>استعلام</span>
-                    </button>
                 </div>
 
-                <div id="track-result-box" style="display:none;"></div>
-            </section>
+                <button class="luxury-button" onclick="handleTrack()">
+                    <i class="fas fa-search"></i>
+                    استعلام عن المسار
+                </button>
+            </div>
 
-            <!-- ==================== شاشة دخول الادمن ==================== -->
-            <section id="view-admin-login" class="view" style="display:none;">
-                <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="width: 100px; height: 100px; background: var(--gradient-primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 50px var(--neon-cyan);">
-                            <i class="fas fa-user-shield" style="font-size: 50px; color: #fff;"></i>
-                        </div>
-                        <h3 style="color: var(--neon-cyan);">دخول المنظومة</h3>
+            <div id="track-result-box" style="display: none;"></div>
+        </section>
+
+        <!-- شاشة دخول الادمن -->
+        <section id="view-admin-login" class="view" style="display: none;">
+            <div class="luxury-card">
+                <div class="card-glow"></div>
+                
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div style="width: 100px; height: 100px; background: var(--gradient-royal); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: var(--shadow-neon);">
+                        <i class="fas fa-user-shield" style="font-size: 50px; color: #fff;"></i>
                     </div>
-
-                    <div class="input-group">
-                        <input type="text" id="adm-user" placeholder="اسم المستخدم" class="neon-border">
-                    </div>
-
-                    <div class="input-group">
-                        <input type="password" id="adm-pass" placeholder="كلمة المرور" class="neon-border">
-                    </div>
-
-                    <button class="btn-main" onclick="adminLogin()">
-                        <i class="fas fa-sign-in-alt"></i> <span>دخول</span>
-                    </button>
+                    <h2 class="card-title" style="margin-bottom: 0;">دخول المنظومة</h2>
+                    <p style="color: rgba(255,255,255,0.6);">لوحة التحكم الخاصة بالمشرفين</p>
                 </div>
-            </section>
+
+                <div class="form-grid">
+                    <div class="input-group grid-full">
+                        <input type="text" id="adm-user" placeholder="اسم المستخدم" class="luxury-input">
+                    </div>
+                    <div class="input-group grid-full">
+                        <input type="password" id="adm-pass" placeholder="كلمة المرور" class="luxury-input">
+                    </div>
+                </div>
+
+                <button class="luxury-button" onclick="adminLogin()">
+                    <i class="fas fa-sign-in-alt"></i>
+                    دخول
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 20px; margin-top: 30px;">
+            <span style="background: var(--gradient-royal); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+                نقابة تكنولوجيا المعلومات والبرمجيات
+            </span>
+            <span style="color: rgba(255,255,255,0.3); margin: 0 10px;">|</span>
+            <span style="color: var(--neon-cyan); font-family: 'Orbitron', monospace;">
+                VR 2.05.2026
+            </span>
         </div>
     </div>
 
-    <!-- ==================== عنصر الكارت المخفي ==================== -->
+    <!-- عنصر الكارت المخفي -->
     <div id="request-card-container" style="position: absolute; left: -9999px; top: 0; width: 650px;"></div>
 
-    <!-- ==================== Footer ==================== -->
-    <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 40px;">
-        <span style="background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">نقابة تكنولوجيا المعلومات والبرمجيات</span> © 2026
-    </div>
-
-    <!-- ==================== JavaScript ==================== -->
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
-        // ==================== إنشاء الجزيئات ====================
+        // إنشاء الجزيئات
         function createParticles() {
-            const container = document.getElementById('particles-container');
-            if (!container) return;
+            const container = document.getElementById('particles');
             for (let i = 0; i < 30; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
@@ -1305,7 +1025,7 @@
             }
         }
 
-        // ==================== شاشة البداية ====================
+        // شاشة البداية
         window.addEventListener('load', function() {
             createParticles();
             setTimeout(function() {
@@ -1314,85 +1034,80 @@
             }, 3000);
         });
 
-        // ==================== تبديل المشاهد ====================
+        // تبديل المشاهد
         function switchView(view) {
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('view-' + view).style.display = 'block';
-            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
-            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
-            else if (view === 'admin-login') document.getElementById('btn-admin').classList.add('active');
+            
+            if (view === 'submit') document.querySelectorAll('.nav-btn')[0].classList.add('active');
+            else if (view === 'track') document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            else if (view === 'admin-login') document.querySelectorAll('.nav-btn')[2].classList.add('active');
         }
 
-        // ==================== حقل العضوية ====================
+        // حقل العضوية
         function toggleMemberField() {
             const type = document.getElementById('u-member-type').value;
             document.getElementById('member-id-box').style.display = type === 'عضو نقابة' ? 'block' : 'none';
         }
 
-        // ==================== إعدادات ====================
-        function toggleSettings() {
-            document.getElementById('settings-menu').classList.toggle('show');
+        // دوال مؤقتة
+        function handleSubmit() {
+            Swal.fire({
+                icon: 'info',
+                title: 'جاري التفعيل',
+                text: 'سيتم ربط Firebase قريباً',
+                background: '#030514',
+                color: '#fff',
+                confirmButtonColor: '#00ffff'
+            });
         }
 
-        function saveSettings() {
-            const logo = document.getElementById('logo-url').value;
-            document.getElementById('splash-logo').src = logo;
-            document.getElementById('header-main-logo').src = logo;
-            localStorage.setItem('logo', logo);
+        function handleTrack() {
+            Swal.fire({
+                icon: 'info',
+                title: 'جاري التفعيل',
+                text: 'سيتم ربط Firebase قريباً',
+                background: '#030514',
+                color: '#fff',
+                confirmButtonColor: '#00ffff'
+            });
+        }
+
+        function adminLogin() {
+            const user = document.getElementById('adm-user').value;
+            const pass = document.getElementById('adm-pass').value;
             
-            const msg = document.getElementById('auto-save-message');
-            msg.style.display = 'flex';
-            setTimeout(() => msg.style.display = 'none', 2000);
-        }
-
-        function resetSettings() {
-            document.getElementById('logo-url').value = 'https://via.placeholder.com/200x200?text=Logo';
-            document.getElementById('services-url').value = 'https://services.egeng.org';
-            document.getElementById('services-text').value = 'موقع تقديم خدمات النقابة';
-            document.getElementById('show-services-btn').checked = true;
-            document.getElementById('complaint-prefix').value = 'REQ';
-            document.getElementById('suggestion-prefix').value = 'REP';
-            saveSettings();
-        }
-
-        // ==================== تحميل الإعدادات ====================
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedLogo = localStorage.getItem('logo');
-            if (savedLogo) {
-                document.getElementById('splash-logo').src = savedLogo;
-                document.getElementById('header-main-logo').src = savedLogo;
+            if (user === 'admin' && pass === 'itws@2026') {
+                localStorage.setItem('admin', 'true');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'مرحباً بك',
+                    text: 'جاري تحويلك للوحة التحكم',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: '#030514'
+                }).then(() => {
+                    window.location.href = 'admin.html';
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'بيانات الدخول غير صحيحة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
             }
+        }
+
+        // تحميل أولي
+        document.addEventListener('DOMContentLoaded', function() {
             switchView('submit');
             if (document.getElementById('u-member-type')?.value === 'غير عضو') {
                 document.getElementById('member-id-box').style.display = 'none';
             }
         });
-
-        // ==================== دوال مؤقتة ====================
-        function handleSubmit() {
-            Swal.fire({ icon: 'info', title: 'تنبيه', text: 'جاري ربط Firebase', background: '#030514', color: '#fff', confirmButtonColor: '#00ffff' });
-        }
-
-        function handleTrack() {
-            Swal.fire({ icon: 'info', title: 'تنبيه', text: 'جاري ربط Firebase', background: '#030514', color: '#fff', confirmButtonColor: '#00ffff' });
-        }
-
-        function adminLogin() {
-            const u = document.getElementById('adm-user').value;
-            const p = document.getElementById('adm-pass').value;
-            if (u === 'admin' && p === 'itws@2026') {
-                localStorage.setItem('admin', 'true');
-                Swal.fire({ icon: 'success', title: 'مرحباً', timer: 1500, showConfirm: false, background: '#030514' }).then(() => {
-                    window.location.href = 'admin.html';
-                });
-            } else {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'بيانات غير صحيحة', background: '#030514', confirmButtonColor: '#00ffff' });
-            }
-        }
     </script>
-
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
