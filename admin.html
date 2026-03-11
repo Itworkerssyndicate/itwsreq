@@ -19,7 +19,7 @@
     <style>
         /* =====================================================================
            VR 2.05.2026 ADMIN - لوحة التحكم الفاخرة
-           الإصدار الماسي - النسخة الإدارية
+           الإصدار الماسي - النسخة الإدارية النهائية
            ===================================================================== */
 
         :root {
@@ -1095,7 +1095,7 @@
         <div class="floating-element"></div>
     </div>
 
-    <!-- زر الإعدادات -->
+    <!-- زر الإعدادات (هذا للصفحة نفسها - مش هو المشكلة) -->
     <div class="settings-panel">
         <button class="settings-btn" onclick="toggleSettings()">
             <i class="fas fa-cog"></i>
@@ -1198,7 +1198,7 @@
             </div>
         </div>
 
-        <!-- إحصائيات سريعة (حقيقية من Firebase) -->
+        <!-- إحصائيات سريعة -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -1283,7 +1283,6 @@
                         <label>الحالة</label>
                         <select id="search-status" onchange="performSearch()">
                             <option value="all">الكل</option>
-                            <!-- الحالات هتتولد ديناميكياً من البيانات -->
                         </select>
                     </div>
                 </div>
@@ -1296,7 +1295,7 @@
             </div>
         </div>
 
-        <!-- جدول البيانات مع Pagination -->
+        <!-- جدول البيانات -->
         <div class="table-card">
             <div class="table-responsive">
                 <table id="main-table">
@@ -1436,9 +1435,9 @@
         db.enablePersistence()
             .catch((err) => {
                 if (err.code == 'failed-precondition') {
-                    console.log('❌ التخزين المؤقت مش متاح');
+                    console.log('⚠️ التخزين المؤقت مش متاح (نافذة مفتوحة في تبويب تاني)');
                 } else if (err.code == 'unimplemented') {
-                    console.log('❌ المتصفح مش بيدعم التخزين المؤقت');
+                    console.log('⚠️ المتصفح مش بيدعم التخزين المؤقت');
                 }
             });
 
@@ -1454,10 +1453,8 @@
         // متغيرات Pagination
         let lastVisible = null;
         let firstVisible = null;
-        let currentPage = 1;
-        const pageSize = 50;
-        let totalCount = 0;
         let isLoading = false;
+        const pageSize = 50;
         
         // Cache
         let requestsCache = {
@@ -1550,7 +1547,7 @@
             window.location.href = 'index.html';
         }
 
-        // ==================== تحميل البيانات بسرعة (مع Cache) ====================
+        // ==================== تحميل البيانات ====================
         async function loadData(filter) {
             currentFilter = filter;
             
@@ -1578,7 +1575,6 @@
             document.getElementById('load-more').style.display = 'none';
             document.getElementById('prev-page').style.display = 'none';
             document.getElementById('next-page').style.display = 'none';
-            document.getElementById('page-info').style.display = 'none';
 
             try {
                 // محاولة استخدام الكاش أولاً
@@ -1586,6 +1582,7 @@
                 if (requestsCache[filter] && requestsCache[filter].length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
                     console.log('✅ استخدام البيانات من الكاش');
                     allRequests = [...requestsCache[filter]];
+                    updateStatusFilterOptions();
                     updateStats();
                     filterData();
                     return;
@@ -1593,7 +1590,7 @@
 
                 console.log('🔄 تحميل بيانات جديدة من Firebase');
                 
-                // بناء الاستعلام مع Pagination
+                // بناء الاستعلام
                 let query = db.collection("Requests")
                     .orderBy("createdAt", "desc")
                     .limit(pageSize);
@@ -1602,7 +1599,6 @@
                     query = query.where("type", "==", filter);
                 }
 
-                // استعلام واحد سريع
                 const snapshot = await query.get();
                 
                 lastVisible = snapshot.docs[snapshot.docs.length - 1];
@@ -1704,7 +1700,7 @@
                             data.createdAtDate = new Date();
                         }
                         
-                        if (data.status) {
+                        if (data.status && !allStatuses.has(data.status)) {
                             allStatuses.add(data.status);
                         }
                         
@@ -1899,35 +1895,87 @@
             document.getElementById('admin-tbody').innerHTML = html;
         }
 
-        // ==================== إدارة الطلب ====================
-        async function manageReq(refId) {
-            try {
-                const doc = await db.collection("Requests").doc(refId).get();
-                if (doc.exists) {
-                    showRequestModal(doc.data());
-                } else {
+        // ==================== إدارة الطلب (المشكلة هنا كانت) ====================
+        function manageReq(refId) {
+            console.log('🔍 فتح الطلب:', refId);
+            
+            // 1️⃣ أول حاجة: ندور على الطلب في الكاش (allRequests)
+            const requestFromCache = allRequests.find(r => r.refId === refId);
+            
+            if (requestFromCache) {
+                console.log('✅ تم العثور على الطلب في الكاش');
+                showRequestModal(requestFromCache);
+                return;
+            }
+            
+            // 2️⃣ لو مش موجود في الكاش، نجيب من Firebase
+            console.log('🔄 الطلب مش في الكاش، بنجيبه من Firebase');
+            
+            // منع الضغط المتكرر
+            if (isLoading) return;
+            isLoading = true;
+            
+            // إظهار مؤشر تحميل
+            Swal.fire({
+                title: 'جاري تحميل البيانات',
+                text: 'الرجاء الانتظار...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: '#030514',
+                color: '#fff'
+            });
+            
+            db.collection("Requests").doc(refId).get()
+                .then(doc => {
+                    Swal.close();
+                    isLoading = false;
+                    
+                    if (doc.exists) {
+                        const data = doc.data();
+                        // تحويل التاريخ
+                        if (data.createdAt && data.createdAt.toDate) {
+                            data.createdAtDate = data.createdAt.toDate();
+                        }
+                        showRequestModal(data);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'خطأ',
+                            text: 'الطلب غير موجود',
+                            background: '#030514',
+                            confirmButtonColor: '#00ffff'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.close();
+                    isLoading = false;
+                    console.error("Error getting request:", error);
                     Swal.fire({
                         icon: 'error',
                         title: 'خطأ',
-                        text: 'الطلب غير موجود',
+                        text: 'حدث خطأ في جلب البيانات',
                         background: '#030514',
                         confirmButtonColor: '#00ffff'
                     });
-                }
-            } catch (error) {
-                console.error("Error getting request:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في جلب البيانات',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
                 });
-            }
         }
 
         // ==================== عرض نافذة إدارة الطلب ====================
         function showRequestModal(d) {
+            // نتأكد إن البيانات موجودة
+            if (!d || !d.refId) {
+                console.error('❌ البيانات مش مكتملة:', d);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'بيانات الطلب غير مكتملة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             currentRequestId = d.refId;
             
             // تنسيق المسار الزمني
