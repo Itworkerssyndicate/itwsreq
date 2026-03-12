@@ -23,14 +23,12 @@
            ===================================================================== */
 
         :root {
-            /* الألوان الأساسية */
             --bg-deep: #030514;
             --bg-dark: #0a0f1f;
             --bg-card: rgba(15, 23, 42, 0.4);
             --bg-card-hover: rgba(15, 23, 42, 0.7);
             --bg-sidebar: rgba(3, 5, 20, 0.7);
             
-            /* النيون الفاخر */
             --neon-cyan: #00ffff;
             --neon-cyan-glow: rgba(0, 255, 255, 0.7);
             --neon-cyan-soft: rgba(0, 255, 255, 0.3);
@@ -54,19 +52,16 @@
             --neon-orange: #f97316;
             --neon-orange-glow: rgba(249, 115, 22, 0.7);
             
-            /* التدرجات الفاخرة */
             --gradient-royal: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
             --gradient-diamond: linear-gradient(45deg, #3b82f6, #00ffff, #a855f7);
             --gradient-success: linear-gradient(135deg, #10b981, #00ffff);
             --gradient-danger: linear-gradient(135deg, #ef4444, #f97316);
             --gradient-silver: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
             
-            /* الظلال */
             --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
             --shadow-neon: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
             --shadow-neon-red: 0 0 30px var(--neon-red), 0 0 60px var(--neon-red);
             
-            /* المسافات */
             --space-xs: 4px;
             --space-sm: 8px;
             --space-md: 16px;
@@ -91,7 +86,6 @@
             overflow-x: hidden;
         }
 
-        /* ===== خلفية كونية فاخرة ===== */
         body::before {
             content: '';
             position: fixed;
@@ -132,7 +126,6 @@
             100% { transform: translateY(50px); }
         }
 
-        /* ===== عناصر عائمة ===== */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -172,7 +165,6 @@
             100% { transform: translate(50px, -50px) scale(1.1); }
         }
 
-        /* ===== جزيئات متطايرة ===== */
         .particles {
             position: fixed;
             top: 0;
@@ -198,7 +190,6 @@
             100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
 
-        /* ===== زر الإعدادات ===== */
         .settings-panel {
             position: fixed;
             top: 20px;
@@ -319,7 +310,6 @@
             margin-top: 15px;
         }
 
-        /* ===== الشريط الجانبي ===== */
         .admin-sidebar {
             width: 300px;
             height: 100vh;
@@ -475,7 +465,6 @@
             box-shadow: 0 0 30px var(--neon-red);
         }
 
-        /* ===== المحتوى الرئيسي ===== */
         .admin-main {
             margin-right: 300px;
             padding: 30px;
@@ -484,7 +473,6 @@
             z-index: 90;
         }
 
-        /* ===== الهيدر العلوي ===== */
         .top-header {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -548,7 +536,6 @@
             box-shadow: 0 0 20px var(--neon-cyan);
         }
 
-        /* ===== بطاقة الإحصائيات ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -601,7 +588,6 @@
             color: transparent;
         }
 
-        /* ===== البحث المتقدم ===== */
         .search-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -704,7 +690,6 @@
             border: 1px solid rgba(0,255,255,0.3);
         }
 
-        /* ===== الجدول ===== */
         .table-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
@@ -752,8 +737,10 @@
             box-shadow: 0 5px 15px rgba(0,255,255,0.2);
         }
 
-        /* ===== شارات الحالة ===== */
-        .status-badge {
+        .status-badge[data-status="تم الاستلام"] {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
             padding: 6px 12px;
             border-radius: 30px;
             font-size: 11px;
@@ -761,46 +748,70 @@
             display: inline-block;
         }
 
-        .status-badge[data-status="تم الاستلام"] {
-            background: rgba(249, 115, 22, 0.2);
-            color: #f97316;
-            border: 1px solid #f97316;
-        }
-
         .status-badge[data-status="قيد المراجعة"] {
             background: rgba(59, 130, 246, 0.2);
             color: #3b82f6;
             border: 1px solid #3b82f6;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .status-badge[data-status="جاري التنفيذ"] {
             background: rgba(168, 85, 247, 0.2);
             color: #a855f7;
             border: 1px solid #a855f7;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .status-badge[data-status="تم الحل"] {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
             border: 1px solid #10b981;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .status-badge[data-status="تم الإغلاق النهائي"] {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid #ef4444;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .status-badge[data-status="تمت القراءة"] {
             background: rgba(0, 255, 255, 0.2);
             color: #00ffff;
             border: 1px solid #00ffff;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .status-badge[data-status="لم يقرأ"] {
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
             border: 1px solid #f97316;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
         }
 
         .type-badge {
@@ -867,7 +878,6 @@
             box-shadow: 0 5px 15px var(--neon-red);
         }
 
-        /* ===== أزرار التحميل ===== */
         .load-more-btn {
             width: 100%;
             padding: 15px;
@@ -892,7 +902,6 @@
             cursor: not-allowed;
         }
 
-        /* ===== النوافذ المنبثقة ===== */
         .modal {
             position: fixed;
             z-index: 2000;
@@ -978,7 +987,6 @@
             transform: rotate(90deg);
         }
 
-        /* ===== تخصيص SweetAlert ===== */
         .swal2-popup {
             background: var(--bg-deep) !important;
             border: 2px solid var(--neon-cyan) !important;
@@ -1000,7 +1008,6 @@
             border-radius: 30px !important;
         }
 
-        /* ===== المسار الزمني ===== */
         .timeline-card {
             background: rgba(255,255,255,0.02);
             border-right: 3px solid var(--neon-cyan);
@@ -1030,7 +1037,6 @@
             font-size: 12px;
         }
 
-        /* ===== تحسينات الجوال ===== */
         @media (max-width: 1200px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1069,16 +1075,12 @@
     </style>
 </head>
 <body>
-    <!-- جزيئات -->
     <div class="particles" id="particles"></div>
-
-    <!-- عناصر عائمة -->
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
     </div>
 
-    <!-- زر الإعدادات -->
     <div class="settings-panel">
         <button class="settings-btn" onclick="toggleSettings()">
             <i class="fas fa-cog"></i>
@@ -1122,7 +1124,6 @@
         </div>
     </div>
 
-    <!-- الشريط الجانبي -->
     <aside class="admin-sidebar" id="admin-sidebar">
         <div class="sidebar-logo">
             <div class="logo-wrapper">
@@ -1157,9 +1158,7 @@
         </button>
     </aside>
 
-    <!-- المحتوى الرئيسي -->
     <main class="admin-main">
-        <!-- الهيدر العلوي -->
         <div class="top-header">
             <div class="header-title">
                 <i class="fas fa-database"></i>
@@ -1181,7 +1180,6 @@
             </div>
         </div>
 
-        <!-- إحصائيات سريعة -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -1221,7 +1219,6 @@
             </div>
         </div>
 
-        <!-- البحث المتقدم -->
         <div class="search-card">
             <div class="search-header" onclick="toggleSearch()">
                 <i class="fas fa-search"></i>
@@ -1278,7 +1275,6 @@
             </div>
         </div>
 
-        <!-- جدول البيانات -->
         <div class="table-card">
             <div class="table-responsive">
                 <table id="main-table">
@@ -1305,7 +1301,6 @@
                 </table>
             </div>
             
-            <!-- أزرار التحميل -->
             <div style="display: flex; justify-content: center; gap: 10px; padding: 20px;">
                 <button class="load-more-btn" id="prev-page" onclick="prevPage()" style="display: none;">
                     <i class="fas fa-chevron-right"></i> الصفحة السابقة
@@ -1323,7 +1318,6 @@
             </div>
         </div>
 
-        <!-- Footer -->
         <div style="text-align: center; padding: 20px; margin-top: 30px;">
             <span style="background: var(--gradient-royal); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
                 نقابة تكنولوجيا المعلومات والبرمجيات
@@ -1335,7 +1329,6 @@
         </div>
     </main>
 
-    <!-- نافذة إدارة الطلب -->
     <div id="request-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -1343,7 +1336,6 @@
         </div>
     </div>
 
-    <!-- نافذة الحذف -->
     <div id="delete-modal" class="delete-modal">
         <div class="delete-content">
             <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
@@ -1356,7 +1348,6 @@
         </div>
     </div>
 
-    <!-- نافذة إغلاق الشكوى -->
     <div id="close-request-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close" onclick="closeCloseModal()">&times;</span>
@@ -1373,7 +1364,6 @@
         </div>
     </div>
 
-    <!-- نافذة تمييز كمقروء -->
     <div id="read-request-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <span class="close" onclick="closeReadModal()">&times;</span>
@@ -1390,13 +1380,11 @@
         </div>
     </div>
 
-    <!-- Firebase و SweetAlert -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
-        // ==================== تهيئة Firebase ====================
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -1407,24 +1395,11 @@
             measurementId: "G-P3YQFRSBMM"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        // تفعيل التخزين المؤقت
-        db.settings({
-            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED
-        });
-        db.enablePersistence()
-            .catch((err) => {
-                if (err.code == 'failed-precondition') {
-                    console.log('⚠️ التخزين المؤقت مش متاح (نافذة مفتوحة في تبويب تاني)');
-                } else if (err.code == 'unimplemented') {
-                    console.log('⚠️ المتصفح مش بيدعم التخزين المؤقت');
-                }
-            });
-
-        // ==================== متغيرات عامة ====================
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        
         let allRequests = [];
         let filteredRequests = [];
         let currentFilter = 'all';
@@ -1433,32 +1408,9 @@
         let currentDeleteId = null;
         let allStatuses = new Set();
         
-        // متغيرات Pagination
-        let lastVisible = null;
-        let firstVisible = null;
-        let isLoading = false;
-        const pageSize = 50;
-        
-        // Cache
-        let requestsCache = {
-            all: [],
-            شكوى: [],
-            اقتراح: []
-        };
-        let cacheTimestamp = 0;
-        const CACHE_DURATION = 5 * 60 * 1000; // 5 دقائق
-
-        // ==================== دوال الإعدادات ====================
-        function getSetting(key, defaultValue) {
-            const value = localStorage.getItem(key);
-            return value !== null ? value : defaultValue;
-        }
-
-        // ==================== إنشاء الجزيئات ====================
         function createParticles() {
             const container = document.getElementById('particles');
             if (!container) return;
-            
             for (let i = 0; i < 20; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
@@ -1470,7 +1422,6 @@
             }
         }
 
-        // ==================== التحقق من تسجيل الدخول ====================
         (function checkAuth() {
             const isLoggedIn = localStorage.getItem('admin');
             if (!isLoggedIn || isLoggedIn !== 'true') {
@@ -1478,14 +1429,16 @@
             }
         })();
 
-        // ==================== تهيئة الصفحة ====================
         window.addEventListener('load', function() {
             createParticles();
             loadSettings();
             loadData('all');
         });
 
-        // ==================== دوال الإعدادات ====================
+        function getSetting(key, defaultValue) {
+            return localStorage.getItem(key) || defaultValue;
+        }
+
         function toggleSettings() {
             document.getElementById('settings-menu').classList.toggle('show');
         }
@@ -1515,7 +1468,6 @@
             setTimeout(() => msg.style.display = 'none', 2000);
         }
 
-        // ==================== دوال التنقل ====================
         function toggleSidebar() {
             document.getElementById('admin-sidebar').classList.toggle('show');
         }
@@ -1530,21 +1482,19 @@
             window.location.href = 'index.html';
         }
 
-        // ==================== تحميل البيانات ====================
-        async function loadData(filter) {
+        // ==================== التحميل المباشر مع onSnapshot ====================
+        function loadData(filter) {
             currentFilter = filter;
             
             if (filter === 'all') setActiveNav('nav-all');
             else if (filter === 'شكوى') setActiveNav('nav-complaint');
             else if (filter === 'اقتراح') setActiveNav('nav-suggestion');
 
-            // إلغاء الاشتراك القديم
             if (unsubscribe) {
                 unsubscribe();
                 unsubscribe = null;
             }
 
-            // إظهار مؤشر التحميل
             document.getElementById('admin-tbody').innerHTML = `
                 <tr>
                     <td colspan="8" style="text-align: center; padding: 50px;">
@@ -1554,124 +1504,21 @@
                 </tr>
             `;
 
-            // إخفاء أزرار التحميل
             document.getElementById('load-more').style.display = 'none';
-            document.getElementById('prev-page').style.display = 'none';
-            document.getElementById('next-page').style.display = 'none';
 
             try {
-                // محاولة استخدام الكاش أولاً
-                const now = Date.now();
-                if (requestsCache[filter] && requestsCache[filter].length > 0 && (now - cacheTimestamp) < CACHE_DURATION) {
-                    console.log('✅ استخدام البيانات من الكاش');
-                    allRequests = [...requestsCache[filter]];
-                    updateStatusFilterOptions();
-                    updateStats();
-                    filterData();
-                    return;
-                }
-
-                console.log('🔄 تحميل بيانات جديدة من Firebase');
-                
-                // بناء الاستعلام
                 let query = db.collection("Requests")
-                    .orderBy("createdAt", "desc")
-                    .limit(pageSize);
+                    .orderBy("createdAt", "desc");
                 
                 if (filter !== 'all') {
                     query = query.where("type", "==", filter);
                 }
 
-                const snapshot = await query.get();
-                
-                lastVisible = snapshot.docs[snapshot.docs.length - 1];
-                firstVisible = snapshot.docs[0];
-                
-                // معالجة البيانات
-                allRequests = [];
-                allStatuses.clear();
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
+                // onSnapshot بيشتغل مباشرة وأي تغيير يظهر فوراً
+                unsubscribe = query.onSnapshot((snapshot) => {
+                    allRequests = [];
+                    allStatuses.clear();
                     
-                    if (data.createdAt && data.createdAt.toDate) {
-                        data.createdAtDate = data.createdAt.toDate();
-                    } else if (data.createdAt) {
-                        data.createdAtDate = new Date(data.createdAt);
-                    } else {
-                        data.createdAtDate = new Date();
-                    }
-                    
-                    if (data.status) {
-                        allStatuses.add(data.status);
-                    }
-                    
-                    if (data.tracking && Array.isArray(data.tracking)) {
-                        data.tracking.forEach(t => {
-                            if (t.status) allStatuses.add(t.status);
-                        });
-                    }
-                    
-                    allRequests.push({
-                        id: doc.id,
-                        ...data
-                    });
-                });
-                
-                // حفظ في الكاش
-                requestsCache[filter] = [...allRequests];
-                cacheTimestamp = now;
-                
-                // تحديث واجهة المستخدم
-                updateStatusFilterOptions();
-                updateStats();
-                
-                // عرض أزرار التحميل إذا كان في بيانات أكثر
-                if (snapshot.docs.length === pageSize) {
-                    document.getElementById('load-more').style.display = 'block';
-                }
-                
-                filterData();
-                
-            } catch (error) {
-                console.error("Error loading data:", error);
-                document.getElementById('admin-tbody').innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 50px; color: var(--neon-red);">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
-                            <p>حدث خطأ في تحميل البيانات</p>
-                            <button class="action-btn" onclick="loadData('${filter}')" style="margin-top: 15px;">
-                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }
-        }
-
-        // ==================== تحميل المزيد من البيانات ====================
-        async function loadMore() {
-            if (isLoading || !lastVisible) return;
-            
-            isLoading = true;
-            document.getElementById('load-more').innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري التحميل...';
-            
-            try {
-                let query = db.collection("Requests")
-                    .orderBy("createdAt", "desc")
-                    .startAfter(lastVisible)
-                    .limit(pageSize);
-                
-                if (currentFilter !== 'all') {
-                    query = query.where("type", "==", currentFilter);
-                }
-                
-                const snapshot = await query.get();
-                
-                if (snapshot.docs.length > 0) {
-                    lastVisible = snapshot.docs[snapshot.docs.length - 1];
-                    
-                    const newRequests = [];
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         
@@ -1683,44 +1530,48 @@
                             data.createdAtDate = new Date();
                         }
                         
-                        if (data.status && !allStatuses.has(data.status)) {
+                        if (data.status) {
                             allStatuses.add(data.status);
                         }
                         
-                        newRequests.push({
+                        if (data.tracking && Array.isArray(data.tracking)) {
+                            data.tracking.forEach(t => {
+                                if (t.status) allStatuses.add(t.status);
+                            });
+                        }
+                        
+                        allRequests.push({
                             id: doc.id,
                             ...data
                         });
                     });
                     
-                    allRequests = [...allRequests, ...newRequests];
-                    requestsCache[currentFilter] = [...allRequests];
-                    
                     updateStatusFilterOptions();
                     updateStats();
+                    
+                    // تطبيق الفلاتر الحالية على البيانات الجديدة
                     filterData();
-                }
-                
-                if (snapshot.docs.length < pageSize) {
-                    document.getElementById('load-more').style.display = 'none';
-                }
+                    
+                }, (error) => {
+                    console.error("Error loading data:", error);
+                    document.getElementById('admin-tbody').innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 50px; color: var(--neon-red);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
+                                <p>حدث خطأ في تحميل البيانات</p>
+                                <button class="action-btn" onclick="loadData('${filter}')" style="margin-top: 15px;">
+                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
                 
             } catch (error) {
-                console.error("Error loading more:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في تحميل المزيد من البيانات',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-            } finally {
-                isLoading = false;
-                document.getElementById('load-more').innerHTML = '<i class="fas fa-arrow-down"></i> تحميل المزيد';
+                console.error("Error setting up query:", error);
             }
         }
 
-        // ==================== تحديث قائمة الحالات في البحث ====================
         function updateStatusFilterOptions() {
             const statusSelect = document.getElementById('search-status');
             if (!statusSelect) return;
@@ -1737,7 +1588,6 @@
             statusSelect.value = currentValue;
         }
 
-        // ==================== تحديث الإحصائيات ====================
         function updateStats() {
             const total = allRequests.length;
             const complaints = allRequests.filter(r => r.type === 'شكوى').length;
@@ -1754,7 +1604,6 @@
             document.getElementById('pending-count').textContent = pending;
         }
 
-        // ==================== فلترة البيانات حسب البحث ====================
         function filterData() {
             let filtered = allRequests;
             
@@ -1792,7 +1641,6 @@
             renderRequests(filtered);
         }
 
-        // ==================== دوال البحث ====================
         function toggleSearch() {
             const body = document.getElementById('search-body');
             const arrow = document.getElementById('search-arrow');
@@ -1816,7 +1664,6 @@
             filterData();
         }
 
-        // ==================== عرض البيانات في الجدول ====================
         function renderRequests(requests) {
             if (!requests || requests.length === 0) {
                 document.getElementById('admin-tbody').innerHTML = `
@@ -1843,7 +1690,6 @@
                 const typeClass = r.type === 'شكوى' ? 'complaint' : 'suggestion';
                 const typeText = r.type === 'شكوى' ? 'شكوى' : 'اقتراح';
 
-                // استخدام data-status للحصول على اللون المناسب
                 const statusSpan = r.status ? 
                     `<span class="status-badge" data-status="${r.status}">${r.status}</span>` : 
                     '<span>غير محدد</span>';
@@ -1878,30 +1724,22 @@
             document.getElementById('admin-tbody').innerHTML = html;
         }
 
-        // ==================== إدارة الطلب (الحل النهائي للمشكلة) ====================
         function manageReq(refId) {
             console.log('🔍 فتح الطلب:', refId);
-            console.log('📊 عدد الطلبات في الكاش:', allRequests.length);
             
-            // منع أي تأثير على الصفحة
             if (window.event) {
                 window.event.preventDefault();
                 window.event.stopPropagation();
             }
             
-            // 1️⃣ نجيب الطلب من الكاش مباشرة
             const requestFromCache = allRequests.find(r => r.refId === refId);
             
             if (requestFromCache) {
                 console.log('✅ تم العثور على الطلب في الكاش');
-                console.log('📦 بيانات الطلب:', requestFromCache);
-                
-                // عرض الكارت بدون أي تغيير في الصفحة
                 showRequestModal(requestFromCache);
                 return;
             }
             
-            // 2️⃣ لو مش موجود في الكاش (نادراً ما يحصل)
             console.log('⚠️ الطلب مش في الكاش، بنجيبه من Firebase');
             
             Swal.fire({
@@ -1946,9 +1784,7 @@
                 });
         }
 
-        // ==================== عرض نافذة إدارة الطلب ====================
         function showRequestModal(d) {
-            // نتأكد إن البيانات موجودة
             if (!d || !d.refId) {
                 console.error('❌ البيانات مش مكتملة:', d);
                 Swal.fire({
@@ -1963,7 +1799,6 @@
             
             currentRequestId = d.refId;
             
-            // تنسيق المسار الزمني
             let timelineHtml = '';
             if (d.tracking && d.tracking.length > 0) {
                 timelineHtml = d.tracking.slice().reverse().map(t => `
@@ -2044,7 +1879,6 @@
             document.getElementById('request-modal').style.display = 'flex';
         }
 
-        // ==================== تحديث حالة الطلب ====================
         async function updateRequestStatus(refId) {
             const newStatus = document.getElementById('new-status-name')?.value.trim();
             const comment = document.getElementById('status-comment')?.value.trim();
@@ -2082,22 +1916,6 @@
                     })
                 });
 
-                // تحديث الكاش
-                const requestIndex = allRequests.findIndex(r => r.refId === refId);
-                if (requestIndex !== -1) {
-                    allRequests[requestIndex].status = newStatus;
-                    if (!allRequests[requestIndex].tracking) {
-                        allRequests[requestIndex].tracking = [];
-                    }
-                    allRequests[requestIndex].tracking.push({
-                        status: newStatus,
-                        comment: comment,
-                        time: new Date().toLocaleString('ar-EG'),
-                        isFinal: newStatus === 'تم الإغلاق النهائي'
-                    });
-                    requestsCache[currentFilter] = [...allRequests];
-                }
-
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -2107,7 +1925,6 @@
                 });
 
                 closeModal();
-                filterData();
                 
             } catch (error) {
                 console.error("Error updating status:", error);
@@ -2121,7 +1938,6 @@
             }
         }
 
-        // ==================== إغلاق الشكوى ====================
         function openCloseModal(refId) {
             currentRequestId = refId;
             document.getElementById('close-request-modal').style.display = 'flex';
@@ -2158,22 +1974,6 @@
                     })
                 });
 
-                // تحديث الكاش
-                const requestIndex = allRequests.findIndex(r => r.refId === currentRequestId);
-                if (requestIndex !== -1) {
-                    allRequests[requestIndex].status = 'تم الإغلاق النهائي';
-                    if (!allRequests[requestIndex].tracking) {
-                        allRequests[requestIndex].tracking = [];
-                    }
-                    allRequests[requestIndex].tracking.push({
-                        status: 'تم الإغلاق النهائي',
-                        comment: comment,
-                        time: new Date().toLocaleString('ar-EG'),
-                        isFinal: true
-                    });
-                    requestsCache[currentFilter] = [...allRequests];
-                }
-
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الإغلاق',
@@ -2184,7 +1984,6 @@
 
                 closeCloseModal();
                 closeModal();
-                filterData();
                 
             } catch (error) {
                 console.error("Error closing request:", error);
@@ -2198,7 +1997,6 @@
             }
         }
 
-        // ==================== تمييز كمقروء ====================
         function openReadModal(refId) {
             currentRequestId = refId;
             document.getElementById('read-request-modal').style.display = 'flex';
@@ -2224,22 +2022,6 @@
                     })
                 });
 
-                // تحديث الكاش
-                const requestIndex = allRequests.findIndex(r => r.refId === currentRequestId);
-                if (requestIndex !== -1) {
-                    allRequests[requestIndex].status = 'تمت القراءة';
-                    if (!allRequests[requestIndex].tracking) {
-                        allRequests[requestIndex].tracking = [];
-                    }
-                    allRequests[requestIndex].tracking.push({
-                        status: 'تمت القراءة',
-                        comment: comment,
-                        time: new Date().toLocaleString('ar-EG'),
-                        isFinal: false
-                    });
-                    requestsCache[currentFilter] = [...allRequests];
-                }
-
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -2250,7 +2032,6 @@
 
                 closeReadModal();
                 closeModal();
-                filterData();
                 
             } catch (error) {
                 console.error("Error marking as read:", error);
@@ -2264,7 +2045,6 @@
             }
         }
 
-        // ==================== دوال الحذف ====================
         function openDeleteModal(id) {
             currentDeleteId = id;
             document.getElementById('delete-modal').style.display = 'flex';
@@ -2296,10 +2076,6 @@
             try {
                 await db.collection("Requests").doc(currentDeleteId).delete();
                 
-                // تحديث الكاش
-                allRequests = allRequests.filter(r => r.refId !== currentDeleteId);
-                requestsCache[currentFilter] = [...allRequests];
-                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الحذف',
@@ -2310,8 +2086,6 @@
 
                 closeDeleteModal();
                 closeModal();
-                updateStats();
-                filterData();
                 
             } catch (error) {
                 console.error("Error deleting request:", error);
@@ -2325,12 +2099,10 @@
             }
         }
 
-        // ==================== دوال النوافذ ====================
         function closeModal() {
             document.getElementById('request-modal').style.display = 'none';
         }
 
-        // ==================== تصدير PDF ====================
         function exportToPDF() {
             Swal.fire({
                 icon: 'info',
@@ -2341,13 +2113,12 @@
             });
         }
 
-        // ==================== تحديث البيانات يدوياً ====================
         function refreshData() {
-            cacheTimestamp = 0; // مسح الكاش
-            loadData(currentFilter);
+            // مش محتاجة حاجة لأن onSnapshot بيحدث تلقائياً
+            // بس هنعمل إعادة تحميل للفلاتر
+            filterData();
         }
 
-        // ==================== إدارة المستخدمين ====================
         function showUsers() {
             Swal.fire({
                 icon: 'info',
@@ -2358,7 +2129,6 @@
             });
         }
 
-        // ==================== تنظيف الاشتراك عند الخروج ====================
         window.addEventListener('beforeunload', function() {
             if (unsubscribe) {
                 unsubscribe();
