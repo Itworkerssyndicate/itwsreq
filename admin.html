@@ -5,87 +5,87 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>لوحة التحكم - نقابة تكنولوجيا المعلومات | VR 2.05.2026</title>
     
-    <!-- الخطوط -->
+    <!-- الخطوط الأساسية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
+    <!-- Font Awesome 6 (الأيقونات) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23a855f7'/><text x='50' y='70' font-size='50' text-anchor='middle' fill='%23030514' font-family='Arial' font-weight='bold'>أ</text></svg>">
+    <!-- SweetAlert2 (للتنبيهات) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <style>
         /* =====================================================================
-           VR 2.05.2026 ADMIN - لوحة التحكم الفاخرة
-           الإصدار الماسي - النسخة الإدارية النهائية
+           التصميم الأساسي للوحة التحكم - نسخة معاد تصميمها بالكامل
+           جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
-
+        
+        /* متغيرات الألوان - ثيم داكن فاخر */
         :root {
-            --bg-deep: #030514;
-            --bg-dark: #0a0f1f;
-            --bg-card: rgba(15, 23, 42, 0.4);
-            --bg-card-hover: rgba(15, 23, 42, 0.7);
-            --bg-sidebar: rgba(3, 5, 20, 0.7);
+            --bg-primary: #030514;
+            --bg-secondary: #0a0f1f;
+            --bg-tertiary: #111827;
+            --bg-card: rgba(15, 23, 42, 0.7);
+            --bg-sidebar: rgba(3, 5, 20, 0.8);
+            --bg-hover: rgba(0, 255, 255, 0.1);
             
             --neon-cyan: #00ffff;
-            --neon-cyan-glow: rgba(0, 255, 255, 0.7);
-            --neon-cyan-soft: rgba(0, 255, 255, 0.3);
-            
+            --neon-cyan-glow: rgba(0, 255, 255, 0.5);
             --neon-purple: #a855f7;
-            --neon-purple-glow: rgba(168, 85, 247, 0.7);
-            --neon-purple-soft: rgba(168, 85, 247, 0.3);
-            
+            --neon-purple-glow: rgba(168, 85, 247, 0.5);
             --neon-pink: #ec4899;
-            --neon-pink-glow: rgba(236, 72, 153, 0.7);
-            
-            --neon-blue: #3b82f6;
-            --neon-blue-glow: rgba(59, 130, 246, 0.7);
-            
+            --neon-pink-glow: rgba(236, 72, 153, 0.5);
             --neon-green: #10b981;
-            --neon-green-glow: rgba(16, 185, 129, 0.7);
-            
+            --neon-green-glow: rgba(16, 185, 129, 0.5);
             --neon-red: #ef4444;
-            --neon-red-glow: rgba(239, 68, 68, 0.7);
-            
+            --neon-red-glow: rgba(239, 68, 68, 0.5);
             --neon-orange: #f97316;
-            --neon-orange-glow: rgba(249, 115, 22, 0.7);
+            --neon-orange-glow: rgba(249, 115, 22, 0.5);
+            --neon-blue: #3b82f6;
+            --neon-blue-glow: rgba(59, 130, 246, 0.5);
             
-            --gradient-royal: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
-            --gradient-diamond: linear-gradient(45deg, #3b82f6, #00ffff, #a855f7);
-            --gradient-success: linear-gradient(135deg, #10b981, #00ffff);
-            --gradient-danger: linear-gradient(135deg, #ef4444, #f97316);
-            --gradient-silver: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            --text-primary: #ffffff;
+            --text-secondary: #b0c4de;
+            --text-muted: #94a3b8;
             
-            --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
-            --shadow-neon: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
-            --shadow-neon-red: 0 0 30px var(--neon-red), 0 0 60px var(--neon-red);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: var(--neon-cyan);
             
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 16px;
-            --space-lg: 24px;
-            --space-xl: 32px;
-            --space-2xl: 40px;
+            --gradient-primary: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            --gradient-secondary: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            --gradient-danger: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+            --gradient-success: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            
+            --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color) inset;
+            --shadow-neon: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-purple);
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --border-radius: 20px;
         }
-
+        
+        /* إعادة تعيين الأنماط */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tajawal', 'Cairo', sans-serif;
         }
-
+        
         body {
-            background: var(--bg-deep);
-            color: #fff;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             direction: rtl;
             min-height: 100vh;
-            position: relative;
             overflow-x: hidden;
+            position: relative;
         }
-
+        
+        /* خلفية متحركة */
         body::before {
             content: '';
             position: fixed;
@@ -94,18 +94,14 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, var(--neon-cyan-soft) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, var(--neon-purple-soft) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, var(--neon-pink) 0%, transparent 50%);
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
             animation: cosmicWave 20s ease infinite;
             z-index: -2;
+            pointer-events: none;
         }
-
-        @keyframes cosmicWave {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
-        }
-
+        
         body::after {
             content: '';
             position: fixed;
@@ -119,13 +115,47 @@
             background-size: 50px 50px;
             animation: gridMove 30s linear infinite;
             z-index: -1;
+            pointer-events: none;
         }
-
+        
+        @keyframes cosmicWave {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
         @keyframes gridMove {
             0% { transform: translateY(0); }
             100% { transform: translateY(50px); }
         }
-
+        
+        /* جزيئات متطايرة */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.3;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+        
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        /* عناصر عائمة */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -135,7 +165,7 @@
             pointer-events: none;
             z-index: 0;
         }
-
+        
         .floating-element {
             position: absolute;
             border-radius: 50%;
@@ -143,207 +173,91 @@
             opacity: 0.1;
             animation: floatLuxury 20s infinite alternate;
         }
-
+        
         .floating-element:nth-child(1) {
-            width: 700px;
-            height: 700px;
+            width: 600px;
+            height: 600px;
             top: -200px;
             right: -200px;
             background: var(--neon-cyan);
         }
-
+        
         .floating-element:nth-child(2) {
-            width: 800px;
-            height: 800px;
+            width: 700px;
+            height: 700px;
             bottom: -250px;
             left: -250px;
             background: var(--neon-purple);
         }
-
+        
         @keyframes floatLuxury {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(50px, -50px) scale(1.1); }
         }
-
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--gradient-royal);
-            border-radius: 50%;
-            animation: particleFloat 20s linear infinite;
-            opacity: 0.3;
-        }
-
-        @keyframes particleFloat {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
-        }
-
-        .settings-panel {
+        
+        /* زر الإعدادات - ثابت */
+        .settings-btn {
             position: fixed;
             top: 20px;
             left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
             z-index: 1000;
         }
-
-        .settings-btn {
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            background: var(--gradient-royal);
-            border: none;
-            color: #fff;
-            font-size: 26px;
-            cursor: pointer;
-            box-shadow: 0 0 30px var(--neon-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.4s ease;
-            position: relative;
-            z-index: 1001;
-        }
-
+        
         .settings-btn:hover {
             transform: rotate(90deg) scale(1.1);
-            box-shadow: var(--shadow-neon);
+            box-shadow: 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-purple);
         }
-
-        .settings-menu {
-            position: absolute;
-            top: 70px;
-            left: 0;
-            width: 380px;
-            background: var(--bg-sidebar);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px;
-            padding: 25px;
-            display: none;
-            z-index: 1002;
-            box-shadow: var(--shadow-3d);
-        }
-
-        .settings-menu.show {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .settings-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .settings-header i {
-            font-size: 24px;
-            color: var(--neon-cyan);
-        }
-
-        .settings-header h4 {
-            color: var(--neon-cyan);
-            font-size: 18px;
-        }
-
-        .settings-section {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: rgba(0,0,0,0.3);
-            border-radius: 15px;
-        }
-
-        .settings-section h5 {
-            color: var(--neon-cyan);
-            margin-bottom: 10px;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .luxury-input {
-            width: 100%;
-            padding: 12px 15px;
-            background: rgba(3,5,20,0.6);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: #fff;
-            outline: none;
-            transition: all 0.3s;
-            margin-bottom: 10px;
-        }
-
-        .luxury-input:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px var(--neon-cyan);
-        }
-
-        .auto-save-message {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            padding: 8px;
-            background: rgba(16, 185, 129, 0.2);
-            border-radius: 10px;
-            color: var(--neon-green);
-            font-size: 13px;
-            margin-top: 15px;
-        }
-
-        .admin-sidebar {
-            width: 300px;
-            height: 100vh;
+        
+        /* القائمة الجانبية */
+        .sidebar {
             position: fixed;
             right: 0;
             top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
             background: var(--bg-sidebar);
             backdrop-filter: blur(20px);
-            border-left: 1px solid rgba(255,255,255,0.1);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid var(--border-color);
             padding: 30px 20px;
             display: flex;
             flex-direction: column;
             z-index: 100;
-            box-shadow: -10px 0 50px rgba(0,0,0,0.5);
-            animation: sidebarSlide 0.5s ease;
+            box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease;
         }
-
-        @keyframes sidebarSlide {
+        
+        @keyframes slideIn {
             from { transform: translateX(100%); opacity: 0; }
             to { transform: translateX(0); opacity: 1; }
         }
-
+        
+        /* الشعار */
         .sidebar-logo {
             text-align: center;
             margin-bottom: 30px;
         }
-
+        
         .logo-wrapper {
-            position: relative;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             margin: 0 auto 15px;
+            position: relative;
         }
-
+        
         .logo-wrapper::after {
             content: '';
             position: absolute;
@@ -352,39 +266,40 @@
             right: -10px;
             bottom: -10px;
             border-radius: 50%;
-            background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
-            animation: logoPulse 3s ease infinite;
+            background: radial-gradient(circle, var(--neon-cyan-glow), transparent 70%);
+            animation: pulse 2s ease infinite;
             z-index: -1;
         }
-
-        @keyframes logoPulse {
+        
+        @keyframes pulse {
             0%, 100% { opacity: 0.5; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.1); }
         }
-
-        .sidebar-logo-img {
+        
+        .sidebar-logo img {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             border: 3px solid var(--neon-cyan);
             object-fit: cover;
+            box-shadow: 0 0 30px var(--neon-cyan);
         }
-
+        
         .sidebar-title {
             font-size: 20px;
             font-weight: 900;
-            background: var(--gradient-royal);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 5px;
         }
-
+        
         .sidebar-sub {
-            color: rgba(255,255,255,0.5);
+            color: var(--text-muted);
             font-size: 12px;
         }
-
+        
+        /* قائمة التنقل */
         .sidebar-nav {
             flex: 1;
             display: flex;
@@ -392,657 +307,623 @@
             gap: 8px;
             margin-top: 20px;
         }
-
+        
         .nav-item {
-            padding: 15px 20px;
+            padding: 12px 15px;
             border: none;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.03);
-            color: #fff;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
             font-size: 15px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            text-align: right;
+            width: 100%;
         }
-
-        .nav-item::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--neon-cyan-soft), transparent 70%);
-            transform: scale(0);
-            transition: transform 0.5s;
-        }
-
-        .nav-item:hover::before {
-            transform: scale(1);
-        }
-
-        .nav-item:hover {
-            transform: translateX(-5px);
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px var(--neon-cyan);
-            background: rgba(255,255,255,0.05);
-        }
-
-        .nav-item.active {
-            background: var(--gradient-royal);
-            border-color: transparent;
-            box-shadow: var(--shadow-neon);
-        }
-
+        
         .nav-item i {
             width: 24px;
-            font-size: 18px;
             color: var(--neon-cyan);
+            font-size: 18px;
+            transition: var(--transition);
         }
-
+        
+        .nav-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--neon-cyan);
+            transform: translateX(-5px);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        
+        .nav-item.active {
+            background: var(--gradient-primary);
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+        
         .nav-item.active i {
-            color: #fff;
+            color: white;
         }
-
+        
+        /* زر الخروج */
         .logout-btn {
             margin-top: auto;
-            background: linear-gradient(135deg, rgba(239,68,68,0.2), rgba(249,115,22,0.2));
-            border-color: rgba(239,68,68,0.3);
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--neon-red);
         }
-
+        
         .logout-btn i {
             color: var(--neon-red);
         }
-
+        
         .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
             border-color: var(--neon-red);
             box-shadow: 0 0 30px var(--neon-red);
         }
-
-        .admin-main {
-            margin-right: 300px;
+        
+        /* المحتوى الرئيسي */
+        .main-content {
+            margin-right: var(--sidebar-width);
             padding: 30px;
             min-height: 100vh;
             position: relative;
             z-index: 90;
         }
-
-        .top-header {
+        
+        /* رأس الصفحة */
+        .page-header {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             padding: 20px 30px;
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: var(--shadow-3d);
+            box-shadow: var(--shadow-card);
         }
-
-        .header-title {
+        
+        .page-title {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-
-        .header-title i {
+        
+        .page-title i {
             font-size: 28px;
-            background: var(--gradient-royal);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
         }
-
-        .header-title h1 {
-            font-size: 22px;
+        
+        .page-title h1 {
+            font-size: 24px;
             font-weight: 900;
-            background: var(--gradient-royal);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
         }
-
+        
         .header-actions {
             display: flex;
             gap: 10px;
         }
-
-        .action-btn {
-            padding: 12px 20px;
-            border: none;
-            border-radius: 15px;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 14px;
-            font-weight: 600;
+        
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
             display: flex;
             align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255,255,255,0.1);
+            justify-content: center;
         }
-
-        .action-btn:hover {
-            transform: translateY(-3px);
+        
+        .btn-icon:hover {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px var(--neon-cyan);
         }
-
+        
+        /* بطاقات الإحصائيات */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
             margin-bottom: 30px;
         }
-
+        
         .stat-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 25px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             padding: 20px;
             display: flex;
             align-items: center;
             gap: 15px;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-3d);
+            transition: var(--transition);
+            box-shadow: var(--shadow-card);
         }
-
+        
         .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: var(--shadow-neon);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 30px var(--neon-cyan);
         }
-
+        
         .stat-icon {
             width: 60px;
             height: 60px;
             border-radius: 20px;
-            background: var(--gradient-royal);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 24px;
-            color: #fff;
+            color: white;
         }
-
+        
         .stat-info h3 {
             font-size: 14px;
-            color: rgba(255,255,255,0.7);
+            color: var(--text-muted);
+            font-weight: 600;
             margin-bottom: 5px;
         }
-
+        
         .stat-info p {
-            font-size: 24px;
+            font-size: 28px;
             font-weight: 900;
-            background: var(--gradient-royal);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
         }
-
+        
+        /* بطاقة البحث المتقدم */
         .search-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             margin-bottom: 30px;
             overflow: hidden;
-            box-shadow: var(--shadow-3d);
+            box-shadow: var(--shadow-card);
         }
-
+        
         .search-header {
-            padding: 18px 25px;
+            padding: 15px 20px;
             display: flex;
             align-items: center;
             gap: 10px;
             cursor: pointer;
-            background: linear-gradient(90deg, rgba(0,255,255,0.1), rgba(168,85,247,0.1));
-            transition: all 0.3s;
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.1), rgba(168, 85, 247, 0.1));
+            transition: var(--transition);
         }
-
+        
         .search-header:hover {
-            padding-right: 30px;
+            padding-right: 25px;
         }
-
+        
         .search-header i:first-child {
             color: var(--neon-cyan);
-            font-size: 18px;
+            font-size: 16px;
         }
-
+        
         .search-header span {
             flex: 1;
-            color: #fff;
             font-weight: 600;
+            color: var(--text-primary);
         }
-
+        
         .search-header i:last-child {
             transition: transform 0.3s;
         }
-
+        
         .search-header.active i:last-child {
             transform: rotate(180deg);
         }
-
+        
         .search-body {
-            padding: 25px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
             display: none;
         }
-
+        
         .search-body.show {
             display: block;
         }
-
+        
         .search-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
-
+        
         .search-field label {
             display: block;
-            margin-bottom: 8px;
-            color: rgba(255,255,255,0.7);
+            margin-bottom: 5px;
             font-size: 13px;
+            color: var(--text-muted);
         }
-
+        
         .search-field input,
         .search-field select {
             width: 100%;
-            padding: 12px 15px;
-            background: rgba(3,5,20,0.6);
-            border: 2px solid rgba(255,255,255,0.1);
+            padding: 10px 12px;
+            background: rgba(3, 5, 20, 0.5);
+            border: 2px solid var(--border-color);
             border-radius: 12px;
-            color: #fff;
+            color: var(--text-primary);
+            font-size: 13px;
             outline: none;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
-
+        
         .search-field input:focus,
         .search-field select:focus {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 20px var(--neon-cyan);
+            box-shadow: 0 0 15px var(--neon-cyan);
         }
-
+        
         .search-actions {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding-top: 15px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid var(--border-color);
         }
-
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+            transform: translateY(-3px);
+        }
+        
         .results-count {
-            background: rgba(0,255,255,0.1);
-            padding: 8px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            padding: 5px 15px;
             border-radius: 30px;
             color: var(--neon-cyan);
             font-size: 13px;
-            border: 1px solid rgba(0,255,255,0.3);
+            border: 1px solid var(--neon-cyan);
         }
-
+        
+        /* بطاقة الجدول */
         .table-card {
             background: var(--bg-card);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 30px;
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
             overflow: hidden;
-            box-shadow: var(--shadow-3d);
+            box-shadow: var(--shadow-card);
         }
-
+        
         .table-responsive {
             overflow-x: auto;
             padding: 5px;
         }
-
+        
         #main-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1300px;
         }
-
+        
         #main-table th {
-            padding: 18px 15px;
+            padding: 15px 12px;
             font-size: 13px;
             font-weight: 800;
-            color: #fff;
+            color: var(--text-primary);
             text-align: right;
             border-bottom: 2px solid var(--neon-cyan);
-            background: linear-gradient(180deg, rgba(0,255,255,0.1), transparent);
+            background: linear-gradient(180deg, rgba(0, 255, 255, 0.1), transparent);
+            white-space: nowrap;
         }
-
+        
         #main-table td {
-            padding: 15px;
+            padding: 12px;
             font-size: 13px;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            color: #fff;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+            vertical-align: middle;
         }
-
-        #main-table td:nth-child(2) {
-            color: var(--neon-cyan);
-            font-weight: 700;
-            text-align: center;
-        }
-
+        
         #main-table tbody tr {
-            transition: all 0.3s;
+            transition: var(--transition);
         }
-
+        
         #main-table tbody tr:hover {
-            background: rgba(0,255,255,0.05);
+            background: var(--bg-hover);
             transform: scale(1.01);
-            box-shadow: 0 5px 15px rgba(0,255,255,0.2);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
         }
-
+        
+        /* أنماط الشارات */
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+            white-space: nowrap;
+        }
+        
         .status-badge[data-status="تم الاستلام"] {
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
             border: 1px solid #f97316;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="قيد المراجعة"] {
             background: rgba(59, 130, 246, 0.2);
             color: #3b82f6;
             border: 1px solid #3b82f6;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="جاري التنفيذ"] {
             background: rgba(168, 85, 247, 0.2);
             color: #a855f7;
             border: 1px solid #a855f7;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="تم الحل"] {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
             border: 1px solid #10b981;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="تم الإغلاق النهائي"] {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
             border: 1px solid #ef4444;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="تمت القراءة"] {
             background: rgba(0, 255, 255, 0.2);
             color: #00ffff;
             border: 1px solid #00ffff;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .status-badge[data-status="لم يقرأ"] {
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
             border: 1px solid #f97316;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 11px;
-            font-weight: 700;
-            display: inline-block;
         }
-
+        
         .type-badge {
-            padding: 6px 12px;
+            padding: 4px 10px;
             border-radius: 30px;
             font-size: 11px;
             font-weight: 700;
             display: inline-block;
         }
-
+        
         .type-badge.complaint {
-            background: rgba(239,68,68,0.2);
-            color: var(--neon-red);
-            border: 1px solid var(--neon-red);
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
         }
-
+        
         .type-badge.suggestion {
-            background: rgba(16,185,129,0.2);
-            color: var(--neon-green);
-            border: 1px solid var(--neon-green);
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
         }
-
+        
         .membership-badge {
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 20px;
             font-size: 11px;
             display: inline-block;
         }
-
+        
         .membership-badge.member {
-            background: rgba(0,255,255,0.2);
-            color: var(--neon-cyan);
-            border: 1px solid var(--neon-cyan);
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            border: 1px solid #00ffff;
         }
-
+        
         .membership-badge.non-member {
-            background: rgba(148,163,184,0.2);
+            background: rgba(148, 163, 184, 0.2);
             color: #94a3b8;
             border: 1px solid #94a3b8;
         }
-
-        .action-btn-small {
+        
+        /* أزرار الإجراءات */
+        .action-btn {
             width: 32px;
             height: 32px;
             border-radius: 8px;
             background: transparent;
-            border: 1px solid rgba(255,255,255,0.1);
-            color: #fff;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             cursor: pointer;
             margin: 0 2px;
-            transition: all 0.3s;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .action-btn-small:hover {
+        
+        .action-btn:hover {
             border-color: var(--neon-cyan);
             color: var(--neon-cyan);
             transform: translateY(-2px);
             box-shadow: 0 5px 15px var(--neon-cyan);
         }
-
-        .action-btn-small.delete:hover {
+        
+        .action-btn.delete:hover {
             border-color: var(--neon-red);
             color: var(--neon-red);
             box-shadow: 0 5px 15px var(--neon-red);
         }
-
-        .load-more-btn {
-            width: 100%;
-            padding: 15px;
-            background: var(--bg-card);
-            border: 1px solid var(--neon-cyan);
-            border-radius: 15px;
-            color: var(--neon-cyan);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 20px;
-        }
-
-        .load-more-btn:hover {
-            background: rgba(0,255,255,0.1);
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px var(--neon-cyan);
-        }
-
-        .load-more-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
+        
+        /* النوافذ المنبثقة */
         .modal {
             position: fixed;
-            z-index: 2000;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: none;
             align-items: center;
             justify-content: center;
+            z-index: 2000;
         }
-
+        
         .modal.show {
             display: flex;
-            animation: modalFade 0.3s ease;
         }
-
-        @keyframes modalFade {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
+        
         .modal-content {
             background: var(--bg-sidebar);
             border: 2px solid var(--neon-cyan);
             border-radius: 30px;
             padding: 30px;
-            max-width: 900px;
+            max-width: 800px;
             width: 90%;
-            max-height: 85vh;
+            max-height: 80vh;
             overflow-y: auto;
-            box-shadow: var(--shadow-neon);
+            box-shadow: 0 0 50px var(--neon-cyan);
+            position: relative;
         }
-
-        .delete-modal {
-            position: fixed;
-            z-index: 3000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(20px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .delete-modal.show {
-            display: flex;
-        }
-
-        .delete-content {
-            background: var(--bg-sidebar);
-            border: 2px solid var(--neon-red);
-            border-radius: 30px;
-            padding: 30px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            box-shadow: var(--shadow-neon-red);
-        }
-
-        .close {
-            float: left;
-            font-size: 28px;
-            color: #fff;
-            cursor: pointer;
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            left: 15px;
             width: 40px;
             height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            transition: all 0.3s;
+            transition: var(--transition);
         }
-
-        .close:hover {
+        
+        .modal-close:hover {
             background: var(--neon-red);
             transform: rotate(90deg);
         }
-
-        .swal2-popup {
-            background: var(--bg-deep) !important;
-            border: 2px solid var(--neon-cyan) !important;
-            border-radius: 40px !important;
-            box-shadow: var(--shadow-neon) !important;
-        }
-
-        .swal2-title {
-            color: var(--neon-cyan) !important;
-        }
-
-        .swal2-confirm {
-            background: var(--gradient-royal) !important;
-            border-radius: 30px !important;
-        }
-
-        .swal2-cancel {
-            background: rgba(255,255,255,0.1) !important;
-            border-radius: 30px !important;
-        }
-
+        
+        /* المسار الزمني */
         .timeline-card {
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border-right: 3px solid var(--neon-cyan);
             padding: 12px;
             margin-bottom: 8px;
             border-radius: 8px;
+            transition: var(--transition);
         }
-
+        
+        .timeline-card:hover {
+            background: var(--bg-hover);
+            transform: translateX(-3px);
+        }
+        
         .timeline-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
         }
-
+        
         .timeline-status {
             color: var(--neon-cyan);
             font-weight: 600;
+            font-size: 13px;
         }
-
+        
         .timeline-time {
-            color: rgba(255,255,255,0.4);
+            color: var(--text-muted);
             font-size: 11px;
         }
-
+        
         .timeline-comment {
-            color: rgba(255,255,255,0.7);
+            color: var(--text-secondary);
             font-size: 12px;
+            padding-right: 10px;
+            border-right: 1px dashed var(--border-color);
         }
-
+        
+        /* تخصيص SweetAlert */
+        .swal2-popup {
+            background: var(--bg-sidebar) !important;
+            border: 2px solid var(--neon-cyan) !important;
+            border-radius: 30px !important;
+            box-shadow: 0 0 50px var(--neon-cyan) !important;
+            color: var(--text-primary) !important;
+        }
+        
+        .swal2-title {
+            color: var(--neon-cyan) !important;
+        }
+        
+        .swal2-confirm {
+            background: var(--gradient-primary) !important;
+            border-radius: 10px !important;
+        }
+        
+        .swal2-cancel {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 10px !important;
+        }
+        
+        /* تحسينات للأجهزة المحمولة */
         @media (max-width: 1200px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -1051,20 +932,20 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
+        
         @media (max-width: 992px) {
-            .admin-sidebar {
+            .sidebar {
                 transform: translateX(100%);
                 transition: transform 0.3s ease;
             }
-            .admin-sidebar.show {
+            .sidebar.show {
                 transform: translateX(0);
             }
-            .admin-main {
+            .main-content {
                 margin-right: 0;
             }
         }
-
+        
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -1072,7 +953,7 @@
             .search-grid {
                 grid-template-columns: 1fr;
             }
-            .top-header {
+            .page-header {
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
@@ -1081,111 +962,80 @@
     </style>
 </head>
 <body>
+    <!-- الجزيئات المتطايرة -->
     <div class="particles" id="particles"></div>
+    
+    <!-- العناصر العائمة -->
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
     </div>
-
-    <div class="settings-panel">
-        <button class="settings-btn" onclick="toggleSettings()">
-            <i class="fas fa-cog"></i>
-        </button>
-        <div class="settings-menu" id="settings-menu">
-            <div class="settings-header">
-                <i class="fas fa-sliders-h"></i>
-                <h4>إعدادات المنصة</h4>
-            </div>
-            
-            <div class="settings-section">
-                <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
-                <input type="url" id="logo-url" class="luxury-input" placeholder="رابط الشعار" value="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo">
-            </div>
-
-            <div class="settings-section">
-                <h5><i class="fas fa-globe"></i> موقع الخدمات</h5>
-                <input type="url" id="services-url" class="luxury-input" placeholder="رابط الموقع" value="https://services.egeng.org">
-                <input type="text" id="services-text" class="luxury-input" placeholder="نص الزر" value="موقع تقديم خدمات النقابة">
-                <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                    <input type="checkbox" id="show-services" checked style="accent-color: var(--neon-cyan);">
-                    <label style="color: #fff;">إظهار الزر</label>
-                </div>
-            </div>
-
-            <div class="settings-section">
-                <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="complaint-prefix" class="luxury-input" placeholder="شكوى" value="REQ">
-                    <input type="text" id="suggestion-prefix" class="luxury-input" placeholder="اقتراح" value="REP">
-                </div>
-            </div>
-
-            <button class="action-btn" onclick="saveSettings()" style="width: 100%; justify-content: center;">
-                <i class="fas fa-save"></i> حفظ الإعدادات
-            </button>
-
-            <div class="auto-save-message" id="auto-save-message" style="display: none;">
-                <i class="fas fa-check-circle"></i> تم حفظ الإعدادات بنجاح
-            </div>
-        </div>
-    </div>
-
-    <aside class="admin-sidebar" id="admin-sidebar">
+    
+    <!-- زر الإعدادات -->
+    <button class="settings-btn" id="settingsBtn">
+        <i class="fas fa-cog"></i>
+    </button>
+    
+    <!-- القائمة الجانبية -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="logo-wrapper">
-                <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="sidebar-logo-img" id="admin-logo">
+                <img src="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo" alt="شعار" id="sidebarLogo">
             </div>
             <h2 class="sidebar-title">بوابة الشكاوي</h2>
             <p class="sidebar-sub">نقابة تكنولوجيا المعلومات</p>
         </div>
-
+        
         <nav class="sidebar-nav">
-            <button class="nav-item active" onclick="loadData('all')" id="nav-all">
+            <button class="nav-item active" data-view="all" id="navAll">
                 <i class="fas fa-list"></i>
                 <span>كل الطلبات</span>
             </button>
-            <button class="nav-item" onclick="loadData('شكوى')" id="nav-complaint">
+            <button class="nav-item" data-view="شكوى" id="navComplaints">
                 <i class="fas fa-exclamation-triangle"></i>
                 <span>سجل الشكاوى</span>
             </button>
-            <button class="nav-item" onclick="loadData('اقتراح')" id="nav-suggestion">
+            <button class="nav-item" data-view="اقتراح" id="navSuggestions">
                 <i class="fas fa-lightbulb"></i>
                 <span>سجل المقترحات</span>
             </button>
-            <button class="nav-item" onclick="showUsers()" id="nav-users">
+            <button class="nav-item" data-view="users" id="navUsers">
                 <i class="fas fa-users-cog"></i>
                 <span>إدارة المستخدمين</span>
             </button>
         </nav>
-
-        <button class="nav-item logout-btn" onclick="logout()">
+        
+        <button class="nav-item logout-btn" id="logoutBtn">
             <i class="fas fa-sign-out-alt"></i>
             <span>خروج آمن</span>
         </button>
     </aside>
-
-    <main class="admin-main">
-        <div class="top-header">
-            <div class="header-title">
+    
+    <!-- المحتوى الرئيسي -->
+    <main class="main-content" id="mainContent">
+        <!-- رأس الصفحة -->
+        <header class="page-header">
+            <div class="page-title">
                 <i class="fas fa-database"></i>
-                <h1>سجل الشكاوي والمقترحات</h1>
+                <h1 id="pageTitle">كل الطلبات</h1>
             </div>
             <div class="header-actions">
-                <button class="action-btn" onclick="exportToPDF()">
-                    <i class="fas fa-file-pdf"></i> PDF
+                <button class="btn-icon" onclick="exportToPDF()" title="تصدير PDF">
+                    <i class="fas fa-file-pdf"></i>
                 </button>
-                <button class="action-btn" onclick="window.print()">
-                    <i class="fas fa-print"></i> طباعة
+                <button class="btn-icon" onclick="window.print()" title="طباعة">
+                    <i class="fas fa-print"></i>
                 </button>
-                <button class="action-btn" onclick="refreshData()">
-                    <i class="fas fa-sync-alt"></i> تحديث
+                <button class="btn-icon" onclick="refreshData()" title="تحديث">
+                    <i class="fas fa-sync-alt"></i>
                 </button>
-                <button class="action-btn" onclick="toggleSidebar()" style="display: none;" id="menu-btn">
+                <button class="btn-icon" onclick="toggleSidebar()" id="menuBtn" title="القائمة">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
-        </div>
-
+        </header>
+        
+        <!-- بطاقات الإحصائيات -->
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-icon">
@@ -1193,7 +1043,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>إجمالي الطلبات</h3>
-                    <p id="total-count">0</p>
+                    <p id="totalCount">0</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -1202,7 +1052,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>شكاوى</h3>
-                    <p id="complaint-count">0</p>
+                    <p id="complaintsCount">0</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -1211,7 +1061,7 @@
                 </div>
                 <div class="stat-info">
                     <h3>مقترحات</h3>
-                    <p id="suggestion-count">0</p>
+                    <p id="suggestionsCount">0</p>
                 </div>
             </div>
             <div class="stat-card">
@@ -1220,177 +1070,106 @@
                 </div>
                 <div class="stat-info">
                     <h3>قيد الانتظار</h3>
-                    <p id="pending-count">0</p>
+                    <p id="pendingCount">0</p>
                 </div>
             </div>
         </div>
-
-        <div class="search-card">
-            <div class="search-header" onclick="toggleSearch()">
-                <i class="fas fa-search"></i>
-                <span>بحث متقدم</span>
-                <i class="fas fa-chevron-down" id="search-arrow"></i>
-            </div>
-            <div class="search-body" id="search-body">
-                <div class="search-grid">
-                    <div class="search-field">
-                        <label>رقم الطلب</label>
-                        <input type="text" id="search-ref" placeholder="مثال: REQ-0001-2026" oninput="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>الاسم</label>
-                        <input type="text" id="search-name" placeholder="بحث بالاسم..." oninput="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>الرقم القومي</label>
-                        <input type="text" id="search-nid" placeholder="بحث بالرقم القومي..." oninput="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>رقم العضوية</label>
-                        <input type="text" id="search-member" placeholder="بحث برقم العضوية..." oninput="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>من تاريخ</label>
-                        <input type="date" id="search-date-from" onchange="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>إلى تاريخ</label>
-                        <input type="date" id="search-date-to" onchange="performSearch()">
-                    </div>
-                    <div class="search-field">
-                        <label>نوع الطلب</label>
-                        <select id="search-type" onchange="performSearch()">
-                            <option value="all">الكل</option>
-                            <option value="شكوى">شكوى</option>
-                            <option value="اقتراح">اقتراح</option>
-                        </select>
-                    </div>
-                    <div class="search-field">
-                        <label>الحالة</label>
-                        <select id="search-status" onchange="performSearch()">
-                            <option value="all">الكل</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="search-actions">
-                    <button class="action-btn" onclick="resetSearch()">
-                        <i class="fas fa-undo"></i> إعادة ضبط
-                    </button>
-                    <span class="results-count" id="results-count">0 نتيجة</span>
-                </div>
-            </div>
+        
+        <!-- قسم عرض المحتوى (الطلبات أو المستخدمين) -->
+        <div id="contentArea">
+            <!-- هنا بيتم تحميل المحتوى ديناميكياً -->
         </div>
-
-        <div class="table-card">
-            <div class="table-responsive">
-                <table id="main-table">
-                    <thead>
-                        <tr>
-                            <th>التاريخ والوقت</th>
-                            <th>رقم الطلب</th>
-                            <th>صاحب الطلب</th>
-                            <th>نوع العضوية</th>
-                            <th>المحافظة</th>
-                            <th>النوع</th>
-                            <th>الحالة</th>
-                            <th>إدارة</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-tbody">
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 50px;">
-                                <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px; display: block;"></i>
-                                <p style="color: rgba(255,255,255,0.6);">جاري تحميل البيانات من Firebase...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div style="display: flex; justify-content: center; gap: 10px; padding: 20px;">
-                <button class="load-more-btn" id="prev-page" onclick="prevPage()" style="display: none;">
-                    <i class="fas fa-chevron-right"></i> الصفحة السابقة
-                </button>
-                <span id="page-info" style="color: var(--neon-cyan); padding: 10px; display: none;"></span>
-                <button class="load-more-btn" id="next-page" onclick="nextPage()" style="display: none;">
-                    التالية <i class="fas fa-chevron-left"></i>
-                </button>
-            </div>
-            
-            <div style="display: flex; justify-content: center; padding: 0 20px 20px;">
-                <button class="load-more-btn" id="load-more" onclick="loadMore()" style="display: none;">
-                    <i class="fas fa-arrow-down"></i> تحميل المزيد
-                </button>
-            </div>
-        </div>
-
+        
+        <!-- تذييل الصفحة -->
         <div style="text-align: center; padding: 20px; margin-top: 30px;">
-            <span style="background: var(--gradient-royal); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
+            <span style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800;">
                 نقابة تكنولوجيا المعلومات والبرمجيات
             </span>
-            <span style="color: rgba(255,255,255,0.3); margin: 0 10px;">|</span>
+            <span style="color: var(--text-muted); margin: 0 10px;">|</span>
             <span style="color: var(--neon-cyan); font-family: 'Orbitron', monospace;">
                 VR 2.05.2026 ADMIN
             </span>
         </div>
     </main>
-
-    <div id="request-modal" class="modal">
+    
+    <!-- نافذة إدارة الطلب -->
+    <div class="modal" id="requestModal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modal-content-area"></div>
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalContent"></div>
         </div>
     </div>
-
-    <div id="delete-modal" class="delete-modal">
-        <div class="delete-content">
-            <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
-            <h3 style="color: var(--neon-red); margin-bottom: 15px;">حذف الطلب</h3>
-            <input type="password" id="delete-password" placeholder="كلمة سر الحذف" class="luxury-input" style="border-color: var(--neon-red);">
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="action-btn" onclick="confirmDelete()" style="background: var(--gradient-danger); flex: 2;">تأكيد الحذف</button>
-                <button class="action-btn" onclick="closeDeleteModal()" style="flex: 1;">إلغاء</button>
+    
+    <!-- نافذة حذف الطلب -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
+            <div style="text-align: center; padding: 20px;">
+                <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                <h3 style="color: var(--neon-red); margin-bottom: 20px;">حذف الطلب</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">هل أنت متأكد من حذف هذا الطلب؟</p>
+                <input type="password" id="deletePassword" class="search-field" placeholder="كلمة سر الحذف" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;">
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="confirmDelete()" style="flex: 2; background: var(--gradient-danger);">تأكيد الحذف</button>
+                    <button class="btn btn-secondary" onclick="closeDeleteModal()" style="flex: 1;">إلغاء</button>
+                </div>
             </div>
         </div>
     </div>
-
-    <div id="close-request-modal" class="modal">
+    
+    <!-- نافذة إغلاق الشكوى -->
+    <div class="modal" id="closeRequestModal">
         <div class="modal-content" style="max-width: 500px;">
-            <span class="close" onclick="closeCloseModal()">&times;</span>
+            <button class="modal-close" onclick="closeCloseModal()">&times;</button>
             <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-lock" style="font-size: 60px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                <i class="fas fa-lock" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
                 <h3 style="color: var(--neon-red); margin-bottom: 20px;">إغلاق الشكوى</h3>
-                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">سيتم إضافة حالة "تم الإغلاق النهائي" إلى المسار الزمني</p>
-                <textarea id="close-comment" class="luxury-input" rows="3" placeholder="اكتب سبب الإغلاق أو القرار النهائي..." style="margin-bottom: 20px;"></textarea>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">سيتم إضافة حالة "تم الإغلاق النهائي" إلى المسار الزمني</p>
+                <textarea id="closeComment" class="search-field" rows="3" placeholder="اكتب سبب الإغلاق..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;"></textarea>
                 <div style="display: flex; gap: 10px;">
-                    <button class="action-btn" onclick="confirmCloseRequest()" style="background: var(--gradient-danger); flex: 2;">تأكيد الإغلاق</button>
-                    <button class="action-btn" onclick="closeCloseModal()" style="flex: 1;">إلغاء</button>
+                    <button class="btn btn-primary" onclick="confirmCloseRequest()" style="flex: 2; background: var(--gradient-danger);">تأكيد الإغلاق</button>
+                    <button class="btn btn-secondary" onclick="closeCloseModal()" style="flex: 1;">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <div id="read-request-modal" class="modal">
+    
+    <!-- نافذة تمييز كمقروء -->
+    <div class="modal" id="readModal">
         <div class="modal-content" style="max-width: 500px;">
-            <span class="close" onclick="closeReadModal()">&times;</span>
+            <button class="modal-close" onclick="closeReadModal()">&times;</button>
             <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-check-circle" style="font-size: 60px; color: var(--neon-green); margin-bottom: 20px;"></i>
+                <i class="fas fa-check-circle" style="font-size: 50px; color: var(--neon-green); margin-bottom: 20px;"></i>
                 <h3 style="color: var(--neon-green); margin-bottom: 20px;">تمييز كمقروء</h3>
-                <p style="color: rgba(255,255,255,0.8); margin-bottom: 20px;">سيتم إضافة حالة "تمت القراءة" إلى المسار الزمني</p>
-                <textarea id="read-comment" class="luxury-input" rows="3" placeholder="اكتب أي ملاحظات (اختياري)..." style="margin-bottom: 20px;"></textarea>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">سيتم إضافة حالة "تمت القراءة" إلى المسار الزمني</p>
+                <textarea id="readComment" class="search-field" rows="3" placeholder="اكتب أي ملاحظات (اختياري)..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-green); border-radius: 10px; color: white;"></textarea>
                 <div style="display: flex; gap: 10px;">
-                    <button class="action-btn" onclick="confirmReadRequest()" style="background: var(--gradient-success); flex: 2;">تأكيد</button>
-                    <button class="action-btn" onclick="closeReadModal()" style="flex: 1;">إلغاء</button>
+                    <button class="btn btn-primary" onclick="confirmReadRequest()" style="flex: 2; background: var(--gradient-success);">تأكيد</button>
+                    <button class="btn btn-secondary" onclick="closeReadModal()" style="flex: 1;">إلغاء</button>
                 </div>
             </div>
         </div>
     </div>
-
+    
+    <!-- نافذة إعدادات المستخدمين (سيتم استخدامها لاحقاً) -->
+    <div class="modal" id="userModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            <div id="userModalContent"></div>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <script>
+        // =====================================================================
+        // تهيئة Firebase
+        // =====================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -1401,197 +1180,137 @@
             measurementId: "G-P3YQFRSBMM"
         };
 
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
+        // تفعيل التخزين المؤقت لتحسين الأداء
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
         
+        // =====================================================================
+        // المتغيرات العامة
+        // =====================================================================
         let allRequests = [];
-        let filteredRequests = [];
-        let currentFilter = 'all';
+        let currentView = 'all';
         let unsubscribe = null;
         let currentRequestId = null;
         let currentDeleteId = null;
-        let allStatuses = new Set();
+        let searchFilters = {
+            ref: '',
+            name: '',
+            nid: '',
+            member: '',
+            dateFrom: '',
+            dateTo: '',
+            type: 'all',
+            status: 'all'
+        };
         
+        // =====================================================================
+        // دوال مساعدة
+        // =====================================================================
         function createParticles() {
             const container = document.getElementById('particles');
             if (!container) return;
-            for (let i = 0; i < 20; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.top = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = 10 + Math.random() * 20 + 's';
-                container.appendChild(p);
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = 10 + Math.random() * 20 + 's';
+                container.appendChild(particle);
             }
         }
-
-        (function checkAuth() {
-            const isLoggedIn = localStorage.getItem('admin');
-            if (!isLoggedIn || isLoggedIn !== 'true') {
-                window.location.href = 'index.html';
-            }
-        })();
-
-        window.addEventListener('load', function() {
-            createParticles();
-            loadSettings();
-            loadData('all');
-        });
-
-        function getSetting(key, defaultValue) {
-            return localStorage.getItem(key) || defaultValue;
-        }
-
-        function toggleSettings() {
-            document.getElementById('settings-menu').classList.toggle('show');
-        }
-
-        function loadSettings() {
-            document.getElementById('logo-url').value = getSetting('logo_url', 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo');
-            document.getElementById('services-url').value = getSetting('services_url', 'https://services.egeng.org');
-            document.getElementById('services-text').value = getSetting('services_text', 'موقع تقديم خدمات النقابة');
-            document.getElementById('show-services').checked = getSetting('show_services', 'true') === 'true';
-            document.getElementById('complaint-prefix').value = getSetting('complaint_prefix', 'REQ');
-            document.getElementById('suggestion-prefix').value = getSetting('suggestion_prefix', 'REP');
-            document.getElementById('admin-logo').src = getSetting('logo_url', 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo');
-        }
-
-        function saveSettings() {
-            localStorage.setItem('logo_url', document.getElementById('logo-url').value);
-            localStorage.setItem('services_url', document.getElementById('services-url').value);
-            localStorage.setItem('services_text', document.getElementById('services-text').value);
-            localStorage.setItem('show_services', document.getElementById('show-services').checked);
-            localStorage.setItem('complaint_prefix', document.getElementById('complaint-prefix').value);
-            localStorage.setItem('suggestion_prefix', document.getElementById('suggestion-prefix').value);
-            
-            document.getElementById('admin-logo').src = document.getElementById('logo-url').value;
-            
-            const msg = document.getElementById('auto-save-message');
-            msg.style.display = 'flex';
-            setTimeout(() => msg.style.display = 'none', 2000);
-        }
-
+        
         function toggleSidebar() {
-            document.getElementById('admin-sidebar').classList.toggle('show');
+            document.getElementById('sidebar').classList.toggle('show');
         }
-
-        function setActiveNav(id) {
-            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        
+        function setActiveNav(view) {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            if (view === 'all') document.getElementById('navAll').classList.add('active');
+            else if (view === 'شكوى') document.getElementById('navComplaints').classList.add('active');
+            else if (view === 'اقتراح') document.getElementById('navSuggestions').classList.add('active');
+            else if (view === 'users') document.getElementById('navUsers').classList.add('active');
         }
-
+        
         function logout() {
             localStorage.removeItem('admin');
             window.location.href = 'index.html';
         }
-
-        function loadData(filter) {
-            currentFilter = filter;
-            
-            if (filter === 'all') setActiveNav('nav-all');
-            else if (filter === 'شكوى') setActiveNav('nav-complaint');
-            else if (filter === 'اقتراح') setActiveNav('nav-suggestion');
-
+        
+        // =====================================================================
+        // تحميل البيانات من Firebase (باستخدام onSnapshot للتحديث المباشر)
+        // =====================================================================
+        function loadRequests() {
             if (unsubscribe) {
                 unsubscribe();
-                unsubscribe = null;
             }
-
-            document.getElementById('admin-tbody').innerHTML = `
-                <tr>
-                    <td colspan="8" style="text-align: center; padding: 50px;">
-                        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px; display: block;"></i>
-                        <p style="color: rgba(255,255,255,0.6);">جاري تحميل البيانات...</p>
-                    </td>
-                </tr>
+            
+            // إظهار مؤشر التحميل
+            document.getElementById('contentArea').innerHTML = `
+                <div class="table-card">
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                        <p style="color: var(--text-muted);">جاري تحميل البيانات...</p>
+                    </div>
+                </div>
             `;
-
-            try {
-                let query = db.collection("Requests")
-                    .orderBy("createdAt", "desc");
+            
+            let query = db.collection("Requests").orderBy("createdAt", "desc");
+            
+            if (currentView !== 'all') {
+                query = query.where("type", "==", currentView);
+            }
+            
+            unsubscribe = query.onSnapshot((snapshot) => {
+                allRequests = [];
                 
-                if (filter !== 'all') {
-                    query = query.where("type", "==", filter);
-                }
-
-                unsubscribe = query.onSnapshot((snapshot) => {
-                    console.log('📥 تحديث البيانات:', snapshot.size, 'طلبات');
+                snapshot.forEach(doc => {
+                    const data = doc.data();
                     
-                    allRequests = [];
-                    allStatuses.clear();
+                    // تحويل التاريخ
+                    if (data.createdAt && data.createdAt.toDate) {
+                        data.createdAtDate = data.createdAt.toDate();
+                    } else if (data.createdAt) {
+                        data.createdAtDate = new Date(data.createdAt);
+                    } else {
+                        data.createdAtDate = new Date();
+                    }
                     
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        
-                        if (data.createdAt && data.createdAt.toDate) {
-                            data.createdAtDate = data.createdAt.toDate();
-                        } else if (data.createdAt) {
-                            data.createdAtDate = new Date(data.createdAt);
-                        } else {
-                            data.createdAtDate = new Date();
-                        }
-                        
-                        if (data.status) {
-                            allStatuses.add(data.status);
-                        }
-                        
-                        if (data.tracking && Array.isArray(data.tracking)) {
-                            data.tracking.forEach(t => {
-                                if (t.status) allStatuses.add(t.status);
-                            });
-                        }
-                        
-                        allRequests.push({
-                            id: doc.id,
-                            ...data
-                        });
+                    allRequests.push({
+                        id: doc.id,
+                        ...data
                     });
-                    
-                    updateStatusFilterOptions();
-                    updateStats();
-                    
-                    // هنا التعديل المهم: نمرر null للفلاتر عشان تظهر كل البيانات
-                    filterData(true);
-                    
-                }, (error) => {
-                    console.error("Error loading data:", error);
-                    document.getElementById('admin-tbody').innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 50px; color: var(--neon-red);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px; display: block;"></i>
-                                <p>حدث خطأ في تحميل البيانات</p>
-                                <button class="action-btn" onclick="loadData('${filter}')" style="margin-top: 15px;">
-                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                                </button>
-                            </td>
-                        </tr>
-                    `;
                 });
                 
-            } catch (error) {
-                console.error("Error setting up query:", error);
-            }
-        }
-
-        function updateStatusFilterOptions() {
-            const statusSelect = document.getElementById('search-status');
-            if (!statusSelect) return;
-            
-            const currentValue = statusSelect.value;
-            const sortedStatuses = Array.from(allStatuses).sort();
-            
-            let options = '<option value="all">الكل</option>';
-            sortedStatuses.forEach(status => {
-                options += `<option value="${status}">${status}</option>`;
+                // تحديث الإحصائيات
+                updateStats();
+                
+                // عرض الطلبات
+                renderRequests();
+                
+            }, (error) => {
+                console.error("خطأ في تحميل البيانات:", error);
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="table-card">
+                        <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px;"></i>
+                            <p>حدث خطأ في تحميل البيانات</p>
+                            <button class="btn btn-primary" onclick="loadRequests()" style="margin-top: 15px;">
+                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
-            
-            statusSelect.innerHTML = options;
-            statusSelect.value = currentValue;
         }
-
+        
         function updateStats() {
             const total = allRequests.length;
             const complaints = allRequests.filter(r => r.type === 'شكوى').length;
@@ -1601,171 +1320,130 @@
                 r.status !== 'تم الإغلاق النهائي' && 
                 r.status !== 'تمت القراءة'
             ).length;
-
-            document.getElementById('total-count').textContent = total;
-            document.getElementById('complaint-count').textContent = complaints;
-            document.getElementById('suggestion-count').textContent = suggestions;
-            document.getElementById('pending-count').textContent = pending;
+            
+            document.getElementById('totalCount').textContent = total;
+            document.getElementById('complaintsCount').textContent = complaints;
+            document.getElementById('suggestionsCount').textContent = suggestions;
+            document.getElementById('pendingCount').textContent = pending;
         }
-
-        // ==================== دالة الفلترة المعدلة ====================
-        function filterData(resetFilters = false) {
-            console.log('🔍 بدء الفلترة...');
-            console.log('📊 عدد الطلبات الكلي:', allRequests.length);
-            
-            // إذا طلبنا reset، نرجع كل البيانات
-            if (resetFilters) {
-                console.log('🔄 إعادة ضبط الفلاتر وعرض كل البيانات');
-                filteredRequests = [...allRequests];
-                document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
-                renderRequests(filteredRequests);
-                return;
-            }
-            
-            // جلب قيم الفلاتر
-            const searchRef = document.getElementById('search-ref')?.value.toLowerCase().trim() || '';
-            const searchName = document.getElementById('search-name')?.value.toLowerCase().trim() || '';
-            const searchNid = document.getElementById('search-nid')?.value.trim() || '';
-            const searchMember = document.getElementById('search-member')?.value.trim() || '';
-            const searchDateFrom = document.getElementById('search-date-from')?.value || '';
-            const searchDateTo = document.getElementById('search-date-to')?.value || '';
-            const searchType = document.getElementById('search-type')?.value || 'all';
-            const searchStatus = document.getElementById('search-status')?.value || 'all';
-
-            // لو مفيش أي فلتر نشط، نعرض كل البيانات
-            if (!searchRef && !searchName && !searchNid && !searchMember && 
-                !searchDateFrom && !searchDateTo && searchType === 'all' && searchStatus === 'all') {
-                console.log('👀 مفيش فلاتر نشطة، عرض كل البيانات');
-                filteredRequests = [...allRequests];
-                document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
-                renderRequests(filteredRequests);
-                return;
-            }
-
+        
+        // =====================================================================
+        // عرض الطلبات مع تطبيق الفلاتر
+        // =====================================================================
+        function renderRequests() {
             // تطبيق الفلاتر
-            let filtered = allRequests.filter(r => {
-                if (searchRef && !r.refId?.toLowerCase().includes(searchRef)) return false;
-                if (searchName && !r.name?.toLowerCase().includes(searchName)) return false;
-                if (searchNid && !r.nid?.includes(searchNid)) return false;
-                if (searchMember && !r.memberId?.includes(searchMember)) return false;
-                if (searchType !== 'all' && r.type !== searchType) return false;
-                if (searchStatus !== 'all' && r.status !== searchStatus) return false;
+            let filtered = allRequests.filter(request => {
+                if (searchFilters.ref && !request.refId?.toLowerCase().includes(searchFilters.ref.toLowerCase())) return false;
+                if (searchFilters.name && !request.name?.toLowerCase().includes(searchFilters.name.toLowerCase())) return false;
+                if (searchFilters.nid && !request.nid?.includes(searchFilters.nid)) return false;
+                if (searchFilters.member && !request.memberId?.includes(searchFilters.member)) return false;
+                if (searchFilters.type !== 'all' && request.type !== searchFilters.type) return false;
+                if (searchFilters.status !== 'all' && request.status !== searchFilters.status) return false;
                 
-                if (searchDateFrom || searchDateTo) {
-                    const rDate = r.createdAtDate;
-                    if (rDate) {
-                        const dateStr = rDate.toISOString().split('T')[0];
-                        if (searchDateFrom && dateStr < searchDateFrom) return false;
-                        if (searchDateTo && dateStr > searchDateTo) return false;
+                if (searchFilters.dateFrom || searchFilters.dateTo) {
+                    const requestDate = request.createdAtDate;
+                    if (requestDate) {
+                        const dateStr = requestDate.toISOString().split('T')[0];
+                        if (searchFilters.dateFrom && dateStr < searchFilters.dateFrom) return false;
+                        if (searchFilters.dateTo && dateStr > searchFilters.dateTo) return false;
                     }
                 }
                 
                 return true;
             });
-
-            console.log('📊 عدد الطلبات بعد الفلترة:', filtered.length);
             
-            filteredRequests = filtered;
-            document.getElementById('results-count').textContent = `${filtered.length} نتيجة`;
-            renderRequests(filtered);
-        }
-
-        function toggleSearch() {
-            const body = document.getElementById('search-body');
-            const arrow = document.getElementById('search-arrow');
-            body.classList.toggle('show');
-            arrow.style.transform = body.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
-        }
-
-        function performSearch() {
-            filterData();
-        }
-
-        function resetSearch() {
-            console.log('🔄 إعادة ضبط البحث');
-            document.getElementById('search-ref').value = '';
-            document.getElementById('search-name').value = '';
-            document.getElementById('search-nid').value = '';
-            document.getElementById('search-member').value = '';
-            document.getElementById('search-date-from').value = '';
-            document.getElementById('search-date-to').value = '';
-            document.getElementById('search-type').value = 'all';
-            document.getElementById('search-status').value = 'all';
+            // إنشاء HTML للجدول
+            let tableHTML = `
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table id="main-table">
+                            <thead>
+                                <tr>
+                                    <th>التاريخ والوقت</th>
+                                    <th>رقم الطلب</th>
+                                    <th>صاحب الطلب</th>
+                                    <th>نوع العضوية</th>
+                                    <th>المحافظة</th>
+                                    <th>النوع</th>
+                                    <th>الحالة</th>
+                                    <th>إدارة</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
             
-            // عرض كل البيانات
-            filterData(true);
-        }
-
-        function renderRequests(requests) {
-            if (!requests || requests.length === 0) {
-                document.getElementById('admin-tbody').innerHTML = `
+            if (filtered.length === 0) {
+                tableHTML += `
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 50px;">
-                            <i class="fas fa-inbox" style="font-size: 40px; color: rgba(255,255,255,0.3); margin-bottom: 15px; display: block;"></i>
-                            <p style="color: rgba(255,255,255,0.5);">لا توجد بيانات للعرض</p>
+                            <i class="fas fa-inbox" style="font-size: 40px; color: var(--text-muted); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted);">لا توجد بيانات للعرض</p>
                         </td>
                     </tr>
                 `;
-                return;
+            } else {
+                filtered.forEach(request => {
+                    const dateStr = request.createdAtDate ? request.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
+                    const timeStr = request.createdAtDate ? request.createdAtDate.toLocaleTimeString('ar-EG') : '';
+                    
+                    const memberType = request.memberType === 'عضو نقابة' 
+                        ? `<span class="membership-badge member">عضو ${request.memberId ? '- ' + request.memberId : ''}</span>`
+                        : `<span class="membership-badge non-member">غير عضو</span>`;
+                    
+                    const typeClass = request.type === 'شكوى' ? 'complaint' : 'suggestion';
+                    const typeText = request.type === 'شكوى' ? 'شكوى' : 'اقتراح';
+                    
+                    const statusSpan = request.status ? 
+                        `<span class="status-badge" data-status="${request.status}">${request.status}</span>` : 
+                        '<span>غير محدد</span>';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">${dateStr}</div>
+                                <div style="color: var(--text-muted); font-size: 11px;">${timeStr}</div>
+                            </td>
+                            <td style="color: var(--neon-cyan); font-weight: 700; text-align: center;">${request.refId || 'غير محدد'}</td>
+                            <td>
+                                <div style="font-weight: 600;">${request.name || 'غير محدد'}</div>
+                                <div style="color: var(--text-muted); font-size: 11px;">${request.job || ''}</div>
+                                <div style="color: var(--neon-cyan); font-size: 11px;">${request.phone || ''}</div>
+                            </td>
+                            <td>${memberType}</td>
+                            <td>${request.gov || 'غير محدد'}</td>
+                            <td><span class="type-badge ${typeClass}">${typeText}</span></td>
+                            <td>${statusSpan}</td>
+                            <td>
+                                <button class="action-btn" onclick="manageRequest('${request.refId}')" title="إدارة الطلب">
+                                    <i class="fas fa-cog"></i>
+                                </button>
+                                <button class="action-btn delete" onclick="openDeleteModal('${request.refId}')" title="حذف">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
             }
-
-            let html = '';
             
-            requests.forEach(r => {
-                const dateStr = r.createdAtDate ? r.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
-                const timeStr = r.createdAtDate ? r.createdAtDate.toLocaleTimeString('ar-EG') : '';
-
-                const memberType = r.memberType === 'عضو نقابة' 
-                    ? `<span class="membership-badge member">عضو ${r.memberId ? '- ' + r.memberId : ''}</span>`
-                    : `<span class="membership-badge non-member">غير عضو</span>`;
-
-                const typeClass = r.type === 'شكوى' ? 'complaint' : 'suggestion';
-                const typeText = r.type === 'شكوى' ? 'شكوى' : 'اقتراح';
-
-                const statusSpan = r.status ? 
-                    `<span class="status-badge" data-status="${r.status}">${r.status}</span>` : 
-                    '<span>غير محدد</span>';
-
-                html += `
-                <tr>
-                    <td>
-                        <div style="font-weight: 600;">${dateStr}</div>
-                        <div style="color: rgba(255,255,255,0.4); font-size: 11px;">${timeStr}</div>
-                    </td>
-                    <td style="color: var(--neon-cyan); font-weight: 700; text-align: center;">${r.refId || 'غير محدد'}</td>
-                    <td>
-                        <div style="font-weight: 600;">${r.name || 'غير محدد'}</div>
-                        <div style="color: rgba(255,255,255,0.4); font-size: 11px;">${r.job || ''}</div>
-                        <div style="color: var(--neon-cyan); font-size: 11px;">${r.phone || ''}</div>
-                    </td>
-                    <td>${memberType}</td>
-                    <td>${r.gov || 'غير محدد'}</td>
-                    <td><span class="type-badge ${typeClass}">${typeText}</span></td>
-                    <td>${statusSpan}</td>
-                    <td>
-                        <button class="action-btn-small" onclick="manageReq('${r.refId}')" title="إدارة الطلب">
-                            <i class="fas fa-cog"></i>
-                        </button>
-                        <button class="action-btn-small delete" onclick="openDeleteModal('${r.refId}')" title="حذف">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>`;
-            });
-
-            document.getElementById('admin-tbody').innerHTML = html;
+            tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = tableHTML;
+            document.getElementById('results-count').textContent = `${filtered.length} نتيجة`;
         }
-
-        function manageReq(refId) {
-            console.log('🔍 فتح الطلب:', refId);
-            
+        
+        // =====================================================================
+        // إدارة الطلب
+        // =====================================================================
+        function manageRequest(refId) {
             const request = allRequests.find(r => r.refId === refId);
             
-            if (request) {
-                console.log('✅ تم العثور على الطلب');
-                showRequestModal(request);
-            } else {
-                console.log('❌ الطلب غير موجود في الذاكرة');
+            if (!request) {
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
@@ -1773,27 +1451,15 @@
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
-            }
-        }
-
-        function showRequestModal(d) {
-            if (!d || !d.refId) {
-                console.error('❌ البيانات مش مكتملة:', d);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'بيانات الطلب غير مكتملة',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
                 return;
             }
             
-            currentRequestId = d.refId;
+            currentRequestId = refId;
             
-            let timelineHtml = '';
-            if (d.tracking && d.tracking.length > 0) {
-                timelineHtml = d.tracking.slice().reverse().map(t => `
+            // إنشاء HTML للمسار الزمني
+            let timelineHTML = '';
+            if (request.tracking && request.tracking.length > 0) {
+                timelineHTML = request.tracking.slice().reverse().map(t => `
                     <div class="timeline-card">
                         <div class="timeline-header">
                             <span class="timeline-status">${t.status}</span>
@@ -1803,78 +1469,76 @@
                     </div>
                 `).join('');
             } else {
-                timelineHtml = '<p style="color: rgba(255,255,255,0.5); text-align: center;">لا يوجد مسار زمني</p>';
+                timelineHTML = '<p style="color: var(--text-muted); text-align: center;">لا يوجد مسار زمني</p>';
             }
-
-            const currentStatus = d.status || 'غير محدد';
-
-            const html = `
-                <div>
+            
+            const modalHTML = `
+                <div style="padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--neon-cyan);">إدارة الطلب: ${d.refId}</h3>
-                        <button class="action-btn-small delete" onclick="openDeleteModal('${d.refId}')">
+                        <h3 style="color: var(--neon-cyan);">إدارة الطلب: ${request.refId}</h3>
+                        <button class="action-btn delete" onclick="openDeleteModal('${request.refId}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
                     
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div><span style="color: rgba(255,255,255,0.5);">الاسم:</span> ${d.name}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">الرقم القومي:</span> ${d.nid}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">الهاتف:</span> ${d.phone}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">المحافظة:</span> ${d.gov}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">النوع:</span> ${d.type}</div>
-                            <div><span style="color: rgba(255,255,255,0.5);">الحالة الحالية:</span> ${currentStatus}</div>
+                            <div><span style="color: var(--text-muted);">الاسم:</span> ${request.name}</div>
+                            <div><span style="color: var(--text-muted);">الرقم القومي:</span> ${request.nid}</div>
+                            <div><span style="color: var(--text-muted);">الهاتف:</span> ${request.phone}</div>
+                            <div><span style="color: var(--text-muted);">المحافظة:</span> ${request.gov}</div>
+                            <div><span style="color: var(--text-muted);">النوع:</span> ${request.type}</div>
+                            <div><span style="color: var(--text-muted);">الحالة الحالية:</span> ${request.status}</div>
                         </div>
                         <div style="margin-top: 15px;">
-                            <span style="color: rgba(255,255,255,0.5);">التفاصيل:</span>
-                            <p style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 8px;">${d.details}</p>
+                            <span style="color: var(--text-muted);">التفاصيل:</span>
+                            <p style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px; margin-top: 8px;">${request.details}</p>
                         </div>
                     </div>
-
+                    
                     <h4 style="color: var(--neon-cyan); margin-bottom: 15px;">المسار الزمني</h4>
-                    <div style="max-height: 300px; overflow-y: auto; margin-bottom: 30px;">
-                        ${timelineHtml}
+                    <div style="max-height: 250px; overflow-y: auto; margin-bottom: 20px;">
+                        ${timelineHTML}
                     </div>
-
+                    
                     <h4 style="color: var(--neon-cyan); margin-bottom: 15px;">تحديث الحالة</h4>
                     
-                    <div class="search-field" style="margin-bottom: 15px;">
-                        <label>اسم المرحلة الجديدة</label>
-                        <input type="text" id="new-status-name" class="luxury-input" placeholder="اكتب اسم المرحلة..." value="${d.type === 'شكوى' ? 'قيد المراجعة' : ''}">
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">اسم المرحلة الجديدة</label>
+                        <input type="text" id="newStatus" class="search-field" placeholder="اكتب اسم المرحلة..." value="${request.type === 'شكوى' ? 'قيد المراجعة' : ''}" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
                     </div>
                     
-                    <div class="search-field" style="margin-bottom: 15px;">
-                        <label>تعليق</label>
-                        <textarea id="status-comment" class="luxury-input" rows="3" placeholder="اكتب تعليقك هنا..."></textarea>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">تعليق</label>
+                        <textarea id="statusComment" class="search-field" rows="3" placeholder="اكتب تعليقك هنا..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></textarea>
                     </div>
-
-                    <div style="display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap;">
-                        <button class="action-btn" onclick="updateRequestStatus('${d.refId}')" style="flex: 2; background: var(--gradient-royal);">
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="updateRequestStatus()" style="flex: 2;">
                             <i class="fas fa-save"></i> تحديث الحالة
                         </button>
                         
-                        ${d.type === 'شكوى' ? `
-                            <button class="action-btn" onclick="openCloseModal('${d.refId}')" style="flex: 1; background: var(--gradient-danger);">
-                                <i class="fas fa-lock"></i> إغلاق الشكوى
+                        ${request.type === 'شكوى' ? `
+                            <button class="btn btn-primary" onclick="openCloseModal()" style="flex: 1; background: var(--gradient-danger);">
+                                <i class="fas fa-lock"></i> إغلاق
                             </button>
                         ` : `
-                            <button class="action-btn" onclick="openReadModal('${d.refId}')" style="flex: 1; background: var(--gradient-success);">
-                                <i class="fas fa-check-circle"></i> تمت القراءة
+                            <button class="btn btn-primary" onclick="openReadModal()" style="flex: 1; background: var(--gradient-success);">
+                                <i class="fas fa-check-circle"></i> قراءة
                             </button>
                         `}
                     </div>
                 </div>
             `;
-
-            document.getElementById('modal-content-area').innerHTML = html;
-            document.getElementById('request-modal').style.display = 'flex';
+            
+            document.getElementById('modalContent').innerHTML = modalHTML;
+            document.getElementById('requestModal').classList.add('show');
         }
-
-        async function updateRequestStatus(refId) {
-            const newStatus = document.getElementById('new-status-name')?.value.trim();
-            const comment = document.getElementById('status-comment')?.value.trim();
-
+        
+        async function updateRequestStatus() {
+            const newStatus = document.getElementById('newStatus')?.value.trim();
+            const comment = document.getElementById('statusComment')?.value.trim();
+            
             if (!newStatus) {
                 Swal.fire({
                     icon: 'error',
@@ -1885,7 +1549,7 @@
                 });
                 return;
             }
-
+            
             if (!comment) {
                 Swal.fire({
                     icon: 'error',
@@ -1896,9 +1560,9 @@
                 });
                 return;
             }
-
+            
             try {
-                await db.collection("Requests").doc(refId).update({
+                await db.collection("Requests").doc(currentRequestId).update({
                     status: newStatus,
                     tracking: firebase.firestore.FieldValue.arrayUnion({
                         status: newStatus,
@@ -1907,7 +1571,7 @@
                         isFinal: newStatus === 'تم الإغلاق النهائي'
                     })
                 });
-
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
@@ -1915,7 +1579,7 @@
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
-
+                
                 closeModal();
                 
             } catch (error) {
@@ -1929,130 +1593,25 @@
                 });
             }
         }
-
-        function openCloseModal(refId) {
-            currentRequestId = refId;
-            document.getElementById('close-request-modal').style.display = 'flex';
-            document.getElementById('close-comment').value = '';
-        }
-
-        function closeCloseModal() {
-            document.getElementById('close-request-modal').style.display = 'none';
-            currentRequestId = null;
-        }
-
-        async function confirmCloseRequest() {
-            const comment = document.getElementById('close-comment')?.value.trim();
-            
-            if (!comment) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'اكتب سبب الإغلاق',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return;
-            }
-
-            try {
-                await db.collection("Requests").doc(currentRequestId).update({
-                    status: 'تم الإغلاق النهائي',
-                    tracking: firebase.firestore.FieldValue.arrayUnion({
-                        status: 'تم الإغلاق النهائي',
-                        comment: comment,
-                        time: new Date().toLocaleString('ar-EG'),
-                        isFinal: true
-                    })
-                });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الإغلاق',
-                    text: 'تم إغلاق الشكوى بنجاح',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-
-                closeCloseModal();
-                closeModal();
-                
-            } catch (error) {
-                console.error("Error closing request:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في إغلاق الشكوى',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-            }
-        }
-
-        function openReadModal(refId) {
-            currentRequestId = refId;
-            document.getElementById('read-request-modal').style.display = 'flex';
-            document.getElementById('read-comment').value = '';
-        }
-
-        function closeReadModal() {
-            document.getElementById('read-request-modal').style.display = 'none';
-            currentRequestId = null;
-        }
-
-        async function confirmReadRequest() {
-            const comment = document.getElementById('read-comment')?.value.trim() || 'تمت قراءة الاقتراح';
-
-            try {
-                await db.collection("Requests").doc(currentRequestId).update({
-                    status: 'تمت القراءة',
-                    tracking: firebase.firestore.FieldValue.arrayUnion({
-                        status: 'تمت القراءة',
-                        comment: comment,
-                        time: new Date().toLocaleString('ar-EG'),
-                        isFinal: false
-                    })
-                });
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم التحديث',
-                    text: 'تم تمييز الاقتراح كمقروء',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-
-                closeReadModal();
-                closeModal();
-                
-            } catch (error) {
-                console.error("Error marking as read:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في تحديث الحالة',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-            }
-        }
-
+        
+        // =====================================================================
+        // دوال الحذف
+        // =====================================================================
         function openDeleteModal(id) {
             currentDeleteId = id;
-            document.getElementById('delete-modal').style.display = 'flex';
-            document.getElementById('delete-password').value = '';
-            document.getElementById('delete-password').focus();
+            document.getElementById('deleteModal').classList.add('show');
+            document.getElementById('deletePassword').value = '';
         }
-
+        
         function closeDeleteModal() {
-            document.getElementById('delete-modal').style.display = 'none';
+            document.getElementById('deleteModal').classList.remove('show');
             currentDeleteId = null;
         }
-
+        
         async function confirmDelete() {
-            const pass = document.getElementById('delete-password').value;
+            const password = document.getElementById('deletePassword').value;
             
-            if (pass !== '11111@') {
+            if (password !== '11111@') {
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
@@ -2062,9 +1621,7 @@
                 });
                 return;
             }
-
-            if (!currentDeleteId) return;
-
+            
             try {
                 await db.collection("Requests").doc(currentDeleteId).delete();
                 
@@ -2075,7 +1632,7 @@
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
-
+                
                 closeDeleteModal();
                 closeModal();
                 
@@ -2090,11 +1647,172 @@
                 });
             }
         }
-
-        function closeModal() {
-            document.getElementById('request-modal').style.display = 'none';
+        
+        // =====================================================================
+        // دوال إغلاق الشكوى وتمييز كمقروء
+        // =====================================================================
+        function openCloseModal() {
+            closeModal();
+            document.getElementById('closeRequestModal').classList.add('show');
+            document.getElementById('closeComment').value = '';
         }
-
+        
+        function closeCloseModal() {
+            document.getElementById('closeRequestModal').classList.remove('show');
+        }
+        
+        async function confirmCloseRequest() {
+            const comment = document.getElementById('closeComment')?.value.trim();
+            
+            if (!comment) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'اكتب سبب الإغلاق',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            try {
+                await db.collection("Requests").doc(currentRequestId).update({
+                    status: 'تم الإغلاق النهائي',
+                    tracking: firebase.firestore.FieldValue.arrayUnion({
+                        status: 'تم الإغلاق النهائي',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: true
+                    })
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الإغلاق',
+                    text: 'تم إغلاق الشكوى بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeCloseModal();
+                
+            } catch (error) {
+                console.error("Error closing request:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في إغلاق الشكوى',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+        
+        function openReadModal() {
+            closeModal();
+            document.getElementById('readModal').classList.add('show');
+            document.getElementById('readComment').value = '';
+        }
+        
+        function closeReadModal() {
+            document.getElementById('readModal').classList.remove('show');
+        }
+        
+        async function confirmReadRequest() {
+            const comment = document.getElementById('readComment')?.value.trim() || 'تمت قراءة الاقتراح';
+            
+            try {
+                await db.collection("Requests").doc(currentRequestId).update({
+                    status: 'تمت القراءة',
+                    tracking: firebase.firestore.FieldValue.arrayUnion({
+                        status: 'تمت القراءة',
+                        comment: comment,
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: false
+                    })
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم التحديث',
+                    text: 'تم تمييز الاقتراح كمقروء',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeReadModal();
+                
+            } catch (error) {
+                console.error("Error marking as read:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تحديث الحالة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+        
+        // =====================================================================
+        // دوال البحث
+        // =====================================================================
+        function toggleSearch() {
+            const searchBody = document.getElementById('searchBody');
+            const searchArrow = document.getElementById('searchArrow');
+            searchBody.classList.toggle('show');
+            searchArrow.style.transform = searchBody.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+        }
+        
+        function updateFilters() {
+            searchFilters = {
+                ref: document.getElementById('searchRef')?.value || '',
+                name: document.getElementById('searchName')?.value || '',
+                nid: document.getElementById('searchNid')?.value || '',
+                member: document.getElementById('searchMember')?.value || '',
+                dateFrom: document.getElementById('searchDateFrom')?.value || '',
+                dateTo: document.getElementById('searchDateTo')?.value || '',
+                type: document.getElementById('searchType')?.value || 'all',
+                status: document.getElementById('searchStatus')?.value || 'all'
+            };
+            
+            renderRequests();
+        }
+        
+        function resetFilters() {
+            document.getElementById('searchRef').value = '';
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchNid').value = '';
+            document.getElementById('searchMember').value = '';
+            document.getElementById('searchDateFrom').value = '';
+            document.getElementById('searchDateTo').value = '';
+            document.getElementById('searchType').value = 'all';
+            document.getElementById('searchStatus').value = 'all';
+            
+            searchFilters = {
+                ref: '',
+                name: '',
+                nid: '',
+                member: '',
+                dateFrom: '',
+                dateTo: '',
+                type: 'all',
+                status: 'all'
+            };
+            
+            renderRequests();
+        }
+        
+        // =====================================================================
+        // دوال النوافذ
+        // =====================================================================
+        function closeModal() {
+            document.getElementById('requestModal').classList.remove('show');
+        }
+        
+        // =====================================================================
+        // دوال إضافية
+        // =====================================================================
         function exportToPDF() {
             Swal.fire({
                 icon: 'info',
@@ -2104,12 +1822,12 @@
                 confirmButtonColor: '#00ffff'
             });
         }
-
+        
         function refreshData() {
-            console.log('🔄 تحديث يدوي');
-            filterData(true);
+            // البيانات بتتجدد تلقائياً عن طريق onSnapshot
+            renderRequests();
         }
-
+        
         function showUsers() {
             Swal.fire({
                 icon: 'info',
@@ -2119,7 +1837,153 @@
                 confirmButtonColor: '#00ffff'
             });
         }
-
+        
+        // =====================================================================
+        // إنشاء واجهة البحث
+        // =====================================================================
+        function createSearchInterface() {
+            // تجميع كل الحالات المختلفة من الطلبات
+            const allStatuses = new Set();
+            allRequests.forEach(request => {
+                if (request.status) allStatuses.add(request.status);
+                if (request.tracking) {
+                    request.tracking.forEach(t => {
+                        if (t.status) allStatuses.add(t.status);
+                    });
+                }
+            });
+            
+            const sortedStatuses = Array.from(allStatuses).sort();
+            
+            let statusOptions = '<option value="all">الكل</option>';
+            sortedStatuses.forEach(status => {
+                statusOptions += `<option value="${status}">${status}</option>`;
+            });
+            
+            const searchHTML = `
+                <div class="search-card">
+                    <div class="search-header" onclick="toggleSearch()">
+                        <i class="fas fa-search"></i>
+                        <span>بحث متقدم</span>
+                        <i class="fas fa-chevron-down" id="searchArrow"></i>
+                    </div>
+                    <div class="search-body" id="searchBody">
+                        <div class="search-grid">
+                            <div class="search-field">
+                                <label>رقم الطلب</label>
+                                <input type="text" id="searchRef" placeholder="مثال: REQ-0001-2026" oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الاسم</label>
+                                <input type="text" id="searchName" placeholder="بحث بالاسم..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الرقم القومي</label>
+                                <input type="text" id="searchNid" placeholder="بحث بالرقم القومي..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>رقم العضوية</label>
+                                <input type="text" id="searchMember" placeholder="بحث برقم العضوية..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>من تاريخ</label>
+                                <input type="date" id="searchDateFrom" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>إلى تاريخ</label>
+                                <input type="date" id="searchDateTo" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>نوع الطلب</label>
+                                <select id="searchType" onchange="updateFilters()">
+                                    <option value="all">الكل</option>
+                                    <option value="شكوى">شكوى</option>
+                                    <option value="اقتراح">اقتراح</option>
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label>الحالة</label>
+                                <select id="searchStatus" onchange="updateFilters()">
+                                    ${statusOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-actions">
+                            <button class="btn btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> إعادة ضبط
+                            </button>
+                            <span class="results-count" id="results-count">0 نتيجة</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // إدراج واجهة البحث قبل الجدول
+            document.getElementById('contentArea').innerHTML = searchHTML + document.getElementById('contentArea').innerHTML;
+        }
+        
+        // =====================================================================
+        // تغيير العرض (كل الطلبات / الشكاوى / المقترحات / المستخدمين)
+        // =====================================================================
+        function changeView(view) {
+            currentView = view;
+            setActiveNav(view);
+            
+            if (view === 'users') {
+                // عرض شاشة المستخدمين
+                document.getElementById('pageTitle').textContent = 'إدارة المستخدمين';
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="table-card">
+                        <div style="text-align: center; padding: 50px;">
+                            <i class="fas fa-users-cog" style="font-size: 50px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">إدارة المستخدمين</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 20px;">قريباً...</p>
+                        </div>
+                    </div>
+                `;
+            } else {
+                document.getElementById('pageTitle').textContent = view === 'all' ? 'كل الطلبات' : (view === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
+                
+                // إلغاء الاشتراك القديم وتحميل البيانات الجديدة
+                if (unsubscribe) {
+                    unsubscribe();
+                }
+                
+                loadRequests();
+            }
+        }
+        
+        // =====================================================================
+        // التهيئة
+        // =====================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // التحقق من تسجيل الدخول
+            const isLoggedIn = localStorage.getItem('admin');
+            if (!isLoggedIn || isLoggedIn !== 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // تحميل الإعدادات المحفوظة
+            const savedLogo = localStorage.getItem('logo_url');
+            if (savedLogo) {
+                document.getElementById('sidebarLogo').src = savedLogo;
+            }
+            
+            // إضافة مستمعي الأحداث لأزرار التنقل
+            document.getElementById('navAll').addEventListener('click', () => changeView('all'));
+            document.getElementById('navComplaints').addEventListener('click', () => changeView('شكوى'));
+            document.getElementById('navSuggestions').addEventListener('click', () => changeView('اقتراح'));
+            document.getElementById('navUsers').addEventListener('click', () => changeView('users'));
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // تحميل البيانات
+            changeView('all');
+        });
+        
+        // تنظيف عند إغلاق الصفحة
         window.addEventListener('beforeunload', function() {
             if (unsubscribe) {
                 unsubscribe();
