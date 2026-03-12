@@ -16,12 +16,12 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- html2pdf (لتصدير PDF) -->
+    <!-- html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع إدارة المستخدمين
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع تتبع المستخدمين
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
@@ -32,6 +32,7 @@
             --bg-card: rgba(15, 23, 42, 0.7);
             --bg-sidebar: rgba(3, 5, 20, 0.8);
             --bg-hover: rgba(0, 255, 255, 0.1);
+            --bg-input: rgba(3, 5, 20, 0.6);
             
             --neon-cyan: #00ffff;
             --neon-cyan-glow: rgba(0, 255, 255, 0.5);
@@ -59,9 +60,11 @@
             --gradient-secondary: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
             --gradient-danger: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
             --gradient-success: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            --gradient-warning: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
             
             --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color) inset;
             --shadow-neon: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-purple);
+            --shadow-neon-red: 0 0 20px var(--neon-red), 0 0 40px var(--neon-red);
             
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             
@@ -298,12 +301,67 @@
             font-size: 12px;
         }
         
+        /* معلومات المستخدم الحالي */
+        .current-user {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .user-info-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .user-info-header i {
+            width: 30px;
+            height: 30px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .user-info-header span {
+            font-weight: 700;
+            color: var(--neon-cyan);
+        }
+        
+        .user-info-detail {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        
+        .user-info-detail i {
+            color: var(--neon-cyan);
+            margin-left: 5px;
+        }
+        
+        .user-role-badge {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-cyan);
+        }
+        
         .sidebar-nav {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            margin-top: 20px;
+            margin-top: 10px;
         }
         
         .nav-item {
@@ -565,7 +623,7 @@
         .search-field select {
             width: 100%;
             padding: 10px 12px;
-            background: rgba(3, 5, 20, 0.5);
+            background: var(--bg-input);
             border: 2px solid var(--border-color);
             border-radius: 12px;
             color: var(--text-primary);
@@ -641,6 +699,16 @@
         .btn-danger:hover {
             transform: translateY(-3px);
             box-shadow: 0 0 20px var(--neon-red);
+        }
+        
+        .btn-warning {
+            background: var(--gradient-warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--neon-orange);
         }
         
         .results-count {
@@ -957,6 +1025,112 @@
             border-right: 1px dashed var(--border-color);
         }
         
+        /* قائمة الإعدادات */
+        .settings-menu {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            width: 350px;
+            background: var(--bg-sidebar);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            display: none;
+            z-index: 1001;
+            box-shadow: var(--shadow-neon);
+        }
+        
+        .settings-menu.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .settings-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .settings-header i {
+            font-size: 24px;
+            color: var(--neon-cyan);
+        }
+        
+        .settings-header h4 {
+            font-size: 18px;
+            color: var(--neon-cyan);
+        }
+        
+        .settings-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+        
+        .settings-section h5 {
+            font-size: 14px;
+            color: var(--neon-cyan);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .luxury-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--bg-input);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+            outline: none;
+            transition: var(--transition);
+            margin-bottom: 10px;
+        }
+        
+        .luxury-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--neon-cyan);
+        }
+        
+        .auto-save-message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 10px;
+            color: var(--neon-green);
+            font-size: 13px;
+            margin-top: 15px;
+        }
+        
         /* تخصيص SweetAlert */
         .swal2-popup {
             background: var(--bg-sidebar) !important;
@@ -1001,6 +1175,9 @@
             .main-content {
                 margin-right: 0;
             }
+            .settings-menu {
+                width: 300px;
+            }
         }
         
         @media (max-width: 768px) {
@@ -1014,6 +1191,10 @@
                 flex-direction: column;
                 gap: 15px;
                 text-align: center;
+            }
+            .settings-menu {
+                width: 280px;
+                left: 10px;
             }
         }
     </style>
@@ -1029,9 +1210,48 @@
     </div>
     
     <!-- زر الإعدادات -->
-    <button class="settings-btn" id="settingsBtn">
+    <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()">
         <i class="fas fa-cog"></i>
     </button>
+    
+    <!-- قائمة الإعدادات -->
+    <div class="settings-menu" id="settingsMenu">
+        <div class="settings-header">
+            <i class="fas fa-sliders-h"></i>
+            <h4>إعدادات النظام</h4>
+        </div>
+        
+        <div class="settings-section">
+            <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
+            <input type="url" id="logoUrl" class="luxury-input" placeholder="رابط الشعار" value="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo">
+        </div>
+        
+        <div class="settings-section">
+            <h5><i class="fas fa-globe"></i> موقع الخدمات</h5>
+            <input type="url" id="servicesUrl" class="luxury-input" placeholder="رابط الموقع" value="https://services.egeng.org">
+            <input type="text" id="servicesText" class="luxury-input" placeholder="نص الزر" value="موقع تقديم خدمات النقابة">
+            <div class="checkbox-group">
+                <input type="checkbox" id="showServices" checked>
+                <label style="color: white;">إظهار زر الخدمات</label>
+            </div>
+        </div>
+        
+        <div class="settings-section">
+            <h5><i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم</h5>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="complaintPrefix" class="luxury-input" placeholder="شكوى" value="REQ" style="flex:1;">
+                <input type="text" id="suggestionPrefix" class="luxury-input" placeholder="اقتراح" value="REP" style="flex:1;">
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%;">
+            <i class="fas fa-save"></i> حفظ الإعدادات
+        </button>
+        
+        <div class="auto-save-message" id="autoSaveMessage" style="display: none;">
+            <i class="fas fa-check-circle"></i> تم حفظ الإعدادات بنجاح
+        </div>
+    </div>
     
     <!-- القائمة الجانبية -->
     <aside class="sidebar" id="sidebar">
@@ -1041,6 +1261,21 @@
             </div>
             <h2 class="sidebar-title">بوابة الشكاوي</h2>
             <p class="sidebar-sub">نقابة تكنولوجيا المعلومات</p>
+        </div>
+        
+        <!-- معلومات المستخدم الحالي -->
+        <div class="current-user" id="currentUserInfo">
+            <div class="user-info-header">
+                <i class="fas fa-user-circle"></i>
+                <span id="currentUserName">جاري التحميل...</span>
+            </div>
+            <div class="user-info-detail">
+                <span><i class="fas fa-tag"></i> <span id="currentUserRole">...</span></span>
+                <span class="user-role-badge" id="currentUserRoleBadge">...</span>
+            </div>
+            <div class="user-info-detail">
+                <span><i class="fas fa-clock"></i> آخر دخول: <span id="currentUserLastLogin">غير معروف</span></span>
+            </div>
         </div>
         
         <nav class="sidebar-nav">
@@ -1191,6 +1426,30 @@
         </div>
     </div>
     
+    <!-- نافذة إضافة مستخدم جديد (صلاحية السوبر أدمن فقط) -->
+    <div class="modal" id="addUserModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeModal('addUserModal')">&times;</button>
+            <div id="addUserModalContent"></div>
+        </div>
+    </div>
+    
+    <!-- نافذة تعديل مستخدم -->
+    <div class="modal" id="editUserModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeModal('editUserModal')">&times;</button>
+            <div id="editUserModalContent"></div>
+        </div>
+    </div>
+    
+    <!-- نافذة تغيير كلمة السر -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeModal('changePasswordModal')">&times;</button>
+            <div id="changePasswordModalContent"></div>
+        </div>
+    </div>
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
@@ -1229,7 +1488,7 @@
         let unsubscribeUsers = null;
         let currentRequestId = null;
         let currentUserId = null;
-        let currentUserRole = 'super_admin'; // المستخدم الحالي (افتراضي)
+        let currentUser = null; // المستخدم الحالي
         let searchFilters = {
             ref: '',
             name: '',
@@ -1240,34 +1499,6 @@
             type: 'all',
             status: 'all'
         };
-        
-        // =====================================================================
-        // إنشاء المستخدم الافتراضي (سوبر أدمن) إذا لم يكن موجوداً
-        // =====================================================================
-        async function createDefaultAdmin() {
-            try {
-                const adminRef = db.collection('Users').doc('admin');
-                const adminDoc = await adminRef.get();
-                
-                if (!adminDoc.exists) {
-                    await adminRef.set({
-                        username: 'admin',
-                        password: btoa('itws@2026'), // تشفير بسيط (في الإنتاج استخدم hashing)
-                        name: 'المشرف العام',
-                        role: 'super_admin',
-                        email: 'admin@itws.org',
-                        phone: '01234567890',
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: null,
-                        isActive: true,
-                        createdBy: 'system'
-                    });
-                    console.log('✅ تم إنشاء المستخدم الافتراضي (admin)');
-                }
-            } catch (error) {
-                console.error('خطأ في إنشاء المستخدم الافتراضي:', error);
-            }
-        }
         
         // =====================================================================
         // دوال مساعدة
@@ -1291,6 +1522,15 @@
             document.getElementById('sidebar').classList.toggle('show');
         }
         
+        function toggleSettings() {
+            const menu = document.getElementById('settingsMenu');
+            menu.classList.toggle('show');
+            
+            if (menu.classList.contains('show')) {
+                loadSettings();
+            }
+        }
+        
         function setActiveNav(view) {
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
@@ -1303,12 +1543,97 @@
         }
         
         function logout() {
-            localStorage.removeItem('admin');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserRole');
+            localStorage.removeItem('currentUserId');
             window.location.href = 'index.html';
         }
         
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('show');
+        }
+        
+        // =====================================================================
+        // تحميل معلومات المستخدم الحالي
+        // =====================================================================
+        function loadCurrentUser() {
+            const userId = localStorage.getItem('currentUserId');
+            const userName = localStorage.getItem('currentUser');
+            const userRole = localStorage.getItem('currentUserRole');
+            
+            if (userId && userName) {
+                currentUser = {
+                    id: userId,
+                    username: userName,
+                    role: userRole || 'viewer'
+                };
+                
+                document.getElementById('currentUserName').textContent = userName;
+                
+                const roleName = getRoleName(userRole);
+                document.getElementById('currentUserRole').textContent = roleName;
+                document.getElementById('currentUserRoleBadge').textContent = roleName;
+                
+                // تحديث آخر دخول
+                const lastLogin = localStorage.getItem('currentUserLastLogin');
+                if (lastLogin) {
+                    document.getElementById('currentUserLastLogin').textContent = lastLogin;
+                }
+            } else {
+                // إذا لم يتم العثور على مستخدم، العودة لصفحة تسجيل الدخول
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // =====================================================================
+        // تحديث آخر دخول للمستخدم
+        // =====================================================================
+        async function updateUserLastLogin(userId) {
+            try {
+                const now = new Date();
+                const lastLoginStr = now.toLocaleString('ar-EG');
+                
+                await db.collection("Users").doc(userId).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLoginString: lastLoginStr
+                });
+                
+                localStorage.setItem('currentUserLastLogin', lastLoginStr);
+                document.getElementById('currentUserLastLogin').textContent = lastLoginStr;
+                
+            } catch (error) {
+                console.error("خطأ في تحديث آخر دخول:", error);
+            }
+        }
+        
+        // =====================================================================
+        // دوال الإعدادات
+        // =====================================================================
+        function loadSettings() {
+            document.getElementById('logoUrl').value = localStorage.getItem('logo_url') || 'https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo';
+            document.getElementById('servicesUrl').value = localStorage.getItem('services_url') || 'https://services.egeng.org';
+            document.getElementById('servicesText').value = localStorage.getItem('services_text') || 'موقع تقديم خدمات النقابة';
+            document.getElementById('showServices').checked = localStorage.getItem('show_services') !== 'false';
+            document.getElementById('complaintPrefix').value = localStorage.getItem('complaint_prefix') || 'REQ';
+            document.getElementById('suggestionPrefix').value = localStorage.getItem('suggestion_prefix') || 'REP';
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('logo_url', document.getElementById('logoUrl').value);
+            localStorage.setItem('services_url', document.getElementById('servicesUrl').value);
+            localStorage.setItem('services_text', document.getElementById('servicesText').value);
+            localStorage.setItem('show_services', document.getElementById('showServices').checked);
+            localStorage.setItem('complaint_prefix', document.getElementById('complaintPrefix').value);
+            localStorage.setItem('suggestion_prefix', document.getElementById('suggestionPrefix').value);
+            
+            // تحديث الشعار
+            document.getElementById('sidebarLogo').src = document.getElementById('logoUrl').value;
+            
+            const msg = document.getElementById('autoSaveMessage');
+            msg.style.display = 'flex';
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 2000);
         }
         
         // =====================================================================
@@ -1389,7 +1714,6 @@
                 unsubscribeRequests();
             }
             
-            // إظهار مؤشر التحميل
             document.getElementById('contentArea').innerHTML = `
                 <div class="table-card">
                     <div style="text-align: center; padding: 50px;">
@@ -1411,7 +1735,6 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     
-                    // تحويل التاريخ
                     if (data.createdAt && data.createdAt.toDate) {
                         data.createdAtDate = data.createdAt.toDate();
                     } else if (data.createdAt) {
@@ -1426,55 +1749,25 @@
                     });
                 });
                 
-                // تحديث الإحصائيات
                 updateStats();
-                
-                // إنشاء واجهة البحث وعرض الطلبات
                 createRequestsView();
-                
                 Swal.close();
                 
             }, (error) => {
                 console.error("خطأ في تحميل الطلبات:", error);
                 
-                if (error.code === 'permission-denied') {
-                    document.getElementById('contentArea').innerHTML = `
-                        <div class="table-card">
-                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
-                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">خطأ في الصلاحيات</h3>
-                                <p style="color: var(--text-muted); margin-bottom: 20px;">تأكد من قواعد الأمان في Firebase</p>
-                                <button class="btn btn-primary" onclick="loadRequests()">
-                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                                </button>
-                            </div>
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="table-card">
+                        <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل البيانات</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
+                            <button class="btn btn-primary" onclick="loadRequests()">
+                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                            </button>
                         </div>
-                    `;
-                } else if (error.code === 'not-found') {
-                    document.getElementById('contentArea').innerHTML = `
-                        <div class="table-card">
-                            <div style="text-align: center; padding: 50px;">
-                                <i class="fas fa-database" style="font-size: 50px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
-                                <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">لا توجد طلبات بعد</h3>
-                                <p style="color: var(--text-muted);">المجموعة جاهزة لاستقبال الطلبات</p>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('contentArea').innerHTML = `
-                        <div class="table-card">
-                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
-                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل البيانات</h3>
-                                <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
-                                <button class="btn btn-primary" onclick="loadRequests()">
-                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }
-                
+                    </div>
+                `;
                 Swal.close();
             });
         }
@@ -1655,7 +1948,6 @@
         }
         
         function createRequestsView() {
-            // تجميع كل الحالات المختلفة من الطلبات
             const allStatuses = new Set();
             allRequests.forEach(request => {
                 if (request.status) allStatuses.add(request.status);
@@ -1673,7 +1965,6 @@
                 statusOptions += `<option value="${status}">${status}</option>`;
             });
             
-            // إنشاء واجهة البحث
             const searchHTML = `
                 <div class="search-card">
                     <div class="search-header" onclick="toggleSearch()">
@@ -1737,7 +2028,7 @@
         }
         
         // =====================================================================
-        // إدارة الطلب (فتح الكارت) - مع تحديث الحالة بشكل حر
+        // إدارة الطلب
         // =====================================================================
         function manageRequest(refId) {
             const request = allRequests.find(r => r.refId === refId);
@@ -1755,7 +2046,6 @@
             
             currentRequestId = request.id;
             
-            // إنشاء HTML للمسار الزمني
             let timelineHTML = '';
             if (request.tracking && request.tracking.length > 0) {
                 timelineHTML = request.tracking.slice().reverse().map(t => `
@@ -2019,7 +2309,7 @@
         }
         
         // =====================================================================
-        // إدارة المستخدمين (Users)
+        // إدارة المستخدمين (Users) - فقط للسوبر أدمن
         // =====================================================================
         function loadUsers() {
             if (unsubscribeUsers) {
@@ -2043,9 +2333,25 @@
                 allUsers = [];
                 
                 snapshot.forEach(doc => {
+                    const data = doc.data();
+                    
+                    // تنسيق تاريخ آخر دخول
+                    let lastLoginStr = 'لم يسجل بعد';
+                    if (data.lastLogin) {
+                        if (data.lastLogin.toDate) {
+                            const lastLoginDate = data.lastLogin.toDate();
+                            lastLoginStr = lastLoginDate.toLocaleString('ar-EG');
+                        } else if (data.lastLoginString) {
+                            lastLoginStr = data.lastLoginString;
+                        }
+                    } else if (data.lastLoginString) {
+                        lastLoginStr = data.lastLoginString;
+                    }
+                    
                     allUsers.push({
                         id: doc.id,
-                        ...doc.data()
+                        ...data,
+                        lastLoginDisplay: lastLoginStr
                     });
                 });
                 
@@ -2054,35 +2360,50 @@
             }, (error) => {
                 console.error("خطأ في تحميل المستخدمين:", error);
                 
-                if (error.code === 'not-found') {
-                    // إنشاء مجموعة Users إذا لم تكن موجودة
-                    createDefaultAdmin().then(() => {
-                        loadUsers();
-                    });
-                } else {
-                    document.getElementById('contentArea').innerHTML = `
-                        <div class="table-card">
-                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
-                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
-                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل المستخدمين</h3>
-                                <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
-                                <button class="btn btn-primary" onclick="loadUsers()">
-                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                                </button>
-                            </div>
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="table-card">
+                        <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل المستخدمين</h3>
+                            <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
+                            <button class="btn btn-primary" onclick="loadUsers()">
+                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                            </button>
                         </div>
-                    `;
-                }
+                    </div>
+                `;
             });
         }
         
+        function getRoleName(role) {
+            const roles = {
+                'super_admin': 'سوبر أدمن',
+                'admin': 'أدمن',
+                'reviewer': 'مراجع',
+                'viewer': 'مشاهد',
+                'data_entry': 'مدخل بيانات'
+            };
+            return roles[role] || role;
+        }
+        
         function renderUsers() {
-            let tableHTML = `
-                <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
-                    <button class="btn btn-success" onclick="showAddUserModal()">
-                        <i class="fas fa-plus"></i> إضافة مستخدم جديد
-                    </button>
-                </div>
+            // التحقق من صلاحية المستخدم الحالي
+            const isSuperAdmin = currentUser?.role === 'super_admin';
+            
+            let tableHTML = '';
+            
+            // فقط السوبر أدمن يمكنه رؤية وإدارة المستخدمين
+            if (isSuperAdmin) {
+                tableHTML += `
+                    <div style="margin-bottom: 20px; display: flex; justify-content: flex-end; gap: 10px;">
+                        <button class="btn btn-success" onclick="showAddUserModal()">
+                            <i class="fas fa-user-plus"></i> إضافة مستخدم جديد
+                        </button>
+                    </div>
+                `;
+            }
+            
+            tableHTML += `
                 <div class="table-card">
                     <div class="table-responsive">
                         <table class="users-table">
@@ -2095,8 +2416,9 @@
                                     <th>الهاتف</th>
                                     <th>الدور</th>
                                     <th>الحالة</th>
+                                    <th>آخر دخول</th>
                                     <th>تاريخ الإنشاء</th>
-                                    <th>الإجراءات</th>
+                                    ${isSuperAdmin ? '<th>الإجراءات</th>' : ''}
                                 </tr>
                             </thead>
                             <tbody>
@@ -2105,24 +2427,21 @@
             if (allUsers.length === 0) {
                 tableHTML += `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 50px;">
+                        <td colspan="${isSuperAdmin ? '10' : '9'}" style="text-align: center; padding: 50px;">
                             <i class="fas fa-users-slash" style="font-size: 40px; color: var(--text-muted); margin-bottom: 15px;"></i>
                             <p style="color: var(--text-muted);">لا يوجد مستخدمين</p>
                         </td>
                     </tr>
                 `;
             } else {
-                allUsers.sort((a, b) => {
-                    if (a.role === 'super_admin') return -1;
-                    if (b.role === 'super_admin') return 1;
-                    return 0;
-                }).forEach((user, index) => {
+                allUsers.forEach((user, index) => {
                     const createdDate = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('ar-EG') : 'غير محدد';
+                    const isCurrentUser = user.id === currentUser?.id;
                     
                     tableHTML += `
-                        <tr>
+                        <tr style="${isCurrentUser ? 'background: rgba(0, 255, 255, 0.1);' : ''}">
                             <td>${index + 1}</td>
-                            <td><strong>${user.username}</strong></td>
+                            <td><strong>${user.username}</strong> ${isCurrentUser ? '<span style="color: var(--neon-cyan);">(أنت)</span>' : ''}</td>
                             <td>${user.name || '-'}</td>
                             <td>${user.email || '-'}</td>
                             <td>${user.phone || '-'}</td>
@@ -2132,20 +2451,28 @@
                                     ${user.isActive ? 'نشط' : 'غير نشط'}
                                 </span>
                             </td>
-                            <td>${createdDate}</td>
                             <td>
-                                <button class="action-btn" onclick="editUser('${user.id}')" title="تعديل">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="action-btn" onclick="changeUserPassword('${user.id}')" title="تغيير كلمة السر">
-                                    <i class="fas fa-key"></i>
-                                </button>
-                                ${user.username !== 'admin' ? `
-                                    <button class="action-btn delete" onclick="openDeleteModal('user', '${user.id}')" title="حذف">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : ''}
+                                <div style="display: flex; flex-direction: column;">
+                                    <span>${user.lastLoginDisplay}</span>
+                                    ${user.lastLogin ? `<span style="font-size: 10px; color: var(--text-muted);">${user.lastLogin}</span>` : ''}
+                                </div>
                             </td>
+                            <td>${createdDate}</td>
+                            ${isSuperAdmin ? `
+                                <td>
+                                    <button class="action-btn" onclick="editUser('${user.id}')" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="action-btn" onclick="changeUserPassword('${user.id}')" title="تغيير كلمة السر">
+                                        <i class="fas fa-key"></i>
+                                    </button>
+                                    ${user.id !== currentUser?.id ? `
+                                        <button class="action-btn delete" onclick="openDeleteModal('user', '${user.id}')" title="حذف">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    ` : ''}
+                                </td>
+                            ` : ''}
                         </tr>
                     `;
                 });
@@ -2161,19 +2488,22 @@
             document.getElementById('contentArea').innerHTML = tableHTML;
         }
         
-        function getRoleName(role) {
-            const roles = {
-                'super_admin': 'سوبر أدمن',
-                'admin': 'أدمن',
-                'reviewer': 'مراجع',
-                'viewer': 'مشاهد',
-                'data_entry': 'مدخل بيانات'
-            };
-            return roles[role] || role;
-        }
-        
+        // =====================================================================
+        // إضافة مستخدم جديد (فقط للسوبر أدمن)
+        // =====================================================================
         function showAddUserModal() {
-            document.getElementById('userModalContent').innerHTML = `
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية إضافة مستخدمين',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            document.getElementById('addUserModalContent').innerHTML = `
                 <div style="padding: 10px;">
                     <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
                         <i class="fas fa-user-plus"></i> إضافة مستخدم جديد
@@ -2207,9 +2537,10 @@
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الدور</label>
                         <select id="newRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                            <option value="super_admin">سوبر أدمن</option>
                             <option value="admin">أدمن</option>
                             <option value="reviewer">مراجع</option>
-                            <option value="viewer">مشاهد</option>
+                            <option value="viewer" selected>مشاهد</option>
                             <option value="data_entry">مدخل بيانات</option>
                         </select>
                     </div>
@@ -2225,17 +2556,40 @@
                         <button class="btn btn-success" onclick="addUser()" style="flex: 2;">
                             <i class="fas fa-save"></i> إضافة المستخدم
                         </button>
-                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                        <button class="btn btn-secondary" onclick="closeModal('addUserModal')" style="flex: 1;">
                             <i class="fas fa-times"></i> إلغاء
                         </button>
                     </div>
                 </div>
             `;
             
-            document.getElementById('userModal').classList.add('show');
+            document.getElementById('addUserModal').classList.add('show');
+        }
+        
+        // =====================================================================
+        // دالة آمنة لتشفير كلمة السر (SHA-256)
+        // =====================================================================
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
         }
         
         async function addUser() {
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية إضافة مستخدمين',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const username = document.getElementById('newUsername')?.value.trim();
             const password = document.getElementById('newPassword')?.value.trim();
             const name = document.getElementById('newName')?.value.trim();
@@ -2269,9 +2623,12 @@
             }
             
             try {
+                // تشفير كلمة السر بطريقة آمنة
+                const hashedPassword = await hashPassword(password);
+                
                 await db.collection("Users").add({
                     username,
-                    password: btoa(password),
+                    password: hashedPassword, // تخزين مشفر
                     name: name || '',
                     email: email || '',
                     phone: phone || '',
@@ -2279,7 +2636,8 @@
                     isActive: isActive !== undefined ? isActive : true,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLogin: null,
-                    createdBy: 'admin'
+                    lastLoginString: null,
+                    createdBy: currentUser?.username || 'system'
                 });
                 
                 Swal.fire({
@@ -2290,7 +2648,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeModal('userModal');
+                closeModal('addUserModal');
                 
             } catch (error) {
                 console.error("Error adding user:", error);
@@ -2305,10 +2663,21 @@
         }
         
         function editUser(userId) {
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية تعديل المستخدمين',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const user = allUsers.find(u => u.id === userId);
             if (!user) return;
             
-            document.getElementById('userModalContent').innerHTML = `
+            document.getElementById('editUserModalContent').innerHTML = `
                 <div style="padding: 10px;">
                     <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
                         <i class="fas fa-user-edit"></i> تعديل المستخدم
@@ -2356,17 +2725,28 @@
                         <button class="btn btn-primary" onclick="updateUser('${user.id}')" style="flex: 2;">
                             <i class="fas fa-save"></i> حفظ التعديلات
                         </button>
-                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                        <button class="btn btn-secondary" onclick="closeModal('editUserModal')" style="flex: 1;">
                             <i class="fas fa-times"></i> إلغاء
                         </button>
                     </div>
                 </div>
             `;
             
-            document.getElementById('userModal').classList.add('show');
+            document.getElementById('editUserModal').classList.add('show');
         }
         
         async function updateUser(userId) {
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية تعديل المستخدمين',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const name = document.getElementById('editName')?.value.trim();
             const email = document.getElementById('editEmail')?.value.trim();
             const phone = document.getElementById('editPhone')?.value.trim();
@@ -2390,7 +2770,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeModal('userModal');
+                closeModal('editUserModal');
                 
             } catch (error) {
                 console.error("Error updating user:", error);
@@ -2405,10 +2785,21 @@
         }
         
         function changeUserPassword(userId) {
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية تغيير كلمات السر',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const user = allUsers.find(u => u.id === userId);
             if (!user) return;
             
-            document.getElementById('userModalContent').innerHTML = `
+            document.getElementById('changePasswordModalContent').innerHTML = `
                 <div style="padding: 10px;">
                     <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
                         <i class="fas fa-key"></i> تغيير كلمة السر
@@ -2432,17 +2823,28 @@
                         <button class="btn btn-primary" onclick="updateUserPassword('${user.id}')" style="flex: 2;">
                             <i class="fas fa-save"></i> تغيير كلمة السر
                         </button>
-                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                        <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')" style="flex: 1;">
                             <i class="fas fa-times"></i> إلغاء
                         </button>
                     </div>
                 </div>
             `;
             
-            document.getElementById('userModal').classList.add('show');
+            document.getElementById('changePasswordModal').classList.add('show');
         }
         
         async function updateUserPassword(userId) {
+            if (currentUser?.role !== 'super_admin') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية تغيير كلمات السر',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const newPassword = document.getElementById('newUserPassword')?.value.trim();
             const confirmPassword = document.getElementById('confirmUserPassword')?.value.trim();
             
@@ -2469,8 +2871,11 @@
             }
             
             try {
+                // تشفير كلمة السر بطريقة آمنة
+                const hashedPassword = await hashPassword(newPassword);
+                
                 await db.collection("Users").doc(userId).update({
-                    password: btoa(newPassword)
+                    password: hashedPassword
                 });
                 
                 Swal.fire({
@@ -2481,7 +2886,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeModal('userModal');
+                closeModal('changePasswordModal');
                 
             } catch (error) {
                 console.error("Error changing password:", error);
@@ -2560,6 +2965,16 @@
                 if (type === 'request') {
                     await db.collection("Requests").doc(currentDeleteId).delete();
                 } else {
+                    if (currentUser?.role !== 'super_admin') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'غير مصرح',
+                            text: 'أنت لا تملك صلاحية حذف المستخدمين',
+                            background: '#030514',
+                            confirmButtonColor: '#00ffff'
+                        });
+                        return;
+                    }
                     await db.collection("Users").doc(currentDeleteId).delete();
                 }
                 
@@ -2614,21 +3029,24 @@
         document.addEventListener('DOMContentLoaded', async function() {
             createParticles();
             
+            // تحميل معلومات المستخدم الحالي
+            loadCurrentUser();
+            
             // التحقق من تسجيل الدخول
-            const isLoggedIn = localStorage.getItem('admin');
-            if (!isLoggedIn || isLoggedIn !== 'true') {
+            const userId = localStorage.getItem('currentUserId');
+            if (!userId) {
                 window.location.href = 'index.html';
                 return;
             }
+            
+            // تحديث آخر دخول للمستخدم
+            await updateUserLastLogin(userId);
             
             // تحميل الإعدادات المحفوظة
             const savedLogo = localStorage.getItem('logo_url');
             if (savedLogo) {
                 document.getElementById('sidebarLogo').src = savedLogo;
             }
-            
-            // إنشاء المستخدم الافتراضي إذا لم يكن موجوداً
-            await createDefaultAdmin();
             
             // إضافة مستمعي الأحداث لأزرار التنقل
             document.getElementById('navAll').addEventListener('click', () => changeView('all'));
