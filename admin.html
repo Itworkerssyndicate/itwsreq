@@ -21,7 +21,7 @@
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع تتبع المستخدمين
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام المستخدمين الآمن
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
@@ -1543,14 +1543,55 @@
         }
         
         function logout() {
+            localStorage.removeItem('admin');
             localStorage.removeItem('currentUser');
             localStorage.removeItem('currentUserRole');
             localStorage.removeItem('currentUserId');
+            localStorage.removeItem('currentUserLastLogin');
             window.location.href = 'index.html';
         }
         
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('show');
+        }
+        
+        // =====================================================================
+        // التحقق من تسجيل الدخول
+        // =====================================================================
+        function checkAuth() {
+            // التحقق من وجود admin في localStorage (طريقة تسجيل الدخول القديمة)
+            const isAdmin = localStorage.getItem('admin');
+            
+            // التحقق من وجود مستخدم حالي
+            const userId = localStorage.getItem('currentUserId');
+            const userName = localStorage.getItem('currentUser');
+            
+            if (isAdmin === 'true') {
+                // هذا مستخدم قديم (admin افتراضي) - نحوله إلى النظام الجديد
+                console.log('تم اكتشاف مستخدم قديم (admin)، جاري تحويله...');
+                
+                // إنشاء مستخدم وهمي للـ admin القديم
+                currentUser = {
+                    id: 'admin',
+                    username: 'admin',
+                    role: 'super_admin'
+                };
+                
+                // تحديث localStorage
+                localStorage.setItem('currentUserId', 'admin');
+                localStorage.setItem('currentUser', 'admin');
+                localStorage.setItem('currentUserRole', 'super_admin');
+                
+                return true;
+            }
+            
+            if (!userId && !userName) {
+                console.log('لا يوجد مستخدم مسجل، جاري التحويل إلى صفحة تسجيل الدخول...');
+                window.location.href = 'index.html';
+                return false;
+            }
+            
+            return true;
         }
         
         // =====================================================================
@@ -1578,10 +1619,21 @@
                 const lastLogin = localStorage.getItem('currentUserLastLogin');
                 if (lastLogin) {
                     document.getElementById('currentUserLastLogin').textContent = lastLogin;
+                } else {
+                    document.getElementById('currentUserLastLogin').textContent = 'غير معروف';
                 }
             } else {
-                // إذا لم يتم العثور على مستخدم، العودة لصفحة تسجيل الدخول
-                window.location.href = 'index.html';
+                // إذا لم يتم العثور على مستخدم، نستخدم admin افتراضي
+                currentUser = {
+                    id: 'admin',
+                    username: 'admin',
+                    role: 'super_admin'
+                };
+                
+                document.getElementById('currentUserName').textContent = 'admin';
+                document.getElementById('currentUserRole').textContent = 'سوبر أدمن';
+                document.getElementById('currentUserRoleBadge').textContent = 'سوبر أدمن';
+                document.getElementById('currentUserLastLogin').textContent = 'غير معروف';
             }
         }
         
@@ -1593,10 +1645,13 @@
                 const now = new Date();
                 const lastLoginStr = now.toLocaleString('ar-EG');
                 
-                await db.collection("Users").doc(userId).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLoginString: lastLoginStr
-                });
+                // إذا كان userId حقيقي (ليس admin)
+                if (userId && userId !== 'admin') {
+                    await db.collection("Users").doc(userId).update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLoginString: lastLoginStr
+                    });
+                }
                 
                 localStorage.setItem('currentUserLastLogin', lastLoginStr);
                 document.getElementById('currentUserLastLogin').textContent = lastLoginStr;
@@ -2454,7 +2509,6 @@
                             <td>
                                 <div style="display: flex; flex-direction: column;">
                                     <span>${user.lastLoginDisplay}</span>
-                                    ${user.lastLogin ? `<span style="font-size: 10px; color: var(--text-muted);">${user.lastLogin}</span>` : ''}
                                 </div>
                             </td>
                             <td>${createdDate}</td>
@@ -3029,18 +3083,19 @@
         document.addEventListener('DOMContentLoaded', async function() {
             createParticles();
             
-            // تحميل معلومات المستخدم الحالي
-            loadCurrentUser();
-            
             // التحقق من تسجيل الدخول
-            const userId = localStorage.getItem('currentUserId');
-            if (!userId) {
-                window.location.href = 'index.html';
+            if (!checkAuth()) {
                 return;
             }
             
+            // تحميل معلومات المستخدم الحالي
+            loadCurrentUser();
+            
             // تحديث آخر دخول للمستخدم
-            await updateUserLastLogin(userId);
+            const userId = localStorage.getItem('currentUserId');
+            if (userId) {
+                await updateUserLastLogin(userId);
+            }
             
             // تحميل الإعدادات المحفوظة
             const savedLogo = localStorage.getItem('logo_url');
