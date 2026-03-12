@@ -10,19 +10,21 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome 6 (الأيقونات) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- SweetAlert2 (للتنبيهات) -->
+    <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <!-- html2pdf (لتصدير PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة معاد تصميمها بالكامل
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع إدارة المستخدمين
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
-        /* متغيرات الألوان - ثيم داكن فاخر */
         :root {
             --bg-primary: #030514;
             --bg-secondary: #0a0f1f;
@@ -64,11 +66,9 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             
             --sidebar-width: 280px;
-            --header-height: 70px;
             --border-radius: 20px;
         }
         
-        /* إعادة تعيين الأنماط */
         * {
             margin: 0;
             padding: 0;
@@ -245,7 +245,6 @@
             to { transform: translateX(0); opacity: 1; }
         }
         
-        /* الشعار */
         .sidebar-logo {
             text-align: center;
             margin-bottom: 30px;
@@ -299,7 +298,6 @@
             font-size: 12px;
         }
         
-        /* قائمة التنقل */
         .sidebar-nav {
             flex: 1;
             display: flex;
@@ -349,7 +347,6 @@
             color: white;
         }
         
-        /* زر الخروج */
         .logout-btn {
             margin-top: auto;
             background: rgba(239, 68, 68, 0.1);
@@ -373,6 +370,7 @@
             min-height: 100vh;
             position: relative;
             z-index: 90;
+            transition: var(--transition);
         }
         
         /* رأس الصفحة */
@@ -591,7 +589,7 @@
         }
         
         .btn {
-            padding: 8px 16px;
+            padding: 10px 20px;
             border: none;
             border-radius: 10px;
             font-weight: 600;
@@ -625,6 +623,26 @@
             transform: translateY(-3px);
         }
         
+        .btn-success {
+            background: var(--gradient-success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .btn-danger {
+            background: var(--gradient-danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 20px var(--neon-red);
+        }
+        
         .results-count {
             background: rgba(0, 255, 255, 0.1);
             padding: 5px 15px;
@@ -650,13 +668,13 @@
             padding: 5px;
         }
         
-        #main-table {
+        #main-table, .users-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1300px;
         }
         
-        #main-table th {
+        #main-table th, .users-table th {
             padding: 15px 12px;
             font-size: 13px;
             font-weight: 800;
@@ -667,7 +685,7 @@
             white-space: nowrap;
         }
         
-        #main-table td {
+        #main-table td, .users-table td {
             padding: 12px;
             font-size: 13px;
             border-bottom: 1px solid var(--border-color);
@@ -675,17 +693,56 @@
             vertical-align: middle;
         }
         
-        #main-table tbody tr {
+        #main-table tbody tr, .users-table tbody tr {
             transition: var(--transition);
         }
         
-        #main-table tbody tr:hover {
+        #main-table tbody tr:hover, .users-table tbody tr:hover {
             background: var(--bg-hover);
             transform: scale(1.01);
             box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
         }
         
-        /* أنماط الشارات */
+        /* شارات الأدوار */
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        
+        .role-badge.super_admin {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        
+        .role-badge.admin {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+        
+        .role-badge.reviewer {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+        
+        .role-badge.viewer {
+            background: rgba(168, 85, 247, 0.2);
+            color: #a855f7;
+            border: 1px solid #a855f7;
+        }
+        
+        .role-badge.data_entry {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        /* شارات الحالة */
         .status-badge {
             padding: 4px 10px;
             border-radius: 30px;
@@ -1016,17 +1073,17 @@
         <!-- رأس الصفحة -->
         <header class="page-header">
             <div class="page-title">
-                <i class="fas fa-database"></i>
+                <i class="fas fa-database" id="pageIcon"></i>
                 <h1 id="pageTitle">كل الطلبات</h1>
             </div>
             <div class="header-actions">
-                <button class="btn-icon" onclick="exportToPDF()" title="تصدير PDF">
+                <button class="btn-icon" onclick="exportToPDF()" title="تصدير PDF" id="exportBtn">
                     <i class="fas fa-file-pdf"></i>
                 </button>
-                <button class="btn-icon" onclick="window.print()" title="طباعة">
+                <button class="btn-icon" onclick="window.print()" title="طباعة" id="printBtn">
                     <i class="fas fa-print"></i>
                 </button>
-                <button class="btn-icon" onclick="refreshData()" title="تحديث">
+                <button class="btn-icon" onclick="refreshData()" title="تحديث" id="refreshBtn">
                     <i class="fas fa-sync-alt"></i>
                 </button>
                 <button class="btn-icon" onclick="toggleSidebar()" id="menuBtn" title="القائمة">
@@ -1035,42 +1092,44 @@
             </div>
         </header>
         
-        <!-- بطاقات الإحصائيات -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-envelope"></i>
+        <!-- بطاقات الإحصائيات (تظهر فقط للطلبات) -->
+        <div id="statsContainer">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>إجمالي الطلبات</h3>
+                        <p id="totalCount">0</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>إجمالي الطلبات</h3>
-                    <p id="totalCount">0</p>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>شكاوى</h3>
+                        <p id="complaintsCount">0</p>
+                    </div>
                 </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-exclamation-circle"></i>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>مقترحات</h3>
+                        <p id="suggestionsCount">0</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>شكاوى</h3>
-                    <p id="complaintsCount">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-lightbulb"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>مقترحات</h3>
-                    <p id="suggestionsCount">0</p>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>قيد الانتظار</h3>
-                    <p id="pendingCount">0</p>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>قيد الانتظار</h3>
+                        <p id="pendingCount">0</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1095,67 +1154,40 @@
     <!-- نافذة إدارة الطلب -->
     <div class="modal" id="requestModal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <button class="modal-close" onclick="closeModal('requestModal')">&times;</button>
             <div id="modalContent"></div>
         </div>
     </div>
     
-    <!-- نافذة حذف الطلب -->
+    <!-- نافذة إضافة/تعديل مستخدم -->
+    <div class="modal" id="userModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
+            <div id="userModalContent"></div>
+        </div>
+    </div>
+    
+    <!-- نافذة حذف الطلب/المستخدم -->
     <div class="modal" id="deleteModal">
         <div class="modal-content" style="max-width: 400px;">
-            <button class="modal-close" onclick="closeDeleteModal()">&times;</button>
-            <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
-                <h3 style="color: var(--neon-red); margin-bottom: 20px;">حذف الطلب</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 20px;">هل أنت متأكد من حذف هذا الطلب؟</p>
-                <input type="password" id="deletePassword" class="search-field" placeholder="كلمة سر الحذف" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;">
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="confirmDelete()" style="flex: 2; background: var(--gradient-danger);">تأكيد الحذف</button>
-                    <button class="btn btn-secondary" onclick="closeDeleteModal()" style="flex: 1;">إلغاء</button>
-                </div>
-            </div>
+            <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+            <div id="deleteModalContent"></div>
         </div>
     </div>
     
     <!-- نافذة إغلاق الشكوى -->
     <div class="modal" id="closeRequestModal">
         <div class="modal-content" style="max-width: 500px;">
-            <button class="modal-close" onclick="closeCloseModal()">&times;</button>
-            <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-lock" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
-                <h3 style="color: var(--neon-red); margin-bottom: 20px;">إغلاق الشكوى</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 20px;">سيتم إضافة حالة "تم الإغلاق النهائي" إلى المسار الزمني</p>
-                <textarea id="closeComment" class="search-field" rows="3" placeholder="اكتب سبب الإغلاق..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;"></textarea>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="confirmCloseRequest()" style="flex: 2; background: var(--gradient-danger);">تأكيد الإغلاق</button>
-                    <button class="btn btn-secondary" onclick="closeCloseModal()" style="flex: 1;">إلغاء</button>
-                </div>
-            </div>
+            <button class="modal-close" onclick="closeModal('closeRequestModal')">&times;</button>
+            <div id="closeRequestModalContent"></div>
         </div>
     </div>
     
     <!-- نافذة تمييز كمقروء -->
     <div class="modal" id="readModal">
         <div class="modal-content" style="max-width: 500px;">
-            <button class="modal-close" onclick="closeReadModal()">&times;</button>
-            <div style="text-align: center; padding: 20px;">
-                <i class="fas fa-check-circle" style="font-size: 50px; color: var(--neon-green); margin-bottom: 20px;"></i>
-                <h3 style="color: var(--neon-green); margin-bottom: 20px;">تمييز كمقروء</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 20px;">سيتم إضافة حالة "تمت القراءة" إلى المسار الزمني</p>
-                <textarea id="readComment" class="search-field" rows="3" placeholder="اكتب أي ملاحظات (اختياري)..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-green); border-radius: 10px; color: white;"></textarea>
-                <div style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="confirmReadRequest()" style="flex: 2; background: var(--gradient-success);">تأكيد</button>
-                    <button class="btn btn-secondary" onclick="closeReadModal()" style="flex: 1;">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- نافذة إعدادات المستخدمين (سيتم استخدامها لاحقاً) -->
-    <div class="modal" id="userModal">
-        <div class="modal-content" style="max-width: 500px;">
-            <button class="modal-close" onclick="closeUserModal()">&times;</button>
-            <div id="userModalContent"></div>
+            <button class="modal-close" onclick="closeModal('readModal')">&times;</button>
+            <div id="readModalContent"></div>
         </div>
     </div>
     
@@ -1184,17 +1216,20 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        // تفعيل التخزين المؤقت لتحسين الأداء
+        // تفعيل التخزين المؤقت
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
         
         // =====================================================================
         // المتغيرات العامة
         // =====================================================================
         let allRequests = [];
+        let allUsers = [];
         let currentView = 'all';
-        let unsubscribe = null;
+        let unsubscribeRequests = null;
+        let unsubscribeUsers = null;
         let currentRequestId = null;
-        let currentDeleteId = null;
+        let currentUserId = null;
+        let currentUserRole = 'super_admin'; // المستخدم الحالي (افتراضي)
         let searchFilters = {
             ref: '',
             name: '',
@@ -1205,6 +1240,34 @@
             type: 'all',
             status: 'all'
         };
+        
+        // =====================================================================
+        // إنشاء المستخدم الافتراضي (سوبر أدمن) إذا لم يكن موجوداً
+        // =====================================================================
+        async function createDefaultAdmin() {
+            try {
+                const adminRef = db.collection('Users').doc('admin');
+                const adminDoc = await adminRef.get();
+                
+                if (!adminDoc.exists) {
+                    await adminRef.set({
+                        username: 'admin',
+                        password: btoa('itws@2026'), // تشفير بسيط (في الإنتاج استخدم hashing)
+                        name: 'المشرف العام',
+                        role: 'super_admin',
+                        email: 'admin@itws.org',
+                        phone: '01234567890',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLogin: null,
+                        isActive: true,
+                        createdBy: 'system'
+                    });
+                    console.log('✅ تم إنشاء المستخدم الافتراضي (admin)');
+                }
+            } catch (error) {
+                console.error('خطأ في إنشاء المستخدم الافتراضي:', error);
+            }
+        }
         
         // =====================================================================
         // دوال مساعدة
@@ -1244,12 +1307,86 @@
             window.location.href = 'index.html';
         }
         
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+        
         // =====================================================================
-        // تحميل البيانات من Firebase (باستخدام onSnapshot للتحديث المباشر)
+        // دوال التصدير والطباعة والتحديث
+        // =====================================================================
+        function exportToPDF() {
+            const element = document.getElementById('contentArea');
+            
+            if (!element) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'لا يوجد محتوى للتصدير',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            Swal.fire({
+                title: 'جاري إنشاء PDF',
+                text: 'الرجاء الانتظار...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: '#030514',
+                color: '#fff'
+            });
+            
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `تقرير_${new Date().toLocaleDateString('ar-EG')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, backgroundColor: '#030514' },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                Swal.close();
+            });
+        }
+        
+        function refreshData() {
+            Swal.fire({
+                title: 'جاري تحديث البيانات',
+                text: 'الرجاء الانتظار...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading(),
+                background: '#030514',
+                color: '#fff'
+            });
+            
+            if (currentView === 'users') {
+                if (unsubscribeUsers) unsubscribeUsers();
+                loadUsers();
+            } else {
+                if (unsubscribeRequests) unsubscribeRequests();
+                loadRequests();
+            }
+            
+            setTimeout(() => {
+                Swal.close();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم التحديث',
+                    text: 'تم تحديث البيانات بنجاح',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: '#030514'
+                });
+            }, 1000);
+        }
+        
+        // =====================================================================
+        // إدارة الطلبات (Requests)
         // =====================================================================
         function loadRequests() {
-            if (unsubscribe) {
-                unsubscribe();
+            if (unsubscribeRequests) {
+                unsubscribeRequests();
             }
             
             // إظهار مؤشر التحميل
@@ -1257,7 +1394,7 @@
                 <div class="table-card">
                     <div style="text-align: center; padding: 50px;">
                         <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
-                        <p style="color: var(--text-muted);">جاري تحميل البيانات...</p>
+                        <p style="color: var(--text-muted);">جاري تحميل الطلبات...</p>
                     </div>
                 </div>
             `;
@@ -1268,7 +1405,7 @@
                 query = query.where("type", "==", currentView);
             }
             
-            unsubscribe = query.onSnapshot((snapshot) => {
+            unsubscribeRequests = query.onSnapshot((snapshot) => {
                 allRequests = [];
                 
                 snapshot.forEach(doc => {
@@ -1292,22 +1429,53 @@
                 // تحديث الإحصائيات
                 updateStats();
                 
-                // عرض الطلبات
-                renderRequests();
+                // إنشاء واجهة البحث وعرض الطلبات
+                createRequestsView();
+                
+                Swal.close();
                 
             }, (error) => {
-                console.error("خطأ في تحميل البيانات:", error);
-                document.getElementById('contentArea').innerHTML = `
-                    <div class="table-card">
-                        <div style="text-align: center; padding: 50px; color: var(--neon-red);">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 40px; margin-bottom: 15px;"></i>
-                            <p>حدث خطأ في تحميل البيانات</p>
-                            <button class="btn btn-primary" onclick="loadRequests()" style="margin-top: 15px;">
-                                <i class="fas fa-sync-alt"></i> إعادة المحاولة
-                            </button>
+                console.error("خطأ في تحميل الطلبات:", error);
+                
+                if (error.code === 'permission-denied') {
+                    document.getElementById('contentArea').innerHTML = `
+                        <div class="table-card">
+                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">خطأ في الصلاحيات</h3>
+                                <p style="color: var(--text-muted); margin-bottom: 20px;">تأكد من قواعد الأمان في Firebase</p>
+                                <button class="btn btn-primary" onclick="loadRequests()">
+                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                `;
+                    `;
+                } else if (error.code === 'not-found') {
+                    document.getElementById('contentArea').innerHTML = `
+                        <div class="table-card">
+                            <div style="text-align: center; padding: 50px;">
+                                <i class="fas fa-database" style="font-size: 50px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                                <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">لا توجد طلبات بعد</h3>
+                                <p style="color: var(--text-muted);">المجموعة جاهزة لاستقبال الطلبات</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    document.getElementById('contentArea').innerHTML = `
+                        <div class="table-card">
+                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل البيانات</h3>
+                                <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
+                                <button class="btn btn-primary" onclick="loadRequests()">
+                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                Swal.close();
             });
         }
         
@@ -1327,11 +1495,55 @@
             document.getElementById('pendingCount').textContent = pending;
         }
         
-        // =====================================================================
-        // عرض الطلبات مع تطبيق الفلاتر
-        // =====================================================================
-        function renderRequests() {
-            // تطبيق الفلاتر
+        function toggleSearch() {
+            const searchBody = document.getElementById('searchBody');
+            const searchArrow = document.getElementById('searchArrow');
+            if (searchBody && searchArrow) {
+                searchBody.classList.toggle('show');
+                searchArrow.style.transform = searchBody.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
+            }
+        }
+        
+        function updateFilters() {
+            searchFilters = {
+                ref: document.getElementById('searchRef')?.value || '',
+                name: document.getElementById('searchName')?.value || '',
+                nid: document.getElementById('searchNid')?.value || '',
+                member: document.getElementById('searchMember')?.value || '',
+                dateFrom: document.getElementById('searchDateFrom')?.value || '',
+                dateTo: document.getElementById('searchDateTo')?.value || '',
+                type: document.getElementById('searchType')?.value || 'all',
+                status: document.getElementById('searchStatus')?.value || 'all'
+            };
+            
+            filterRequests();
+        }
+        
+        function resetFilters() {
+            if (document.getElementById('searchRef')) document.getElementById('searchRef').value = '';
+            if (document.getElementById('searchName')) document.getElementById('searchName').value = '';
+            if (document.getElementById('searchNid')) document.getElementById('searchNid').value = '';
+            if (document.getElementById('searchMember')) document.getElementById('searchMember').value = '';
+            if (document.getElementById('searchDateFrom')) document.getElementById('searchDateFrom').value = '';
+            if (document.getElementById('searchDateTo')) document.getElementById('searchDateTo').value = '';
+            if (document.getElementById('searchType')) document.getElementById('searchType').value = 'all';
+            if (document.getElementById('searchStatus')) document.getElementById('searchStatus').value = 'all';
+            
+            searchFilters = {
+                ref: '',
+                name: '',
+                nid: '',
+                member: '',
+                dateFrom: '',
+                dateTo: '',
+                type: 'all',
+                status: 'all'
+            };
+            
+            filterRequests();
+        }
+        
+        function filterRequests() {
             let filtered = allRequests.filter(request => {
                 if (searchFilters.ref && !request.refId?.toLowerCase().includes(searchFilters.ref.toLowerCase())) return false;
                 if (searchFilters.name && !request.name?.toLowerCase().includes(searchFilters.name.toLowerCase())) return false;
@@ -1352,7 +1564,13 @@
                 return true;
             });
             
-            // إنشاء HTML للجدول
+            renderRequests(filtered);
+            if (document.getElementById('resultsCount')) {
+                document.getElementById('resultsCount').textContent = `${filtered.length} نتيجة`;
+            }
+        }
+        
+        function renderRequests(requests) {
             let tableHTML = `
                 <div class="table-card">
                     <div class="table-responsive">
@@ -1372,17 +1590,17 @@
                             <tbody>
             `;
             
-            if (filtered.length === 0) {
+            if (requests.length === 0) {
                 tableHTML += `
                     <tr>
                         <td colspan="8" style="text-align: center; padding: 50px;">
                             <i class="fas fa-inbox" style="font-size: 40px; color: var(--text-muted); margin-bottom: 15px;"></i>
-                            <p style="color: var(--text-muted);">لا توجد بيانات للعرض</p>
+                            <p style="color: var(--text-muted);">لا توجد طلبات للعرض</p>
                         </td>
                     </tr>
                 `;
             } else {
-                filtered.forEach(request => {
+                requests.forEach(request => {
                     const dateStr = request.createdAtDate ? request.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
                     const timeStr = request.createdAtDate ? request.createdAtDate.toLocaleTimeString('ar-EG') : '';
                     
@@ -1417,7 +1635,7 @@
                                 <button class="action-btn" onclick="manageRequest('${request.refId}')" title="إدارة الطلب">
                                     <i class="fas fa-cog"></i>
                                 </button>
-                                <button class="action-btn delete" onclick="openDeleteModal('${request.refId}')" title="حذف">
+                                <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')" title="حذف">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
@@ -1434,11 +1652,92 @@
             `;
             
             document.getElementById('contentArea').innerHTML = tableHTML;
-            document.getElementById('results-count').textContent = `${filtered.length} نتيجة`;
+        }
+        
+        function createRequestsView() {
+            // تجميع كل الحالات المختلفة من الطلبات
+            const allStatuses = new Set();
+            allRequests.forEach(request => {
+                if (request.status) allStatuses.add(request.status);
+                if (request.tracking) {
+                    request.tracking.forEach(t => {
+                        if (t.status) allStatuses.add(t.status);
+                    });
+                }
+            });
+            
+            const sortedStatuses = Array.from(allStatuses).sort();
+            
+            let statusOptions = '<option value="all">الكل</option>';
+            sortedStatuses.forEach(status => {
+                statusOptions += `<option value="${status}">${status}</option>`;
+            });
+            
+            // إنشاء واجهة البحث
+            const searchHTML = `
+                <div class="search-card">
+                    <div class="search-header" onclick="toggleSearch()">
+                        <i class="fas fa-search"></i>
+                        <span>بحث متقدم</span>
+                        <i class="fas fa-chevron-down" id="searchArrow"></i>
+                    </div>
+                    <div class="search-body" id="searchBody">
+                        <div class="search-grid">
+                            <div class="search-field">
+                                <label>رقم الطلب</label>
+                                <input type="text" id="searchRef" placeholder="مثال: REQ-0001-2026" oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الاسم</label>
+                                <input type="text" id="searchName" placeholder="بحث بالاسم..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الرقم القومي</label>
+                                <input type="text" id="searchNid" placeholder="بحث بالرقم القومي..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>رقم العضوية</label>
+                                <input type="text" id="searchMember" placeholder="بحث برقم العضوية..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>من تاريخ</label>
+                                <input type="date" id="searchDateFrom" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>إلى تاريخ</label>
+                                <input type="date" id="searchDateTo" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>نوع الطلب</label>
+                                <select id="searchType" onchange="updateFilters()">
+                                    <option value="all">الكل</option>
+                                    <option value="شكوى">شكوى</option>
+                                    <option value="اقتراح">اقتراح</option>
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label>الحالة</label>
+                                <select id="searchStatus" onchange="updateFilters()">
+                                    ${statusOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-actions">
+                            <button class="btn btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> إعادة ضبط
+                            </button>
+                            <span class="results-count" id="resultsCount">${allRequests.length} نتيجة</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = searchHTML;
+            filterRequests();
         }
         
         // =====================================================================
-        // إدارة الطلب
+        // إدارة الطلب (فتح الكارت)
         // =====================================================================
         function manageRequest(refId) {
             const request = allRequests.find(r => r.refId === refId);
@@ -1454,7 +1753,7 @@
                 return;
             }
             
-            currentRequestId = refId;
+            currentRequestId = request.id;
             
             // إنشاء HTML للمسار الزمني
             let timelineHTML = '';
@@ -1476,7 +1775,7 @@
                 <div style="padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="color: var(--neon-cyan);">إدارة الطلب: ${request.refId}</h3>
-                        <button class="action-btn delete" onclick="openDeleteModal('${request.refId}')">
+                        <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')">
                             <i class="fas fa-trash"></i>
                         </button>
                     </div>
@@ -1505,12 +1804,12 @@
                     
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">اسم المرحلة الجديدة</label>
-                        <input type="text" id="newStatus" class="search-field" placeholder="اكتب اسم المرحلة..." value="${request.type === 'شكوى' ? 'قيد المراجعة' : ''}" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                        <input type="text" id="newStatus" placeholder="اكتب اسم المرحلة..." value="${request.type === 'شكوى' ? 'قيد المراجعة' : ''}" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
                     </div>
                     
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">تعليق</label>
-                        <textarea id="statusComment" class="search-field" rows="3" placeholder="اكتب تعليقك هنا..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></textarea>
+                        <textarea id="statusComment" rows="3" placeholder="اكتب تعليقك هنا..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></textarea>
                     </div>
                     
                     <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -1519,11 +1818,11 @@
                         </button>
                         
                         ${request.type === 'شكوى' ? `
-                            <button class="btn btn-primary" onclick="openCloseModal()" style="flex: 1; background: var(--gradient-danger);">
+                            <button class="btn btn-danger" onclick="openCloseModal()" style="flex: 1;">
                                 <i class="fas fa-lock"></i> إغلاق
                             </button>
                         ` : `
-                            <button class="btn btn-primary" onclick="openReadModal()" style="flex: 1; background: var(--gradient-success);">
+                            <button class="btn btn-success" onclick="openReadModal()" style="flex: 1;">
                                 <i class="fas fa-check-circle"></i> قراءة
                             </button>
                         `}
@@ -1580,7 +1879,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeModal();
+                closeModal('requestModal');
                 
             } catch (error) {
                 console.error("Error updating status:", error);
@@ -1594,71 +1893,25 @@
             }
         }
         
-        // =====================================================================
-        // دوال الحذف
-        // =====================================================================
-        function openDeleteModal(id) {
-            currentDeleteId = id;
-            document.getElementById('deleteModal').classList.add('show');
-            document.getElementById('deletePassword').value = '';
-        }
-        
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.remove('show');
-            currentDeleteId = null;
-        }
-        
-        async function confirmDelete() {
-            const password = document.getElementById('deletePassword').value;
-            
-            if (password !== '11111@') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'كلمة السر غير صحيحة',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return;
-            }
-            
-            try {
-                await db.collection("Requests").doc(currentDeleteId).delete();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحذف',
-                    text: 'تم حذف الطلب بنجاح',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                
-                closeDeleteModal();
-                closeModal();
-                
-            } catch (error) {
-                console.error("Error deleting request:", error);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في حذف الطلب',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-            }
-        }
-        
-        // =====================================================================
-        // دوال إغلاق الشكوى وتمييز كمقروء
-        // =====================================================================
         function openCloseModal() {
-            closeModal();
+            closeModal('requestModal');
             document.getElementById('closeRequestModal').classList.add('show');
-            document.getElementById('closeComment').value = '';
-        }
-        
-        function closeCloseModal() {
-            document.getElementById('closeRequestModal').classList.remove('show');
+            document.getElementById('closeRequestModalContent').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-lock" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                    <h3 style="color: var(--neon-red); margin-bottom: 20px;">إغلاق الشكوى</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">سيتم إضافة حالة "تم الإغلاق النهائي" إلى المسار الزمني</p>
+                    <textarea id="closeComment" rows="3" placeholder="اكتب سبب الإغلاق..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;"></textarea>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-danger" onclick="confirmCloseRequest()" style="flex: 2;">
+                            <i class="fas fa-check"></i> تأكيد الإغلاق
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal('closeRequestModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
         }
         
         async function confirmCloseRequest() {
@@ -1694,7 +1947,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeCloseModal();
+                closeModal('closeRequestModal');
                 
             } catch (error) {
                 console.error("Error closing request:", error);
@@ -1709,13 +1962,24 @@
         }
         
         function openReadModal() {
-            closeModal();
+            closeModal('requestModal');
             document.getElementById('readModal').classList.add('show');
-            document.getElementById('readComment').value = '';
-        }
-        
-        function closeReadModal() {
-            document.getElementById('readModal').classList.remove('show');
+            document.getElementById('readModalContent').innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 50px; color: var(--neon-green); margin-bottom: 20px;"></i>
+                    <h3 style="color: var(--neon-green); margin-bottom: 20px;">تمييز كمقروء</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">سيتم إضافة حالة "تمت القراءة" إلى المسار الزمني</p>
+                    <textarea id="readComment" rows="3" placeholder="اكتب أي ملاحظات (اختياري)..." style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-green); border-radius: 10px; color: white;"></textarea>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-success" onclick="confirmReadRequest()" style="flex: 2;">
+                            <i class="fas fa-check"></i> تأكيد
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal('readModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
         }
         
         async function confirmReadRequest() {
@@ -1740,7 +2004,7 @@
                     confirmButtonColor: '#00ffff'
                 });
                 
-                closeReadModal();
+                closeModal('readModal');
                 
             } catch (error) {
                 console.error("Error marking as read:", error);
@@ -1755,200 +2019,591 @@
         }
         
         // =====================================================================
-        // دوال البحث
+        // إدارة المستخدمين (Users)
         // =====================================================================
-        function toggleSearch() {
-            const searchBody = document.getElementById('searchBody');
-            const searchArrow = document.getElementById('searchArrow');
-            searchBody.classList.toggle('show');
-            searchArrow.style.transform = searchBody.classList.contains('show') ? 'rotate(180deg)' : 'rotate(0)';
-        }
-        
-        function updateFilters() {
-            searchFilters = {
-                ref: document.getElementById('searchRef')?.value || '',
-                name: document.getElementById('searchName')?.value || '',
-                nid: document.getElementById('searchNid')?.value || '',
-                member: document.getElementById('searchMember')?.value || '',
-                dateFrom: document.getElementById('searchDateFrom')?.value || '',
-                dateTo: document.getElementById('searchDateTo')?.value || '',
-                type: document.getElementById('searchType')?.value || 'all',
-                status: document.getElementById('searchStatus')?.value || 'all'
-            };
+        function loadUsers() {
+            if (unsubscribeUsers) {
+                unsubscribeUsers();
+            }
             
-            renderRequests();
-        }
-        
-        function resetFilters() {
-            document.getElementById('searchRef').value = '';
-            document.getElementById('searchName').value = '';
-            document.getElementById('searchNid').value = '';
-            document.getElementById('searchMember').value = '';
-            document.getElementById('searchDateFrom').value = '';
-            document.getElementById('searchDateTo').value = '';
-            document.getElementById('searchType').value = 'all';
-            document.getElementById('searchStatus').value = 'all';
+            document.getElementById('statsContainer').style.display = 'none';
+            document.getElementById('pageTitle').textContent = 'إدارة المستخدمين';
+            document.getElementById('pageIcon').className = 'fas fa-users-cog';
             
-            searchFilters = {
-                ref: '',
-                name: '',
-                nid: '',
-                member: '',
-                dateFrom: '',
-                dateTo: '',
-                type: 'all',
-                status: 'all'
-            };
-            
-            renderRequests();
-        }
-        
-        // =====================================================================
-        // دوال النوافذ
-        // =====================================================================
-        function closeModal() {
-            document.getElementById('requestModal').classList.remove('show');
-        }
-        
-        // =====================================================================
-        // دوال إضافية
-        // =====================================================================
-        function exportToPDF() {
-            Swal.fire({
-                icon: 'info',
-                title: 'قريباً',
-                text: 'خاصية تصدير PDF قيد التطوير',
-                background: '#030514',
-                confirmButtonColor: '#00ffff'
-            });
-        }
-        
-        function refreshData() {
-            // البيانات بتتجدد تلقائياً عن طريق onSnapshot
-            renderRequests();
-        }
-        
-        function showUsers() {
-            Swal.fire({
-                icon: 'info',
-                title: 'إدارة المستخدمين',
-                text: 'سيتم فتح شاشة إدارة المستخدمين قريباً',
-                background: '#030514',
-                confirmButtonColor: '#00ffff'
-            });
-        }
-        
-        // =====================================================================
-        // إنشاء واجهة البحث
-        // =====================================================================
-        function createSearchInterface() {
-            // تجميع كل الحالات المختلفة من الطلبات
-            const allStatuses = new Set();
-            allRequests.forEach(request => {
-                if (request.status) allStatuses.add(request.status);
-                if (request.tracking) {
-                    request.tracking.forEach(t => {
-                        if (t.status) allStatuses.add(t.status);
-                    });
-                }
-            });
-            
-            const sortedStatuses = Array.from(allStatuses).sort();
-            
-            let statusOptions = '<option value="all">الكل</option>';
-            sortedStatuses.forEach(status => {
-                statusOptions += `<option value="${status}">${status}</option>`;
-            });
-            
-            const searchHTML = `
-                <div class="search-card">
-                    <div class="search-header" onclick="toggleSearch()">
-                        <i class="fas fa-search"></i>
-                        <span>بحث متقدم</span>
-                        <i class="fas fa-chevron-down" id="searchArrow"></i>
-                    </div>
-                    <div class="search-body" id="searchBody">
-                        <div class="search-grid">
-                            <div class="search-field">
-                                <label>رقم الطلب</label>
-                                <input type="text" id="searchRef" placeholder="مثال: REQ-0001-2026" oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>الاسم</label>
-                                <input type="text" id="searchName" placeholder="بحث بالاسم..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>الرقم القومي</label>
-                                <input type="text" id="searchNid" placeholder="بحث بالرقم القومي..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>رقم العضوية</label>
-                                <input type="text" id="searchMember" placeholder="بحث برقم العضوية..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>من تاريخ</label>
-                                <input type="date" id="searchDateFrom" onchange="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>إلى تاريخ</label>
-                                <input type="date" id="searchDateTo" onchange="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>نوع الطلب</label>
-                                <select id="searchType" onchange="updateFilters()">
-                                    <option value="all">الكل</option>
-                                    <option value="شكوى">شكوى</option>
-                                    <option value="اقتراح">اقتراح</option>
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label>الحالة</label>
-                                <select id="searchStatus" onchange="updateFilters()">
-                                    ${statusOptions}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="search-actions">
-                            <button class="btn btn-secondary" onclick="resetFilters()">
-                                <i class="fas fa-undo"></i> إعادة ضبط
-                            </button>
-                            <span class="results-count" id="results-count">0 نتيجة</span>
-                        </div>
+            document.getElementById('contentArea').innerHTML = `
+                <div class="table-card">
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                        <p style="color: var(--text-muted);">جاري تحميل المستخدمين...</p>
                     </div>
                 </div>
             `;
             
-            // إدراج واجهة البحث قبل الجدول
-            document.getElementById('contentArea').innerHTML = searchHTML + document.getElementById('contentArea').innerHTML;
+            unsubscribeUsers = db.collection("Users").orderBy("createdAt", "desc").onSnapshot((snapshot) => {
+                allUsers = [];
+                
+                snapshot.forEach(doc => {
+                    allUsers.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                renderUsers();
+                
+            }, (error) => {
+                console.error("خطأ في تحميل المستخدمين:", error);
+                
+                if (error.code === 'not-found') {
+                    // إنشاء مجموعة Users إذا لم تكن موجودة
+                    createDefaultAdmin().then(() => {
+                        loadUsers();
+                    });
+                } else {
+                    document.getElementById('contentArea').innerHTML = `
+                        <div class="table-card">
+                            <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                                <h3 style="color: var(--neon-red); margin-bottom: 10px;">حدث خطأ في تحميل المستخدمين</h3>
+                                <p style="color: var(--text-muted); margin-bottom: 20px;">${error.message}</p>
+                                <button class="btn btn-primary" onclick="loadUsers()">
+                                    <i class="fas fa-sync-alt"></i> إعادة المحاولة
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+        
+        function renderUsers() {
+            let tableHTML = `
+                <div style="margin-bottom: 20px; display: flex; justify-content: flex-end;">
+                    <button class="btn btn-success" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> إضافة مستخدم جديد
+                    </button>
+                </div>
+                <div class="table-card">
+                    <div class="table-responsive">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>اسم المستخدم</th>
+                                    <th>الاسم الكامل</th>
+                                    <th>البريد الإلكتروني</th>
+                                    <th>الهاتف</th>
+                                    <th>الدور</th>
+                                    <th>الحالة</th>
+                                    <th>تاريخ الإنشاء</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            if (allUsers.length === 0) {
+                tableHTML += `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 50px;">
+                            <i class="fas fa-users-slash" style="font-size: 40px; color: var(--text-muted); margin-bottom: 15px;"></i>
+                            <p style="color: var(--text-muted);">لا يوجد مستخدمين</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                allUsers.sort((a, b) => {
+                    if (a.role === 'super_admin') return -1;
+                    if (b.role === 'super_admin') return 1;
+                    return 0;
+                }).forEach((user, index) => {
+                    const createdDate = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('ar-EG') : 'غير محدد';
+                    
+                    tableHTML += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><strong>${user.username}</strong></td>
+                            <td>${user.name || '-'}</td>
+                            <td>${user.email || '-'}</td>
+                            <td>${user.phone || '-'}</td>
+                            <td><span class="role-badge ${user.role || 'viewer'}">${getRoleName(user.role)}</span></td>
+                            <td>
+                                <span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">
+                                    ${user.isActive ? 'نشط' : 'غير نشط'}
+                                </span>
+                            </td>
+                            <td>${createdDate}</td>
+                            <td>
+                                <button class="action-btn" onclick="editUser('${user.id}')" title="تعديل">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="action-btn" onclick="changeUserPassword('${user.id}')" title="تغيير كلمة السر">
+                                    <i class="fas fa-key"></i>
+                                </button>
+                                ${user.username !== 'admin' ? `
+                                    <button class="action-btn delete" onclick="openDeleteModal('user', '${user.id}')" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            tableHTML += `
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('contentArea').innerHTML = tableHTML;
+        }
+        
+        function getRoleName(role) {
+            const roles = {
+                'super_admin': 'سوبر أدمن',
+                'admin': 'أدمن',
+                'reviewer': 'مراجع',
+                'viewer': 'مشاهد',
+                'data_entry': 'مدخل بيانات'
+            };
+            return roles[role] || role;
+        }
+        
+        function showAddUserModal() {
+            document.getElementById('userModalContent').innerHTML = `
+                <div style="padding: 10px;">
+                    <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-user-plus"></i> إضافة مستخدم جديد
+                    </h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">اسم المستخدم</label>
+                        <input type="text" id="newUsername" placeholder="اسم المستخدم" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">كلمة السر</label>
+                        <input type="password" id="newPassword" placeholder="كلمة السر" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الاسم الكامل</label>
+                        <input type="text" id="newName" placeholder="الاسم الكامل" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">البريد الإلكتروني</label>
+                        <input type="email" id="newEmail" placeholder="البريد الإلكتروني" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">رقم الهاتف</label>
+                        <input type="text" id="newPhone" placeholder="رقم الهاتف" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الدور</label>
+                        <select id="newRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                            <option value="admin">أدمن</option>
+                            <option value="reviewer">مراجع</option>
+                            <option value="viewer">مشاهد</option>
+                            <option value="data_entry">مدخل بيانات</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 10px; color: var(--text-primary);">
+                            <input type="checkbox" id="newIsActive" checked style="width: 18px; height: 18px; accent-color: var(--neon-cyan);">
+                            <span>حساب نشط</span>
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-success" onclick="addUser()" style="flex: 2;">
+                            <i class="fas fa-save"></i> إضافة المستخدم
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('userModal').classList.add('show');
+        }
+        
+        async function addUser() {
+            const username = document.getElementById('newUsername')?.value.trim();
+            const password = document.getElementById('newPassword')?.value.trim();
+            const name = document.getElementById('newName')?.value.trim();
+            const email = document.getElementById('newEmail')?.value.trim();
+            const phone = document.getElementById('newPhone')?.value.trim();
+            const role = document.getElementById('newRole')?.value;
+            const isActive = document.getElementById('newIsActive')?.checked;
+            
+            if (!username || !password) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'اسم المستخدم وكلمة السر مطلوبان',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            // التحقق من عدم وجود اسم مستخدم مكرر
+            const existingUser = allUsers.find(u => u.username === username);
+            if (existingUser) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'اسم المستخدم موجود بالفعل',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            try {
+                await db.collection("Users").add({
+                    username,
+                    password: btoa(password),
+                    name: name || '',
+                    email: email || '',
+                    phone: phone || '',
+                    role: role || 'viewer',
+                    isActive: isActive !== undefined ? isActive : true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: null,
+                    createdBy: 'admin'
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم',
+                    text: 'تم إضافة المستخدم بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeModal('userModal');
+                
+            } catch (error) {
+                console.error("Error adding user:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في إضافة المستخدم',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+        
+        function editUser(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('userModalContent').innerHTML = `
+                <div style="padding: 10px;">
+                    <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-user-edit"></i> تعديل المستخدم
+                    </h3>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">اسم المستخدم</label>
+                        <input type="text" id="editUsername" value="${user.username}" readonly style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white; opacity: 0.7;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الاسم الكامل</label>
+                        <input type="text" id="editName" value="${user.name || ''}" placeholder="الاسم الكامل" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">البريد الإلكتروني</label>
+                        <input type="email" id="editEmail" value="${user.email || ''}" placeholder="البريد الإلكتروني" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">رقم الهاتف</label>
+                        <input type="text" id="editPhone" value="${user.phone || ''}" placeholder="رقم الهاتف" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الدور</label>
+                        <select id="editRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                            <option value="super_admin" ${user.role === 'super_admin' ? 'selected' : ''}>سوبر أدمن</option>
+                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>أدمن</option>
+                            <option value="reviewer" ${user.role === 'reviewer' ? 'selected' : ''}>مراجع</option>
+                            <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>مشاهد</option>
+                            <option value="data_entry" ${user.role === 'data_entry' ? 'selected' : ''}>مدخل بيانات</option>
+                        </select>
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: flex; align-items: center; gap: 10px; color: var(--text-primary);">
+                            <input type="checkbox" id="editIsActive" ${user.isActive ? 'checked' : ''} style="width: 18px; height: 18px; accent-color: var(--neon-cyan);">
+                            <span>حساب نشط</span>
+                        </label>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="updateUser('${user.id}')" style="flex: 2;">
+                            <i class="fas fa-save"></i> حفظ التعديلات
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('userModal').classList.add('show');
+        }
+        
+        async function updateUser(userId) {
+            const name = document.getElementById('editName')?.value.trim();
+            const email = document.getElementById('editEmail')?.value.trim();
+            const phone = document.getElementById('editPhone')?.value.trim();
+            const role = document.getElementById('editRole')?.value;
+            const isActive = document.getElementById('editIsActive')?.checked;
+            
+            try {
+                await db.collection("Users").doc(userId).update({
+                    name: name || '',
+                    email: email || '',
+                    phone: phone || '',
+                    role: role || 'viewer',
+                    isActive: isActive !== undefined ? isActive : true
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم',
+                    text: 'تم تحديث بيانات المستخدم بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeModal('userModal');
+                
+            } catch (error) {
+                console.error("Error updating user:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تحديث البيانات',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+        
+        function changeUserPassword(userId) {
+            const user = allUsers.find(u => u.id === userId);
+            if (!user) return;
+            
+            document.getElementById('userModalContent').innerHTML = `
+                <div style="padding: 10px;">
+                    <h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;">
+                        <i class="fas fa-key"></i> تغيير كلمة السر
+                    </h3>
+                    
+                    <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">
+                        المستخدم: <strong style="color: var(--neon-cyan);">${user.username}</strong>
+                    </p>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">كلمة السر الجديدة</label>
+                        <input type="password" id="newUserPassword" placeholder="كلمة السر الجديدة" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">تأكيد كلمة السر</label>
+                        <input type="password" id="confirmUserPassword" placeholder="تأكيد كلمة السر" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="updateUserPassword('${user.id}')" style="flex: 2;">
+                            <i class="fas fa-save"></i> تغيير كلمة السر
+                        </button>
+                        <button class="btn btn-secondary" onclick="closeModal('userModal')" style="flex: 1;">
+                            <i class="fas fa-times"></i> إلغاء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('userModal').classList.add('show');
+        }
+        
+        async function updateUserPassword(userId) {
+            const newPassword = document.getElementById('newUserPassword')?.value.trim();
+            const confirmPassword = document.getElementById('confirmUserPassword')?.value.trim();
+            
+            if (!newPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة السر مطلوبة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة السر غير متطابقة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            try {
+                await db.collection("Users").doc(userId).update({
+                    password: btoa(newPassword)
+                });
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم',
+                    text: 'تم تغيير كلمة السر بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeModal('userModal');
+                
+            } catch (error) {
+                console.error("Error changing password:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في تغيير كلمة السر',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
         }
         
         // =====================================================================
-        // تغيير العرض (كل الطلبات / الشكاوى / المقترحات / المستخدمين)
+        // دوال الحذف المشتركة
+        // =====================================================================
+        function openDeleteModal(type, id) {
+            currentDeleteId = id;
+            
+            let content = '';
+            if (type === 'request') {
+                content = `
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--neon-red); margin-bottom: 20px;">حذف الطلب</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">هل أنت متأكد من حذف هذا الطلب؟</p>
+                        <input type="password" id="deletePassword" placeholder="كلمة سر الحذف" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;">
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-danger" onclick="confirmDelete('${type}')" style="flex: 2;">
+                                <i class="fas fa-check"></i> تأكيد الحذف
+                            </button>
+                            <button class="btn btn-secondary" onclick="closeModal('deleteModal')" style="flex: 1;">
+                                <i class="fas fa-times"></i> إلغاء
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                content = `
+                    <div style="text-align: center; padding: 20px;">
+                        <i class="fas fa-trash-alt" style="font-size: 50px; color: var(--neon-red); margin-bottom: 20px;"></i>
+                        <h3 style="color: var(--neon-red); margin-bottom: 20px;">حذف المستخدم</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">هل أنت متأكد من حذف هذا المستخدم؟</p>
+                        <input type="password" id="deletePassword" placeholder="كلمة سر الحذف" style="width: 100%; padding: 12px; margin-bottom: 20px; background: rgba(0,0,0,0.5); border: 2px solid var(--neon-red); border-radius: 10px; color: white;">
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-danger" onclick="confirmDelete('${type}')" style="flex: 2;">
+                                <i class="fas fa-check"></i> تأكيد الحذف
+                            </button>
+                            <button class="btn btn-secondary" onclick="closeModal('deleteModal')" style="flex: 1;">
+                                <i class="fas fa-times"></i> إلغاء
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('deleteModalContent').innerHTML = content;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+        
+        async function confirmDelete(type) {
+            const password = document.getElementById('deletePassword')?.value;
+            
+            if (password !== '11111@') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة السر غير صحيحة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            try {
+                if (type === 'request') {
+                    await db.collection("Requests").doc(currentDeleteId).delete();
+                } else {
+                    await db.collection("Users").doc(currentDeleteId).delete();
+                }
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحذف',
+                    text: `تم حذف ${type === 'request' ? 'الطلب' : 'المستخدم'} بنجاح`,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                closeModal('deleteModal');
+                if (type === 'request') {
+                    closeModal('requestModal');
+                }
+                
+            } catch (error) {
+                console.error(`Error deleting ${type}:`, error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: `حدث خطأ في حذف ${type === 'request' ? 'الطلب' : 'المستخدم'}`,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
+        
+        // =====================================================================
+        // تغيير العرض
         // =====================================================================
         function changeView(view) {
             currentView = view;
             setActiveNav(view);
             
             if (view === 'users') {
-                // عرض شاشة المستخدمين
+                document.getElementById('statsContainer').style.display = 'none';
                 document.getElementById('pageTitle').textContent = 'إدارة المستخدمين';
-                document.getElementById('contentArea').innerHTML = `
-                    <div class="table-card">
-                        <div style="text-align: center; padding: 50px;">
-                            <i class="fas fa-users-cog" style="font-size: 50px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
-                            <h3 style="color: var(--neon-cyan); margin-bottom: 10px;">إدارة المستخدمين</h3>
-                            <p style="color: var(--text-muted); margin-bottom: 20px;">قريباً...</p>
-                        </div>
-                    </div>
-                `;
+                document.getElementById('pageIcon').className = 'fas fa-users-cog';
+                loadUsers();
             } else {
+                document.getElementById('statsContainer').style.display = 'block';
                 document.getElementById('pageTitle').textContent = view === 'all' ? 'كل الطلبات' : (view === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
-                
-                // إلغاء الاشتراك القديم وتحميل البيانات الجديدة
-                if (unsubscribe) {
-                    unsubscribe();
-                }
-                
+                document.getElementById('pageIcon').className = 'fas fa-database';
                 loadRequests();
             }
         }
@@ -1956,7 +2611,7 @@
         // =====================================================================
         // التهيئة
         // =====================================================================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             createParticles();
             
             // التحقق من تسجيل الدخول
@@ -1972,6 +2627,9 @@
                 document.getElementById('sidebarLogo').src = savedLogo;
             }
             
+            // إنشاء المستخدم الافتراضي إذا لم يكن موجوداً
+            await createDefaultAdmin();
+            
             // إضافة مستمعي الأحداث لأزرار التنقل
             document.getElementById('navAll').addEventListener('click', () => changeView('all'));
             document.getElementById('navComplaints').addEventListener('click', () => changeView('شكوى'));
@@ -1985,8 +2643,11 @@
         
         // تنظيف عند إغلاق الصفحة
         window.addEventListener('beforeunload', function() {
-            if (unsubscribe) {
-                unsubscribe();
+            if (unsubscribeRequests) {
+                unsubscribeRequests();
+            }
+            if (unsubscribeUsers) {
+                unsubscribeUsers();
             }
         });
     </script>
