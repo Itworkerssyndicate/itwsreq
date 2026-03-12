@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تهيئة النظام - نقابة تكنولوجيا المعلومات | VR 2.05.2026</title>
+    
+    <!-- الخطوط الأساسية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #030514, #0a0f1f, #1a1f3a);
+            color: #ffffff;
+            direction: rtl;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* خلفية متحركة */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
+            animation: cosmicWave 20s ease infinite;
+            z-index: 0;
+        }
+        
+        @keyframes cosmicWave {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
+        /* جزيئات متطايرة */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: linear-gradient(135deg, #00ffff, #a855f7);
+            border-radius: 50%;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.3;
+        }
+        
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        /* الحاوية الرئيسية */
+        .setup-container {
+            position: relative;
+            z-index: 10;
+            width: 90%;
+            max-width: 700px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50px;
+            padding: 50px 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 50px rgba(0, 255, 255, 0.3);
+            animation: glowPulse 3s ease infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 50px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 255, 255, 0.4) inset, 0 0 80px rgba(168, 85, 247, 0.4); }
+        }
+        
+        /* الشعار */
+        .logo-wrapper {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+            animation: rotate 10s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .logo-icon i {
+            font-size: 50px;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        }
+        
+        .logo-wrapper h1 {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .logo-wrapper p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 16px;
+        }
+        
+        /* العنوان */
+        .setup-title {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .setup-title h2 {
+            font-size: 28px;
+            font-weight: 900;
+            color: #00ffff;
+            text-shadow: 0 0 20px #00ffff;
+            margin-bottom: 10px;
+        }
+        
+        .setup-title p {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+        
+        /* بطاقة التهيئة */
+        .setup-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* معلومات المستخدم الأساسي */
+        .admin-info {
+            margin-bottom: 30px;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .info-item i {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00ffff, #a855f7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .info-item .label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .info-item .value {
+            color: #00ffff;
+            font-size: 18px;
+            font-weight: 700;
+            font-family: monospace;
+        }
+        
+        /* شريط التقدم */
+        .progress-container {
+            margin: 30px 0;
+        }
+        
+        .progress-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 12px;
+            border-radius: 15px;
+            transition: all 0.3s;
+            opacity: 0.5;
+        }
+        
+        .progress-step.active {
+            background: rgba(0, 255, 255, 0.1);
+            border-right: 4px solid #00ffff;
+            opacity: 1;
+        }
+        
+        .progress-step.completed {
+            opacity: 1;
+        }
+        
+        .progress-step.completed .step-number {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid #00ffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #00ffff;
+        }
+        
+        .progress-step.completed .step-number {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .step-info h4 {
+            font-size: 16px;
+            margin-bottom: 3px;
+            color: white;
+        }
+        
+        .step-info p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        /* رسائل الحالة */
+        .status-message {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 14px;
+            color: #00ffff;
+            border-left: 4px solid #00ffff;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status-message div {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+        
+        /* الأزرار */
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 800;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+            color: white;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.8);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .btn-secondary:hover:not(:disabled) {
+            border-color: #00ffff;
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 0 40px #ef4444;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* تذييل */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 12px;
+        }
+        
+        .version {
+            color: #00ffff;
+            font-family: 'Orbitron', monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- جزيئات متطايرة -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- حاوية التهيئة -->
+    <div class="setup-container">
+        <!-- الشعار -->
+        <div class="logo-wrapper">
+            <div class="logo-icon">
+                <i class="fas fa-cogs"></i>
+            </div>
+            <h1>نقابة تكنولوجيا المعلومات</h1>
+            <p>شاشة تهيئة النظام وبناء قاعدة البيانات</p>
+        </div>
+        
+        <!-- العنوان -->
+        <div class="setup-title">
+            <h2>⚡ تهيئة شاملة للنظام ⚡</h2>
+            <p>سيتم مسح أي بيانات قديمة وإنشاء هيكل جديد كلياً</p>
+        </div>
+        
+        <!-- بطاقة معلومات المستخدم الأساسي -->
+        <div class="setup-card">
+            <h3 style="color: #00ffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-user-shield"></i>
+                المستخدم الأساسي (سوبر أدمن)
+            </h3>
+            
+            <div class="admin-info">
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <div style="flex: 1;">
+                        <div class="label">اسم المستخدم</div>
+                        <div class="value">admin</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-lock"></i>
+                    <div style="flex: 1;">
+                        <div class="label">كلمة المرور</div>
+                        <div class="value">itws@2026</div>
+                    </div>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-crown"></i>
+                    <div style="flex: 1;">
+                        <div class="label">الصلاحية</div>
+                        <div class="value">سوبر أدمن (Super Admin)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- شريط التقدم -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-step" id="step1">
+                    <div class="step-number">1</div>
+                    <div class="step-info">
+                        <h4>الاتصال بقاعدة البيانات</h4>
+                        <p>التحقق من الاتصال بـ Firebase</p>
+                    </div>
+                </div>
+                <div class="progress-step" id="step2">
+                    <div class="step-number">2</div>
+                    <div class="step-info">
+                        <h4>مسح البيانات القديمة</h4>
+                        <p>حذف جميع المستندات القديمة</p>
+                    </div>
+                </div>
+                <div class="progress-step" id="step3">
+                    <div class="step-number">3</div>
+                    <div class="step-info">
+                        <h4>إنشاء المستخدم الأساسي</h4>
+                        <p>إضافة المستخدم admin بصلاحيات كاملة</p>
+                    </div>
+                </div>
+                <div class="progress-step" id="step4">
+                    <div class="step-number">4</div>
+                    <div class="step-info">
+                        <h4>إنشاء الفهارس (Indexes)</h4>
+                        <p>إعداد قاعدة البيانات للاستعلامات السريعة</p>
+                    </div>
+                </div>
+                <div class="progress-step" id="step5">
+                    <div class="step-number">5</div>
+                    <div class="step-info">
+                        <h4>تهيئة النظام</h4>
+                        <p>تطبيق الإعدادات النهائية</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- رسائل الحالة -->
+            <div class="status-message" id="statusMessage">
+                <div>✨ بانتظار بدء عملية التهيئة...</div>
+            </div>
+            
+            <!-- الأزرار -->
+            <div class="actions">
+                <button class="btn btn-primary" id="startSetupBtn" onclick="startSetup()">
+                    <i class="fas fa-play"></i>
+                    بدء التهيئة
+                </button>
+                <button class="btn btn-secondary" id="testConnectionBtn" onclick="testConnection()">
+                    <i class="fas fa-plug"></i>
+                    اختبار الاتصال
+                </button>
+                <button class="btn btn-danger" id="emergencyResetBtn" onclick="emergencyReset()" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    تهيئة طارئة
+                </button>
+            </div>
+            
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn btn-secondary" onclick="goToLogin()" style="flex: 1;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    الذهاب لتسجيل الدخول
+                </button>
+                <button class="btn btn-secondary" onclick="goToAdmin()" style="flex: 1;">
+                    <i class="fas fa-tachometer-alt"></i>
+                    الذهاب للوحة التحكم
+                </button>
+            </div>
+        </div>
+        
+        <!-- تذييل -->
+        <div class="footer">
+            <span>نقابة تكنولوجيا المعلومات والبرمجيات</span>
+            <span style="margin: 0 10px;">|</span>
+            <span class="version">VR 2.05.2026 SETUP</span>
+        </div>
+    </div>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // =====================================================================
+        // تهيئة Firebase
+        // =====================================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
+            authDomain: "itwsreq.firebaseapp.com",
+            projectId: "itwsreq",
+            storageBucket: "itwsreq.firebasestorage.app",
+            messagingSenderId: "417900842360",
+            appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
+            measurementId: "G-P3YQFRSBMM"
+        };
+
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // تفعيل التخزين المؤقت
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        
+        // =====================================================================
+        // المتغيرات العامة
+        // =====================================================================
+        let setupInProgress = false;
+        let setupCompleted = false;
+        let statusLog = [];
+        let currentStep = 0;
+        
+        // =====================================================================
+        // إنشاء الجزيئات المتطايرة
+        // =====================================================================
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 10 + 's';
+                particle.style.animationDuration = 10 + Math.random() * 20 + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        // =====================================================================
+        // إضافة رسالة إلى سجل الحالة
+        // =====================================================================
+        function addStatusMessage(message, type = 'info') {
+            const statusDiv = document.getElementById('statusMessage');
+            const msgDiv = document.createElement('div');
+            
+            const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : (type === 'warning' ? '⚠️' : '🔄'));
+            const color = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : (type === 'warning' ? '#f97316' : '#00ffff'));
+            
+            msgDiv.style.color = color;
+            msgDiv.style.borderRight = `3px solid ${color}`;
+            msgDiv.style.paddingRight = '10px';
+            msgDiv.style.marginBottom = '8px';
+            
+            const time = new Date().toLocaleTimeString('ar-EG');
+            msgDiv.innerHTML = `${icon} [${time}] ${message}`;
+            
+            statusDiv.appendChild(msgDiv);
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+            
+            statusLog.push({ time, message, type });
+        }
+        
+        // =====================================================================
+        // تحديث خطوات التقدم
+        // =====================================================================
+        function updateProgressStep(step, status = 'active') {
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                stepEl.classList.remove('active', 'completed');
+                
+                if (i < step) {
+                    stepEl.classList.add('completed');
+                } else if (i === step) {
+                    stepEl.classList.add('active');
+                }
+            }
+        }
+        
+        // =====================================================================
+        // اختبار الاتصال بقاعدة البيانات
+        // =====================================================================
+        async function testConnection() {
+            addStatusMessage('جاري اختبار الاتصال بقاعدة البيانات...', 'info');
+            
+            try {
+                // محاولة قراءة أي مستند بسيط
+                const testRef = db.collection('_test_').doc('test');
+                await testRef.set({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                await testRef.delete();
+                
+                addStatusMessage('✅ الاتصال بقاعدة البيانات ناجح!', 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'اتصال ناجح',
+                    text: 'تم الاتصال بقاعدة البيانات بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return true;
+            } catch (error) {
+                addStatusMessage(`❌ خطأ في الاتصال: ${error.message}`, 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في الاتصال',
+                    text: error.message,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return false;
+            }
+        }
+        
+        // =====================================================================
+        // مسح جميع البيانات القديمة
+        // =====================================================================
+        async function clearAllData() {
+            addStatusMessage('جاري مسح جميع البيانات القديمة...', 'warning');
+            updateProgressStep(2);
+            
+            try {
+                // مسح مجموعة الطلبات
+                const requestsSnapshot = await db.collection('Requests').get();
+                const requestsBatch = db.batch();
+                requestsSnapshot.docs.forEach(doc => {
+                    requestsBatch.delete(doc.ref);
+                });
+                await requestsBatch.commit();
+                addStatusMessage(`✅ تم مسح ${requestsSnapshot.size} طلب قديم`, 'success');
+                
+                // مسح مجموعة المستخدمين
+                const usersSnapshot = await db.collection('Users').get();
+                const usersBatch = db.batch();
+                usersSnapshot.docs.forEach(doc => {
+                    usersBatch.delete(doc.ref);
+                });
+                await usersBatch.commit();
+                addStatusMessage(`✅ تم مسح ${usersSnapshot.size} مستخدم قديم`, 'success');
+                
+                return true;
+            } catch (error) {
+                addStatusMessage(`❌ خطأ في مسح البيانات: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // =====================================================================
+        // إنشاء المستخدم الأساسي (admin)
+        // =====================================================================
+        async function createAdminUser() {
+            addStatusMessage('جاري إنشاء المستخدم الأساسي...', 'info');
+            updateProgressStep(3);
+            
+            try {
+                const adminRef = db.collection('Users').doc('admin');
+                
+                await adminRef.set({
+                    username: 'admin',
+                    password: btoa('itws@2026'), // تشفير بسيط
+                    name: 'المشرف العام',
+                    role: 'super_admin',
+                    email: 'admin@itws.org',
+                    phone: '01234567890',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: null,
+                    isActive: true,
+                    createdBy: 'system',
+                    permissions: {
+                        all: true,
+                        users: { view: true, create: true, edit: true, delete: true },
+                        requests: { view: true, create: true, edit: true, delete: true },
+                        settings: { view: true, edit: true },
+                        reports: { view: true, export: true },
+                        system: { backup: true, restore: true, reset: true }
+                    }
+                });
+                
+                addStatusMessage('✅ تم إنشاء المستخدم admin بنجاح', 'success');
+                return true;
+            } catch (error) {
+                addStatusMessage(`❌ خطأ في إنشاء المستخدم: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // =====================================================================
+        // إنشاء الفهارس المطلوبة
+        // =====================================================================
+        async function createRequiredIndexes() {
+            addStatusMessage('جاري إعداد الفهارس المطلوبة...', 'info');
+            updateProgressStep(4);
+            
+            addStatusMessage('📌 الفهارس يتم إنشاؤها تلقائياً في Firebase Console', 'info');
+            addStatusMessage('🔗 الرابط: https://console.firebase.google.com/project/itwsreq/firestore/indexes', 'info');
+            addStatusMessage('⚠️ يرجى إنشاء الفهرس التالي يدوياً:', 'warning');
+            addStatusMessage('• Collection: Requests', 'info');
+            addStatusMessage('• Fields: type (Ascending), createdAt (Descending)', 'info');
+            
+            // لا يمكن إنشاء الفهارس برمجياً، نعطي تعليمات فقط
+            return true;
+        }
+        
+        // =====================================================================
+        // تهيئة الإعدادات النهائية
+        // =====================================================================
+        async function finalizeSetup() {
+            addStatusMessage('جاري تطبيق الإعدادات النهائية...', 'info');
+            updateProgressStep(5);
+            
+            try {
+                // إنشاء مجموعة للإعدادات
+                const settingsRef = db.collection('Settings').doc('system');
+                await settingsRef.set({
+                    version: 'VR 2.05.2026',
+                    initializedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    initializedBy: 'system',
+                    lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                    defaultAdmin: 'admin',
+                    setupComplete: true
+                });
+                
+                addStatusMessage('✅ تم تطبيق الإعدادات النهائية بنجاح', 'success');
+                return true;
+            } catch (error) {
+                addStatusMessage(`❌ خطأ في الإعدادات النهائية: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // =====================================================================
+        // بدء عملية التهيئة
+        // =====================================================================
+        async function startSetup() {
+            if (setupInProgress) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'عملية جارية',
+                    text: 'يوجد عملية تهيئة قيد التنفيذ حالياً',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            const result = await Swal.fire({
+                title: '⚠️ تحذير شديد الخطورة ⚠️',
+                html: `
+                    <p style="color: #ef4444; font-size: 18px; margin-bottom: 15px;">أنت على وشك تهيئة النظام بالكامل!</p>
+                    <p style="color: #94a3b8; margin-bottom: 10px;">سيتم:</p>
+                    <ul style="color: #94a3b8; text-align: right; margin-bottom: 20px;">
+                        <li>✓ مسح جميع الطلبات القديمة</li>
+                        <li>✓ مسح جميع المستخدمين الحاليين</li>
+                        <li>✓ إنشاء مستخدم admin جديد</li>
+                        <li>✓ إعادة ضبط جميع الإعدادات</li>
+                    </ul>
+                    <p style="color: #ef4444; font-weight: 900;">هذا الإجراء لا يمكن التراجع عنه!</p>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، قم بالتهيئة',
+                cancelButtonText: 'إلغاء',
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#3085d6',
+                background: '#030514',
+                color: '#fff'
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            // تأكيد إضافي بكلمة السر
+            const { value: password } = await Swal.fire({
+                title: 'تأكيد التهيئة',
+                text: 'اكتب كلمة سر التهيئة للمتابعة (11111@)',
+                input: 'password',
+                inputPlaceholder: 'كلمة سر التهيئة',
+                showCancelButton: true,
+                confirmButtonText: 'تأكيد',
+                cancelButtonText: 'إلغاء',
+                background: '#030514',
+                color: '#fff',
+                inputAttributes: {
+                    style: 'width: 100%; padding: 10px; background: rgba(0,0,0,0.5); border: 2px solid #ef4444; border-radius: 10px; color: white;'
+                }
+            });
+            
+            if (password !== '11111@') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة السر غير صحيحة',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            setupInProgress = true;
+            document.getElementById('startSetupBtn').disabled = true;
+            document.getElementById('testConnectionBtn').disabled = true;
+            
+            // مسح سجل الحالة
+            document.getElementById('statusMessage').innerHTML = '';
+            statusLog = [];
+            
+            try {
+                // الخطوة 1: اختبار الاتصال
+                updateProgressStep(1);
+                addStatusMessage('🚀 بدء عملية التهيئة الشاملة...', 'info');
+                await testConnection();
+                
+                // الخطوة 2: مسح البيانات
+                await clearAllData();
+                
+                // الخطوة 3: إنشاء المستخدم
+                await createAdminUser();
+                
+                // الخطوة 4: إنشاء الفهارس
+                await createRequiredIndexes();
+                
+                // الخطوة 5: الإعدادات النهائية
+                await finalizeSetup();
+                
+                // اكتمال التهيئة
+                updateProgressStep(5);
+                addStatusMessage('🎉 تمت تهيئة النظام بنجاح!', 'success');
+                addStatusMessage('👤 يمكنك تسجيل الدخول باستخدام: admin / itws@2026', 'success');
+                
+                setupCompleted = true;
+                
+                // حفظ علامة في localStorage أن التهيئة تمت
+                localStorage.setItem('system_setup_complete', 'true');
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '✅ تهيئة النظام',
+                    html: `
+                        <p style="color: #10b981; font-size: 18px;">تمت تهيئة النظام بنجاح!</p>
+                        <p style="color: #94a3b8; margin-top: 10px;">يمكنك الآن الذهاب لتسجيل الدخول</p>
+                    `,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+                // إظهار زر التهيئة الطارئة
+                document.getElementById('emergencyResetBtn').style.display = 'flex';
+                
+            } catch (error) {
+                addStatusMessage(`❌ فشلت عملية التهيئة: ${error.message}`, 'error');
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ في التهيئة',
+                    text: error.message,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            } finally {
+                setupInProgress = false;
+                document.getElementById('startSetupBtn').disabled = false;
+                document.getElementById('testConnectionBtn').disabled = false;
+            }
+        }
+        
+        // =====================================================================
+        // تهيئة طارئة (تبدأ من حيث توقفت)
+        // =====================================================================
+        async function emergencyReset() {
+            const steps = ['الاتصال', 'مسح البيانات', 'إنشاء المستخدم', 'الفهارس', 'الإعدادات'];
+            
+            const { value: step } = await Swal.fire({
+                title: 'تهيئة طارئة',
+                text: 'اختر الخطوة التي تريد البدء منها:',
+                input: 'select',
+                inputOptions: {
+                    1: '1. اختبار الاتصال',
+                    2: '2. مسح البيانات',
+                    3: '3. إنشاء المستخدم',
+                    4: '4. إنشاء الفهارس',
+                    5: '5. الإعدادات النهائية'
+                },
+                inputPlaceholder: 'اختر خطوة',
+                showCancelButton: true,
+                background: '#030514',
+                color: '#fff',
+                confirmButtonColor: '#00ffff'
+            });
+            
+            if (!step) return;
+            
+            setupInProgress = true;
+            document.getElementById('startSetupBtn').disabled = true;
+            document.getElementById('testConnectionBtn').disabled = true;
+            
+            try {
+                updateProgressStep(parseInt(step));
+                
+                if (parseInt(step) <= 1) await testConnection();
+                if (parseInt(step) <= 2) await clearAllData();
+                if (parseInt(step) <= 3) await createAdminUser();
+                if (parseInt(step) <= 4) await createRequiredIndexes();
+                if (parseInt(step) <= 5) await finalizeSetup();
+                
+                addStatusMessage('✅ تمت التهيئة الطارئة بنجاح!', 'success');
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم',
+                    text: 'تمت التهيئة الطارئة بنجاح',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                
+            } catch (error) {
+                addStatusMessage(`❌ خطأ في التهيئة الطارئة: ${error.message}`, 'error');
+            } finally {
+                setupInProgress = false;
+                document.getElementById('startSetupBtn').disabled = false;
+                document.getElementById('testConnectionBtn').disabled = false;
+            }
+        }
+        
+        // =====================================================================
+        // دوال التنقل
+        // =====================================================================
+        function goToLogin() {
+            window.location.href = 'index.html';
+        }
+        
+        function goToAdmin() {
+            window.location.href = 'admin.html';
+        }
+        
+        // =====================================================================
+        // التهيئة عند تحميل الصفحة
+        // =====================================================================
+        window.addEventListener('load', function() {
+            createParticles();
+            
+            // التحقق مما إذا كانت التهيئة قد تمت سابقاً
+            const setupComplete = localStorage.getItem('system_setup_complete');
+            if (setupComplete === 'true') {
+                addStatusMessage('ℹ️ تم تهيئة النظام مسبقاً', 'info');
+                document.getElementById('emergencyResetBtn').style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
