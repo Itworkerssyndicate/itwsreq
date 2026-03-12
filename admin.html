@@ -727,11 +727,10 @@
             color: #fff;
         }
 
-        /* تعديل رقم الطلب ليكون في النص (وسط) */
         #main-table td:nth-child(2) {
             color: var(--neon-cyan);
             font-weight: 700;
-            text-align: center; /* محاذاة النص في المنتصف */
+            text-align: center;
         }
 
         #main-table tbody tr {
@@ -1519,6 +1518,8 @@
                 }
 
                 unsubscribe = query.onSnapshot((snapshot) => {
+                    console.log('📥 تحديث البيانات:', snapshot.size, 'طلبات');
+                    
                     allRequests = [];
                     allStatuses.clear();
                     
@@ -1551,7 +1552,9 @@
                     
                     updateStatusFilterOptions();
                     updateStats();
-                    filterData();
+                    
+                    // هنا التعديل المهم: نمرر null للفلاتر عشان تظهر كل البيانات
+                    filterData(true);
                     
                 }, (error) => {
                     console.error("Error loading data:", error);
@@ -1605,9 +1608,21 @@
             document.getElementById('pending-count').textContent = pending;
         }
 
-        function filterData() {
-            let filtered = allRequests;
+        // ==================== دالة الفلترة المعدلة ====================
+        function filterData(resetFilters = false) {
+            console.log('🔍 بدء الفلترة...');
+            console.log('📊 عدد الطلبات الكلي:', allRequests.length);
             
+            // إذا طلبنا reset، نرجع كل البيانات
+            if (resetFilters) {
+                console.log('🔄 إعادة ضبط الفلاتر وعرض كل البيانات');
+                filteredRequests = [...allRequests];
+                document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
+                renderRequests(filteredRequests);
+                return;
+            }
+            
+            // جلب قيم الفلاتر
             const searchRef = document.getElementById('search-ref')?.value.toLowerCase().trim() || '';
             const searchName = document.getElementById('search-name')?.value.toLowerCase().trim() || '';
             const searchNid = document.getElementById('search-nid')?.value.trim() || '';
@@ -1617,7 +1632,18 @@
             const searchType = document.getElementById('search-type')?.value || 'all';
             const searchStatus = document.getElementById('search-status')?.value || 'all';
 
-            filtered = filtered.filter(r => {
+            // لو مفيش أي فلتر نشط، نعرض كل البيانات
+            if (!searchRef && !searchName && !searchNid && !searchMember && 
+                !searchDateFrom && !searchDateTo && searchType === 'all' && searchStatus === 'all') {
+                console.log('👀 مفيش فلاتر نشطة، عرض كل البيانات');
+                filteredRequests = [...allRequests];
+                document.getElementById('results-count').textContent = `${filteredRequests.length} نتيجة`;
+                renderRequests(filteredRequests);
+                return;
+            }
+
+            // تطبيق الفلاتر
+            let filtered = allRequests.filter(r => {
                 if (searchRef && !r.refId?.toLowerCase().includes(searchRef)) return false;
                 if (searchName && !r.name?.toLowerCase().includes(searchName)) return false;
                 if (searchNid && !r.nid?.includes(searchNid)) return false;
@@ -1637,6 +1663,8 @@
                 return true;
             });
 
+            console.log('📊 عدد الطلبات بعد الفلترة:', filtered.length);
+            
             filteredRequests = filtered;
             document.getElementById('results-count').textContent = `${filtered.length} نتيجة`;
             renderRequests(filtered);
@@ -1654,6 +1682,7 @@
         }
 
         function resetSearch() {
+            console.log('🔄 إعادة ضبط البحث');
             document.getElementById('search-ref').value = '';
             document.getElementById('search-name').value = '';
             document.getElementById('search-nid').value = '';
@@ -1662,7 +1691,9 @@
             document.getElementById('search-date-to').value = '';
             document.getElementById('search-type').value = 'all';
             document.getElementById('search-status').value = 'all';
-            filterData();
+            
+            // عرض كل البيانات
+            filterData(true);
         }
 
         function renderRequests(requests) {
@@ -1725,11 +1756,9 @@
             document.getElementById('admin-tbody').innerHTML = html;
         }
 
-        // ==================== الحل النهائي لمشكلة زر إدارة الطلب ====================
         function manageReq(refId) {
             console.log('🔍 فتح الطلب:', refId);
             
-            // البحث عن الطلب في allRequests
             const request = allRequests.find(r => r.refId === refId);
             
             if (request) {
@@ -2077,8 +2106,8 @@
         }
 
         function refreshData() {
-            // onSnapshot بيحدث تلقائياً
-            filterData();
+            console.log('🔄 تحديث يدوي');
+            filterData(true);
         }
 
         function showUsers() {
