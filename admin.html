@@ -54,15 +54,6 @@
             --neon-orange: #f97316;
             --neon-orange-glow: rgba(249, 115, 22, 0.7);
             
-            /* ألوان خاصة للحالات */
-            --status-تم-الاستلام: #f97316;
-            --status-قيد-المراجعة: #3b82f6;
-            --status-جاري-التنفيذ: #a855f7;
-            --status-تم-الحل: #10b981;
-            --status-تم-الإغلاق-النهائي: #ef4444;
-            --status-تمت-القراءة: #00ffff;
-            --status-لم-يقرأ: #f97316;
-            
             /* التدرجات الفاخرة */
             --gradient-royal: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
             --gradient-diamond: linear-gradient(45deg, #3b82f6, #00ffff, #a855f7);
@@ -770,7 +761,6 @@
             display: inline-block;
         }
 
-        /* ألوان ثابتة للحالات المعروفة */
         .status-badge[data-status="تم الاستلام"] {
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
@@ -811,13 +801,6 @@
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
             border: 1px solid #f97316;
-        }
-
-        /* للحالات التانية (ألوان عشوائية) */
-        .status-badge[data-generic="true"] {
-            background: rgba(var(--status-r), var(--status-g), var(--status-b), 0.2);
-            color: rgb(var(--status-r), var(--status-g), var(--status-b));
-            border: 1px solid rgb(var(--status-r), var(--status-g), var(--status-b));
         }
 
         .type-badge {
@@ -1095,7 +1078,7 @@
         <div class="floating-element"></div>
     </div>
 
-    <!-- زر الإعدادات (هذا للصفحة نفسها - مش هو المشكلة) -->
+    <!-- زر الإعدادات -->
     <div class="settings-panel">
         <button class="settings-btn" onclick="toggleSettings()">
             <i class="fas fa-cog"></i>
@@ -1108,7 +1091,7 @@
             
             <div class="settings-section">
                 <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
-                <input type="url" id="logo-url" class="luxury-input" placeholder="رابط الشعار" value="https://via.placeholder.com/120x120?text=Logo">
+                <input type="url" id="logo-url" class="luxury-input" placeholder="رابط الشعار" value="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo">
             </div>
 
             <div class="settings-section">
@@ -1143,7 +1126,7 @@
     <aside class="admin-sidebar" id="admin-sidebar">
         <div class="sidebar-logo">
             <div class="logo-wrapper">
-                <img src="https://via.placeholder.com/120x120?text=Logo" alt="شعار" class="sidebar-logo-img" id="admin-logo">
+                <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="sidebar-logo-img" id="admin-logo">
             </div>
             <h2 class="sidebar-title">بوابة الشكاوي</h2>
             <p class="sidebar-sub">نقابة تكنولوجيا المعلومات</p>
@@ -1508,13 +1491,13 @@
         }
 
         function loadSettings() {
-            document.getElementById('logo-url').value = getSetting('logo_url', 'https://via.placeholder.com/120x120?text=Logo');
+            document.getElementById('logo-url').value = getSetting('logo_url', 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo');
             document.getElementById('services-url').value = getSetting('services_url', 'https://services.egeng.org');
             document.getElementById('services-text').value = getSetting('services_text', 'موقع تقديم خدمات النقابة');
             document.getElementById('show-services').checked = getSetting('show_services', 'true') === 'true';
             document.getElementById('complaint-prefix').value = getSetting('complaint_prefix', 'REQ');
             document.getElementById('suggestion-prefix').value = getSetting('suggestion_prefix', 'REP');
-            document.getElementById('admin-logo').src = getSetting('logo_url', 'https://via.placeholder.com/120x120?text=Logo');
+            document.getElementById('admin-logo').src = getSetting('logo_url', 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo');
         }
 
         function saveSettings() {
@@ -1895,27 +1878,32 @@
             document.getElementById('admin-tbody').innerHTML = html;
         }
 
-        // ==================== إدارة الطلب (المشكلة هنا كانت) ====================
+        // ==================== إدارة الطلب (الحل النهائي للمشكلة) ====================
         function manageReq(refId) {
             console.log('🔍 فتح الطلب:', refId);
+            console.log('📊 عدد الطلبات في الكاش:', allRequests.length);
             
-            // 1️⃣ أول حاجة: ندور على الطلب في الكاش (allRequests)
+            // منع أي تأثير على الصفحة
+            if (window.event) {
+                window.event.preventDefault();
+                window.event.stopPropagation();
+            }
+            
+            // 1️⃣ نجيب الطلب من الكاش مباشرة
             const requestFromCache = allRequests.find(r => r.refId === refId);
             
             if (requestFromCache) {
                 console.log('✅ تم العثور على الطلب في الكاش');
+                console.log('📦 بيانات الطلب:', requestFromCache);
+                
+                // عرض الكارت بدون أي تغيير في الصفحة
                 showRequestModal(requestFromCache);
                 return;
             }
             
-            // 2️⃣ لو مش موجود في الكاش، نجيب من Firebase
-            console.log('🔄 الطلب مش في الكاش، بنجيبه من Firebase');
+            // 2️⃣ لو مش موجود في الكاش (نادراً ما يحصل)
+            console.log('⚠️ الطلب مش في الكاش، بنجيبه من Firebase');
             
-            // منع الضغط المتكرر
-            if (isLoading) return;
-            isLoading = true;
-            
-            // إظهار مؤشر تحميل
             Swal.fire({
                 title: 'جاري تحميل البيانات',
                 text: 'الرجاء الانتظار...',
@@ -1928,11 +1916,9 @@
             db.collection("Requests").doc(refId).get()
                 .then(doc => {
                     Swal.close();
-                    isLoading = false;
                     
                     if (doc.exists) {
                         const data = doc.data();
-                        // تحويل التاريخ
                         if (data.createdAt && data.createdAt.toDate) {
                             data.createdAtDate = data.createdAt.toDate();
                         }
@@ -1949,7 +1935,6 @@
                 })
                 .catch(error => {
                     Swal.close();
-                    isLoading = false;
                     console.error("Error getting request:", error);
                     Swal.fire({
                         icon: 'error',
