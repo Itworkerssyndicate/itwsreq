@@ -727,6 +727,13 @@
             color: #fff;
         }
 
+        /* تعديل رقم الطلب ليكون في النص (وسط) */
+        #main-table td:nth-child(2) {
+            color: var(--neon-cyan);
+            font-weight: 700;
+            text-align: center; /* محاذاة النص في المنتصف */
+        }
+
         #main-table tbody tr {
             transition: all 0.3s;
         }
@@ -1482,7 +1489,6 @@
             window.location.href = 'index.html';
         }
 
-        // ==================== التحميل المباشر مع onSnapshot ====================
         function loadData(filter) {
             currentFilter = filter;
             
@@ -1504,8 +1510,6 @@
                 </tr>
             `;
 
-            document.getElementById('load-more').style.display = 'none';
-
             try {
                 let query = db.collection("Requests")
                     .orderBy("createdAt", "desc");
@@ -1514,7 +1518,6 @@
                     query = query.where("type", "==", filter);
                 }
 
-                // onSnapshot بيشتغل مباشرة وأي تغيير يظهر فوراً
                 unsubscribe = query.onSnapshot((snapshot) => {
                     allRequests = [];
                     allStatuses.clear();
@@ -1548,8 +1551,6 @@
                     
                     updateStatusFilterOptions();
                     updateStats();
-                    
-                    // تطبيق الفلاتر الحالية على البيانات الجديدة
                     filterData();
                     
                 }, (error) => {
@@ -1700,7 +1701,7 @@
                         <div style="font-weight: 600;">${dateStr}</div>
                         <div style="color: rgba(255,255,255,0.4); font-size: 11px;">${timeStr}</div>
                     </td>
-                    <td style="color: var(--neon-cyan); font-weight: 600; direction: ltr;">${r.refId || 'غير محدد'}</td>
+                    <td style="color: var(--neon-cyan); font-weight: 700; text-align: center;">${r.refId || 'غير محدد'}</td>
                     <td>
                         <div style="font-weight: 600;">${r.name || 'غير محدد'}</div>
                         <div style="color: rgba(255,255,255,0.4); font-size: 11px;">${r.job || ''}</div>
@@ -1724,64 +1725,26 @@
             document.getElementById('admin-tbody').innerHTML = html;
         }
 
+        // ==================== الحل النهائي لمشكلة زر إدارة الطلب ====================
         function manageReq(refId) {
             console.log('🔍 فتح الطلب:', refId);
             
-            if (window.event) {
-                window.event.preventDefault();
-                window.event.stopPropagation();
-            }
+            // البحث عن الطلب في allRequests
+            const request = allRequests.find(r => r.refId === refId);
             
-            const requestFromCache = allRequests.find(r => r.refId === refId);
-            
-            if (requestFromCache) {
-                console.log('✅ تم العثور على الطلب في الكاش');
-                showRequestModal(requestFromCache);
-                return;
-            }
-            
-            console.log('⚠️ الطلب مش في الكاش، بنجيبه من Firebase');
-            
-            Swal.fire({
-                title: 'جاري تحميل البيانات',
-                text: 'الرجاء الانتظار...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading(),
-                background: '#030514',
-                color: '#fff'
-            });
-            
-            db.collection("Requests").doc(refId).get()
-                .then(doc => {
-                    Swal.close();
-                    
-                    if (doc.exists) {
-                        const data = doc.data();
-                        if (data.createdAt && data.createdAt.toDate) {
-                            data.createdAtDate = data.createdAt.toDate();
-                        }
-                        showRequestModal(data);
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'خطأ',
-                            text: 'الطلب غير موجود',
-                            background: '#030514',
-                            confirmButtonColor: '#00ffff'
-                        });
-                    }
-                })
-                .catch(error => {
-                    Swal.close();
-                    console.error("Error getting request:", error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطأ',
-                        text: 'حدث خطأ في جلب البيانات',
-                        background: '#030514',
-                        confirmButtonColor: '#00ffff'
-                    });
+            if (request) {
+                console.log('✅ تم العثور على الطلب');
+                showRequestModal(request);
+            } else {
+                console.log('❌ الطلب غير موجود في الذاكرة');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'الطلب غير موجود',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
                 });
+            }
         }
 
         function showRequestModal(d) {
@@ -2114,8 +2077,7 @@
         }
 
         function refreshData() {
-            // مش محتاجة حاجة لأن onSnapshot بيحدث تلقائياً
-            // بس هنعمل إعادة تحميل للفلاتر
+            // onSnapshot بيحدث تلقائياً
             filterData();
         }
 
