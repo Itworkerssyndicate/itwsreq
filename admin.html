@@ -1737,7 +1737,7 @@
         }
         
         // =====================================================================
-        // إدارة الطلب (فتح الكارت)
+        // إدارة الطلب (فتح الكارت) - مع تحديث الحالة بشكل حر
         // =====================================================================
         function manageRequest(refId) {
             const request = allRequests.find(r => r.refId === refId);
@@ -1804,11 +1804,11 @@
                     
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">اسم المرحلة الجديدة</label>
-                        <input type="text" id="newStatus" placeholder="اكتب اسم المرحلة..." value="${request.type === 'شكوى' ? 'قيد المراجعة' : ''}" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
+                        <input type="text" id="newStatus" placeholder="اكتب اسم المرحلة..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
                     </div>
                     
                     <div style="margin-bottom: 15px;">
-                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">تعليق</label>
+                        <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">تعليق على التحديث</label>
                         <textarea id="statusComment" rows="3" placeholder="اكتب تعليقك هنا..." style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></textarea>
                     </div>
                     
@@ -1819,11 +1819,11 @@
                         
                         ${request.type === 'شكوى' ? `
                             <button class="btn btn-danger" onclick="openCloseModal()" style="flex: 1;">
-                                <i class="fas fa-lock"></i> إغلاق
+                                <i class="fas fa-lock"></i> إغلاق الشكوى
                             </button>
                         ` : `
                             <button class="btn btn-success" onclick="openReadModal()" style="flex: 1;">
-                                <i class="fas fa-check-circle"></i> قراءة
+                                <i class="fas fa-check-circle"></i> تمت القراءة
                             </button>
                         `}
                     </div>
