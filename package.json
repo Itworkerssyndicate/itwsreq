@@ -1,0 +1,38 @@
+{
+  "name": "itwsreq",
+  "version": "2.05.2026",
+  "description": "نظام إدارة الشكاوي والمقترحات - نقابة تكنولوجيا المعلومات والبرمجيات",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server -p 3000",
+    "dev": "npx http-server -p 3000 -o",
+    "build": "echo 'No build step required'",
+    "deploy": "firebase deploy",
+    "deploy:hosting": "firebase deploy --only hosting",
+    "deploy:firestore": "firebase deploy --only firestore",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:storage": "firebase deploy --only storage"
+  },
+  "keywords": [
+    "نقابة",
+    "تكنولوجيا المعلومات",
+    "شكاوي",
+    "مقترحات"
+  ],
+  "author": "المهندس/ محمود جميل",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/itworkerssyndicate/itwsreq.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itworkerssyndicate/itwsreq/issues"
+  },
+  "homepage": "https://itworkerssyndicate.github.io/itwsreq",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
