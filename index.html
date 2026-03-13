@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05.2026</title>
     
-    <!-- الخطوط الأساسية الفاخرة -->
+    <!-- الخطوط الأساسية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,93 +16,49 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- AOS (Animate On Scroll) -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    
     <style>
         /* =====================================================================
-           التصميم الفخم جداً - VR 2.05.2026 ULTIMATE
+           التصميم الفخم - VR 2.05.2026
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
-           تصميم حصري: المهندس/ محمود جميل
            ===================================================================== */
         
-        /* -------------------- متغيرات الألوان الرئيسية الفاخرة -------------------- */
         :root {
             --bg-deep: #030514;
             --bg-dark: #0a0f1f;
             --bg-medium: #111827;
-            --bg-light: #1e293b;
-            --bg-card: rgba(15, 23, 42, 0.25);
-            --bg-card-solid: #0f172a;
-            --bg-sidebar: rgba(3, 5, 20, 0.7);
-            --bg-input: rgba(3, 5, 20, 0.5);
+            --bg-card: rgba(15, 23, 42, 0.4);
+            --bg-input: rgba(3, 5, 20, 0.6);
             --bg-hover: rgba(0, 255, 255, 0.1);
             
-            /* ألوان النيون الرئيسية */
             --neon-cyan: #00ffff;
-            --neon-cyan-light: #7fffff;
-            --neon-cyan-dark: #00cccc;
             --neon-cyan-glow: rgba(0, 255, 255, 0.7);
             --neon-cyan-soft: rgba(0, 255, 255, 0.2);
-            --neon-cyan-glow-dark: rgba(0, 255, 255, 0.1);
-            
-            --neon-blue: #3b82f6;
-            --neon-blue-light: #60a5fa;
-            --neon-blue-dark: #2563eb;
-            --neon-blue-glow: rgba(59, 130, 246, 0.7);
             
             --neon-purple: #a855f7;
-            --neon-purple-light: #c084fc;
-            --neon-purple-dark: #9333ea;
             --neon-purple-glow: rgba(168, 85, 247, 0.7);
             --neon-purple-soft: rgba(168, 85, 247, 0.2);
             
             --neon-pink: #ec4899;
-            --neon-pink-light: #f472b6;
-            --neon-pink-dark: #db2777;
             --neon-pink-glow: rgba(236, 72, 153, 0.7);
             
             --neon-green: #10b981;
-            --neon-green-glow: rgba(16, 185, 129, 0.7);
-            
             --neon-red: #ef4444;
-            --neon-red-glow: rgba(239, 68, 68, 0.7);
-            
             --neon-orange: #f97316;
-            --neon-orange-glow: rgba(249, 115, 22, 0.7);
-            
-            /* تدرجات نيون متحركة */
-            --gradient-prime: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
-            --gradient-warm: linear-gradient(45deg, var(--neon-orange), var(--neon-pink), var(--neon-purple));
-            --gradient-cold: linear-gradient(315deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
-            --gradient-rainbow: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple), var(--neon-pink), var(--neon-orange));
             
             --gradient-primary: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            --gradient-secondary: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
-            --gradient-danger: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
-            --gradient-success: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            --gradient-warm: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
+            --gradient-rainbow: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
             
-            /* الظلال */
-            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
-            --shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.6);
-            --shadow-2xl: 0 40px 80px rgba(0, 0, 0, 0.7);
             --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
             --shadow-neon: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
-            --shadow-neon-strong: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple), 0 0 150px var(--neon-pink);
             
-            /* المسافات */
             --space-xs: 4px;
             --space-sm: 8px;
             --space-md: 16px;
             --space-lg: 24px;
             --space-xl: 32px;
             --space-2xl: 40px;
-            --space-3xl: 60px;
-            --space-4xl: 80px;
             
-            /* أحجام الخطوط */
             --text-xs: 12px;
             --text-sm: 14px;
             --text-md: 16px;
@@ -112,125 +68,33 @@
             --text-3xl: 30px;
             --text-4xl: 36px;
             --text-5xl: 48px;
-            --text-6xl: 60px;
-            --text-7xl: 72px;
-            --text-8xl: 96px;
             
-            /* مدة الحركات */
-            --transition-fast: 0.15s;
-            --transition-normal: 0.25s;
-            --transition-slow: 0.4s;
-            --transition-very-slow: 0.8s;
-            
-            /* منحنيات الحركة */
-            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
-            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-            
-            /* الحدود */
             --border-color: rgba(255, 255, 255, 0.1);
-            --border-color-strong: rgba(255, 255, 255, 0.2);
-            --border-hover: var(--neon-cyan);
-            --border-radius-sm: 8px;
-            --border-radius-md: 12px;
-            --border-radius-lg: 16px;
-            --border-radius-xl: 24px;
-            --border-radius-2xl: 32px;
-            --border-radius-3xl: 40px;
-            --border-radius-4xl: 50px;
+            --border-radius-xl: 30px;
+            --border-radius-2xl: 40px;
+            --border-radius-3xl: 50px;
             --border-radius-full: 50%;
             
-            /* منظور ثلاثي الأبعاد */
-            --perspective: 1000px;
-            --perspective-3d: 2000px;
+            --transition: all 0.3s ease;
         }
         
-        /* -------------------- إعادة تعيين الأنماط -------------------- */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        html {
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-        
         body {
-            font-family: 'Tajawal', 'Cairo', 'Space Grotesk', sans-serif;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
             background: var(--bg-deep);
-            color: #ffffff;
+            color: #fff;
             direction: rtl;
             min-height: 100vh;
             position: relative;
             overflow-x: hidden;
-            line-height: 1.6;
-            will-change: transform;
         }
         
-        /* -------------------- مؤشر الماوس المخصص السريع -------------------- */
-        * {
-            cursor: none !important;
-        }
-        
-        .custom-cursor {
-            width: 32px;
-            height: 32px;
-            border: 2px solid var(--neon-cyan);
-            border-radius: 50%;
-            position: fixed;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: width 0.15s, height 0.15s, background 0.15s;
-            mix-blend-mode: difference;
-            box-shadow: 0 0 20px var(--neon-cyan);
-            will-change: transform;
-        }
-        
-        .custom-cursor::before {
-            content: '';
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        .custom-cursor.hover {
-            width: 48px;
-            height: 48px;
-            background: rgba(0, 255, 255, 0.1);
-            border-width: 3px;
-        }
-        
-        /* -------------------- منع النسخ مع الحفاظ على الماوس ظاهر -------------------- */
-        *:not(input):not(textarea):not(select) {
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-            user-select: none !important;
-        }
-        
-        input, textarea, select {
-            -webkit-user-select: text !important;
-            -moz-user-select: text !important;
-            -ms-user-select: text !important;
-            user-select: text !important;
-            pointer-events: auto !important;
-            cursor: text !important;
-        }
-        
-        button, .btn, .nav-btn, .login-btn, .splash-skip {
-            cursor: none !important;
-        }
-        
-        /* -------------------- الخلفية الكونية المتطورة (محسنة للأداء) -------------------- */
+        /* خلفية متحركة */
         body::before {
             content: '';
             position: fixed;
@@ -239,21 +103,17 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-            animation: cosmicDrift 40s linear infinite;
+                radial-gradient(circle at 20% 30%, var(--neon-cyan-soft) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, var(--neon-purple-soft) 0%, transparent 50%);
+            animation: cosmicWave 20s ease infinite;
             z-index: -2;
-            pointer-events: none;
-            will-change: transform;
         }
         
-        @keyframes cosmicDrift {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.02) rotate(1deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        @keyframes cosmicWave {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
         }
         
-        /* شبكة متحركة سريعة */
         body::after {
             content: '';
             position: fixed;
@@ -265,9 +125,8 @@
                 linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
             background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
+            animation: gridMove 30s linear infinite;
             z-index: -1;
-            pointer-events: none;
         }
         
         @keyframes gridMove {
@@ -275,7 +134,7 @@
             100% { transform: translateY(50px); }
         }
         
-        /* -------------------- عناصر عائمة سريعة -------------------- */
+        /* عناصر عائمة */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -289,10 +148,9 @@
         .floating-element {
             position: absolute;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.1;
-            animation: floatFast 15s infinite alternate;
-            will-change: transform;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 15s infinite alternate;
         }
         
         .floating-element:nth-child(1) {
@@ -301,7 +159,6 @@
             top: -150px;
             right: -150px;
             background: var(--neon-cyan);
-            animation-duration: 12s;
         }
         
         .floating-element:nth-child(2) {
@@ -310,16 +167,14 @@
             bottom: -200px;
             left: -200px;
             background: var(--neon-purple);
-            animation-duration: 15s;
-            animation-direction: reverse;
         }
         
-        @keyframes floatFast {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, -30px) scale(1.05); }
+        @keyframes float {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, -30px); }
         }
         
-        /* -------------------- جزيئات متطايرة سريعة -------------------- */
+        /* جزيئات متطايرة */
         .particles {
             position: fixed;
             top: 0;
@@ -328,51 +183,50 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
-            overflow: hidden;
         }
         
         .particle {
             position: absolute;
             width: 3px;
             height: 3px;
-            background: var(--neon-cyan);
+            background: var(--gradient-primary);
             border-radius: 50%;
-            animation: particleFloat 10s linear infinite;
-            opacity: 0.3;
-            will-change: transform;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.4;
         }
         
         @keyframes particleFloat {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
-            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+            0% { transform: translateY(100vh) translateX(0); opacity: 0.4; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
         
-        /* -------------------- شاشة البداية السريعة المبهرة -------------------- */
+        /* ==================== شاشة البداية - مضبوطة في النص ==================== */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #030514, #0a0f1f);
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: linear-gradient(135deg, #030514, #0a0f1f, #1a1f3a);
             z-index: 9999;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            animation: splashFadeOut 1s ease 4s forwards;
         }
         
-        .splash-screen.fade-out {
-            opacity: 0;
-            visibility: hidden;
+        @keyframes splashFadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
         }
         
         .splash-content {
             text-align: center;
             max-width: 90%;
-            position: relative;
-            z-index: 10;
-            animation: splashFloat 4s ease-in-out infinite;
+            transform: translateY(0);
+            animation: splashFloat 3s ease-in-out infinite;
         }
         
         @keyframes splashFloat {
@@ -380,24 +234,21 @@
             50% { transform: translateY(-10px); }
         }
         
-        /* تأثير 3D سريع للشعار */
         .splash-logo-wrapper {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
             position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 0 auto 25px;
         }
         
         .splash-logo {
             width: 100%;
             height: 100%;
             border-radius: 50%;
+            border: 4px solid var(--neon-cyan);
+            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
+            animation: logoSpin 10s linear infinite;
             object-fit: cover;
-            position: relative;
-            z-index: 2;
-            animation: logoSpin 8s linear infinite;
-            box-shadow: 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-purple);
-            will-change: transform;
         }
         
         @keyframes logoSpin {
@@ -405,54 +256,22 @@
             to { transform: rotate(360deg); }
         }
         
-        .splash-logo-wrapper::after {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: var(--neon-cyan);
-            border-right-color: var(--neon-purple);
-            animation: borderRotate 4s linear infinite;
-        }
-        
-        @keyframes borderRotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
         .splash-title {
-            font-size: var(--text-5xl);
+            font-size: var(--text-4xl);
             font-weight: 900;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             margin-bottom: 10px;
-            animation: titleGlow 2s ease-in-out infinite;
-        }
-        
-        @keyframes titleGlow {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.2); }
         }
         
         .splash-subtitle {
             font-size: var(--text-lg);
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 30px;
-            animation: subtitlePulse 2s ease-in-out infinite;
         }
         
-        @keyframes subtitlePulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-        
-        /* محول سريع */
         .splash-loader {
             width: 250px;
             height: 4px;
@@ -466,8 +285,7 @@
             width: 40%;
             height: 100%;
             background: var(--gradient-primary);
-            animation: loaderMove 1.2s ease-in-out infinite;
-            will-change: transform;
+            animation: loaderMove 1.5s ease infinite;
         }
         
         @keyframes loaderMove {
@@ -482,30 +300,7 @@
             font-size: 14px;
         }
         
-        /* زر تخطي سريع */
-        .splash-skip {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--neon-cyan);
-            color: var(--neon-cyan);
-            padding: 8px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.2s;
-        }
-        
-        .splash-skip:hover {
-            background: var(--neon-cyan);
-            color: var(--bg-deep);
-            transform: translateY(-2px);
-            box-shadow: 0 0 30px var(--neon-cyan);
-        }
-        
-        /* -------------------- الحاوية الرئيسية -------------------- */
+        /* ==================== الحاوية الرئيسية ==================== */
         .main-wrapper {
             max-width: 1300px;
             margin: 0 auto;
@@ -514,22 +309,20 @@
             padding: var(--space-lg);
             width: 100%;
             opacity: 0;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.8s ease;
         }
         
         .main-wrapper.visible {
             opacity: 1;
         }
         
-        /* -------------------- تأثير الزجاج السريع -------------------- */
+        /* تأثير الزجاج */
         .glass-effect {
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-3d);
-            transition: all var(--transition-normal) var(--ease-smooth);
-            will-change: transform;
+            transition: var(--transition);
         }
         
         .glass-effect:hover {
@@ -537,21 +330,15 @@
             box-shadow: var(--shadow-neon), var(--shadow-3d);
         }
         
-        /* -------------------- الهيدر السريع مع اللوجو -------------------- */
+        /* ==================== الهيدر ==================== */
         .header-box {
             margin-bottom: var(--space-2xl);
             padding: var(--space-xl);
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius-3xl);
             box-shadow: var(--shadow-3d);
-            animation: headerFloat 5s ease-in-out infinite;
-        }
-        
-        @keyframes headerFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
         }
         
         .header-content {
@@ -563,25 +350,6 @@
         
         .header-logo-container {
             position: relative;
-            flex-shrink: 0;
-        }
-        
-        .header-logo-container::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--neon-cyan-glow), transparent 70%);
-            animation: logoPulse 2s ease-in-out infinite;
-            z-index: -1;
-        }
-        
-        @keyframes logoPulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
         }
         
         .header-main-logo {
@@ -591,12 +359,6 @@
             border: 3px solid var(--neon-cyan);
             box-shadow: 0 0 30px var(--neon-cyan);
             object-fit: cover;
-            animation: logoGlow 3s ease-in-out infinite;
-        }
-        
-        @keyframes logoGlow {
-            0%, 100% { box-shadow: 0 0 30px var(--neon-cyan); }
-            50% { box-shadow: 0 0 50px var(--neon-purple); }
         }
         
         .header-titles {
@@ -618,14 +380,12 @@
             background-clip: text;
             color: transparent;
             margin-bottom: 5px;
-            text-shadow: 0 0 20px var(--neon-cyan);
         }
         
         .header-role {
             display: block;
             color: rgba(255, 255, 255, 0.9);
             font-size: var(--text-md);
-            margin-bottom: 3px;
         }
         
         .header-name {
@@ -642,12 +402,9 @@
             padding: 8px 20px;
             font-family: 'Orbitron', monospace;
             color: var(--neon-cyan);
-            font-size: var(--text-sm);
-            white-space: nowrap;
-            backdrop-filter: blur(10px);
         }
         
-        /* -------------------- أزرار التنقل السريعة -------------------- */
+        /* ==================== أزرار التنقل ==================== */
         .nav-buttons {
             display: flex;
             gap: var(--space-md);
@@ -672,8 +429,7 @@
             cursor: pointer;
             border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
-            transition: all var(--transition-fast) var(--ease-smooth);
-            will-change: transform;
+            transition: var(--transition);
         }
         
         .btn-nav:hover {
@@ -685,7 +441,7 @@
         .btn-nav.active {
             background: var(--gradient-primary);
             border-color: transparent;
-            box-shadow: 0 0 25px var(--neon-cyan);
+            box-shadow: 0 0 30px var(--neon-cyan);
         }
         
         .btn-nav.btn-admin-icon {
@@ -693,17 +449,16 @@
             min-width: 60px;
         }
         
-        /* -------------------- الكروت السريعة -------------------- */
+        /* ==================== الكروت ==================== */
         .card {
             padding: var(--space-xl);
             border-radius: var(--border-radius-2xl);
             margin-bottom: var(--space-xl);
             background: var(--bg-card);
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(15px);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-3d);
-            transition: all var(--transition-fast) var(--ease-smooth);
-            will-change: transform;
+            transition: var(--transition);
         }
         
         .card:hover {
@@ -717,10 +472,9 @@
             color: var(--neon-cyan);
             margin-bottom: var(--space-xl);
             text-align: center;
-            text-shadow: 0 0 15px var(--neon-cyan);
         }
         
-        /* -------------------- الحقول السريعة -------------------- */
+        /* ==================== الحقول ==================== */
         .input-group {
             margin-bottom: var(--space-lg);
         }
@@ -748,7 +502,7 @@
             color: #fff;
             font-size: var(--text-sm);
             outline: none;
-            transition: all var(--transition-fast);
+            transition: var(--transition);
             backdrop-filter: blur(5px);
         }
         
@@ -756,10 +510,6 @@
             border-color: var(--neon-cyan);
             box-shadow: 0 0 20px var(--neon-cyan);
             transform: translateY(-2px);
-        }
-        
-        .neon-input:hover {
-            border-color: var(--neon-purple);
         }
         
         select.neon-input {
@@ -777,7 +527,7 @@
             gap: var(--space-md);
         }
         
-        /* -------------------- الزر الرئيسي السريع -------------------- */
+        /* ==================== الزر الرئيسي ==================== */
         .btn-main {
             width: 100%;
             padding: var(--space-lg);
@@ -793,8 +543,7 @@
             justify-content: center;
             gap: var(--space-sm);
             margin-top: var(--space-lg);
-            transition: all var(--transition-fast) var(--ease-bounce);
-            will-change: transform;
+            transition: var(--transition);
         }
         
         .btn-main:hover {
@@ -802,33 +551,7 @@
             box-shadow: var(--shadow-neon);
         }
         
-        .btn-main:hover i {
-            transform: rotate(360deg);
-            transition: transform 0.4s;
-        }
-        
-        /* -------------------- خدمات -------------------- */
-        .services-banner {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-sm);
-            padding: var(--space-md) var(--space-lg);
-            background: var(--gradient-warm);
-            border-radius: var(--border-radius-xl);
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            margin-bottom: var(--space-xl);
-            transition: all var(--transition-fast);
-        }
-        
-        .services-banner:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px var(--neon-orange);
-        }
-        
-        /* -------------------- شاشة تسجيل الدخول -------------------- */
+        /* ==================== شاشة تسجيل الدخول ==================== */
         .login-card {
             max-width: 450px;
             margin: 0 auto;
@@ -854,11 +577,11 @@
         .login-info {
             text-align: center;
             margin-top: var(--space-lg);
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.5);
             font-size: var(--text-xs);
         }
         
-        /* -------------------- المسار الزمني السريع -------------------- */
+        /* ==================== المسار الزمني ==================== */
         .track-container {
             position: relative;
             width: 100%;
@@ -923,15 +646,9 @@
             transform: scale(1.1);
         }
         
-        .track-dot i {
-            color: #fff;
-            font-size: 16px;
-        }
-        
         .track-label {
             font-size: var(--text-xs);
             color: #fff;
-            text-align: center;
             background: rgba(0, 0, 0, 0.5);
             padding: 4px 8px;
             border-radius: 15px;
@@ -958,57 +675,16 @@
         }
         
         .timeline-time {
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.5);
             font-size: var(--text-xs);
         }
         
-        .timeline-card p {
-            font-size: var(--text-xs);
-            color: rgba(255, 255, 255, 0.8);
-            padding-right: var(--space-md);
-            border-right: 1px dashed rgba(255, 255, 255, 0.1);
-        }
-        
-        /* -------------------- كارت التصدير -------------------- */
-        #request-card-container {
-            position: absolute;
-            left: -9999px;
-            top: 0;
-            width: 600px;
-        }
-        
-        /* -------------------- التمرير المخصص السريع -------------------- */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-deep);
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--gradient-primary);
-            border-radius: 10px;
-        }
-        
-        /* -------------------- تحسينات للجوال -------------------- */
+        /* ==================== تحسينات الجوال ==================== */
         @media (max-width: 1024px) {
             .header-content {
                 flex-direction: column;
                 text-align: center;
             }
-            
-            .header-main-logo {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .header-title {
-                font-size: var(--text-2xl);
-            }
-            
             .responsive-grid {
                 grid-template-columns: 1fr;
             }
@@ -1018,70 +694,17 @@
             .nav-buttons {
                 flex-direction: column;
             }
-            
-            .btn-nav {
-                width: 100%;
-            }
-            
-            .splash-logo-wrapper {
-                width: 180px;
-                height: 180px;
-            }
-            
-            .splash-title {
-                font-size: var(--text-3xl);
-            }
-            
-            .custom-cursor {
-                display: none;
-            }
-            
-            * {
-                cursor: auto !important;
-            }
-        }
-        
-        @media (max-width: 480px) {
             .splash-logo-wrapper {
                 width: 150px;
                 height: 150px;
             }
-            
-            .header-main-logo {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .card {
-                padding: var(--space-lg);
-            }
-        }
-        
-        /* -------------------- منع الطباعة -------------------- */
-        @media print {
-            * { display: none !important; }
-            body::before {
-                content: "لا يمكن طباعة هذه الصفحة";
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: var(--bg-deep);
-                color: var(--neon-red);
-                font-size: 24px;
-                z-index: 999999;
+            .splash-title {
+                font-size: var(--text-2xl);
             }
         }
     </style>
 </head>
 <body>
-    <!-- مؤشر الماوس المخصص السريع -->
-    <div class="custom-cursor" id="custom-cursor"></div>
-    
     <!-- جزيئات متطايرة -->
     <div class="particles" id="particles"></div>
     
@@ -1091,11 +714,11 @@
         <div class="floating-element"></div>
     </div>
     
-    <!-- شاشة البداية -->
+    <!-- ==================== شاشة البداية (مضبوطة في النص) ==================== -->
     <div class="splash-screen" id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo-wrapper">
-                <img src="https://placehold.co/220x220/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
+                <img src="https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
             </div>
             <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
             <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
@@ -1104,17 +727,13 @@
             </div>
             <div class="splash-version">VR 2.05.2026</div>
         </div>
-        
-        <button class="splash-skip" id="splash-skip" onclick="skipSplash()">
-            <i class="fas fa-forward"></i> تخطي
-        </button>
     </div>
     
-    <!-- المحتوى الرئيسي -->
+    <!-- ==================== المحتوى الرئيسي ==================== -->
     <div class="main-wrapper" id="main-wrapper">
         <div class="main-content" id="main-content">
             
-            <!-- الهيدر مع اللوجو -->
+            <!-- الهيدر -->
             <header class="header-box glass-effect">
                 <div class="header-content">
                     <div class="header-logo-container">
@@ -1148,7 +767,7 @@
             <!-- شاشة تقديم الطلب -->
             <section id="view-submit" class="view">
                 <div class="card">
-                    <a href="#" id="services-link" class="services-banner" style="display: none;">
+                    <a href="#" id="services-link" class="services-banner" style="display: none; background: var(--gradient-warm); padding: 15px; border-radius: 30px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none;">
                         <i class="fas fa-globe"></i> <span>موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
                     </a>
                     
@@ -1280,7 +899,7 @@
                 <div id="track-result-box" style="display: none;"></div>
             </section>
             
-            <!-- شاشة تسجيل الدخول -->
+            <!-- ==================== شاشة تسجيل الدخول (مصححة) ==================== -->
             <section id="view-login" class="view" style="display: none;">
                 <div class="card login-card">
                     <div class="login-icon">
@@ -1304,7 +923,7 @@
                     </button>
                     
                     <div class="login-info">
-                        <i class="fas fa-info-circle"></i> استخدم بيانات المستخدم المسجلة
+                        <i class="fas fa-info-circle"></i> استخدم بيانات المستخدم المسجلة في النظام
                     </div>
                 </div>
             </section>
@@ -1312,14 +931,22 @@
     </div>
     
     <!-- كارت التصدير المخفي -->
-    <div id="request-card-container"></div>
+    <div id="request-card-container" style="position: absolute; left: -9999px; top: 0; width: 600px;"></div>
     
-    <!-- Firebase v12.10.0 (CDN) -->
-    <script type="import">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, query, where, orderBy, deleteDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-        
-        // Firebase configuration
+    <!-- Firebase v9 compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        // =====================================================================
+        // تهيئة Firebase
+        // =====================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -1330,86 +957,8 @@
             measurementId: "G-P3YQFRSBMM"
         };
         
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // Make db available globally
-        window.db = db;
-        window.collection = collection;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.getDocs = getDocs;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-        window.deleteDoc = deleteDoc;
-        window.serverTimestamp = serverTimestamp;
-        window.arrayUnion = arrayUnion;
-        
-        console.log("🔥 Firebase initialized successfully");
-    </script>
-    
-    <!-- SweetAlert2 and other libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-    
-    <!-- Main JavaScript -->
-    <script type="module">
-        // =====================================================================
-        // Wait for Firebase to initialize
-        // =====================================================================
-        function waitForFirebase() {
-            return new Promise((resolve) => {
-                if (window.db) {
-                    resolve();
-                } else {
-                    setTimeout(() => waitForFirebase().then(resolve), 100);
-                }
-            });
-        }
-        
-        waitForFirebase().then(() => {
-            console.log("✅ Firebase ready, starting app...");
-            initializeApp();
-        });
-        
-        // =====================================================================
-        // متغيرات عامة
-        // =====================================================================
-        const STORAGE_KEYS = {
-            LOGO_URL: 'union_logo_url',
-            SERVICES_URL: 'services_url',
-            SERVICES_TEXT: 'services_text',
-            SHOW_SERVICES: 'show_services',
-            COMPLAINT_PREFIX: 'complaint_prefix',
-            SUGGESTION_PREFIX: 'suggestion_prefix'
-        };
-        
-        const DEFAULT_SETTINGS = {
-            LOGO_URL: 'https://placehold.co/220x220/0a0f1f/00ffff/png?text=Logo',
-            SERVICES_URL: 'https://services.egeng.org',
-            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
-            SHOW_SERVICES: true,
-            COMPLAINT_PREFIX: 'REQ',
-            SUGGESTION_PREFIX: 'REP'
-        };
-        
-        // =====================================================================
-        // مؤشر الماوس المخصص
-        // =====================================================================
-        const cursor = document.getElementById('custom-cursor');
-        
-        document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
-        });
-        
-        document.querySelectorAll('button, a, .btn-nav, .btn-main, .splash-skip').forEach(el => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
-        });
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         
         // =====================================================================
         // إنشاء الجزيئات
@@ -1429,43 +978,12 @@
         // =====================================================================
         // شاشة البداية
         // =====================================================================
-        window.addEventListener('load', () => {
-            setTimeout(() => {
+        window.addEventListener('load', function() {
+            setTimeout(function() {
                 document.getElementById('splash-screen').style.display = 'none';
                 document.getElementById('main-wrapper').classList.add('visible');
-            }, 3000);
+            }, 4000);
         });
-        
-        window.skipSplash = function() {
-            document.getElementById('splash-screen').style.display = 'none';
-            document.getElementById('main-wrapper').classList.add('visible');
-        };
-        
-        // =====================================================================
-        // تحميل الإعدادات
-        // =====================================================================
-        function getSetting(key, defaultValue) {
-            return localStorage.getItem(key) || defaultValue;
-        }
-        
-        function getSavedLogo() {
-            return getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
-        }
-        
-        function getComplaintPrefix() {
-            return getSetting(STORAGE_KEYS.COMPLAINT_PREFIX, DEFAULT_SETTINGS.COMPLAINT_PREFIX);
-        }
-        
-        function getSuggestionPrefix() {
-            return getSetting(STORAGE_KEYS.SUGGESTION_PREFIX, DEFAULT_SETTINGS.SUGGESTION_PREFIX);
-        }
-        
-        function updateAllLogos() {
-            const logo = getSavedLogo();
-            document.getElementById('splash-logo').src = logo;
-            document.getElementById('header-main-logo').src = logo;
-        }
-        updateAllLogos();
         
         // =====================================================================
         // تبديل المشاهد
@@ -1511,36 +1029,9 @@
         }
         
         // =====================================================================
-        // إنشاء رقم الطلب
-        // =====================================================================
-        async function generateRequestNumber(type) {
-            const year = new Date().getFullYear();
-            const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
-            
-            try {
-                const requestsRef = collection(db, "Requests");
-                const q = query(requestsRef, where("type", "==", type));
-                const snapshot = await getDocs(q);
-                
-                let maxSerial = 0;
-                snapshot.forEach(doc => {
-                    const ref = doc.data().refId;
-                    if (ref) {
-                        const serial = parseInt(ref.split('-')[1]);
-                        if (!isNaN(serial) && serial > maxSerial) maxSerial = serial;
-                    }
-                });
-                
-                return `${prefix}-${(maxSerial + 1).toString().padStart(4,'0')}-${year}`;
-            } catch (e) {
-                return `${prefix}-${Date.now().toString().slice(-6)}-${year}`;
-            }
-        }
-        
-        // =====================================================================
         // تقديم الطلب
         // =====================================================================
-        function validateSubmitForm() {
+        window.handleSubmit = async function() {
             const name = document.getElementById('u-name')?.value.trim();
             const nid = document.getElementById('u-nid')?.value.trim();
             const phone = document.getElementById('u-phone')?.value.trim();
@@ -1554,171 +1045,58 @@
             
             if (!name || !nid || !phone || !gov || !address || !job || !details) {
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
-            }
-            
-            if (name.split(' ').length < 2) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الاسم ثلاثي على الأقل', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
+                return;
             }
             
             if (!validateNationalID(nid)) {
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي 14 رقم', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
+                return;
             }
             
             if (!validatePhone(phone)) {
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الهاتف غير صحيح', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
+                return;
             }
-            
-            if (memberType === 'عضو نقابة' && !memberId) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل رقم العضوية', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
-            }
-            
-            if (details.length < 10) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'التفاصيل على الأقل 10 حروف', background: '#030514', confirmButtonColor: '#00ffff' });
-                return null;
-            }
-            
-            return { name, nid, phone, gov, address, job, type, details, memberType, memberId };
-        }
-        
-        async function generateRequestCard(data) {
-            const logo = getSavedLogo();
-            const date = new Date().toLocaleDateString('ar-EG');
-            const time = new Date().toLocaleTimeString('ar-EG');
-            
-            const container = document.getElementById('request-card-container');
-            container.innerHTML = '';
-            
-            const card = document.createElement('div');
-            card.style.cssText = `
-                width: 550px;
-                padding: 35px;
-                background: linear-gradient(135deg, #0a0f1f, #030514);
-                border-radius: 35px;
-                border: 4px solid #00ffff;
-                font-family: 'Tajawal', sans-serif;
-                color: white;
-                text-align: center;
-                direction: rtl;
-                box-shadow: 0 20px 40px rgba(0,255,255,0.4);
-            `;
-            
-            const logoImg = document.createElement('img');
-            logoImg.src = logo;
-            logoImg.style.cssText = `
-                width: 100px;
-                height: 100px;
-                border-radius: 50%;
-                border: 3px solid #00ffff;
-                margin: 0 auto 15px;
-                display: block;
-                box-shadow: 0 0 30px #00ffff;
-                object-fit: cover;
-            `;
-            
-            const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
-            
-            card.innerHTML = `
-                <h2 style="font-size: 24px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0;">نقابة تكنولوجيا المعلومات</h2>
-                <h3 style="font-size: 18px; color: white;">المهندس / محمود جميل</h3>
-                
-                <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 20px; margin: 15px 0;">
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: #aaa;">رقم الطلب:</span>
-                        <span style="color: #00ffff;">${data.refId}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: #aaa;">نوع الطلب:</span>
-                        <span style="color: ${typeColor};">${data.type}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: #aaa;">الاسم:</span>
-                        <span>${data.name}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
-                        <span style="color: #aaa;">التاريخ:</span>
-                        <span>${date} - ${time}</span>
-                    </div>
-                </div>
-                
-                <div style="color: #666; font-size: 12px;">هذا الكارت معتمد من النقابة</div>
-                <div style="color: #00ffff; font-size: 10px; margin-top: 10px;">VR 2.05.2026</div>
-            `;
-            
-            card.prepend(logoImg);
-            container.appendChild(card);
-            
-            try {
-                const canvas = await html2canvas(card, { scale: 2 });
-                const dataUrl = canvas.toDataURL('image/png');
-                
-                const result = await Swal.fire({
-                    title: '✅ تم الحفظ',
-                    html: `<div style="color: #00ffff;">${data.refId}</div>`,
-                    imageUrl: dataUrl,
-                    imageWidth: 450,
-                    showCancelButton: true,
-                    confirmButtonText: '📥 تحميل',
-                    cancelButtonText: 'إغلاق',
-                    background: '#030514'
-                });
-                
-                if (result.isConfirmed) {
-                    const link = document.createElement('a');
-                    link.download = `طلب_${data.refId}.png`;
-                    link.href = dataUrl;
-                    link.click();
-                }
-            } catch (e) {
-                Swal.fire({ icon: 'success', title: 'تم', text: data.refId, background: '#030514' });
-            }
-            
-            setTimeout(() => container.innerHTML = '', 1000);
-        }
-        
-        window.handleSubmit = async function() {
-            const formData = validateSubmitForm();
-            if (!formData) return;
             
             try {
                 Swal.fire({ title: 'جاري الحفظ', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
-                const refId = await generateRequestNumber(formData.type);
-                const initialStatus = formData.type === 'شكوى' ? "تم الاستلام" : "لم يقرأ";
+                const year = new Date().getFullYear();
+                const prefix = type === 'شكوى' ? 'REQ' : 'REP';
+                const refId = prefix + '-0001-' + year;
                 
                 const requestData = {
                     refId,
-                    ...formData,
-                    status: initialStatus,
-                    createdAt: serverTimestamp(),
+                    name, nid, phone, gov, address, job, type, details, memberType, memberId,
+                    status: type === 'شكوى' ? 'تم الاستلام' : 'لم يقرأ',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     tracking: [{
-                        status: initialStatus,
-                        comment: formData.type === 'شكوى' ? "تم استلام شكواك" : "تم استلام اقتراحك",
+                        status: type === 'شكوى' ? 'تم الاستلام' : 'لم يقرأ',
+                        comment: type === 'شكوى' ? 'تم استلام شكواك' : 'تم استلام اقتراحك',
                         time: new Date().toLocaleString('ar-EG'),
                         isFinal: false
                     }]
                 };
                 
-                await setDoc(doc(db, "Requests", refId), requestData);
+                await db.collection('Requests').doc(refId).set(requestData);
                 Swal.close();
-                await generateRequestCard(requestData);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: refId,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
                 
                 // Clear form
                 ['u-name','u-nid','u-phone','u-address','u-job','u-details','u-member-id'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
                 });
-                document.getElementById('u-member-type').value = 'عضو نقابة';
-                document.getElementById('u-gov').value = 'القاهرة';
-                document.getElementById('u-req-type').innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
-                document.getElementById('member-id-box').style.display = 'block';
                 
-            } catch (e) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: e.message, background: '#030514', confirmButtonColor: '#00ffff' });
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
             }
         };
         
@@ -1738,13 +1116,11 @@
             try {
                 Swal.fire({ title: 'جاري البحث', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
-                const requestsRef = collection(db, "Requests");
-                const q = query(requestsRef, 
-                    where("nid", "==", nid),
-                    where("refId", "==", ref),
-                    where("type", "==", type)
-                );
-                const snapshot = await getDocs(q);
+                const snapshot = await db.collection('Requests')
+                    .where('nid', '==', nid)
+                    .where('refId', '==', ref)
+                    .where('type', '==', type)
+                    .get();
                 
                 Swal.close();
                 
@@ -1754,122 +1130,169 @@
                 }
                 
                 const data = snapshot.docs[0].data();
-                renderTrackResult(data);
                 
-            } catch (e) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: e.message, background: '#030514', confirmButtonColor: '#00ffff' });
+                const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
+                const currentIdx = stages.indexOf(data.status);
+                const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
+                
+                const timeline = data.tracking?.length ? data.tracking.slice().reverse().map(t => `
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <span class="timeline-status">${t.status}</span>
+                            <span class="timeline-time">${t.time}</span>
+                        </div>
+                        <p>${t.comment}</p>
+                    </div>
+                `).join('') : '<p style="text-align:center">لا يوجد مسار زمني</p>';
+                
+                const html = `
+                    <div class="card" style="margin-top:20px;">
+                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                            <div style="width:60px; height:60px; background:var(--gradient-primary); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i class="fas fa-qrcode" style="font-size:30px; color:#fff;"></i>
+                            </div>
+                            <div>
+                                <h3 style="color:var(--neon-cyan);">${data.refId}</h3>
+                                <p>${data.name}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="track-container">
+                            <div class="track-line-bg"></div>
+                            <div class="track-line-fill" style="width:${progress}%;"></div>
+                            <div class="track-points">
+                                ${stages.map((s, i) => `
+                                    <div class="track-point">
+                                        <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
+                                            ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
+                                        </div>
+                                        <span class="track-label">${s}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <h4 style="color:var(--neon-cyan); margin:15px 0 10px;">المسار الزمني</h4>
+                        <div style="max-height:250px; overflow-y:auto;">${timeline}</div>
+                    </div>
+                `;
+                
+                document.getElementById('track-result-box').innerHTML = html;
+                document.getElementById('track-result-box').style.display = 'block';
+                
+            } catch (error) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
             }
         };
         
-        function renderTrackResult(data) {
-            const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
-            const currentIdx = stages.indexOf(data.status);
-            const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
-            
-            const timeline = data.tracking?.length ? data.tracking.slice().reverse().map(t => `
-                <div class="timeline-card">
-                    <div class="timeline-header">
-                        <span class="timeline-status">${t.status}</span>
-                        <span class="timeline-time">${t.time}</span>
-                    </div>
-                    <p>${t.comment}</p>
-                </div>
-            `).join('') : '<p style="text-align:center">لا يوجد مسار زمني</p>';
-            
-            const html = `
-                <div class="card" style="margin-top:20px;">
-                    <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
-                        <div style="width:60px; height:60px; background:var(--gradient-primary); border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                            <i class="fas fa-qrcode" style="font-size:30px; color:#fff;"></i>
-                        </div>
-                        <div>
-                            <h3 style="color:var(--neon-cyan); font-size:20px;">${data.refId}</h3>
-                            <p>${data.name}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="track-container">
-                        <div class="track-line-bg"></div>
-                        <div class="track-line-fill" style="width:${progress}%;"></div>
-                        <div class="track-points">
-                            ${stages.map((s, i) => `
-                                <div class="track-point">
-                                    <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
-                                        ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
-                                    </div>
-                                    <span class="track-label">${s}</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <h4 style="color:var(--neon-cyan); margin:15px 0 10px;">المسار الزمني</h4>
-                    <div style="max-height:250px; overflow-y:auto;">${timeline}</div>
-                </div>
-            `;
-            
-            const resultBox = document.getElementById('track-result-box');
-            resultBox.innerHTML = html;
-            resultBox.style.display = 'block';
-        }
-        
         // =====================================================================
-        // تسجيل الدخول
+        // تسجيل الدخول - مصحح بالكامل
         // =====================================================================
         window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
             const password = document.getElementById('login-password')?.value.trim();
             
+            console.log('محاولة دخول:', username);
+            
             if (!username || !password) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل اسم المستخدم وكلمة المرور', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: 'أدخل اسم المستخدم وكلمة المرور', 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
+                });
                 return;
             }
             
             try {
-                Swal.fire({ title: 'جاري التحقق', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
+                Swal.fire({ 
+                    title: 'جاري التحقق', 
+                    allowOutsideClick: false, 
+                    didOpen: () => Swal.showLoading(), 
+                    background: '#030514' 
+                });
                 
-                const usersRef = collection(db, 'Users');
-                const q = query(usersRef, where('username', '==', username));
-                const snapshot = await getDocs(q);
+                // البحث في مجموعة Users
+                const usersRef = db.collection('Users');
+                const snapshot = await usersRef.where('username', '==', username).get();
+                
+                console.log('نتيجة البحث:', snapshot.empty ? 'لا يوجد' : 'موجود');
                 
                 if (snapshot.empty) {
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'خطأ', text: 'اسم المستخدم غير موجود', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ', 
+                        text: 'اسم المستخدم غير موجود', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
                 
                 const userDoc = snapshot.docs[0];
                 const userData = userDoc.data();
                 
+                console.log('بيانات المستخدم:', { 
+                    username: userData.username, 
+                    role: userData.role,
+                    isActive: userData.isActive 
+                });
+                
+                // التحقق من حالة الحساب
                 if (userData.isActive === false) {
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'حساب معطل', text: 'الحساب غير نشط', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'حساب معطل', 
+                        text: 'هذا الحساب غير نشط', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
                 
-                // Simple password check (base64)
+                // التحقق من كلمة المرور
                 const hashedPassword = btoa(password);
+                console.log('كلمة السر المدخلة (مشفرة):', hashedPassword);
+                console.log('كلمة السر المخزنة:', userData.password);
+                
                 if (hashedPassword !== userData.password) {
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'خطأ', text: 'كلمة المرور غير صحيحة', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ', 
+                        text: 'كلمة المرور غير صحيحة', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
                 
-                // Update last login
-                await setDoc(doc(db, "Users", userDoc.id), {
-                    lastLogin: serverTimestamp(),
-                    lastLoginString: new Date().toLocaleString('ar-EG')
-                }, { merge: true });
+                // تسجيل الدخول ناجح
+                const now = new Date();
+                const lastLoginStr = now.toLocaleString('ar-EG');
                 
+                // تحديث آخر دخول
+                await db.collection('Users').doc(userDoc.id).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLoginString: lastLoginStr
+                });
+                
+                // تخزين في localStorage
                 localStorage.setItem('currentUserId', userDoc.id);
                 localStorage.setItem('currentUser', userData.username);
                 localStorage.setItem('currentUserRole', userData.role);
+                localStorage.setItem('currentUserLastLogin', lastLoginStr);
                 
                 Swal.close();
+                
                 Swal.fire({
                     icon: 'success',
-                    title: 'مرحباً',
-                    timer: 1500,
+                    title: 'مرحباً بك',
+                    html: `<p style="color: #00ffff;">${userData.name || userData.username}</p><p>جاري التحويل...</p>`,
+                    timer: 2000,
                     showConfirmButton: false,
                     background: '#030514'
                 }).then(() => {
@@ -1877,8 +1300,15 @@
                 });
                 
             } catch (error) {
+                console.error('خطأ في تسجيل الدخول:', error);
                 Swal.close();
-                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: error.message, 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
+                });
             }
         };
     </script>
