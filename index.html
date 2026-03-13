@@ -173,7 +173,7 @@
             cursor: text !important;
         }
         
-        button, .btn, .nav-btn, .login-btn, .splash-skip {
+        button, .btn, .nav-btn, .login-btn, .splash-skip, .google-btn {
             cursor: pointer !important;
         }
         
@@ -1032,116 +1032,95 @@
             color: white;
         }
         
-        .input-group {
-            margin-bottom: var(--space-lg);
-            position: relative;
-            z-index: 2;
-        }
-        
-        .input-group label {
-            display: block;
-            margin-bottom: var(--space-sm);
-            font-size: var(--text-md);
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 700;
-        }
-        
-        .input-group label i {
-            color: var(--neon-cyan);
-            margin-left: var(--space-xs);
-            font-size: var(--text-lg);
-            animation: labelIcon 2s infinite;
-        }
-        
-        @keyframes labelIcon {
-            0%, 100% { filter: drop-shadow(0 0 5px var(--neon-cyan)); }
-            50% { filter: drop-shadow(0 0 15px var(--neon-purple)); }
-        }
-        
-        .neon-input {
-            width: 100%;
-            padding: var(--space-md) var(--space-lg);
-            background: var(--bg-input);
-            border: 2px solid var(--border-color);
-            border-radius: var(--border-radius-xl);
-            color: #fff;
-            font-size: var(--text-md);
-            outline: none;
-            transition: all var(--transition-normal) var(--ease-smooth);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,255,255,0.1) inset;
-        }
-        
-        .neon-input:focus {
-            border-color: var(--neon-cyan);
-            box-shadow: 0 0 25px var(--neon-cyan), 0 10px 25px rgba(0,0,0,0.3);
-            transform: translateY(-3px);
-            background: rgba(3,5,20,0.8);
-        }
-        
-        .neon-input:hover {
-            border-color: var(--neon-purple);
-            box-shadow: 0 0 20px var(--neon-purple);
-        }
-        
-        .login-btn {
+        /* زر تسجيل الدخول بـ Google */
+        .google-btn {
             width: 100%;
             padding: var(--space-lg);
             border: none;
             border-radius: var(--border-radius-xl);
-            background: var(--gradient-primary);
-            background-size: 200% 200%;
-            color: #fff;
-            font-weight: 800;
+            background: #4285F4;
+            color: white;
+            font-weight: 700;
             font-size: var(--text-lg);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: var(--space-md);
-            position: relative;
-            overflow: hidden;
             transition: all var(--transition-normal) var(--ease-bounce);
             margin-top: var(--space-lg);
-            animation: btnGradientShift 5s ease infinite;
             box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
         }
         
-        @keyframes btnGradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .login-btn::before {
+        .google-btn::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: rotate(45deg) translate(-100%, -100%);
+            transform: translateX(-100%);
             transition: transform 0.6s;
         }
         
-        .login-btn:hover::before {
-            transform: rotate(45deg) translate(100%, 100%);
+        .google-btn:hover::before {
+            transform: translateX(100%);
         }
         
-        .login-btn:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: var(--shadow-neon), var(--shadow-lg);
+        .google-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px #4285F4;
         }
         
-        .login-btn i {
+        .google-btn i {
             font-size: var(--text-xl);
-            transition: transform var(--transition-normal) var(--ease-bounce);
         }
         
-        .login-btn:hover i {
-            transform: rotate(360deg) scale(1.2);
+        /* معلومات المستخدم بعد تسجيل الدخول */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            background: rgba(255,255,255,0.05);
+            border-radius: var(--border-radius-xl);
+            margin-top: var(--space-xl);
+        }
+        
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-cyan);
+            object-fit: cover;
+        }
+        
+        .user-info {
+            flex: 1;
+        }
+        
+        .user-name {
+            font-weight: 700;
+            color: var(--neon-cyan);
+            font-size: var(--text-md);
+        }
+        
+        .user-email {
+            color: var(--text-muted);
+            font-size: var(--text-sm);
+        }
+        
+        .user-role {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(0,255,255,0.1);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 20px;
+            font-size: var(--text-xs);
+            margin-top: 5px;
         }
         
         .login-info {
@@ -1832,7 +1811,7 @@
                 <div id="track-result-box" style="display:none;"></div>
             </section>
             
-            <!-- ==================== شاشة تسجيل الدخول ==================== -->
+            <!-- ==================== شاشة تسجيل الدخول بـ Google ==================== -->
             <section id="view-login" class="view" style="display:none;">
                 <div class="card glass-effect login-card">
                     <div class="login-icon">
@@ -1841,27 +1820,33 @@
                     
                     <h2 class="card-title" style="margin-bottom: var(--space-xl);">دخول المنظومة</h2>
                     
-                    <!-- اسم المستخدم -->
-                    <div class="input-group">
-                        <label><i class="fas fa-user"></i> اسم المستخدم</label>
-                        <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" class="neon-input">
+                    <!-- معلومات المستخدم الحالي (تظهر إذا كان مسجل الدخول) -->
+                    <div id="user-profile-container" style="display: none;">
+                        <div class="user-profile" id="user-profile">
+                            <img src="" alt="صورة المستخدم" class="user-avatar" id="user-avatar">
+                            <div class="user-info">
+                                <div class="user-name" id="user-name"></div>
+                                <div class="user-email" id="user-email"></div>
+                                <div class="user-role" id="user-role"></div>
+                            </div>
+                        </div>
+                        <button class="google-btn" onclick="logout()" style="background: #dc3545; margin-top: var(--space-md);">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>تسجيل الخروج</span>
+                        </button>
                     </div>
                     
-                    <!-- كلمة المرور -->
-                    <div class="input-group">
-                        <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" class="neon-input">
+                    <!-- زر تسجيل الدخول بـ Google -->
+                    <div id="google-login-container">
+                        <button class="google-btn" onclick="loginWithGoogle()">
+                            <i class="fab fa-google"></i>
+                            <span>تسجيل الدخول بحساب Google</span>
+                        </button>
                     </div>
-                    
-                    <!-- زر الدخول -->
-                    <button class="login-btn" onclick="handleLogin()">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>تسجيل الدخول</span>
-                    </button>
                     
                     <div class="login-info">
                         <i class="fas fa-info-circle"></i>
-                        استخدم بيانات المستخدم الخاصة بك المسجلة في النظام
+                        سيتم تخزين بيانات حسابك Google في قاعدة البيانات للدخول التلقائي مستقبلاً
                     </div>
                 </div>
             </section>
@@ -1881,6 +1866,7 @@
     <!-- ==================== المكتبات الخارجية ==================== -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
@@ -1902,6 +1888,7 @@
         // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
         
         // تفعيل التخزين المؤقت
         db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
@@ -2028,7 +2015,6 @@
         
         function getSavedLogo() {
             const savedLogo = getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
-            console.log('تحميل الشعار المحفوظ:', savedLogo);
             return savedLogo;
         }
         
@@ -2072,20 +2058,12 @@
         
         function updateAllLogos() {
             const savedLogo = getSavedLogo();
-            console.log('تحديث جميع الشعارات إلى:', savedLogo);
             
             const splashLogo = document.getElementById('splash-logo');
             const headerLogo = document.getElementById('header-main-logo');
             
-            if (splashLogo) {
-                splashLogo.src = savedLogo;
-                console.log('تم تحديث شعار شاشة الترحيب');
-            }
-            
-            if (headerLogo) {
-                headerLogo.src = savedLogo;
-                console.log('تم تحديث شعار الهيدر');
-            }
+            if (splashLogo) splashLogo.src = savedLogo;
+            if (headerLogo) headerLogo.src = savedLogo;
         }
         
         // =====================================================================
@@ -2109,16 +2087,6 @@
             return new Date().toLocaleTimeString('ar-EG', {
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
             });
-        }
-        
-        // دالة آمنة لتشفير كلمة السر (SHA-256)
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
         }
         
         async function generateRequestNumber(type) {
@@ -2205,7 +2173,184 @@
             if (document.getElementById('u-member-type').value === 'غير عضو') {
                 document.getElementById('member-id-box').style.display = 'none';
             }
+            
+            // التحقق من حالة تسجيل الدخول
+            checkAuthState();
         });
+        
+        // =====================================================================
+        // نظام تسجيل الدخول بـ Google
+        // =====================================================================
+        
+        // التحقق من حالة المصادقة
+        function checkAuthState() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    // مستخدم مسجل الدخول
+                    console.log('مستخدم مسجل الدخول:', user.email);
+                    
+                    // حفظ أو تحديث بيانات المستخدم في Firestore
+                    await saveUserToFirestore(user);
+                    
+                    // عرض معلومات المستخدم
+                    displayUserInfo(user);
+                    
+                    // إخفاء زر Google وإظهار معلومات المستخدم
+                    document.getElementById('google-login-container').style.display = 'none';
+                    document.getElementById('user-profile-container').style.display = 'block';
+                    
+                    // تخزين في localStorage للاستخدام في admin
+                    localStorage.setItem('currentUserId', user.uid);
+                    localStorage.setItem('currentUser', user.displayName || user.email);
+                    localStorage.setItem('currentUserEmail', user.email);
+                    
+                } else {
+                    // لا يوجد مستخدم مسجل الدخول
+                    console.log('لا يوجد مستخدم مسجل الدخول');
+                    
+                    document.getElementById('google-login-container').style.display = 'block';
+                    document.getElementById('user-profile-container').style.display = 'none';
+                }
+            });
+        }
+        
+        // تسجيل الدخول بـ Google
+        function loginWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            
+            auth.signInWithPopup(provider)
+                .then((result) => {
+                    // تم تسجيل الدخول بنجاح
+                    console.log('تم تسجيل الدخول بنجاح:', result.user);
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم تسجيل الدخول',
+                        text: `مرحباً بك ${result.user.displayName || result.user.email}`,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#030514'
+                    });
+                    
+                })
+                .catch((error) => {
+                    console.error('خطأ في تسجيل الدخول:', error);
+                    
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'خطأ في تسجيل الدخول',
+                        text: error.message,
+                        background: '#030514',
+                        confirmButtonColor: '#00ffff'
+                    });
+                });
+        }
+        
+        // تسجيل الخروج
+        function logout() {
+            auth.signOut()
+                .then(() => {
+                    console.log('تم تسجيل الخروج');
+                    
+                    // مسح بيانات localStorage
+                    localStorage.removeItem('currentUserId');
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('currentUserEmail');
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم تسجيل الخروج',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: '#030514'
+                    });
+                })
+                .catch((error) => {
+                    console.error('خطأ في تسجيل الخروج:', error);
+                });
+        }
+        
+        // حفظ بيانات المستخدم في Firestore
+        async function saveUserToFirestore(user) {
+            try {
+                const userRef = db.collection('Users').doc(user.uid);
+                const userDoc = await userRef.get();
+                
+                const userData = {
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || '',
+                    photoURL: user.photoURL || '',
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLoginString: new Date().toLocaleString('ar-EG'),
+                    provider: 'google'
+                };
+                
+                if (!userDoc.exists) {
+                    // مستخدم جديد - نضيفه مع دور افتراضي
+                    await userRef.set({
+                        ...userData,
+                        role: 'viewer', // دور افتراضي
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        isActive: true
+                    });
+                    
+                    console.log('تم إضافة مستخدم جديد إلى Firestore');
+                    
+                } else {
+                    // مستخدم موجود - نحدث آخر دخول فقط
+                    await userRef.update({
+                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastLoginString: new Date().toLocaleString('ar-EG'),
+                        displayName: user.displayName || userDoc.data().displayName,
+                        photoURL: user.photoURL || userDoc.data().photoURL
+                    });
+                    
+                    console.log('تم تحديث آخر دخول للمستخدم');
+                }
+                
+            } catch (error) {
+                console.error('خطأ في حفظ المستخدم:', error);
+            }
+        }
+        
+        // عرض معلومات المستخدم
+        function displayUserInfo(user) {
+            const avatar = document.getElementById('user-avatar');
+            const nameEl = document.getElementById('user-name');
+            const emailEl = document.getElementById('user-email');
+            const roleEl = document.getElementById('user-role');
+            
+            if (avatar) avatar.src = user.photoURL || 'https://placehold.co/60x60/0a0f1f/00ffff/png?text=User';
+            if (nameEl) nameEl.textContent = user.displayName || 'مستخدم';
+            if (emailEl) emailEl.textContent = user.email;
+            
+            // جلب دور المستخدم من Firestore
+            db.collection('Users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const role = doc.data().role || 'viewer';
+                        roleEl.textContent = getRoleName(role);
+                    } else {
+                        roleEl.textContent = 'مشاهد';
+                    }
+                })
+                .catch((error) => {
+                    console.error('خطأ في جلب دور المستخدم:', error);
+                    roleEl.textContent = 'مشاهد';
+                });
+        }
+        
+        function getRoleName(role) {
+            const roles = {
+                'super_admin': 'سوبر أدمن',
+                'admin': 'أدمن',
+                'reviewer': 'مراجع',
+                'viewer': 'مشاهد',
+                'data_entry': 'مدخل بيانات'
+            };
+            return roles[role] || role;
+        }
         
         // =====================================================================
         // دوال تقديم الطلب
@@ -2534,161 +2679,6 @@
                 resultBox.style.display = 'block';
                 resultBox.scrollIntoView({ behavior: 'smooth' });
             }
-        }
-        
-        // =====================================================================
-        // نظام تسجيل الدخول الحقيقي من Firebase
-        // =====================================================================
-        async function handleLogin() {
-            const username = document.getElementById('login-username')?.value.trim();
-            const password = document.getElementById('login-password')?.value.trim();
-            
-            console.log('محاولة تسجيل الدخول للمستخدم:', username);
-            
-            if (!username || !password) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'برجاء إدخال اسم المستخدم وكلمة المرور',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return;
-            }
-            
-            try {
-                Swal.fire({
-                    title: 'جاري تسجيل الدخول',
-                    text: 'الرجاء الانتظار...',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading(),
-                    background: '#030514'
-                });
-                
-                // البحث عن المستخدم في قاعدة البيانات
-                console.log('جاري البحث عن المستخدم في قاعدة البيانات...');
-                const usersRef = db.collection('Users');
-                const snapshot = await usersRef.where('username', '==', username).get();
-                
-                console.log('نتيجة البحث:', snapshot.empty ? 'لا يوجد مستخدم' : 'تم العثور على مستخدم');
-                
-                if (snapshot.empty) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطأ',
-                        text: 'اسم المستخدم غير موجود',
-                        background: '#030514',
-                        confirmButtonColor: '#00ffff'
-                    });
-                    return;
-                }
-                
-                const userDoc = snapshot.docs[0];
-                const userData = userDoc.data();
-                
-                console.log('بيانات المستخدم:', { 
-                    username: userData.username, 
-                    role: userData.role, 
-                    isActive: userData.isActive,
-                    hasPassword: !!userData.password
-                });
-                
-                // التحقق من حالة الحساب
-                if (userData.isActive === false) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'حساب غير نشط',
-                        text: 'هذا الحساب معطل، الرجاء التواصل مع المشرف',
-                        background: '#030514',
-                        confirmButtonColor: '#00ffff'
-                    });
-                    return;
-                }
-                
-                // تشفير كلمة المرور المدخلة ومقارنتها بالمخزنة
-                console.log('تشفير كلمة المرور المدخلة...');
-                const hashedInputPassword = await hashPassword(password);
-                
-                console.log('مقارنة كلمات المرور...');
-                console.log('المدخلة (مشفرة):', hashedInputPassword);
-                console.log('المخزنة:', userData.password);
-                
-                if (hashedInputPassword !== userData.password) {
-                    Swal.close();
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'خطأ',
-                        text: 'كلمة المرور غير صحيحة',
-                        background: '#030514',
-                        confirmButtonColor: '#00ffff'
-                    });
-                    return;
-                }
-                
-                console.log('✓ تم التحقق من كلمة المرور بنجاح');
-                
-                // تسجيل الدخول ناجح - تخزين معلومات المستخدم
-                const now = new Date();
-                const lastLoginStr = now.toLocaleString('ar-EG');
-                
-                // تحديث آخر دخول في قاعدة البيانات
-                await db.collection("Users").doc(userDoc.id).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLoginString: lastLoginStr
-                });
-                
-                // تخزين في localStorage
-                localStorage.setItem('currentUserId', userDoc.id);
-                localStorage.setItem('currentUser', userData.username);
-                localStorage.setItem('currentUserRole', userData.role);
-                localStorage.setItem('currentUserLastLogin', lastLoginStr);
-                
-                // للحفاظ على التوافق مع النظام القديم
-                localStorage.setItem('admin', 'true');
-                
-                Swal.close();
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'مرحباً بك',
-                    html: `
-                        <div style="text-align: center;">
-                            <p style="color: var(--neon-cyan); font-size: 20px;">${userData.name || userData.username}</p>
-                            <p style="color: rgba(255,255,255,0.7);">تم تسجيل الدخول بنجاح</p>
-                            <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">${getRoleName(userData.role)}</p>
-                        </div>
-                    `,
-                    timer: 2000,
-                    showConfirmButton: false,
-                    background: '#030514'
-                }).then(() => {
-                    window.location.href = 'admin.html';
-                });
-                
-            } catch (error) {
-                console.error("❌ خطأ في تسجيل الدخول:", error);
-                Swal.close();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'حدث خطأ في تسجيل الدخول: ' + error.message,
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-            }
-        }
-        
-        function getRoleName(role) {
-            const roles = {
-                'super_admin': 'سوبر أدمن',
-                'admin': 'أدمن',
-                'reviewer': 'مراجع',
-                'viewer': 'مشاهد',
-                'data_entry': 'مدخل بيانات'
-            };
-            return roles[role] || role;
         }
     </script>
 </body>
