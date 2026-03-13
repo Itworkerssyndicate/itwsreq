@@ -1,0 +1,92 @@
+# =====================================================================
+# إعدادات Apache لنقابة تكنولوجيا المعلومات
+# VR 2.05.2026
+# =====================================================================
+
+# تفعيل محرك إعادة الكتابة
+RewriteEngine On
+
+# =====================================================================
+# قواعد إعادة الكتابة للتطبيق أحادي الصفحة
+# =====================================================================
+
+# السماح بالوصول المباشر للملفات الموجودة
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# السماح بالوصول المباشر للمجلدات الموجودة
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# إعادة توجيه جميع الطلبات الأخرى إلى index.html
+RewriteRule ^ index.html [L]
+
+# =====================================================================
+# رؤوس الأمان
+# =====================================================================
+
+# منع التخمين بنوع المحتوى
+Header set X-Content-Type-Options "nosniff"
+
+# منع تضمين الصفحة في iframe
+Header set X-Frame-Options "DENY"
+
+# تفعيل حماية XSS
+Header set X-XSS-Protection "1; mode=block"
+
+# سياسة الإحالة
+Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+# سياسة أمان المحتوى
+Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://firestore.googleapis.com https://itwsreq.firebaseio.com;"
+
+# =====================================================================
+# التخزين المؤقت
+# =====================================================================
+
+# تخزين مؤقت طويل للملفات الثابتة
+<FilesMatch "\.(css|js)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+<FilesMatch "\.(jpg|jpeg|png|gif|ico|svg)$">
+    Header set Cache-Control "max-age=31536000, public"
+</FilesMatch>
+
+# منع التخزين المؤقت لملفات HTML
+<FilesMatch "\.(html)$">
+    Header set Cache-Control "no-cache, no-store, must-revalidate"
+    Header set Pragma "no-cache"
+    Header set Expires 0
+</FilesMatch>
+
+# =====================================================================
+# منع الوصول إلى الملفات الحساسة
+# =====================================================================
+
+# منع الوصول إلى ملفات الإعدادات
+<FilesMatch "\.(json|config|env)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# منع الوصول إلى ملفات Git
+RedirectMatch 404 /\.git
+
+# منع عرض محتويات المجلدات
+Options -Indexes
+
+# =====================================================================
+# ضغط الملفات
+# =====================================================================
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json
+</IfModule>
+
+# =====================================================================
+# صفحات الخطأ المخصصة
+# =====================================================================
+
+ErrorDocument 404 /index.html
+ErrorDocument 500 /index.html
