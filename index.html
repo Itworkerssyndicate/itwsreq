@@ -1401,7 +1401,8 @@
         
         <div class="splash-content">
             <div class="splash-logo-wrapper">
-                <img src="https://scontent.faly2-1.fna.fbcdn.net/v/t39.30808-6/593730823_122093109195160671_7091223187923992721_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=5AEwUQWeIZ4Q7kNvwEaDbwh&_nc_oc=AdlIuXDUcBjjMbf7Vl12bjgKvJTyhfESxSBuBzgAYNPT11GdtbC40eKHiRGLbucIPrE&_nc_zt=23&_nc_ht=scontent.faly2-1.fna&_nc_gid=KcLnDDn6c7aR5IfnZNX8JQ&_nc_ss=8&oh=00_AfxJB5sUn_ZR3TNo0mp6-y7s1BrhY1hefwyy5aXfakfq2A&oe=69B799A3" alt="شعار النقابة" class="splash-logo" id="splash-logo">
+                <!-- اللوجو هنا هيتحمل من الإعدادات -->
+                <img src="https://placehold.co/280x280/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
             </div>
             <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
             <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
@@ -1434,7 +1435,8 @@
             <header class="header-box-3d glass-effect-3d">
                 <div class="header-content-3d">
                     <div class="header-logo-container-3d">
-                        <img src="https://scontent.faly2-1.fna.fbcdn.net/v/t39.30808-6/593730823_122093109195160671_7091223187923992721_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=5AEwUQWeIZ4Q7kNvwEaDbwh&_nc_oc=AdlIuXDUcBjjMbf7Vl12bjgKvJTyhfESxSBuBzgAYNPT11GdtbC40eKHiRGLbucIPrE&_nc_zt=23&_nc_ht=scontent.faly2-1.fna&_nc_gid=KcLnDDn6c7aR5IfnZNX8JQ&_nc_ss=8&oh=00_AfxJB5sUn_ZR3TNo0mp6-y7s1BrhY1hefwyy5aXfakfq2A&oe=69B799A3" alt="شعار النقابة" class="header-main-logo-3d" id="header-main-logo">
+                        <!-- اللوجو هنا هيتحمل من الإعدادات -->
+                        <img src="https://placehold.co/140x140/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="header-main-logo-3d" id="header-main-logo">
                     </div>
                     <div class="header-titles-3d">
                         <span class="header-subtitle-3d">نقابة تكنولوجيا المعلومات والبرمجيات</span>
@@ -1656,6 +1658,62 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        
+        // =====================================================================
+        // متغيرات الإعدادات
+        // =====================================================================
+        const STORAGE_KEYS = {
+            LOGO_URL: 'union_logo_url',
+            SERVICES_URL: 'services_url',
+            SERVICES_TEXT: 'services_text',
+            SHOW_SERVICES: 'show_services',
+            COMPLAINT_PREFIX: 'complaint_prefix',
+            SUGGESTION_PREFIX: 'suggestion_prefix'
+        };
+        
+        const DEFAULT_SETTINGS = {
+            LOGO_URL: 'https://placehold.co/280x280/0a0f1f/00ffff/png?text=Logo',
+            SERVICES_URL: 'https://services.egeng.org',
+            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
+            SHOW_SERVICES: true,
+            COMPLAINT_PREFIX: 'REQ',
+            SUGGESTION_PREFIX: 'REP'
+        };
+        
+        // =====================================================================
+        // تحميل اللوجو من الإعدادات
+        // =====================================================================
+        function getSavedLogo() {
+            const savedLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+            console.log('🔍 اللوجو المحفوظ:', savedLogo);
+            return savedLogo || DEFAULT_SETTINGS.LOGO_URL;
+        }
+        
+        function updateAllLogos() {
+            const logo = getSavedLogo();
+            console.log('🔄 تحديث جميع الشعارات إلى:', logo);
+            
+            const splashLogo = document.getElementById('splash-logo');
+            const headerLogo = document.getElementById('header-main-logo');
+            
+            if (splashLogo) {
+                splashLogo.src = logo;
+                console.log('✅ تم تحديث شعار الترحيب');
+            }
+            
+            if (headerLogo) {
+                headerLogo.src = logo;
+                console.log('✅ تم تحديث شعار الهيدر');
+            }
+        }
+        
+        // =====================================================================
+        // تحميل الإعدادات عند بدء التشغيل
+        // =====================================================================
+        window.addEventListener('load', function() {
+            console.log('🚀 بدء تحميل الصفحة...');
+            updateAllLogos();
+        });
         
         // =====================================================================
         // مؤشر الماوس المخصص
