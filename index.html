@@ -1868,7 +1868,7 @@
         };
         
         // =====================================================================
-        // إنشاء كارت الطلب (الوصل) - مع التعديلات المطلوبة
+        // إنشاء كارت الطلب (الوصل)
         // =====================================================================
         async function generateRequestCard(data) {
             const logo = getSavedLogo();
@@ -1884,7 +1884,6 @@
             const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
             const typeClass = data.type === 'شكوى' ? 'complaint' : 'suggestion';
             
-            // تعديل الكارت - اسم النقابة أبيض بدون مستطيل، والنقيب العام فوق المهندس محمود جميل
             card.innerHTML = `
                 <div class="request-card-logo-wrapper">
                     <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo'">
@@ -2180,7 +2179,7 @@
         };
         
         // =====================================================================
-        // تسجيل الدخول
+        // تسجيل الدخول - (تم التعديل هنا فقط)
         // =====================================================================
         window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
@@ -2206,6 +2205,7 @@
                     background: '#030514' 
                 });
                 
+                // البحث عن المستخدم
                 const snapshot = await db.collection('Users').where('username', '==', username).get();
                 
                 if (snapshot.empty) {
@@ -2235,13 +2235,35 @@
                     return;
                 }
                 
-                const validPasswords = {
-                    'admin': 'keyatech@',
-                    'reviewer': 'review@2026',
-                    'data_entry': 'data@2026'
-                };
+                // التحقق من كلمة المرور - استخدام bcrypt إذا كان متاحاً
+                let passwordValid = false;
                 
-                if (validPasswords[username] !== password) {
+                try {
+                    // محاولة استخدام bcrypt للمقارنة
+                    if (typeof bcrypt !== 'undefined' && userData.password && userData.password.startsWith('$2')) {
+                        passwordValid = await bcrypt.compare(password, userData.password);
+                    } else {
+                        // إذا لم يكن bcrypt متاحاً أو كلمة المرور غير مشفرة بـ bcrypt
+                        // نستخدم المقارنة المباشرة (للتطوير فقط)
+                        const validPasswords = {
+                            'admin': 'keyatech@',
+                            'reviewer': 'review@2026',
+                            'data_entry': 'data@2026'
+                        };
+                        passwordValid = validPasswords[username] === password;
+                    }
+                } catch (error) {
+                    console.error('خطأ في مقارنة كلمة المرور:', error);
+                    // في حالة الخطأ، نستخدم المقارنة المباشرة كبديل
+                    const validPasswords = {
+                        'admin': 'keyatech@',
+                        'reviewer': 'review@2026',
+                        'data_entry': 'data@2026'
+                    };
+                    passwordValid = validPasswords[username] === password;
+                }
+                
+                if (!passwordValid) {
                     Swal.close();
                     Swal.fire({ 
                         icon: 'error', 
@@ -2256,11 +2278,13 @@
                 const now = new Date();
                 const lastLoginStr = now.toLocaleString('ar-EG');
                 
+                // تحديث آخر دخول
                 await db.collection('Users').doc(userDoc.id).update({
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLoginString: lastLoginStr
                 });
                 
+                // حفظ بيانات المستخدم
                 localStorage.setItem('currentUserId', userDoc.id);
                 localStorage.setItem('currentUser', userData.username);
                 localStorage.setItem('currentUserRole', userData.role || 'admin');
