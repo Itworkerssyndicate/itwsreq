@@ -32,10 +32,10 @@
             --bg-dark: #0a0f1f;
             --bg-medium: #111827;
             --bg-light: #1e293b;
-            --bg-card: rgba(15, 23, 42, 0.3);
+            --bg-card: rgba(15, 23, 42, 0.25);
             --bg-card-solid: #0f172a;
             --bg-sidebar: rgba(3, 5, 20, 0.7);
-            --bg-input: rgba(3, 5, 20, 0.6);
+            --bg-input: rgba(3, 5, 20, 0.5);
             --bg-hover: rgba(0, 255, 255, 0.1);
             
             /* ألوان النيون الرئيسية */
@@ -43,7 +43,7 @@
             --neon-cyan-light: #7fffff;
             --neon-cyan-dark: #00cccc;
             --neon-cyan-glow: rgba(0, 255, 255, 0.7);
-            --neon-cyan-soft: rgba(0, 255, 255, 0.3);
+            --neon-cyan-soft: rgba(0, 255, 255, 0.2);
             --neon-cyan-glow-dark: rgba(0, 255, 255, 0.1);
             
             --neon-blue: #3b82f6;
@@ -55,7 +55,7 @@
             --neon-purple-light: #c084fc;
             --neon-purple-dark: #9333ea;
             --neon-purple-glow: rgba(168, 85, 247, 0.7);
-            --neon-purple-soft: rgba(168, 85, 247, 0.3);
+            --neon-purple-soft: rgba(168, 85, 247, 0.2);
             
             --neon-pink: #ec4899;
             --neon-pink-light: #f472b6;
@@ -117,30 +117,28 @@
             --text-8xl: 96px;
             
             /* مدة الحركات */
-            --transition-fast: 0.2s;
-            --transition-normal: 0.3s;
-            --transition-slow: 0.5s;
-            --transition-very-slow: 1s;
-            --transition-super-slow: 2s;
+            --transition-fast: 0.15s;
+            --transition-normal: 0.25s;
+            --transition-slow: 0.4s;
+            --transition-very-slow: 0.8s;
             
             /* منحنيات الحركة */
             --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
             --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
             --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
             --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --ease-in-back: cubic-bezier(0.36, 0, 0.66, -0.56);
             
             /* الحدود */
             --border-color: rgba(255, 255, 255, 0.1);
             --border-color-strong: rgba(255, 255, 255, 0.2);
             --border-hover: var(--neon-cyan);
-            --border-radius-sm: 10px;
-            --border-radius-md: 15px;
-            --border-radius-lg: 20px;
-            --border-radius-xl: 30px;
-            --border-radius-2xl: 40px;
-            --border-radius-3xl: 50px;
-            --border-radius-4xl: 60px;
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 24px;
+            --border-radius-2xl: 32px;
+            --border-radius-3xl: 40px;
+            --border-radius-4xl: 50px;
             --border-radius-full: 50%;
             
             /* منظور ثلاثي الأبعاد */
@@ -169,44 +167,46 @@
             position: relative;
             overflow-x: hidden;
             line-height: 1.6;
+            will-change: transform;
         }
         
-        /* -------------------- مؤشر الماوس المخصص -------------------- */
+        /* -------------------- مؤشر الماوس المخصص السريع -------------------- */
         * {
             cursor: none !important;
         }
         
         .custom-cursor {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--neon-cyan);
+            width: 32px;
+            height: 32px;
+            border: 2px solid var(--neon-cyan);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
             z-index: 99999;
             transform: translate(-50%, -50%);
-            transition: all 0.1s linear;
+            transition: width 0.15s, height 0.15s, background 0.15s;
             mix-blend-mode: difference;
-            box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-purple);
-            animation: cursorPulse 2s infinite;
+            box-shadow: 0 0 20px var(--neon-cyan);
+            will-change: transform;
         }
         
         .custom-cursor::before {
             content: '';
-            width: 8px;
-            height: 8px;
+            width: 4px;
+            height: 4px;
             background: white;
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px white;
         }
         
-        @keyframes cursorPulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
+        .custom-cursor.hover {
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 255, 255, 0.1);
+            border-width: 3px;
         }
         
         /* -------------------- منع النسخ مع الحفاظ على الماوس ظاهر -------------------- */
@@ -226,11 +226,11 @@
             cursor: text !important;
         }
         
-        button, .btn, .nav-btn, .login-btn, .splash-skip, .google-btn {
+        button, .btn, .nav-btn, .login-btn, .splash-skip {
             cursor: none !important;
         }
         
-        /* -------------------- الخلفية الكونية المتطورة -------------------- */
+        /* -------------------- الخلفية الكونية المتطورة (محسنة للأداء) -------------------- */
         body::before {
             content: '';
             position: fixed;
@@ -239,25 +239,21 @@
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 60% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 10% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
-            animation: cosmicDrift 60s ease-in-out infinite alternate;
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            animation: cosmicDrift 40s linear infinite;
             z-index: -2;
             pointer-events: none;
+            will-change: transform;
         }
         
         @keyframes cosmicDrift {
-            0% { opacity: 0.3; transform: scale(1) rotate(0deg); }
-            25% { opacity: 0.4; transform: scale(1.05) rotate(2deg); }
-            50% { opacity: 0.5; transform: scale(1.1) rotate(4deg); }
-            75% { opacity: 0.4; transform: scale(1.05) rotate(2deg); }
-            100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.02) rotate(1deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
         
-        /* شبكة ثلاثية الأبعاد متحركة */
+        /* شبكة متحركة سريعة */
         body::after {
             content: '';
             position: fixed;
@@ -266,24 +262,21 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            animation: gridMove 60s linear infinite;
+                linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
             z-index: -1;
             pointer-events: none;
         }
         
         @keyframes gridMove {
-            0% { transform: translateY(0) translateX(0) rotate(0deg); }
-            25% { transform: translateY(30px) translateX(15px) rotate(1deg); }
-            50% { transform: translateY(60px) translateX(30px) rotate(2deg); }
-            75% { transform: translateY(30px) translateX(15px) rotate(1deg); }
-            100% { transform: translateY(0) translateX(0) rotate(0deg); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
         }
         
-        /* -------------------- عناصر عائمة متعددة 3D -------------------- */
-        .floating-elements-3d {
+        /* -------------------- عناصر عائمة سريعة -------------------- */
+        .floating-elements {
             position: fixed;
             top: 0;
             left: 0;
@@ -291,81 +284,43 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
         }
         
-        .floating-element-3d {
+        .floating-element {
             position: absolute;
             border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            animation: float3D 30s infinite alternate;
-            transform-style: preserve-3d;
+            filter: blur(60px);
+            opacity: 0.1;
+            animation: floatFast 15s infinite alternate;
+            will-change: transform;
         }
         
-        .floating-element-3d:nth-child(1) {
-            width: 800px;
-            height: 800px;
-            top: -200px;
-            right: -200px;
-            background: radial-gradient(circle, var(--neon-cyan), transparent 80%);
-            animation-duration: 25s;
-            transform: translateZ(100px);
-        }
-        
-        .floating-element-3d:nth-child(2) {
-            width: 900px;
-            height: 900px;
-            bottom: -300px;
-            left: -300px;
-            background: radial-gradient(circle, var(--neon-purple), transparent 80%);
-            animation-duration: 30s;
-            animation-direction: reverse;
-            transform: translateZ(200px);
-        }
-        
-        .floating-element-3d:nth-child(3) {
-            width: 600px;
-            height: 600px;
-            top: 30%;
-            left: 10%;
-            background: radial-gradient(circle, var(--neon-pink), transparent 80%);
-            animation-duration: 20s;
-            transform: translateZ(150px);
-        }
-        
-        .floating-element-3d:nth-child(4) {
-            width: 700px;
-            height: 700px;
-            bottom: 20%;
-            right: 10%;
-            background: radial-gradient(circle, var(--neon-blue), transparent 80%);
-            animation-duration: 22s;
-            animation-direction: reverse;
-            transform: translateZ(50px);
-        }
-        
-        .floating-element-3d:nth-child(5) {
+        .floating-element:nth-child(1) {
             width: 500px;
             height: 500px;
-            top: 60%;
-            left: 40%;
-            background: radial-gradient(circle, var(--neon-green), transparent 80%);
-            animation-duration: 18s;
-            transform: translateZ(250px);
+            top: -150px;
+            right: -150px;
+            background: var(--neon-cyan);
+            animation-duration: 12s;
         }
         
-        @keyframes float3D {
-            0% { transform: translateZ(0) translate(0, 0) scale(1); opacity: 0.1; }
-            25% { transform: translateZ(100px) translate(30px, -30px) scale(1.1); opacity: 0.15; }
-            50% { transform: translateZ(200px) translate(60px, -60px) scale(1.2); opacity: 0.2; }
-            75% { transform: translateZ(100px) translate(30px, -30px) scale(1.1); opacity: 0.15; }
-            100% { transform: translateZ(0) translate(0, 0) scale(1); opacity: 0.1; }
+        .floating-element:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            bottom: -200px;
+            left: -200px;
+            background: var(--neon-purple);
+            animation-duration: 15s;
+            animation-direction: reverse;
         }
         
-        /* -------------------- جزيئات متطايرة ثلاثية الأبعاد -------------------- */
-        .particles-3d {
+        @keyframes floatFast {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.05); }
+        }
+        
+        /* -------------------- جزيئات متطايرة سريعة -------------------- */
+        .particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -374,87 +329,37 @@
             pointer-events: none;
             z-index: 1;
             overflow: hidden;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
         }
         
-        .particle-3d {
+        .particle {
             position: absolute;
-            border-radius: 50%;
-            animation: particleFloat3D 25s linear infinite;
-            opacity: 0.4;
-            transform-style: preserve-3d;
-        }
-        
-        .particle-3d.small {
             width: 3px;
             height: 3px;
             background: var(--neon-cyan);
-            box-shadow: 0 0 15px var(--neon-cyan);
+            border-radius: 50%;
+            animation: particleFloat 10s linear infinite;
+            opacity: 0.3;
+            will-change: transform;
         }
         
-        .particle-3d.medium {
-            width: 5px;
-            height: 5px;
-            background: var(--neon-purple);
-            box-shadow: 0 0 20px var(--neon-purple);
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
         }
         
-        .particle-3d.large {
-            width: 7px;
-            height: 7px;
-            background: var(--neon-pink);
-            box-shadow: 0 0 25px var(--neon-pink);
-        }
-        
-        @keyframes particleFloat3D {
-            0% { 
-                transform: translateY(100vh) translateX(0) translateZ(0) rotateX(0deg) rotateY(0deg); 
-                opacity: 0.4; 
-            }
-            25% { 
-                transform: translateY(50vh) translateX(50px) translateZ(100px) rotateX(90deg) rotateY(45deg); 
-                opacity: 0.5; 
-            }
-            50% { 
-                transform: translateY(0) translateX(100px) translateZ(200px) rotateX(180deg) rotateY(90deg); 
-                opacity: 0.6; 
-            }
-            75% { 
-                transform: translateY(-50vh) translateX(50px) translateZ(100px) rotateX(270deg) rotateY(135deg); 
-                opacity: 0.5; 
-            }
-            100% { 
-                transform: translateY(-100vh) translateX(0) translateZ(0) rotateX(360deg) rotateY(180deg); 
-                opacity: 0; 
-            }
-        }
-        
-        /* -------------------- شاشة البداية المبهرة 3D -------------------- */
+        /* -------------------- شاشة البداية السريعة المبهرة -------------------- */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #030514, #0a0f1f, #1a1f3a, #2d1b4b);
-            background-size: 400% 400%;
-            animation: gradientBG 20s ease infinite;
+            background: linear-gradient(135deg, #030514, #0a0f1f);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            transition: opacity 1.5s ease, visibility 1.5s ease;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
-        }
-        
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 50% 100%; }
-            50% { background-position: 100% 50%; }
-            75% { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
         
         .splash-screen.fade-out {
@@ -467,25 +372,20 @@
             max-width: 90%;
             position: relative;
             z-index: 10;
-            animation: splashContentFloat 6s ease-in-out infinite;
-            transform-style: preserve-3d;
+            animation: splashFloat 4s ease-in-out infinite;
         }
         
-        @keyframes splashContentFloat {
-            0%, 100% { transform: translateZ(0) translateY(0); }
-            25% { transform: translateZ(50px) translateY(-10px); }
-            50% { transform: translateZ(100px) translateY(-20px); }
-            75% { transform: translateZ(50px) translateY(-10px); }
+        @keyframes splashFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
         
-        /* تأثير 3D متطور للشعار */
+        /* تأثير 3D سريع للشعار */
         .splash-logo-wrapper {
             position: relative;
-            width: 350px;
-            height: 350px;
-            margin: 0 auto 30px;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto 25px;
         }
         
         .splash-logo {
@@ -495,1233 +395,578 @@
             object-fit: cover;
             position: relative;
             z-index: 2;
-            animation: logoSpin3D 15s infinite linear;
-            transform-style: preserve-3d;
-            box-shadow: 0 0 80px var(--neon-cyan), 0 0 150px var(--neon-purple), 0 0 200px var(--neon-pink);
+            animation: logoSpin 8s linear infinite;
+            box-shadow: 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-purple);
+            will-change: transform;
         }
         
-        @keyframes logoSpin3D {
-            0% { transform: rotateY(0deg) rotateX(0deg) rotateZ(0deg); }
-            25% { transform: rotateY(90deg) rotateX(10deg) rotateZ(5deg); }
-            50% { transform: rotateY(180deg) rotateX(0deg) rotateZ(0deg); }
-            75% { transform: rotateY(270deg) rotateX(-10deg) rotateZ(-5deg); }
-            100% { transform: rotateY(360deg) rotateX(0deg) rotateZ(0deg); }
-        }
-        
-        .splash-logo-wrapper::before {
-            content: '';
-            position: absolute;
-            top: -30px;
-            left: -30px;
-            right: -30px;
-            bottom: -30px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,255,255,0.5), rgba(168,85,247,0.5), rgba(236,72,153,0.5), transparent 80%);
-            animation: pulseGlow3D 3s ease infinite;
-            z-index: 1;
-            transform: translateZ(-50px);
+        @keyframes logoSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .splash-logo-wrapper::after {
             content: '';
             position: absolute;
-            top: -50px;
-            left: -50px;
-            right: -50px;
-            bottom: -50px;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
             border-radius: 50%;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
             border-top-color: var(--neon-cyan);
             border-right-color: var(--neon-purple);
-            border-bottom-color: var(--neon-pink);
-            border-left-color: var(--neon-blue);
-            animation: rotate3D 12s linear infinite;
-            z-index: 3;
-            transform-style: preserve-3d;
-            transform: translateZ(-100px) rotateX(20deg) rotateY(10deg);
+            animation: borderRotate 4s linear infinite;
         }
         
-        @keyframes rotate3D {
-            from { transform: translateZ(-100px) rotateX(20deg) rotateY(10deg) rotate(0deg); }
-            to { transform: translateZ(-100px) rotateX(20deg) rotateY(10deg) rotate(360deg); }
+        @keyframes borderRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
-        @keyframes pulseGlow3D {
-            0%, 100% { opacity: 0.5; transform: translateZ(-50px) scale(1); }
-            50% { opacity: 1; transform: translateZ(-50px) scale(1.2); }
-        }
-        
-        /* حلقات متحدة المركز ثلاثية الأبعاد */
-        .splash-rings {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 500px;
-            height: 500px;
-            transform: translate(-50%, -50%) translateZ(-200px);
-            border-radius: 50%;
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            animation: ringRotate 20s linear infinite;
-            transform-style: preserve-3d;
-        }
-        
-        .splash-rings::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            border-radius: 50%;
-            border: 2px solid rgba(168, 85, 247, 0.3);
-            animation: ringRotateReverse 15s linear infinite;
-        }
-        
-        .splash-rings::after {
-            content: '';
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            right: 40px;
-            bottom: 40px;
-            border-radius: 50%;
-            border: 2px solid rgba(236, 72, 153, 0.3);
-            animation: ringRotate 10s linear infinite;
-        }
-        
-        @keyframes ringRotate {
-            from { transform: rotate(0deg) rotateX(30deg) rotateY(20deg); }
-            to { transform: rotate(360deg) rotateX(30deg) rotateY(20deg); }
-        }
-        
-        @keyframes ringRotateReverse {
-            from { transform: rotate(360deg) rotateX(30deg) rotateY(20deg); }
-            to { transform: rotate(0deg) rotateX(30deg) rotateY(20deg); }
-        }
-        
-        /* النصوص المتحركة ثلاثية الأبعاد */
         .splash-title {
-            font-size: var(--text-7xl);
+            font-size: var(--text-5xl);
             font-weight: 900;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-blue));
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            background-size: 300% 300%;
-            animation: gradientShift 8s ease infinite, floatText3D 4s ease infinite;
-            margin-bottom: 20px;
-            letter-spacing: 6px;
-            text-shadow: 0 0 40px rgba(0,255,255,0.5), 0 0 80px rgba(168,85,247,0.5);
-            transform-style: preserve-3d;
+            margin-bottom: 10px;
+            animation: titleGlow 2s ease-in-out infinite;
         }
         
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 50% 100%; }
-            50% { background-position: 100% 50%; }
-            75% { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        @keyframes floatText3D {
-            0%, 100% { transform: translateZ(0) translateY(0) rotateX(0deg); }
-            25% { transform: translateZ(50px) translateY(-10px) rotateX(5deg); }
-            50% { transform: translateZ(100px) translateY(-20px) rotateX(10deg); }
-            75% { transform: translateZ(50px) translateY(-10px) rotateX(5deg); }
+        @keyframes titleGlow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
         }
         
         .splash-subtitle {
-            font-size: var(--text-2xl);
-            color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
-            margin-bottom: 50px;
-            animation: subtitlePulse3D 3s ease-in-out infinite;
-            letter-spacing: 3px;
-            transform-style: preserve-3d;
+            font-size: var(--text-lg);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 30px;
+            animation: subtitlePulse 2s ease-in-out infinite;
         }
         
-        @keyframes subtitlePulse3D {
-            0%, 100% { 
-                opacity: 0.8; 
-                text-shadow: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
-                transform: translateZ(0);
-            }
-            50% { 
-                opacity: 1; 
-                text-shadow: 0 0 60px var(--neon-purple), 0 0 90px var(--neon-pink);
-                transform: translateZ(50px);
-            }
+        @keyframes subtitlePulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
         }
         
-        /* محول متطور ثلاثي الأبعاد */
-        .splash-loader-3d {
-            margin: 50px auto;
-            width: 450px;
-            position: relative;
-            transform-style: preserve-3d;
-            perspective: var(--perspective-3d);
-        }
-        
-        .splash-loader-bg-3d {
-            width: 100%;
-            height: 10px;
+        /* محول سريع */
+        .splash-loader {
+            width: 250px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+            margin: 20px auto;
             overflow: hidden;
-            position: relative;
-            box-shadow: 0 0 30px rgba(0,255,255,0.4);
-            transform: translateZ(20px) rotateX(2deg);
+            border-radius: 2px;
         }
         
-        .splash-loader-fill-3d {
-            width: 0%;
+        .loader-bar {
+            width: 40%;
             height: 100%;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-blue), var(--neon-cyan));
-            background-size: 400% 100%;
-            border-radius: 10px;
-            animation: loaderProgress 4s ease-in-out forwards, gradientShift 3s linear infinite;
-            box-shadow: 0 0 30px var(--neon-cyan);
+            background: var(--gradient-primary);
+            animation: loaderMove 1.2s ease-in-out infinite;
+            will-change: transform;
         }
         
-        @keyframes loaderProgress {
-            0% { width: 0%; }
-            20% { width: 20%; }
-            40% { width: 40%; }
-            60% { width: 60%; }
-            80% { width: 80%; }
-            100% { width: 100%; }
+        @keyframes loaderMove {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
         }
         
-        .splash-loader-text-3d {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 15px;
-            color: var(--neon-cyan);
+        .splash-version {
+            margin-top: 20px;
             font-family: 'Orbitron', monospace;
-            font-size: var(--text-md);
-            letter-spacing: 3px;
-            transform: translateZ(30px);
-        }
-        
-        .splash-loader-percent-3d {
-            color: var(--neon-purple);
-            font-weight: 700;
-            font-size: var(--text-lg);
-        }
-        
-        /* رسالة التحميل */
-        .splash-message-3d {
-            margin-top: 30px;
-            font-size: var(--text-lg);
-            color: rgba(255,255,255,0.9);
-            animation: messagePulse3D 2s ease infinite;
-            transform-style: preserve-3d;
-        }
-        
-        @keyframes messagePulse3D {
-            0%, 100% { 
-                opacity: 0.7; 
-                transform: translateZ(0) scale(1);
-                text-shadow: 0 0 20px var(--neon-cyan);
-            }
-            50% { 
-                opacity: 1; 
-                transform: translateZ(30px) scale(1.1);
-                text-shadow: 0 0 40px var(--neon-purple), 0 0 60px var(--neon-pink);
-            }
-        }
-        
-        /* زر تخطي ثلاثي الأبعاد */
-        .splash-skip-3d {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid var(--neon-cyan);
             color: var(--neon-cyan);
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: var(--text-md);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all var(--transition-normal);
-            backdrop-filter: blur(10px);
-            z-index: 10000;
-            overflow: hidden;
-            box-shadow: 0 0 30px rgba(0,255,255,0.4);
-            transform-style: preserve-3d;
-            animation: skipBtnFloat 3s ease infinite;
+            font-size: 14px;
         }
         
-        @keyframes skipBtnFloat {
-            0%, 100% { transform: translateZ(0) translateY(0); }
-            50% { transform: translateZ(30px) translateY(-5px); }
-        }
-        
-        .splash-skip-3d::before {
-            content: '';
+        /* زر تخطي سريع */
+        .splash-skip {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(0,255,255,0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-            z-index: -1;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
         }
         
-        .splash-skip-3d:hover::before {
-            width: 400px;
-            height: 400px;
-        }
-        
-        .splash-skip-3d:hover {
+        .splash-skip:hover {
             background: var(--neon-cyan);
             color: var(--bg-deep);
-            box-shadow: 0 0 60px var(--neon-cyan);
-            transform: translateZ(50px) translateY(-10px);
-        }
-        
-        /* رقم الإصدار ثلاثي الأبعاد */
-        .splash-version-3d {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
-            font-family: 'Orbitron', monospace;
-            color: rgba(255,255,255,0.4);
-            font-size: var(--text-md);
-            letter-spacing: 4px;
-            z-index: 10000;
-            transform-style: preserve-3d;
-            animation: versionFloat 4s ease infinite;
-        }
-        
-        @keyframes versionFloat {
-            0%, 100% { transform: translateZ(0) translateY(0); }
-            50% { transform: translateZ(20px) translateY(-5px); }
-        }
-        
-        .splash-version-3d span {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--neon-cyan);
         }
         
         /* -------------------- الحاوية الرئيسية -------------------- */
         .main-wrapper {
-            max-width: 1400px;
+            max-width: 1300px;
             margin: 0 auto;
             position: relative;
             z-index: 10;
-            padding: var(--space-2xl);
+            padding: var(--space-lg);
             width: 100%;
             opacity: 0;
-            transition: opacity 1.5s ease;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
+            transition: opacity 0.6s ease;
         }
         
         .main-wrapper.visible {
             opacity: 1;
         }
         
-        .main-content {
-            position: relative;
-            z-index: 11;
-            width: 100%;
-            transform-style: preserve-3d;
-        }
-        
-        /* -------------------- تأثير الزجاج ثلاثي الأبعاد -------------------- */
-        .glass-effect-3d {
+        /* -------------------- تأثير الزجاج السريع -------------------- */
+        .glass-effect {
             background: var(--bg-card);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-3d);
             transition: all var(--transition-normal) var(--ease-smooth);
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
+            will-change: transform;
         }
         
-        .glass-effect-3d::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(0, 255, 255, 0.08) 50%,
-                transparent 70%
-            );
-            animation: glassShine3D 10s linear infinite;
-            pointer-events: none;
-            transform: rotate(30deg) translateZ(-10px);
+        .glass-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-neon), var(--shadow-3d);
         }
         
-        .glass-effect-3d::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.1), transparent 70%);
-            opacity: 0;
-            transition: opacity var(--transition-normal);
-            pointer-events: none;
-            transform: translateZ(-5px);
-        }
-        
-        .glass-effect-3d:hover {
-            transform: translateY(-15px) translateZ(30px) scale(1.03);
-            box-shadow: var(--shadow-neon-strong), var(--shadow-3d);
-            border-color: rgba(0, 255, 255, 0.3);
-        }
-        
-        .glass-effect-3d:hover::after {
-            opacity: 1;
-        }
-        
-        @keyframes glassShine3D {
-            0% { transform: translate(-30%, -30%) rotate(30deg) translateZ(-10px); }
-            100% { transform: translate(30%, 30%) rotate(30deg) translateZ(-10px); }
-        }
-        
-        /* -------------------- الهيدر ثلاثي الأبعاد -------------------- */
-        .header-box-3d {
-            margin-bottom: var(--space-3xl);
-            padding: var(--space-2xl);
+        /* -------------------- الهيدر السريع مع اللوجو -------------------- */
+        .header-box {
+            margin-bottom: var(--space-2xl);
+            padding: var(--space-xl);
             background: var(--bg-card);
-            border-radius: var(--border-radius-4xl);
+            backdrop-filter: blur(12px);
             border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            animation: headerFloat3D 8s ease-in-out infinite;
+            border-radius: var(--border-radius-3xl);
             box-shadow: var(--shadow-3d);
-            transform-style: preserve-3d;
+            animation: headerFloat 5s ease-in-out infinite;
         }
         
-        @keyframes headerFloat3D {
-            0%, 100% { transform: translateZ(0) translateY(0) rotateX(0deg); }
-            25% { transform: translateZ(30px) translateY(-10px) rotateX(2deg); }
-            50% { transform: translateZ(50px) translateY(-15px) rotateX(4deg); }
-            75% { transform: translateZ(30px) translateY(-10px) rotateX(2deg); }
+        @keyframes headerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
         
-        .header-box-3d::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                45deg,
-                transparent 0%,
-                rgba(0, 255, 255, 0.1) 25%,
-                rgba(168, 85, 247, 0.1) 50%,
-                rgba(236, 72, 153, 0.1) 75%,
-                transparent 100%
-            );
-            background-size: 400% 400%;
-            animation: headerGradient3D 15s ease infinite;
-            pointer-events: none;
-            transform: translateZ(-10px);
-        }
-        
-        @keyframes headerGradient3D {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 50% 100%; }
-            50% { background-position: 100% 50%; }
-            75% { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        .header-content-3d {
+        .header-content {
             display: flex;
             align-items: center;
-            gap: var(--space-2xl);
-            position: relative;
-            z-index: 2;
+            gap: var(--space-xl);
             flex-wrap: wrap;
-            transform-style: preserve-3d;
         }
         
-        .header-logo-container-3d {
-            text-align: center;
+        .header-logo-container {
             position: relative;
-            transform-style: preserve-3d;
+            flex-shrink: 0;
         }
         
-        .header-logo-container-3d::after {
+        .header-logo-container::after {
             content: '';
             position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
             border-radius: 50%;
             background: radial-gradient(circle, var(--neon-cyan-glow), transparent 70%);
-            animation: logoGlow3D 3s ease-in-out infinite;
+            animation: logoPulse 2s ease-in-out infinite;
             z-index: -1;
-            transform: translateZ(-20px);
         }
         
-        @keyframes logoGlow3D {
-            0%, 100% { opacity: 0.5; transform: translateZ(-20px) scale(1); }
-            50% { opacity: 1; transform: translateZ(-20px) scale(1.2); }
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
         }
         
-        .header-main-logo-3d {
-            width: 180px;
-            height: 180px;
+        .header-main-logo {
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            border: 4px solid transparent;
-            background: var(--gradient-primary) border-box;
-            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
-            animation: logoSpinSlow 30s linear infinite;
+            border: 3px solid var(--neon-cyan);
+            box-shadow: 0 0 30px var(--neon-cyan);
             object-fit: cover;
-            transform-style: preserve-3d;
+            animation: logoGlow 3s ease-in-out infinite;
         }
         
-        @keyframes logoSpinSlow {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+        @keyframes logoGlow {
+            0%, 100% { box-shadow: 0 0 30px var(--neon-cyan); }
+            50% { box-shadow: 0 0 50px var(--neon-purple); }
         }
         
-        .header-titles-3d {
+        .header-titles {
             flex: 1;
-            transform: translateZ(20px);
         }
         
-        .header-subtitle-3d {
+        .header-subtitle {
             display: block;
-            color: rgba(255, 255, 255, 0.9);
-            font-size: var(--text-lg);
-            margin-bottom: var(--space-sm);
-            letter-spacing: 3px;
-            text-shadow: 0 0 30px var(--neon-cyan);
-            animation: subtitleShift3D 4s infinite;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: var(--text-md);
+            margin-bottom: 5px;
         }
         
-        @keyframes subtitleShift3D {
-            0%, 100% { letter-spacing: 3px; transform: translateZ(0); }
-            50% { letter-spacing: 6px; transform: translateZ(20px); }
-        }
-        
-        .header-title-3d {
-            font-size: var(--text-5xl);
+        .header-title {
+            font-size: var(--text-3xl);
             font-weight: 900;
-            background: var(--gradient-rainbow);
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: var(--space-sm);
-            line-height: 1.4;
-            text-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
-            animation: titleBreath3D 4s infinite;
-            transform-style: preserve-3d;
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px var(--neon-cyan);
         }
         
-        @keyframes titleBreath3D {
-            0%, 100% { filter: brightness(1); transform: translateZ(0); }
-            50% { filter: brightness(1.3); transform: translateZ(20px); }
-        }
-        
-        .header-role-3d {
+        .header-role {
             display: block;
-            color: rgba(255, 255, 255, 0.95);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: var(--text-md);
+            margin-bottom: 3px;
+        }
+        
+        .header-name {
+            display: block;
             font-size: var(--text-xl);
-            margin-bottom: var(--space-xs);
-            text-shadow: 0 0 20px var(--neon-purple);
-        }
-        
-        .header-name-3d {
-            display: block;
             color: #fff;
-            font-size: var(--text-2xl);
-            font-weight: 800;
-            text-shadow: 0 0 30px var(--neon-pink), 2px 2px 0 var(--neon-cyan), -2px -2px 0 var(--neon-purple);
-            animation: nameGlow3D 5s infinite;
+            text-shadow: 0 0 10px var(--neon-pink);
         }
         
-        @keyframes nameGlow3D {
-            0%, 100% { text-shadow: 0 0 30px var(--neon-pink), 2px 2px 0 var(--neon-cyan), -2px -2px 0 var(--neon-purple); }
-            50% { text-shadow: 0 0 60px var(--neon-pink), 4px 4px 0 var(--neon-cyan), -4px -4px 0 var(--neon-purple); }
-        }
-        
-        .version-badge-3d {
-            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
-            border: 2px solid var(--neon-cyan);
-            border-radius: 50px;
-            padding: 12px 30px;
+        .version-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 30px;
+            padding: 8px 20px;
             font-family: 'Orbitron', monospace;
             color: var(--neon-cyan);
-            text-shadow: 0 0 20px var(--neon-cyan);
-            font-size: var(--text-md);
+            font-size: var(--text-sm);
             white-space: nowrap;
             backdrop-filter: blur(10px);
-            animation: badgeGlow3D 4s infinite;
-            box-shadow: 0 0 30px rgba(0,255,255,0.4);
-            transform-style: preserve-3d;
-            transform: translateZ(30px);
         }
         
-        @keyframes badgeGlow3D {
-            0%, 100% { 
-                border-color: var(--neon-cyan); 
-                box-shadow: 0 0 30px var(--neon-cyan);
-                transform: translateZ(30px) translateY(0);
-            }
-            50% { 
-                border-color: var(--neon-purple); 
-                box-shadow: 0 0 60px var(--neon-purple);
-                transform: translateZ(50px) translateY(-5px);
-            }
-        }
-        
-        /* -------------------- أزرار التنقل ثلاثية الأبعاد -------------------- */
-        .nav-buttons-3d {
+        /* -------------------- أزرار التنقل السريعة -------------------- */
+        .nav-buttons {
             display: flex;
-            gap: var(--space-lg);
-            margin-bottom: var(--space-3xl);
-            position: relative;
-            z-index: 12;
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
             flex-wrap: wrap;
-            perspective: var(--perspective-3d);
-            transform-style: preserve-3d;
         }
         
-        .btn-nav-3d {
+        .btn-nav {
             flex: 1;
-            min-width: 180px;
-            padding: var(--space-lg) var(--space-xl);
+            min-width: 140px;
+            padding: var(--space-md) var(--space-lg);
             border: none;
-            border-radius: var(--border-radius-2xl);
+            border-radius: var(--border-radius-xl);
             background: var(--bg-card);
             color: #fff;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: var(--text-lg);
+            font-weight: 600;
+            font-size: var(--text-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-md);
-            transition: all var(--transition-normal) var(--ease-elastic);
-            border: 2px solid var(--border-color);
+            gap: var(--space-sm);
+            cursor: pointer;
+            border: 1px solid var(--border-color);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            position: relative;
-            overflow: hidden;
-            letter-spacing: 1px;
-            transform-style: preserve-3d;
-            box-shadow: var(--shadow-md);
+            transition: all var(--transition-fast) var(--ease-smooth);
+            will-change: transform;
         }
         
-        .btn-nav-3d::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(0, 255, 255, 0.3),
-                rgba(168, 85, 247, 0.3),
-                rgba(236, 72, 153, 0.3),
-                transparent
-            );
-            transform: rotate(45deg) translate(-100%, -100%);
-            transition: transform 0.8s;
-            pointer-events: none;
-        }
-        
-        .btn-nav-3d:hover::before {
-            transform: rotate(45deg) translate(100%, 100%);
-        }
-        
-        .btn-nav-3d:hover {
-            transform: translateY(-10px) translateZ(50px) scale(1.05);
-            box-shadow: var(--shadow-neon-strong);
+        .btn-nav:hover {
+            transform: translateY(-3px);
             border-color: var(--neon-cyan);
-            background: rgba(15, 23, 42, 0.7);
+            box-shadow: 0 0 20px var(--neon-cyan);
         }
         
-        .btn-nav-3d.active {
+        .btn-nav.active {
             background: var(--gradient-primary);
             border-color: transparent;
-            box-shadow: var(--shadow-neon-strong);
-            animation: activeBtn3D 3s infinite;
-            transform: translateZ(30px);
+            box-shadow: 0 0 25px var(--neon-cyan);
         }
         
-        @keyframes activeBtn3D {
-            0%, 100% { filter: brightness(1); transform: translateZ(30px) translateY(0); }
-            50% { filter: brightness(1.2); transform: translateZ(50px) translateY(-5px); }
-        }
-        
-        .btn-nav-3d i {
-            font-size: var(--text-xl);
-            transition: all var(--transition-normal) var(--ease-elastic);
-        }
-        
-        .btn-nav-3d:hover i {
-            transform: rotate(360deg) scale(1.3);
-            color: var(--neon-cyan);
-            text-shadow: 0 0 30px var(--neon-cyan);
-        }
-        
-        .btn-nav-3d.active i {
-            color: #fff;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-        }
-        
-        .btn-nav-3d.btn-admin-icon-3d {
+        .btn-nav.btn-admin-icon {
             flex: 0.3;
-            min-width: 80px;
+            min-width: 60px;
         }
         
-        /* -------------------- الكروت ثلاثية الأبعاد -------------------- */
-        .card-3d {
-            padding: var(--space-3xl);
-            border-radius: var(--border-radius-4xl);
-            margin-bottom: var(--space-2xl);
-            position: relative;
-            overflow: hidden;
-            transition: all var(--transition-normal) var(--ease-elastic);
-            width: 100%;
+        /* -------------------- الكروت السريعة -------------------- */
+        .card {
+            padding: var(--space-xl);
+            border-radius: var(--border-radius-2xl);
+            margin-bottom: var(--space-xl);
             background: var(--bg-card);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 2px solid var(--border-color);
-            animation: cardAppear3D 1.5s var(--ease-out-back);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
             box-shadow: var(--shadow-3d);
-            transform-style: preserve-3d;
+            transition: all var(--transition-fast) var(--ease-smooth);
+            will-change: transform;
         }
         
-        @keyframes cardAppear3D {
-            0% { 
-                opacity: 0; 
-                transform: translateY(50px) translateZ(-200px) rotateX(30deg) scale(0.8);
-            }
-            100% { 
-                opacity: 1; 
-                transform: translateY(0) translateZ(0) rotateX(0) scale(1);
-            }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-neon), var(--shadow-3d);
         }
         
-        .card-3d::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(
-                circle,
-                rgba(0, 255, 255, 0.2) 0%,
-                rgba(168, 85, 247, 0.2) 25%,
-                rgba(236, 72, 153, 0.2) 50%,
-                transparent 70%
-            );
-            animation: cardRotate3D 20s linear infinite;
-            pointer-events: none;
-            transform: translateZ(-50px);
-        }
-        
-        @keyframes cardRotate3D {
-            from { transform: rotate(0deg) translateZ(-50px); }
-            to { transform: rotate(360deg) translateZ(-50px); }
-        }
-        
-        .card-3d:hover {
-            transform: translateY(-20px) translateZ(80px) scale(1.03);
-            box-shadow: var(--shadow-neon-strong), var(--shadow-3d);
-            border-color: rgba(0, 255, 255, 0.3);
-        }
-        
-        .card-title-3d {
-            font-size: var(--text-3xl);
+        .card-title {
+            font-size: var(--text-xl);
             font-weight: 900;
             color: var(--neon-cyan);
-            margin-bottom: var(--space-2xl);
-            text-align: center;
-            text-shadow: 0 0 30px var(--neon-cyan);
-            position: relative;
-            z-index: 2;
-            animation: titlePulse3D 3s infinite;
-            transform-style: preserve-3d;
-        }
-        
-        @keyframes titlePulse3D {
-            0%, 100% { transform: translateZ(0); text-shadow: 0 0 30px var(--neon-cyan); }
-            50% { transform: translateZ(20px); text-shadow: 0 0 60px var(--neon-purple); }
-        }
-        
-        /* -------------------- الحقول ثلاثية الأبعاد -------------------- */
-        .input-group-3d {
             margin-bottom: var(--space-xl);
-            position: relative;
-            z-index: 2;
-            transform-style: preserve-3d;
+            text-align: center;
+            text-shadow: 0 0 15px var(--neon-cyan);
         }
         
-        .input-group-3d label {
+        /* -------------------- الحقول السريعة -------------------- */
+        .input-group {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .input-group label {
             display: block;
-            margin-bottom: var(--space-sm);
-            font-size: var(--text-lg);
-            color: rgba(255, 255, 255, 0.95);
-            font-weight: 700;
-            transition: all var(--transition-normal);
-            transform: translateZ(10px);
+            margin-bottom: var(--space-xs);
+            font-size: var(--text-sm);
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
         }
         
-        .input-group-3d label i {
+        .input-group label i {
             color: var(--neon-cyan);
             margin-left: var(--space-xs);
-            font-size: var(--text-xl);
-            animation: labelIcon3D 2s infinite;
-            display: inline-block;
-            width: 28px;
-            text-align: center;
+            width: 20px;
         }
         
-        @keyframes labelIcon3D {
-            0%, 100% { filter: drop-shadow(0 0 5px var(--neon-cyan)); transform: translateZ(0); }
-            50% { filter: drop-shadow(0 0 20px var(--neon-purple)); transform: translateZ(10px); }
-        }
-        
-        .neon-input-3d {
+        .neon-input {
             width: 100%;
-            padding: var(--space-lg) var(--space-xl);
+            padding: var(--space-md) var(--space-lg);
             background: var(--bg-input);
             border: 2px solid var(--border-color);
-            border-radius: var(--border-radius-2xl);
+            border-radius: var(--border-radius-xl);
             color: #fff;
-            font-size: var(--text-lg);
+            font-size: var(--text-sm);
             outline: none;
-            transition: all var(--transition-normal) var(--ease-elastic);
+            transition: all var(--transition-fast);
             backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,255,255,0.1) inset;
-            transform-style: preserve-3d;
         }
         
-        .neon-input-3d:focus {
+        .neon-input:focus {
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 40px var(--neon-cyan), 0 20px 40px rgba(0,0,0,0.4);
-            transform: translateY(-5px) translateZ(30px) scale(1.02);
-            background: rgba(3,5,20,0.8);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateY(-2px);
         }
         
-        .neon-input-3d:hover {
+        .neon-input:hover {
             border-color: var(--neon-purple);
-            box-shadow: 0 0 30px var(--neon-purple);
-            transform: translateY(-3px) translateZ(15px);
         }
         
-        select.neon-input-3d {
+        select.neon-input {
             cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2300ffff' stroke-width='3'><polyline points='6 9 12 15 18 9'/></svg>");
-            background-repeat: no-repeat;
-            background-position: left 20px center;
-            padding-left: 50px;
         }
         
-        textarea.neon-input-3d {
+        textarea.neon-input {
             resize: vertical;
-            min-height: 150px;
+            min-height: 100px;
         }
         
-        .responsive-grid-3d {
+        .responsive-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: var(--space-xl);
+            gap: var(--space-md);
         }
         
-        /* -------------------- الأزرار الرئيسية ثلاثية الأبعاد -------------------- */
-        .btn-main-3d {
+        /* -------------------- الزر الرئيسي السريع -------------------- */
+        .btn-main {
             width: 100%;
-            padding: var(--space-xl) var(--space-2xl);
+            padding: var(--space-lg);
             border: none;
-            border-radius: var(--border-radius-2xl);
-            background: var(--gradient-rainbow);
-            background-size: 400% 400%;
+            border-radius: var(--border-radius-xl);
+            background: var(--gradient-primary);
             color: #fff;
-            font-weight: 900;
-            font-size: var(--text-xl);
+            font-weight: 800;
+            font-size: var(--text-md);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: var(--space-lg);
-            position: relative;
-            overflow: hidden;
-            transition: all var(--transition-normal) var(--ease-elastic);
-            margin-top: var(--space-2xl);
-            letter-spacing: 2px;
-            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
-            animation: btnGradientShift3D 8s ease infinite, btnFloat3D 3s ease infinite;
-            box-shadow: var(--shadow-lg);
-            transform-style: preserve-3d;
+            gap: var(--space-sm);
+            margin-top: var(--space-lg);
+            transition: all var(--transition-fast) var(--ease-bounce);
+            will-change: transform;
         }
         
-        @keyframes btnGradientShift3D {
-            0% { background-position: 0% 50%; }
-            25% { background-position: 50% 100%; }
-            50% { background-position: 100% 50%; }
-            75% { background-position: 50% 0%; }
-            100% { background-position: 0% 50%; }
+        .btn-main:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-neon);
         }
         
-        @keyframes btnFloat3D {
-            0%, 100% { transform: translateZ(0) translateY(0); }
-            50% { transform: translateZ(30px) translateY(-5px); }
+        .btn-main:hover i {
+            transform: rotate(360deg);
+            transition: transform 0.4s;
         }
         
-        .btn-main-3d::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(255, 255, 255, 0.3),
-                transparent
-            );
-            transform: rotate(45deg) translate(-100%, -100%);
-            transition: transform 1s;
-            pointer-events: none;
+        /* -------------------- خدمات -------------------- */
+        .services-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-lg);
+            background: var(--gradient-warm);
+            border-radius: var(--border-radius-xl);
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: var(--space-xl);
+            transition: all var(--transition-fast);
         }
         
-        .btn-main-3d:hover::before {
-            transform: rotate(45deg) translate(100%, 100%);
+        .services-banner:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px var(--neon-orange);
         }
         
-        .btn-main-3d:hover {
-            transform: translateY(-15px) translateZ(80px) scale(1.05);
-            box-shadow: var(--shadow-neon-strong), var(--shadow-2xl);
-        }
-        
-        .btn-main-3d:active {
-            transform: translateY(-5px) translateZ(30px) scale(0.98);
-        }
-        
-        .btn-main-3d i {
-            font-size: var(--text-2xl);
-            transition: all var(--transition-normal) var(--ease-elastic);
-            filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.8));
-        }
-        
-        .btn-main-3d:hover i {
-            transform: rotate(360deg) scale(1.3);
-            filter: drop-shadow(0 0 30px var(--neon-cyan));
-        }
-        
-        /* -------------------- شاشة تسجيل الدخول ثلاثية الأبعاد -------------------- */
-        .login-card-3d {
-            max-width: 600px;
+        /* -------------------- شاشة تسجيل الدخول -------------------- */
+        .login-card {
+            max-width: 450px;
             margin: 0 auto;
-            transform-style: preserve-3d;
         }
         
-        .login-icon-3d {
-            width: 120px;
-            height: 120px;
-            background: var(--gradient-rainbow);
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto var(--space-2xl);
-            box-shadow: var(--shadow-neon-strong);
-            animation: loginIconFloat 4s ease infinite;
-            transform-style: preserve-3d;
+            margin: 0 auto var(--space-lg);
+            box-shadow: var(--shadow-neon);
         }
         
-        @keyframes loginIconFloat {
-            0%, 100% { transform: translateZ(0) rotate(0deg); }
-            33% { transform: translateZ(30px) rotate(5deg); }
-            66% { transform: translateZ(50px) rotate(-5deg); }
-        }
-        
-        .login-icon-3d i {
-            font-size: 60px;
+        .login-icon i {
+            font-size: 40px;
             color: white;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
         }
         
-        /* -------------------- خدمات ثلاثية الأبعاد -------------------- */
-        .services-banner-3d {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: var(--space-xl);
-            padding: var(--space-lg) var(--space-2xl);
-            background: var(--gradient-warm);
-            border-radius: var(--border-radius-3xl);
-            color: #fff;
-            text-decoration: none;
-            font-weight: 700;
-            margin-bottom: var(--space-2xl);
-            position: relative;
-            overflow: hidden;
-            border: 2px solid rgba(255,255,255,0.2);
-            font-size: var(--text-lg);
-            transition: all var(--transition-normal) var(--ease-elastic);
-            animation: servicesPulse3D 4s infinite;
-            box-shadow: var(--shadow-lg);
-            transform-style: preserve-3d;
+        .login-info {
+            text-align: center;
+            margin-top: var(--space-lg);
+            color: var(--text-muted);
+            font-size: var(--text-xs);
         }
         
-        @keyframes servicesPulse3D {
-            0%, 100% { 
-                box-shadow: 0 0 30px rgba(249,115,22,0.4);
-                transform: translateZ(0) translateY(0);
-            }
-            50% { 
-                box-shadow: 0 0 60px rgba(236,72,153,0.6);
-                transform: translateZ(30px) translateY(-5px);
-            }
-        }
-        
-        .services-banner-3d:hover {
-            transform: translateY(-10px) translateZ(50px) scale(1.05);
-            box-shadow: var(--shadow-neon-strong), var(--shadow-2xl);
-        }
-        
-        .services-banner-3d i {
-            font-size: var(--text-2xl);
-            animation: iconWiggle3D 2s infinite;
-        }
-        
-        @keyframes iconWiggle3D {
-            0%, 100% { transform: rotate(0deg) translateZ(0); }
-            25% { transform: rotate(10deg) translateZ(10px); }
-            75% { transform: rotate(-10deg) translateZ(10px); }
-        }
-        
-        /* -------------------- المسار الزمني ثلاثي الأبعاد -------------------- */
-        .track-container-3d {
+        /* -------------------- المسار الزمني السريع -------------------- */
+        .track-container {
             position: relative;
             width: 100%;
-            height: 150px;
-            margin: var(--space-3xl) 0;
-            overflow: visible;
-            transform-style: preserve-3d;
-            perspective: var(--perspective-3d);
+            height: 100px;
+            margin: var(--space-2xl) 0;
         }
         
-        .track-line-bg-3d {
+        .track-line-bg {
             position: absolute;
             top: 50%;
             left: 0;
             right: 0;
-            height: 10px;
-            background: rgba(30,41,59,0.5);
-            border-radius: 5px;
-            transform: translateY(-50%) translateZ(-30px);
-            border: 2px solid rgba(0,255,255,0.2);
-            box-shadow: 0 0 30px rgba(0,255,255,0.3) inset;
-            overflow: hidden;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            transform: translateY(-50%);
         }
         
-        .track-line-bg-3d::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                90deg,
-                transparent,
-                rgba(0,255,255,0.5),
-                rgba(168,85,247,0.5),
-                transparent
-            );
-            animation: trackFlow3D 4s linear infinite;
-        }
-        
-        @keyframes trackFlow3D {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-        
-        .track-line-fill-3d {
+        .track-line-fill {
             position: absolute;
             top: 50%;
             right: 0;
-            height: 10px;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
-            border-radius: 5px;
-            transform: translateY(-50%) translateZ(-20px);
-            transition: width 2s var(--ease-elastic);
-            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
+            height: 6px;
+            background: var(--gradient-primary);
+            border-radius: 3px;
+            transform: translateY(-50%);
+            transition: width 1s ease;
+            box-shadow: 0 0 20px var(--neon-cyan);
             z-index: 2;
         }
         
-        .track-points-3d {
+        .track-points {
             position: relative;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            height: 150px;
+            height: 100px;
             z-index: 3;
-            padding: 0 20px;
-            transform-style: preserve-3d;
         }
         
-        .track-point-3d {
+        .track-point {
             display: flex;
             flex-direction: column;
             align-items: center;
             flex: 1;
-            min-width: 0;
-            transform-style: preserve-3d;
         }
         
-        .track-dot-3d {
-            width: 60px;
-            height: 60px;
+        .track-dot {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--bg-deep);
-            border: 4px solid var(--neon-cyan);
+            border: 2px solid var(--neon-cyan);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 4;
-            transition: all 0.5s var(--ease-elastic);
-            margin-bottom: var(--space-sm);
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
-            flex-shrink: 0;
-            animation: dotPulse3D 3s infinite;
-            transform-style: preserve-3d;
+            margin-bottom: 5px;
         }
         
-        @keyframes dotPulse3D {
-            0%, 100% { transform: translateZ(0) scale(1); }
-            50% { transform: translateZ(20px) scale(1.1); }
+        .track-dot.active {
+            background: var(--gradient-primary);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: scale(1.1);
         }
         
-        .track-dot-3d i {
+        .track-dot i {
             color: #fff;
-            font-size: 24px;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.8));
+            font-size: 16px;
         }
         
-        .track-dot-3d.active {
-            background: var(--gradient-rainbow);
-            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple), 0 0 150px var(--neon-pink);
-            transform: scale(1.3) translateZ(40px);
-            border-color: #fff;
-            animation: activeDot3D 2s infinite;
-        }
-        
-        @keyframes activeDot3D {
-            0%, 100% { transform: scale(1.3) translateZ(40px); }
-            50% { transform: scale(1.4) translateZ(60px); }
-        }
-        
-        .track-label-3d {
-            margin-top: var(--space-sm);
-            font-size: var(--text-sm);
+        .track-label {
+            font-size: var(--text-xs);
             color: #fff;
             text-align: center;
-            max-width: 140px;
-            word-break: break-word;
-            font-weight: 600;
-            background: rgba(0,0,0,0.5);
-            padding: var(--space-sm) var(--space-md);
-            border-radius: 30px;
-            border: 2px solid var(--border-color);
-            backdrop-filter: blur(5px);
-            transition: all var(--transition-normal);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 4px 8px;
+            border-radius: 15px;
+            max-width: 100px;
         }
         
-        .track-dot-3d.active + .track-label-3d {
-            background: rgba(0,255,255,0.2);
-            border-color: var(--neon-cyan);
-            color: var(--neon-cyan);
-            box-shadow: 0 0 40px var(--neon-cyan);
-            transform: translateZ(20px) scale(1.1);
+        .timeline-card {
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 3px solid var(--neon-cyan);
+            padding: var(--space-md);
+            border-radius: var(--border-radius-md);
+            margin-bottom: var(--space-sm);
         }
         
-        /* -------------------- كروت المسار الزمني ثلاثية الأبعاد -------------------- */
-        .timeline-card-3d {
-            background: rgba(255,255,255,0.02);
-            border-right: 5px solid var(--neon-cyan);
-            padding: var(--space-lg);
-            margin-bottom: var(--space-md);
-            border-radius: var(--border-radius-xl);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: all var(--transition-normal) var(--ease-elastic);
-            backdrop-filter: blur(5px);
-            transform-style: preserve-3d;
-        }
-        
-        .timeline-card-3d:hover {
-            transform: translateX(-10px) translateZ(30px) scale(1.02);
-            background: var(--bg-hover);
-            border-right-color: var(--neon-purple);
-            box-shadow: 0 0 40px var(--neon-cyan);
-        }
-        
-        .timeline-card-3d.final {
-            border-right-color: var(--neon-green);
-            background: rgba(16,185,129,0.05);
-        }
-        
-        .timeline-header-3d {
+        .timeline-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-sm);
-            flex-wrap: wrap;
-            gap: var(--space-sm);
+            margin-bottom: var(--space-xs);
         }
         
-        .timeline-header-3d h4 {
+        .timeline-status {
             color: var(--neon-cyan);
-            font-size: var(--text-md);
-            font-weight: 800;
+            font-weight: 600;
         }
         
-        .timeline-header-3d span {
-            font-size: var(--text-xs);
+        .timeline-time {
             color: var(--text-muted);
-            background: rgba(0,0,0,0.3);
-            padding: 4px 12px;
-            border-radius: 30px;
-            border: 1px solid var(--border-color);
+            font-size: var(--text-xs);
         }
         
-        .timeline-card-3d p {
-            font-size: var(--text-sm);
-            color: rgba(255,255,255,0.8);
-            line-height: 1.7;
-            margin-top: var(--space-sm);
-            padding-right: var(--space-lg);
-            border-right: 2px dashed rgba(255,255,255,0.1);
-            word-break: break-word;
+        .timeline-card p {
+            font-size: var(--text-xs);
+            color: rgba(255, 255, 255, 0.8);
+            padding-right: var(--space-md);
+            border-right: 1px dashed rgba(255, 255, 255, 0.1);
         }
         
         /* -------------------- كارت التصدير -------------------- */
@@ -1729,170 +974,62 @@
             position: absolute;
             left: -9999px;
             top: 0;
-            width: 650px;
+            width: 600px;
         }
         
-        #request-card-container * {
-            font-family: 'Tajawal', 'Cairo', sans-serif !important;
-        }
-        
-        /* -------------------- تخصيص SweetAlert -------------------- */
-        .swal2-popup {
-            font-family: 'Tajawal', sans-serif !important;
-            border-radius: var(--border-radius-3xl) !important;
-            background: var(--bg-sidebar) !important;
-            color: #fff !important;
-            backdrop-filter: blur(20px) !important;
-            border: 3px solid var(--neon-cyan) !important;
-            box-shadow: var(--shadow-neon-strong) !important;
-        }
-        
-        .swal2-title {
-            color: var(--neon-cyan) !important;
-            font-weight: 900 !important;
-            font-size: var(--text-2xl) !important;
-        }
-        
-        .swal2-confirm {
-            background: var(--gradient-rainbow) !important;
-            border-radius: var(--border-radius-xl) !important;
-            font-weight: 700 !important;
-            padding: 12px 30px !important;
-        }
-        
-        .swal2-cancel {
-            background: rgba(255,255,255,0.1) !important;
-            border-radius: var(--border-radius-xl) !important;
-        }
-        
-        /* -------------------- التمرير المخصص -------------------- */
+        /* -------------------- التمرير المخصص السريع -------------------- */
         ::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 8px;
+            height: 8px;
         }
         
         ::-webkit-scrollbar-track {
             background: var(--bg-deep);
             border-radius: 10px;
-            border: 2px solid rgba(0,255,255,0.2);
         }
         
         ::-webkit-scrollbar-thumb {
-            background: var(--gradient-rainbow);
+            background: var(--gradient-primary);
             border-radius: 10px;
-            border: 3px solid rgba(255,255,255,0.3);
-            box-shadow: 0 0 20px var(--neon-cyan);
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--gradient-prime);
         }
         
         /* -------------------- تحسينات للجوال -------------------- */
-        @media (max-width: 1200px) {
-            .splash-title {
-                font-size: var(--text-6xl);
-            }
-            
-            .splash-logo-wrapper {
-                width: 280px;
-                height: 280px;
-            }
-            
-            .header-title-3d {
-                font-size: var(--text-4xl);
-            }
-            
-            .responsive-grid-3d {
-                grid-template-columns: 1fr;
-            }
-        }
-        
         @media (max-width: 1024px) {
-            .header-content-3d {
+            .header-content {
                 flex-direction: column;
                 text-align: center;
             }
             
-            .header-titles-3d {
-                width: 100%;
+            .header-main-logo {
+                width: 120px;
+                height: 120px;
             }
             
-            .version-badge-3d {
-                margin: var(--space-lg) auto;
+            .header-title {
+                font-size: var(--text-2xl);
             }
             
-            .splash-title {
-                font-size: var(--text-5xl);
-            }
-            
-            .splash-logo-wrapper {
-                width: 240px;
-                height: 240px;
-            }
-            
-            .nav-buttons-3d {
-                flex-direction: column;
-            }
-            
-            .btn-nav-3d {
-                width: 100%;
+            .responsive-grid {
+                grid-template-columns: 1fr;
             }
         }
         
         @media (max-width: 768px) {
-            .main-wrapper {
-                padding: var(--space-lg);
+            .nav-buttons {
+                flex-direction: column;
             }
             
-            .header-main-logo-3d {
-                width: 140px;
-                height: 140px;
-            }
-            
-            .header-title-3d {
-                font-size: var(--text-3xl);
-            }
-            
-            .header-name-3d {
-                font-size: var(--text-xl);
-            }
-            
-            .card-3d {
-                padding: var(--space-xl);
-            }
-            
-            .splash-title {
-                font-size: var(--text-4xl);
-            }
-            
-            .splash-subtitle {
-                font-size: var(--text-lg);
+            .btn-nav {
+                width: 100%;
             }
             
             .splash-logo-wrapper {
-                width: 200px;
-                height: 200px;
+                width: 180px;
+                height: 180px;
             }
             
-            .splash-skip-3d, .splash-version-3d {
-                bottom: 20px;
-                font-size: var(--text-sm);
-                padding: 10px 20px;
-            }
-            
-            .track-container-3d {
-                height: 120px;
-            }
-            
-            .track-dot-3d {
-                width: 45px;
-                height: 45px;
-            }
-            
-            .track-label-3d {
-                font-size: 10px;
-                max-width: 100px;
+            .splash-title {
+                font-size: var(--text-3xl);
             }
             
             .custom-cursor {
@@ -1905,40 +1042,18 @@
         }
         
         @media (max-width: 480px) {
-            .header-main-logo-3d {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .header-title-3d {
-                font-size: var(--text-2xl);
-            }
-            
-            .splash-title {
-                font-size: var(--text-3xl);
-            }
-            
             .splash-logo-wrapper {
-                width: 160px;
-                height: 160px;
+                width: 150px;
+                height: 150px;
             }
             
-            .splash-loader-3d {
-                width: 300px;
+            .header-main-logo {
+                width: 100px;
+                height: 100px;
             }
             
-            .track-dot-3d {
-                width: 40px;
-                height: 40px;
-            }
-            
-            .track-dot-3d i {
-                font-size: 18px;
-            }
-            
-            .track-label-3d {
-                font-size: 9px;
-                max-width: 80px;
+            .card {
+                padding: var(--space-lg);
             }
         }
         
@@ -1946,7 +1061,7 @@
         @media print {
             * { display: none !important; }
             body::before {
-                content: "⛔ لا يمكن طباعة هذه الصفحة ⛔";
+                content: "لا يمكن طباعة هذه الصفحة";
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -1957,153 +1072,119 @@
                 height: 100%;
                 background: var(--bg-deep);
                 color: var(--neon-red);
-                font-size: 48px;
-                font-weight: 900;
-                text-align: center;
+                font-size: 24px;
                 z-index: 999999;
-                padding: 20px;
-                text-shadow: 0 0 50px var(--neon-red);
             }
         }
     </style>
 </head>
 <body>
-    <!-- مؤشر الماوس المخصص -->
+    <!-- مؤشر الماوس المخصص السريع -->
     <div class="custom-cursor" id="custom-cursor"></div>
     
-    <!-- جزيئات ثلاثية الأبعاد -->
-    <div class="particles-3d" id="particles-3d"></div>
+    <!-- جزيئات متطايرة -->
+    <div class="particles" id="particles"></div>
     
-    <!-- عناصر عائمة ثلاثية الأبعاد -->
-    <div class="floating-elements-3d">
-        <div class="floating-element-3d"></div>
-        <div class="floating-element-3d"></div>
-        <div class="floating-element-3d"></div>
-        <div class="floating-element-3d"></div>
-        <div class="floating-element-3d"></div>
+    <!-- عناصر عائمة -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
     </div>
     
-    <!-- شاشة البداية المبهرة ثلاثية الأبعاد -->
+    <!-- شاشة البداية -->
     <div class="splash-screen" id="splash-screen">
-        <!-- حلقات متحدة المركز ثلاثية الأبعاد -->
-        <div class="splash-rings"></div>
-        
         <div class="splash-content">
             <div class="splash-logo-wrapper">
-                <img src="https://placehold.co/350x350/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
+                <img src="https://placehold.co/220x220/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
             </div>
             <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
             <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
-            
-            <div class="splash-loader-3d">
-                <div class="splash-loader-bg-3d">
-                    <div class="splash-loader-fill-3d" id="splash-loader-fill"></div>
-                </div>
-                <div class="splash-loader-text-3d">
-                    <span>جاري تحميل المنصة المتطورة</span>
-                    <span class="splash-loader-percent-3d" id="splash-loader-percent">0%</span>
-                </div>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
             </div>
-            
-            <div class="splash-message-3d" id="splash-message">جاري تحميل العالم الافتراضي...</div>
+            <div class="splash-version">VR 2.05.2026</div>
         </div>
         
-        <button class="splash-skip-3d" id="splash-skip" onclick="skipSplash()">
+        <button class="splash-skip" id="splash-skip" onclick="skipSplash()">
             <i class="fas fa-forward"></i> تخطي
         </button>
-        
-        <div class="splash-version-3d">
-            <span>VR</span> 2.05.2026
-        </div>
     </div>
     
-    <!-- الحاوية الرئيسية -->
+    <!-- المحتوى الرئيسي -->
     <div class="main-wrapper" id="main-wrapper">
         <div class="main-content" id="main-content">
             
-            <!-- الهيدر ثلاثي الأبعاد -->
-            <header class="header-box-3d glass-effect-3d">
-                <div class="header-content-3d">
-                    <div class="header-logo-container-3d">
-                        <img src="https://placehold.co/180x180/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="header-main-logo-3d" id="header-main-logo">
+            <!-- الهيدر مع اللوجو -->
+            <header class="header-box glass-effect">
+                <div class="header-content">
+                    <div class="header-logo-container">
+                        <img src="https://placehold.co/130x130/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="header-main-logo" id="header-main-logo">
                     </div>
-                    <div class="header-titles-3d">
-                        <span class="header-subtitle-3d">نقابة تكنولوجيا المعلومات والبرمجيات</span>
-                        <h1 class="header-title-3d">بوابة الشكاوي والمقترحات</h1>
-                        <span class="header-role-3d">النقيب العام</span>
-                        <h2 class="header-name-3d">المهندس / محمود جميل</h2>
+                    <div class="header-titles">
+                        <span class="header-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</span>
+                        <h1 class="header-title">بوابة الشكاوي والمقترحات</h1>
+                        <span class="header-role">النقيب العام</span>
+                        <h2 class="header-name">المهندس / محمود جميل</h2>
                     </div>
-                    <div class="version-badge-3d">
+                    <div class="version-badge">
                         <i class="fas fa-crown"></i> VR 2.05.2026
                     </div>
                 </div>
             </header>
             
-            <!-- أزرار التنقل ثلاثية الأبعاد -->
-            <nav class="nav-buttons-3d">
-                <button class="btn-nav-3d active" onclick="switchView('submit')" id="btn-submit">
-                    <i class="fas fa-plus-circle"></i>
-                    <span>تقديم طلب</span>
+            <!-- أزرار التنقل -->
+            <nav class="nav-buttons">
+                <button class="btn-nav active" onclick="switchView('submit')" id="btn-submit">
+                    <i class="fas fa-plus-circle"></i> تقديم طلب
                 </button>
-                <button class="btn-nav-3d" onclick="switchView('track')" id="btn-track">
-                    <i class="fas fa-search"></i>
-                    <span>استعلام عن طلب</span>
+                <button class="btn-nav" onclick="switchView('track')" id="btn-track">
+                    <i class="fas fa-search"></i> استعلام
                 </button>
-                <button class="btn-nav-3d btn-admin-icon-3d" onclick="switchView('login')" id="btn-login">
+                <button class="btn-nav btn-admin-icon" onclick="switchView('login')" id="btn-login">
                     <i class="fas fa-user-cog"></i>
                 </button>
             </nav>
             
             <!-- شاشة تقديم الطلب -->
             <section id="view-submit" class="view">
-                <div class="card-3d glass-effect-3d">
-                    <!-- زر موقع تقديم الخدمات -->
-                    <a href="#" id="services-link" target="_blank" class="services-banner-3d" style="display: none;">
-                        <i class="fas fa-globe"></i>
-                        <span>موقع تقديم خدمات النقابة</span>
-                        <i class="fas fa-arrow-left"></i>
+                <div class="card">
+                    <a href="#" id="services-link" class="services-banner" style="display: none;">
+                        <i class="fas fa-globe"></i> <span>موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
                     </a>
                     
-                    <h2 class="card-title-3d">
-                        <i class="fas fa-pen-alt"></i> نموذج تقديم طلب
-                    </h2>
+                    <h2 class="card-title"><i class="fas fa-pen-alt"></i> نموذج تقديم طلب</h2>
                     
-                    <!-- نوع مقدم الطلب -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
-                        <select id="u-member-type" class="neon-input-3d" onchange="toggleMemberField()">
+                        <select id="u-member-type" class="neon-input" onchange="toggleMemberField()">
                             <option value="عضو نقابة">عضو نقابة</option>
                             <option value="غير عضو">غير عضو</option>
                         </select>
                     </div>
                     
-                    <!-- رقم العضوية -->
-                    <div class="input-group-3d" id="member-id-box">
+                    <div class="input-group" id="member-id-box">
                         <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
-                        <input type="text" id="u-member-id" placeholder="أدخل رقم عضويتك" class="neon-input-3d">
+                        <input type="text" id="u-member-id" placeholder="رقم العضوية" class="neon-input">
                     </div>
                     
-                    <!-- الاسم الكامل -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-input-3d">
+                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-input">
                     </div>
                     
-                    <!-- الرقم القومي -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-input-3d" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     
-                    <!-- شبكة الهاتف والمحافظة -->
-                    <div class="responsive-grid-3d">
-                        <div class="input-group-3d">
+                    <div class="responsive-grid">
+                        <div class="input-group">
                             <label><i class="fas fa-phone"></i> رقم الهاتف</label>
-                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-input-3d" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                         </div>
-                        <div class="input-group-3d">
+                        <div class="input-group">
                             <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
-                            <select id="u-gov" class="neon-input-3d">
+                            <select id="u-gov" class="neon-input">
                                 <option value="القاهرة">القاهرة</option>
                                 <option value="الجيزة">الجيزة</option>
                                 <option value="الإسكندرية">الإسكندرية</option>
@@ -2136,112 +1217,94 @@
                         </div>
                     </div>
                     
-                    <!-- العنوان بالتفصيل -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
-                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-input-3d">
+                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-input">
                     </div>
                     
-                    <!-- المهنة -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-briefcase"></i> المهنة</label>
-                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-input-3d">
+                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-input">
                     </div>
                     
-                    <!-- نوع الطلب -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="u-req-type" class="neon-input-3d">
+                        <select id="u-req-type" class="neon-input">
                             <option value="شكوى">شكوى</option>
                             <option value="اقتراح">اقتراح</option>
                         </select>
                     </div>
                     
-                    <!-- التفاصيل -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
-                        <textarea id="u-details" rows="5" placeholder="اكتب تفاصيل طلبك هنا..." class="neon-input-3d"></textarea>
+                        <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك..." class="neon-input"></textarea>
                     </div>
                     
-                    <!-- زر الإرسال -->
-                    <button class="btn-main-3d" onclick="handleSubmit()">
-                        <i class="fas fa-paper-plane"></i>
-                        <span>إرسال الطلب وحفظ الوصل</span>
+                    <button class="btn-main" onclick="handleSubmit()">
+                        <i class="fas fa-paper-plane"></i> إرسال الطلب
                     </button>
                 </div>
             </section>
             
             <!-- شاشة الاستعلام -->
             <section id="view-track" class="view" style="display: none;">
-                <div class="card-3d glass-effect-3d">
-                    <div style="text-align: center; margin-bottom: var(--space-2xl);">
-                        <i class="fas fa-search" style="font-size: 70px; background: var(--gradient-rainbow); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-lg);"></i>
-                        <h2 class="card-title-3d" style="margin-bottom: 0;">استعلام عن طلب</h2>
-                        <p style="color: var(--text-muted);">أدخل بيانات الطلب لمتابعة المسار الزمني</p>
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: var(--space-xl);">
+                        <i class="fas fa-search" style="font-size: 50px; color: var(--neon-cyan);"></i>
+                        <h2 class="card-title">استعلام عن طلب</h2>
                     </div>
                     
-                    <!-- الرقم القومي -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-id-card"></i> الرقم القومي</label>
-                        <input type="text" id="q-nid" placeholder="أدخل الرقم القومي" class="neon-input-3d" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        <input type="text" id="q-nid" placeholder="الرقم القومي" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                     </div>
                     
-                    <!-- نوع الطلب -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-tag"></i> نوع الطلب</label>
-                        <select id="q-type" class="neon-input-3d">
+                        <select id="q-type" class="neon-input">
                             <option value="شكوى">شكوى</option>
                             <option value="اقتراح">اقتراح</option>
                         </select>
                     </div>
                     
-                    <!-- كود الطلب -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-qrcode"></i> كود الطلب</label>
-                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="neon-input-3d">
+                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="neon-input">
                     </div>
                     
-                    <!-- زر الاستعلام -->
-                    <button class="btn-main-3d" onclick="handleTrack()">
-                        <i class="fas fa-search"></i>
-                        <span>استعلام عن المسار</span>
+                    <button class="btn-main" onclick="handleTrack()">
+                        <i class="fas fa-search"></i> استعلام
                     </button>
                 </div>
                 
-                <!-- مكان عرض نتيجة الاستعلام -->
                 <div id="track-result-box" style="display: none;"></div>
             </section>
             
             <!-- شاشة تسجيل الدخول -->
             <section id="view-login" class="view" style="display: none;">
-                <div class="card-3d glass-effect-3d login-card-3d">
-                    <div class="login-icon-3d">
+                <div class="card login-card">
+                    <div class="login-icon">
                         <i class="fas fa-user-shield"></i>
                     </div>
                     
-                    <h2 class="card-title-3d">دخول المنظومة</h2>
+                    <h2 class="card-title">دخول المنظومة</h2>
                     
-                    <!-- اسم المستخدم -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-user"></i> اسم المستخدم</label>
-                        <input type="text" id="login-username" placeholder="أدخل اسم المستخدم" class="neon-input-3d">
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" class="neon-input">
                     </div>
                     
-                    <!-- كلمة المرور -->
-                    <div class="input-group-3d">
+                    <div class="input-group">
                         <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                        <input type="password" id="login-password" placeholder="أدخل كلمة المرور" class="neon-input-3d">
+                        <input type="password" id="login-password" placeholder="كلمة المرور" class="neon-input">
                     </div>
                     
-                    <!-- زر الدخول -->
-                    <button class="btn-main-3d" onclick="handleLogin()">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>تسجيل الدخول</span>
+                    <button class="btn-main" onclick="handleLogin()">
+                        <i class="fas fa-sign-in-alt"></i> دخول
                     </button>
                     
-                    <div class="login-info" style="text-align: center; margin-top: var(--space-xl); color: var(--text-muted);">
-                        <i class="fas fa-info-circle"></i>
-                        استخدم بيانات المستخدم المسجلة في النظام
+                    <div class="login-info">
+                        <i class="fas fa-info-circle"></i> استخدم بيانات المستخدم المسجلة
                     </div>
                 </div>
             </section>
@@ -2251,20 +1314,12 @@
     <!-- كارت التصدير المخفي -->
     <div id="request-card-container"></div>
     
-    <!-- المكتبات الخارجية -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
-    
-    <!-- AOS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    
-    <script>
-        // =====================================================================
-        // تهيئة Firebase
-        // =====================================================================
+    <!-- Firebase v12.10.0 (CDN) -->
+    <script type="import">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, query, where, orderBy, deleteDoc, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -2275,12 +1330,53 @@
             measurementId: "G-P3YQFRSBMM"
         };
         
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        
+        // Make db available globally
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDocs = getDocs;
+        window.query = query;
+        window.where = where;
+        window.orderBy = orderBy;
+        window.deleteDoc = deleteDoc;
+        window.serverTimestamp = serverTimestamp;
+        window.arrayUnion = arrayUnion;
+        
+        console.log("🔥 Firebase initialized successfully");
+    </script>
+    
+    <!-- SweetAlert2 and other libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+    
+    <!-- Main JavaScript -->
+    <script type="module">
+        // =====================================================================
+        // Wait for Firebase to initialize
+        // =====================================================================
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (window.db) {
+                    resolve();
+                } else {
+                    setTimeout(() => waitForFirebase().then(resolve), 100);
+                }
+            });
+        }
+        
+        waitForFirebase().then(() => {
+            console.log("✅ Firebase ready, starting app...");
+            initializeApp();
+        });
         
         // =====================================================================
-        // المتغيرات العامة
+        // متغيرات عامة
         // =====================================================================
         const STORAGE_KEYS = {
             LOGO_URL: 'union_logo_url',
@@ -2292,7 +1388,7 @@
         };
         
         const DEFAULT_SETTINGS = {
-            LOGO_URL: 'https://placehold.co/350x350/0a0f1f/00ffff/png?text=Logo',
+            LOGO_URL: 'https://placehold.co/220x220/0a0f1f/00ffff/png?text=Logo',
             SERVICES_URL: 'https://services.egeng.org',
             SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
             SHOW_SERVICES: true,
@@ -2303,111 +1399,50 @@
         // =====================================================================
         // مؤشر الماوس المخصص
         // =====================================================================
+        const cursor = document.getElementById('custom-cursor');
+        
         document.addEventListener('mousemove', (e) => {
-            const cursor = document.getElementById('custom-cursor');
             cursor.style.left = e.clientX + 'px';
             cursor.style.top = e.clientY + 'px';
         });
         
+        document.querySelectorAll('button, a, .btn-nav, .btn-main, .splash-skip').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+        
         // =====================================================================
-        // إنشاء الجزيئات ثلاثية الأبعاد
+        // إنشاء الجزيئات
         // =====================================================================
-        function createParticles3D() {
-            const container = document.getElementById('particles-3d');
-            const sizes = ['small', 'medium', 'large'];
-            
-            for (let i = 0; i < 100; i++) {
-                const particle = document.createElement('div');
-                const sizeClass = sizes[Math.floor(Math.random() * sizes.length)];
-                particle.className = `particle-3d ${sizeClass}`;
-                
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 10 + 's';
-                particle.style.animationDuration = 15 + Math.random() * 20 + 's';
-                
-                container.appendChild(particle);
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(p);
             }
         }
+        createParticles();
         
         // =====================================================================
-        // شاشة البداية المتطورة
+        // شاشة البداية
         // =====================================================================
-        let splashInterval;
-        let splashProgress = 0;
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-wrapper').classList.add('visible');
+            }, 3000);
+        });
         
-        function startSplashLoader() {
-            const loaderFill = document.getElementById('splash-loader-fill');
-            const percentEl = document.getElementById('splash-loader-percent');
-            const messageEl = document.getElementById('splash-message');
-            
-            const messages = [
-                'جاري تحميل العالم الافتراضي...',
-                'تشغيل المؤثرات البصرية ثلاثية الأبعاد...',
-                'تفعيل الأنظمة الأمنية المتطورة...',
-                'تجهيز قاعدة البيانات الكمية...',
-                'مرحباً بك في المستقبل...',
-                'تقريباً انتهينا...'
-            ];
-            
-            splashInterval = setInterval(() => {
-                splashProgress += 1;
-                
-                if (loaderFill) {
-                    loaderFill.style.width = splashProgress + '%';
-                }
-                
-                if (percentEl) {
-                    percentEl.textContent = splashProgress + '%';
-                }
-                
-                if (splashProgress % 17 === 0 && splashProgress <= 100) {
-                    const msgIndex = Math.floor(splashProgress / 17);
-                    if (messageEl && messages[msgIndex]) {
-                        messageEl.textContent = messages[msgIndex];
-                    }
-                }
-                
-                if (splashProgress >= 100) {
-                    clearInterval(splashInterval);
-                    setTimeout(() => {
-                        hideSplash();
-                    }, 1000);
-                }
-            }, 40);
-        }
-        
-        function hideSplash() {
-            const splash = document.getElementById('splash-screen');
-            const wrapper = document.getElementById('main-wrapper');
-            
-            if (splash) {
-                splash.classList.add('fade-out');
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                }, 1500);
-            }
-            
-            if (wrapper) {
-                wrapper.classList.add('visible');
-            }
-            
-            // تهيئة AOS
-            AOS.init({
-                duration: 1000,
-                once: true,
-                mirror: true
-            });
-        }
-        
-        function skipSplash() {
-            clearInterval(splashInterval);
-            splashProgress = 100;
-            hideSplash();
-        }
+        window.skipSplash = function() {
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('main-wrapper').classList.add('visible');
+        };
         
         // =====================================================================
-        // الإعدادات
+        // تحميل الإعدادات
         // =====================================================================
         function getSetting(key, defaultValue) {
             return localStorage.getItem(key) || defaultValue;
@@ -2415,18 +1450,6 @@
         
         function getSavedLogo() {
             return getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
-        }
-        
-        function getServicesUrl() {
-            return getSetting(STORAGE_KEYS.SERVICES_URL, DEFAULT_SETTINGS.SERVICES_URL);
-        }
-        
-        function getServicesText() {
-            return getSetting(STORAGE_KEYS.SERVICES_TEXT, DEFAULT_SETTINGS.SERVICES_TEXT);
-        }
-        
-        function shouldShowServices() {
-            return localStorage.getItem(STORAGE_KEYS.SHOW_SERVICES) !== 'false';
         }
         
         function getComplaintPrefix() {
@@ -2437,50 +1460,32 @@
             return getSetting(STORAGE_KEYS.SUGGESTION_PREFIX, DEFAULT_SETTINGS.SUGGESTION_PREFIX);
         }
         
-        function updateServicesButton() {
-            const btn = document.getElementById('services-link');
-            if (!btn) return;
-            
-            const show = shouldShowServices();
-            const url = getServicesUrl();
-            const text = getServicesText();
-            
-            if (show && url) {
-                btn.style.display = 'flex';
-                btn.href = url;
-                btn.querySelector('span').textContent = text;
-            } else {
-                btn.style.display = 'none';
-            }
-        }
-        
         function updateAllLogos() {
             const logo = getSavedLogo();
-            const splashLogo = document.getElementById('splash-logo');
-            const headerLogo = document.getElementById('header-main-logo');
-            
-            if (splashLogo) splashLogo.src = logo;
-            if (headerLogo) headerLogo.src = logo;
+            document.getElementById('splash-logo').src = logo;
+            document.getElementById('header-main-logo').src = logo;
         }
+        updateAllLogos();
         
         // =====================================================================
-        // التبديل بين المشاهد
+        // تبديل المشاهد
         // =====================================================================
-        function switchView(view) {
+        window.switchView = function(view) {
             document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-            document.querySelectorAll('.btn-nav-3d').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
             
             document.getElementById('view-' + view).style.display = 'block';
             
             if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
             else if (view === 'track') document.getElementById('btn-track').classList.add('active');
             else if (view === 'login') document.getElementById('btn-login').classList.add('active');
-        }
+        };
+        window.switchView('submit');
         
         // =====================================================================
         // حقل العضوية
         // =====================================================================
-        function toggleMemberField() {
+        window.toggleMemberField = function() {
             const type = document.getElementById('u-member-type').value;
             const box = document.getElementById('member-id-box');
             const typeSelect = document.getElementById('u-req-type');
@@ -2492,7 +1497,7 @@
                 box.style.display = 'none';
                 typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
             }
-        }
+        };
         
         // =====================================================================
         // التحقق من البيانات
@@ -2510,14 +1515,12 @@
         // =====================================================================
         async function generateRequestNumber(type) {
             const year = new Date().getFullYear();
-            const prefix = type === 'شكوى' ? 
-                getComplaintPrefix() : 
-                getSuggestionPrefix();
+            const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
             
             try {
-                const snapshot = await db.collection("Requests")
-                    .where("type", "==", type)
-                    .get();
+                const requestsRef = collection(db, "Requests");
+                const q = query(requestsRef, where("type", "==", type));
+                const snapshot = await getDocs(q);
                 
                 let maxSerial = 0;
                 snapshot.forEach(doc => {
@@ -2550,17 +1553,17 @@
             const memberId = document.getElementById('u-member-id')?.value.trim() || "غير عضو";
             
             if (!name || !nid || !phone || !gov || !address || !job || !details) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'برجاء ملء جميع البيانات المطلوبة', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
                 return null;
             }
             
             if (name.split(' ').length < 2) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'برجاء إدخال الاسم ثلاثياً على الأقل', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الاسم ثلاثي على الأقل', background: '#030514', confirmButtonColor: '#00ffff' });
                 return null;
             }
             
             if (!validateNationalID(nid)) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي يجب أن يكون 14 رقماً', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي 14 رقم', background: '#030514', confirmButtonColor: '#00ffff' });
                 return null;
             }
             
@@ -2570,12 +1573,12 @@
             }
             
             if (memberType === 'عضو نقابة' && !memberId) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'برجاء إدخال رقم العضوية', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل رقم العضوية', background: '#030514', confirmButtonColor: '#00ffff' });
                 return null;
             }
             
             if (details.length < 10) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'التفاصيل يجب أن تكون على الأقل 10 حروف', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'التفاصيل على الأقل 10 حروف', background: '#030514', confirmButtonColor: '#00ffff' });
                 return null;
             }
             
@@ -2592,312 +1595,242 @@
             
             const card = document.createElement('div');
             card.style.cssText = `
-                width: 600px;
-                padding: 40px;
+                width: 550px;
+                padding: 35px;
                 background: linear-gradient(135deg, #0a0f1f, #030514);
-                border-radius: 40px;
-                border: 5px solid #00ffff;
-                font-family: 'Tajawal', 'Cairo', sans-serif;
+                border-radius: 35px;
+                border: 4px solid #00ffff;
+                font-family: 'Tajawal', sans-serif;
                 color: white;
                 text-align: center;
                 direction: rtl;
-                box-shadow: 0 30px 50px rgba(0,255,255,0.5);
-                position: relative;
-                overflow: hidden;
+                box-shadow: 0 20px 40px rgba(0,255,255,0.4);
             `;
-            
-            // خلفية متحركة
-            const glow = document.createElement('div');
-            glow.style.cssText = `
-                position: absolute;
-                top: -50%;
-                left: -50%;
-                width: 200%;
-                height: 200%;
-                background: radial-gradient(circle, rgba(0,255,255,0.2), transparent 70%);
-                animation: rotate 15s linear infinite;
-                pointer-events: none;
-            `;
-            card.appendChild(glow);
-            
-            const style = document.createElement('style');
-            style.textContent = `@keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`;
-            card.appendChild(style);
             
             const logoImg = document.createElement('img');
             logoImg.src = logo;
             logoImg.style.cssText = `
-                width: 130px;
-                height: 130px;
+                width: 100px;
+                height: 100px;
                 border-radius: 50%;
-                border: 4px solid #00ffff;
-                margin-bottom: 20px;
-                object-fit: cover;
+                border: 3px solid #00ffff;
+                margin: 0 auto 15px;
                 display: block;
-                margin-left: auto;
-                margin-right: auto;
-                box-shadow: 0 0 40px #00ffff;
-                position: relative;
-                z-index: 2;
+                box-shadow: 0 0 30px #00ffff;
+                object-fit: cover;
             `;
             
             const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
             
-            const contentDiv = document.createElement('div');
-            contentDiv.style.cssText = `position: relative; z-index: 2;`;
-            contentDiv.innerHTML = `
-                <h2 style="font-size: 28px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; font-weight: 900;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
-                <h3 style="font-size: 22px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
-                <p style="color: rgba(255,255,255,0.6); font-size: 18px; margin-bottom: 25px;">النقيب العام</p>
+            card.innerHTML = `
+                <h2 style="font-size: 24px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0;">نقابة تكنولوجيا المعلومات</h2>
+                <h3 style="font-size: 18px; color: white;">المهندس / محمود جميل</h3>
                 
-                <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 25px; margin: 20px 0; border: 2px solid rgba(0,255,255,0.3);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">رقم الطلب :</span>
-                        <span style="color: #00ffff; font-weight: 700; direction: ltr; font-size: 20px;">${data.refId}</span>
+                <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 20px; margin: 15px 0;">
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: #aaa;">رقم الطلب:</span>
+                        <span style="color: #00ffff;">${data.refId}</span>
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">نوع الطلب :</span>
-                        <span style="color: ${typeColor}; font-weight: 700; font-size: 20px;">${data.type}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: #aaa;">نوع الطلب:</span>
+                        <span style="color: ${typeColor};">${data.type}</span>
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">اسم مقدم الطلب :</span>
-                        <span style="font-weight: 600; font-size: 20px;">${data.name}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: #aaa;">الاسم:</span>
+                        <span>${data.name}</span>
                     </div>
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0;">
-                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 18px;">تاريخ التقديم :</span>
-                        <span style="font-weight: 600; font-size: 20px;">${date} - ${time}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+                        <span style="color: #aaa;">التاريخ:</span>
+                        <span>${date} - ${time}</span>
                     </div>
                 </div>
                 
-                <div style="color: rgba(255,255,255,0.4); font-size: 14px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 15px;">
-                    هذا الكارت معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
-                </div>
-                <div style="color: #00ffff; font-size: 12px; margin-top: 10px; font-family: 'Orbitron', monospace;">
-                    VR 2.05.2026
-                </div>
+                <div style="color: #666; font-size: 12px;">هذا الكارت معتمد من النقابة</div>
+                <div style="color: #00ffff; font-size: 10px; margin-top: 10px;">VR 2.05.2026</div>
             `;
             
-            card.appendChild(logoImg);
-            card.appendChild(contentDiv);
+            card.prepend(logoImg);
             container.appendChild(card);
             
             try {
-                let dataUrl;
-                if (typeof domtoimage !== 'undefined') {
-                    dataUrl = await domtoimage.toPng(card, { quality: 1, bgcolor: '#030514', width: 600 });
-                } else if (typeof html2canvas !== 'undefined') {
-                    const canvas = await html2canvas(card, { scale: 2, backgroundColor: '#030514' });
-                    dataUrl = canvas.toDataURL('image/png');
-                }
+                const canvas = await html2canvas(card, { scale: 2 });
+                const dataUrl = canvas.toDataURL('image/png');
                 
-                if (dataUrl) {
-                    const result = await Swal.fire({
-                        title: '✅ تم حفظ الطلب بنجاح',
-                        html: `<div style="color: #00ffff; font-size: 32px; font-weight: 900;">${data.refId}</div>`,
-                        imageUrl: dataUrl,
-                        imageWidth: 500,
-                        imageHeight: 400,
-                        showCancelButton: true,
-                        confirmButtonText: '📥 تحميل الكارت',
-                        cancelButtonText: '🔒 إغلاق',
-                        confirmButtonColor: '#00ffff',
-                        cancelButtonColor: 'rgba(255,255,255,0.2)',
-                        background: '#030514',
-                        color: '#fff',
-                        allowOutsideClick: false
-                    });
-                    
-                    if (result.isConfirmed) {
-                        const link = document.createElement('a');
-                        link.download = `طلب_${data.refId}.png`;
-                        link.href = dataUrl;
-                        link.click();
-                    }
+                const result = await Swal.fire({
+                    title: '✅ تم الحفظ',
+                    html: `<div style="color: #00ffff;">${data.refId}</div>`,
+                    imageUrl: dataUrl,
+                    imageWidth: 450,
+                    showCancelButton: true,
+                    confirmButtonText: '📥 تحميل',
+                    cancelButtonText: 'إغلاق',
+                    background: '#030514'
+                });
+                
+                if (result.isConfirmed) {
+                    const link = document.createElement('a');
+                    link.download = `طلب_${data.refId}.png`;
+                    link.href = dataUrl;
+                    link.click();
                 }
-            } catch (error) {
-                console.error('خطأ في إنشاء الكارت:', error);
-                Swal.fire({ icon: 'success', title: 'تم حفظ الطلب', html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`, background: '#030514' });
+            } catch (e) {
+                Swal.fire({ icon: 'success', title: 'تم', text: data.refId, background: '#030514' });
             }
             
-            setTimeout(() => { container.innerHTML = ''; }, 1000);
+            setTimeout(() => container.innerHTML = '', 1000);
         }
         
-        function clearSubmitForm() {
-            ['u-name', 'u-nid', 'u-phone', 'u-address', 'u-job', 'u-details', 'u-member-id'].forEach(id => {
-                const field = document.getElementById(id);
-                if (field) field.value = '';
-            });
-            document.getElementById('u-member-type').value = 'عضو نقابة';
-            document.getElementById('u-gov').value = 'القاهرة';
-            document.getElementById('u-req-type').innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
-            document.getElementById('member-id-box').style.display = 'block';
-        }
-        
-        async function handleSubmit() {
+        window.handleSubmit = async function() {
             const formData = validateSubmitForm();
             if (!formData) return;
             
             try {
-                Swal.fire({ title: 'جاري حفظ الطلب', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
+                Swal.fire({ title: 'جاري الحفظ', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
                 const refId = await generateRequestNumber(formData.type);
                 const initialStatus = formData.type === 'شكوى' ? "تم الاستلام" : "لم يقرأ";
                 
                 const requestData = {
-                    refId, ...formData,
+                    refId,
+                    ...formData,
                     status: initialStatus,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: serverTimestamp(),
                     tracking: [{
                         status: initialStatus,
-                        comment: formData.type === 'شكوى' ? "تم استلام شكواك بنجاح" : "تم استلام اقتراحك بنجاح",
+                        comment: formData.type === 'شكوى' ? "تم استلام شكواك" : "تم استلام اقتراحك",
                         time: new Date().toLocaleString('ar-EG'),
                         isFinal: false
                     }]
                 };
                 
-                await db.collection("Requests").doc(refId).set(requestData);
+                await setDoc(doc(db, "Requests", refId), requestData);
                 Swal.close();
                 await generateRequestCard(requestData);
-                clearSubmitForm();
                 
-            } catch (error) {
-                console.error("خطأ في تقديم الطلب:", error);
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'حدث خطأ في حفظ الطلب', background: '#030514', confirmButtonColor: '#00ffff' });
+                // Clear form
+                ['u-name','u-nid','u-phone','u-address','u-job','u-details','u-member-id'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
+                document.getElementById('u-member-type').value = 'عضو نقابة';
+                document.getElementById('u-gov').value = 'القاهرة';
+                document.getElementById('u-req-type').innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+                document.getElementById('member-id-box').style.display = 'block';
+                
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: e.message, background: '#030514', confirmButtonColor: '#00ffff' });
             }
-        }
+        };
         
         // =====================================================================
-        // دوال الاستعلام
+        // الاستعلام
         // =====================================================================
-        async function handleTrack() {
+        window.handleTrack = async function() {
             const nid = document.getElementById('q-nid')?.value.trim();
             const ref = document.getElementById('q-ref')?.value.trim();
             const type = document.getElementById('q-type')?.value;
             
             if (!nid || !ref || !type) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'برجاء إدخال جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
                 return;
             }
             
             try {
                 Swal.fire({ title: 'جاري البحث', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
-                const snapshot = await db.collection("Requests")
-                    .where("nid", "==", nid)
-                    .where("refId", "==", ref)
-                    .where("type", "==", type)
-                    .get();
+                const requestsRef = collection(db, "Requests");
+                const q = query(requestsRef, 
+                    where("nid", "==", nid),
+                    where("refId", "==", ref),
+                    where("type", "==", type)
+                );
+                const snapshot = await getDocs(q);
                 
                 Swal.close();
                 
                 if (snapshot.empty) {
-                    Swal.fire({ icon: 'error', title: 'عذراً', text: 'لا يوجد طلب بهذه البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ icon: 'error', title: 'لا يوجد', text: 'لا يوجد طلب', background: '#030514', confirmButtonColor: '#00ffff' });
                     return;
                 }
                 
-                const requestData = snapshot.docs[0].data();
-                if (requestData.createdAt && requestData.createdAt.toDate) {
-                    requestData.createdAtDate = requestData.createdAt.toDate();
-                }
+                const data = snapshot.docs[0].data();
+                renderTrackResult(data);
                 
-                renderTrackResult(requestData);
-                
-            } catch (error) {
-                console.error("خطأ في الاستعلام:", error);
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'حدث خطأ في الاستعلام', background: '#030514', confirmButtonColor: '#00ffff' });
+            } catch (e) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: e.message, background: '#030514', confirmButtonColor: '#00ffff' });
             }
-        }
+        };
         
         function renderTrackResult(data) {
             const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
             const currentIdx = stages.indexOf(data.status);
             const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
             
-            const dateStr = data.createdAtDate ? data.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
-            
-            let timelineHtml = '';
-            if (data.tracking && data.tracking.length > 0) {
-                timelineHtml = data.tracking.slice().reverse().map(t => `
-                    <div class="timeline-card-3d">
-                        <div class="timeline-header-3d">
-                            <h4>${t.status}</h4>
-                            <span>${t.time}</span>
-                        </div>
-                        <p>${t.comment}</p>
+            const timeline = data.tracking?.length ? data.tracking.slice().reverse().map(t => `
+                <div class="timeline-card">
+                    <div class="timeline-header">
+                        <span class="timeline-status">${t.status}</span>
+                        <span class="timeline-time">${t.time}</span>
                     </div>
-                `).join('');
-            } else {
-                timelineHtml = '<p style="color: var(--text-muted); text-align: center;">لا يوجد مسار زمني</p>';
-            }
+                    <p>${t.comment}</p>
+                </div>
+            `).join('') : '<p style="text-align:center">لا يوجد مسار زمني</p>';
             
             const html = `
-                <div class="card-3d glass-effect-3d" style="margin-top: 30px;">
-                    <div style="display: flex; align-items: center; gap: 25px; margin-bottom: 25px;">
-                        <div style="width: 90px; height: 90px; background: var(--gradient-rainbow); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-neon-strong);">
-                            <i class="fas fa-qrcode" style="font-size: 45px; color: #fff;"></i>
+                <div class="card" style="margin-top:20px;">
+                    <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                        <div style="width:60px; height:60px; background:var(--gradient-primary); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                            <i class="fas fa-qrcode" style="font-size:30px; color:#fff;"></i>
                         </div>
                         <div>
-                            <h3 style="color: var(--neon-cyan); font-size: 32px; font-weight: 900;">${data.refId}</h3>
-                            <p style="color: rgba(255,255,255,0.9); font-size: 18px;">${data.name}</p>
+                            <h3 style="color:var(--neon-cyan); font-size:20px;">${data.refId}</h3>
+                            <p>${data.name}</p>
                         </div>
                     </div>
                     
-                    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin-bottom: 25px;">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div><span style="color: var(--text-muted);">النوع:</span> ${data.type}</div>
-                            <div><span style="color: var(--text-muted);">الحالة:</span> ${data.status}</div>
-                            <div><span style="color: var(--text-muted);">تاريخ التقديم:</span> ${dateStr}</div>
-                            <div><span style="color: var(--text-muted);">المحافظة:</span> ${data.gov}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="track-container-3d">
-                        <div class="track-line-bg-3d"></div>
-                        <div class="track-line-fill-3d" style="width: ${progress}%;"></div>
-                        <div class="track-points-3d">
+                    <div class="track-container">
+                        <div class="track-line-bg"></div>
+                        <div class="track-line-fill" style="width:${progress}%;"></div>
+                        <div class="track-points">
                             ${stages.map((s, i) => `
-                                <div class="track-point-3d">
-                                    <div class="track-dot-3d ${i <= currentIdx ? 'active' : ''}">
+                                <div class="track-point">
+                                    <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
                                         ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
                                     </div>
-                                    <span class="track-label-3d">${s}</span>
+                                    <span class="track-label">${s}</span>
                                 </div>
                             `).join('')}
                         </div>
                     </div>
                     
-                    <h4 style="color: var(--neon-cyan); font-size: 20px; margin-bottom: 15px;"><i class="fas fa-history"></i> المسار الزمني</h4>
-                    <div style="max-height: 350px; overflow-y: auto; padding-left: 10px;">
-                        ${timelineHtml}
-                    </div>
+                    <h4 style="color:var(--neon-cyan); margin:15px 0 10px;">المسار الزمني</h4>
+                    <div style="max-height:250px; overflow-y:auto;">${timeline}</div>
                 </div>
             `;
             
             const resultBox = document.getElementById('track-result-box');
-            if (resultBox) {
-                resultBox.innerHTML = html;
-                resultBox.style.display = 'block';
-                resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            resultBox.innerHTML = html;
+            resultBox.style.display = 'block';
         }
         
         // =====================================================================
         // تسجيل الدخول
         // =====================================================================
-        async function handleLogin() {
+        window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
             const password = document.getElementById('login-password')?.value.trim();
             
             if (!username || !password) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'برجاء إدخال اسم المستخدم وكلمة المرور', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل اسم المستخدم وكلمة المرور', background: '#030514', confirmButtonColor: '#00ffff' });
                 return;
             }
             
             try {
                 Swal.fire({ title: 'جاري التحقق', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
-                const usersRef = db.collection('Users');
-                const snapshot = await usersRef.where('username', '==', username).get();
+                const usersRef = collection(db, 'Users');
+                const q = query(usersRef, where('username', '==', username));
+                const snapshot = await getDocs(q);
                 
                 if (snapshot.empty) {
                     Swal.close();
@@ -2910,10 +1843,11 @@
                 
                 if (userData.isActive === false) {
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'حساب معطل', text: 'هذا الحساب غير نشط', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ icon: 'error', title: 'حساب معطل', text: 'الحساب غير نشط', background: '#030514', confirmButtonColor: '#00ffff' });
                     return;
                 }
                 
+                // Simple password check (base64)
                 const hashedPassword = btoa(password);
                 if (hashedPassword !== userData.password) {
                     Swal.close();
@@ -2921,32 +1855,21 @@
                     return;
                 }
                 
-                const now = new Date();
-                const lastLoginStr = now.toLocaleString('ar-EG');
-                
-                await db.collection("Users").doc(userDoc.id).update({
-                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastLoginString: lastLoginStr
-                });
+                // Update last login
+                await setDoc(doc(db, "Users", userDoc.id), {
+                    lastLogin: serverTimestamp(),
+                    lastLoginString: new Date().toLocaleString('ar-EG')
+                }, { merge: true });
                 
                 localStorage.setItem('currentUserId', userDoc.id);
                 localStorage.setItem('currentUser', userData.username);
                 localStorage.setItem('currentUserRole', userData.role);
-                localStorage.setItem('currentUserLastLogin', lastLoginStr);
                 
                 Swal.close();
-                
                 Swal.fire({
                     icon: 'success',
-                    title: 'مرحباً بك',
-                    html: `
-                        <div style="text-align: center;">
-                            <p style="color: var(--neon-cyan); font-size: 24px;">${userData.name || userData.username}</p>
-                            <p style="color: rgba(255,255,255,0.8);">تم تسجيل الدخول بنجاح</p>
-                            <p style="color: var(--text-muted); font-size: 14px; margin-top: 10px;">${getRoleName(userData.role)}</p>
-                        </div>
-                    `,
-                    timer: 2000,
+                    title: 'مرحباً',
+                    timer: 1500,
                     showConfirmButton: false,
                     background: '#030514'
                 }).then(() => {
@@ -2954,38 +1877,10 @@
                 });
                 
             } catch (error) {
-                console.error("خطأ في تسجيل الدخول:", error);
                 Swal.close();
                 Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
             }
-        }
-        
-        function getRoleName(role) {
-            const roles = {
-                'super_admin': 'سوبر أدمن',
-                'admin': 'أدمن',
-                'reviewer': 'مراجع',
-                'viewer': 'مشاهد',
-                'data_entry': 'مدخل بيانات'
-            };
-            return roles[role] || role;
-        }
-        
-        // =====================================================================
-        // التهيئة
-        // =====================================================================
-        window.addEventListener('load', function() {
-            createParticles3D();
-            startSplashLoader();
-            
-            updateAllLogos();
-            updateServicesButton();
-            switchView('submit');
-            
-            if (document.getElementById('u-member-type').value === 'غير عضو') {
-                document.getElementById('member-id-box').style.display = 'none';
-            }
-        });
+        };
     </script>
 </body>
 </html>
