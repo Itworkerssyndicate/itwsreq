@@ -21,7 +21,7 @@
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام المستخدمين الآمن
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام الصلاحيات
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
@@ -198,7 +198,7 @@
             100% { transform: translate(50px, -50px) scale(1.1); }
         }
         
-        /* زر الإعدادات - ثابت */
+        /* زر الإعدادات - يظهر فقط للسوبر أدمن */
         .settings-btn {
             position: fixed;
             top: 20px;
@@ -798,12 +798,6 @@
             border: 1px solid #3b82f6;
         }
         
-        .role-badge.viewer {
-            background: rgba(168, 85, 247, 0.2);
-            color: #a855f7;
-            border: 1px solid #a855f7;
-        }
-        
         .role-badge.data_entry {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
@@ -1200,17 +1194,17 @@
     </style>
 </head>
 <body>
-    <!-- الجزيئات المتطايرة -->
+    <!-- جزيئات متطايرة -->
     <div class="particles" id="particles"></div>
     
-    <!-- العناصر العائمة -->
+    <!-- عناصر عائمة -->
     <div class="floating-elements">
         <div class="floating-element"></div>
         <div class="floating-element"></div>
     </div>
     
-    <!-- زر الإعدادات -->
-    <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()">
+    <!-- زر الإعدادات - يظهر فقط للسوبر أدمن -->
+    <button class="settings-btn" id="settingsBtn" onclick="toggleSettings()" style="display: none;">
         <i class="fas fa-cog"></i>
     </button>
     
@@ -1450,9 +1444,9 @@
         </div>
     </div>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <!-- Firebase v9 compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -1471,7 +1465,6 @@
             measurementId: "G-P3YQFRSBMM"
         };
 
-        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
@@ -1489,6 +1482,7 @@
         let currentRequestId = null;
         let currentUserId = null;
         let currentUser = null; // المستخدم الحالي
+        let isSuperAdmin = false;
         let searchFilters = {
             ref: '',
             name: '',
@@ -1501,21 +1495,124 @@
         };
         
         // =====================================================================
-        // دوال مساعدة
+        // إنشاء الجزيئات
         // =====================================================================
         function createParticles() {
             const container = document.getElementById('particles');
-            if (!container) return;
-            
             for (let i = 0; i < 30; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 10 + 's';
-                particle.style.animationDuration = 10 + Math.random() * 20 + 's';
-                container.appendChild(particle);
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 10 + Math.random() * 20 + 's';
+                container.appendChild(p);
             }
+        }
+        createParticles();
+        
+        // =====================================================================
+        // التحقق من تسجيل الدخول
+        // =====================================================================
+        function checkAuth() {
+            const userId = localStorage.getItem('currentUserId');
+            const userName = localStorage.getItem('currentUser');
+            
+            if (!userId && !userName) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+        checkAuth();
+        
+        // =====================================================================
+        // تحميل معلومات المستخدم الحالي
+        // =====================================================================
+        async function loadCurrentUser() {
+            const userId = localStorage.getItem('currentUserId');
+            const userName = localStorage.getItem('currentUser');
+            const userRole = localStorage.getItem('currentUserRole');
+            
+            if (userId && userName) {
+                try {
+                    // محاولة جلب بيانات المستخدم من Firestore
+                    const userDoc = await db.collection('Users').doc(userId).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        currentUser = {
+                            id: userId,
+                            username: userData.username,
+                            role: userData.role,
+                            name: userData.name || userName
+                        };
+                    } else {
+                        // استخدام البيانات المخزنة في localStorage
+                        currentUser = {
+                            id: userId,
+                            username: userName,
+                            role: userRole || 'admin',
+                            name: userName
+                        };
+                    }
+                } catch (error) {
+                    console.error('خطأ في جلب بيانات المستخدم:', error);
+                    currentUser = {
+                        id: userId,
+                        username: userName,
+                        role: userRole || 'admin',
+                        name: userName
+                    };
+                }
+            } else {
+                currentUser = {
+                    id: 'unknown',
+                    username: 'زائر',
+                    role: 'viewer',
+                    name: 'زائر'
+                };
+            }
+            
+            // تحديث الواجهة
+            document.getElementById('currentUserName').textContent = currentUser.name || currentUser.username;
+            
+            const roleName = getRoleName(currentUser.role);
+            document.getElementById('currentUserRole').textContent = roleName;
+            document.getElementById('currentUserRoleBadge').textContent = roleName;
+            
+            // التحقق من صلاحية السوبر أدمن
+            isSuperAdmin = (currentUser.role === 'super_admin');
+            
+            // إظهار/إخفاء زر الإعدادات
+            const settingsBtn = document.getElementById('settingsBtn');
+            if (settingsBtn) {
+                settingsBtn.style.display = isSuperAdmin ? 'flex' : 'none';
+            }
+            
+            // تحديث آخر دخول
+            const lastLogin = localStorage.getItem('currentUserLastLogin');
+            if (lastLogin) {
+                document.getElementById('currentUserLastLogin').textContent = lastLogin;
+            }
+            
+            console.log('👤 المستخدم الحالي:', currentUser);
+            console.log('👑 سوبر أدمن:', isSuperAdmin);
+            
+            return currentUser;
+        }
+        
+        // =====================================================================
+        // دوال المساعدة
+        // =====================================================================
+        function getRoleName(role) {
+            const roles = {
+                'super_admin': 'سوبر أدمن',
+                'admin': 'أدمن',
+                'reviewer': 'مراجع',
+                'data_entry': 'مدخل بيانات'
+            };
+            return roles[role] || role;
         }
         
         function toggleSidebar() {
@@ -1525,10 +1622,13 @@
         function toggleSettings() {
             const menu = document.getElementById('settingsMenu');
             menu.classList.toggle('show');
-            
             if (menu.classList.contains('show')) {
                 loadSettings();
             }
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
         }
         
         function setActiveNav(view) {
@@ -1544,121 +1644,11 @@
         
         function logout() {
             localStorage.removeItem('admin');
+            localStorage.removeItem('currentUserId');
             localStorage.removeItem('currentUser');
             localStorage.removeItem('currentUserRole');
-            localStorage.removeItem('currentUserId');
             localStorage.removeItem('currentUserLastLogin');
             window.location.href = 'index.html';
-        }
-        
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('show');
-        }
-        
-        // =====================================================================
-        // التحقق من تسجيل الدخول
-        // =====================================================================
-        function checkAuth() {
-            // التحقق من وجود admin في localStorage (طريقة تسجيل الدخول القديمة)
-            const isAdmin = localStorage.getItem('admin');
-            
-            // التحقق من وجود مستخدم حالي
-            const userId = localStorage.getItem('currentUserId');
-            const userName = localStorage.getItem('currentUser');
-            
-            if (isAdmin === 'true') {
-                // هذا مستخدم قديم (admin افتراضي) - نحوله إلى النظام الجديد
-                console.log('تم اكتشاف مستخدم قديم (admin)، جاري تحويله...');
-                
-                // إنشاء مستخدم وهمي للـ admin القديم
-                currentUser = {
-                    id: 'admin',
-                    username: 'admin',
-                    role: 'super_admin'
-                };
-                
-                // تحديث localStorage
-                localStorage.setItem('currentUserId', 'admin');
-                localStorage.setItem('currentUser', 'admin');
-                localStorage.setItem('currentUserRole', 'super_admin');
-                
-                return true;
-            }
-            
-            if (!userId && !userName) {
-                console.log('لا يوجد مستخدم مسجل، جاري التحويل إلى صفحة تسجيل الدخول...');
-                window.location.href = 'index.html';
-                return false;
-            }
-            
-            return true;
-        }
-        
-        // =====================================================================
-        // تحميل معلومات المستخدم الحالي
-        // =====================================================================
-        function loadCurrentUser() {
-            const userId = localStorage.getItem('currentUserId');
-            const userName = localStorage.getItem('currentUser');
-            const userRole = localStorage.getItem('currentUserRole');
-            
-            if (userId && userName) {
-                currentUser = {
-                    id: userId,
-                    username: userName,
-                    role: userRole || 'viewer'
-                };
-                
-                document.getElementById('currentUserName').textContent = userName;
-                
-                const roleName = getRoleName(userRole);
-                document.getElementById('currentUserRole').textContent = roleName;
-                document.getElementById('currentUserRoleBadge').textContent = roleName;
-                
-                // تحديث آخر دخول
-                const lastLogin = localStorage.getItem('currentUserLastLogin');
-                if (lastLogin) {
-                    document.getElementById('currentUserLastLogin').textContent = lastLogin;
-                } else {
-                    document.getElementById('currentUserLastLogin').textContent = 'غير معروف';
-                }
-            } else {
-                // إذا لم يتم العثور على مستخدم، نستخدم admin افتراضي
-                currentUser = {
-                    id: 'admin',
-                    username: 'admin',
-                    role: 'super_admin'
-                };
-                
-                document.getElementById('currentUserName').textContent = 'admin';
-                document.getElementById('currentUserRole').textContent = 'سوبر أدمن';
-                document.getElementById('currentUserRoleBadge').textContent = 'سوبر أدمن';
-                document.getElementById('currentUserLastLogin').textContent = 'غير معروف';
-            }
-        }
-        
-        // =====================================================================
-        // تحديث آخر دخول للمستخدم
-        // =====================================================================
-        async function updateUserLastLogin(userId) {
-            try {
-                const now = new Date();
-                const lastLoginStr = now.toLocaleString('ar-EG');
-                
-                // إذا كان userId حقيقي (ليس admin)
-                if (userId && userId !== 'admin') {
-                    await db.collection("Users").doc(userId).update({
-                        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLoginString: lastLoginStr
-                    });
-                }
-                
-                localStorage.setItem('currentUserLastLogin', lastLoginStr);
-                document.getElementById('currentUserLastLogin').textContent = lastLoginStr;
-                
-            } catch (error) {
-                console.error("خطأ في تحديث آخر دخول:", error);
-            }
         }
         
         // =====================================================================
@@ -1681,7 +1671,6 @@
             localStorage.setItem('complaint_prefix', document.getElementById('complaintPrefix').value);
             localStorage.setItem('suggestion_prefix', document.getElementById('suggestionPrefix').value);
             
-            // تحديث الشعار
             document.getElementById('sidebarLogo').src = document.getElementById('logoUrl').value;
             
             const msg = document.getElementById('autoSaveMessage');
@@ -1696,7 +1685,6 @@
         // =====================================================================
         function exportToPDF() {
             const element = document.getElementById('contentArea');
-            
             if (!element) {
                 Swal.fire({
                     icon: 'error',
@@ -1768,6 +1756,10 @@
             if (unsubscribeRequests) {
                 unsubscribeRequests();
             }
+            
+            document.getElementById('statsContainer').style.display = 'block';
+            document.getElementById('pageTitle').textContent = currentView === 'all' ? 'كل الطلبات' : (currentView === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
+            document.getElementById('pageIcon').className = 'fas fa-database';
             
             document.getElementById('contentArea').innerHTML = `
                 <div class="table-card">
@@ -2120,9 +2112,11 @@
                 <div style="padding: 10px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                         <h3 style="color: var(--neon-cyan);">إدارة الطلب: ${request.refId}</h3>
-                        <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        ${isSuperAdmin ? `
+                            <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        ` : ''}
                     </div>
                     
                     <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
@@ -2364,9 +2358,15 @@
         }
         
         // =====================================================================
-        // إدارة المستخدمين (Users) - فقط للسوبر أدمن
+        // إدارة المستخدمين - فقط للسوبر أدمن
         // =====================================================================
         function loadUsers() {
+            if (!isSuperAdmin) {
+                // إذا لم يكن سوبر أدمن، العودة للطلبات
+                changeView('all');
+                return;
+            }
+            
             if (unsubscribeUsers) {
                 unsubscribeUsers();
             }
@@ -2390,7 +2390,6 @@
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     
-                    // تنسيق تاريخ آخر دخول
                     let lastLoginStr = 'لم يسجل بعد';
                     if (data.lastLogin) {
                         if (data.lastLogin.toDate) {
@@ -2430,24 +2429,9 @@
             });
         }
         
-        function getRoleName(role) {
-            const roles = {
-                'super_admin': 'سوبر أدمن',
-                'admin': 'أدمن',
-                'reviewer': 'مراجع',
-                'viewer': 'مشاهد',
-                'data_entry': 'مدخل بيانات'
-            };
-            return roles[role] || role;
-        }
-        
         function renderUsers() {
-            // التحقق من صلاحية المستخدم الحالي
-            const isSuperAdmin = currentUser?.role === 'super_admin';
-            
             let tableHTML = '';
             
-            // فقط السوبر أدمن يمكنه رؤية وإدارة المستخدمين
             if (isSuperAdmin) {
                 tableHTML += `
                     <div style="margin-bottom: 20px; display: flex; justify-content: flex-end; gap: 10px;">
@@ -2500,7 +2484,7 @@
                             <td>${user.name || '-'}</td>
                             <td>${user.email || '-'}</td>
                             <td>${user.phone || '-'}</td>
-                            <td><span class="role-badge ${user.role || 'viewer'}">${getRoleName(user.role)}</span></td>
+                            <td><span class="role-badge ${user.role || 'data_entry'}">${getRoleName(user.role)}</span></td>
                             <td>
                                 <span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">
                                     ${user.isActive ? 'نشط' : 'غير نشط'}
@@ -2546,7 +2530,7 @@
         // إضافة مستخدم جديد (فقط للسوبر أدمن)
         // =====================================================================
         function showAddUserModal() {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2591,11 +2575,9 @@
                     <div style="margin-bottom: 15px;">
                         <label style="color: var(--text-muted); font-size: 13px; margin-bottom: 5px; display: block;">الدور</label>
                         <select id="newRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;">
-                            <option value="super_admin">سوبر أدمن</option>
                             <option value="admin">أدمن</option>
                             <option value="reviewer">مراجع</option>
-                            <option value="viewer" selected>مشاهد</option>
-                            <option value="data_entry">مدخل بيانات</option>
+                            <option value="data_entry" selected>مدخل بيانات</option>
                         </select>
                     </div>
                     
@@ -2620,20 +2602,13 @@
             document.getElementById('addUserModal').classList.add('show');
         }
         
-        // =====================================================================
-        // دالة آمنة لتشفير كلمة السر (SHA-256)
-        // =====================================================================
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            return hashHex;
+        // دالة تشفير
+        function hashPassword(password) {
+            return btoa(password);
         }
         
         async function addUser() {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2663,7 +2638,6 @@
                 return;
             }
             
-            // التحقق من عدم وجود اسم مستخدم مكرر
             const existingUser = allUsers.find(u => u.username === username);
             if (existingUser) {
                 Swal.fire({
@@ -2677,16 +2651,15 @@
             }
             
             try {
-                // تشفير كلمة السر بطريقة آمنة
-                const hashedPassword = await hashPassword(password);
+                const hashedPassword = hashPassword(password);
                 
                 await db.collection("Users").add({
                     username,
-                    password: hashedPassword, // تخزين مشفر
+                    password: hashedPassword,
                     name: name || '',
                     email: email || '',
                     phone: phone || '',
-                    role: role || 'viewer',
+                    role: role || 'data_entry',
                     isActive: isActive !== undefined ? isActive : true,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLogin: null,
@@ -2717,7 +2690,7 @@
         }
         
         function editUser(userId) {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2763,7 +2736,6 @@
                             <option value="super_admin" ${user.role === 'super_admin' ? 'selected' : ''}>سوبر أدمن</option>
                             <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>أدمن</option>
                             <option value="reviewer" ${user.role === 'reviewer' ? 'selected' : ''}>مراجع</option>
-                            <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>مشاهد</option>
                             <option value="data_entry" ${user.role === 'data_entry' ? 'selected' : ''}>مدخل بيانات</option>
                         </select>
                     </div>
@@ -2790,7 +2762,7 @@
         }
         
         async function updateUser(userId) {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2812,7 +2784,7 @@
                     name: name || '',
                     email: email || '',
                     phone: phone || '',
-                    role: role || 'viewer',
+                    role: role || 'data_entry',
                     isActive: isActive !== undefined ? isActive : true
                 });
                 
@@ -2839,7 +2811,7 @@
         }
         
         function changeUserPassword(userId) {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2888,7 +2860,7 @@
         }
         
         async function updateUserPassword(userId) {
-            if (currentUser?.role !== 'super_admin') {
+            if (!isSuperAdmin) {
                 Swal.fire({
                     icon: 'error',
                     title: 'غير مصرح',
@@ -2925,8 +2897,7 @@
             }
             
             try {
-                // تشفير كلمة السر بطريقة آمنة
-                const hashedPassword = await hashPassword(newPassword);
+                const hashedPassword = hashPassword(newPassword);
                 
                 await db.collection("Users").doc(userId).update({
                     password: hashedPassword
@@ -2955,9 +2926,20 @@
         }
         
         // =====================================================================
-        // دوال الحذف المشتركة
+        // دوال الحذف المشتركة (للسوبر أدمن فقط)
         // =====================================================================
         function openDeleteModal(type, id) {
+            if (!isSuperAdmin) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية الحذف',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             currentDeleteId = id;
             
             let content = '';
@@ -3002,6 +2984,17 @@
         }
         
         async function confirmDelete(type) {
+            if (!isSuperAdmin) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'غير مصرح',
+                    text: 'أنت لا تملك صلاحية الحذف',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const password = document.getElementById('deletePassword')?.value;
             
             if (password !== '11111@') {
@@ -3019,16 +3012,6 @@
                 if (type === 'request') {
                     await db.collection("Requests").doc(currentDeleteId).delete();
                 } else {
-                    if (currentUser?.role !== 'super_admin') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'غير مصرح',
-                            text: 'أنت لا تملك صلاحية حذف المستخدمين',
-                            background: '#030514',
-                            confirmButtonColor: '#00ffff'
-                        });
-                        return;
-                    }
                     await db.collection("Users").doc(currentDeleteId).delete();
                 }
                 
@@ -3065,10 +3048,17 @@
             setActiveNav(view);
             
             if (view === 'users') {
-                document.getElementById('statsContainer').style.display = 'none';
-                document.getElementById('pageTitle').textContent = 'إدارة المستخدمين';
-                document.getElementById('pageIcon').className = 'fas fa-users-cog';
-                loadUsers();
+                if (isSuperAdmin) {
+                    loadUsers();
+                } else {
+                    // إذا لم يكن سوبر أدمن، العودة للطلبات
+                    currentView = 'all';
+                    setActiveNav('all');
+                    document.getElementById('statsContainer').style.display = 'block';
+                    document.getElementById('pageTitle').textContent = 'كل الطلبات';
+                    document.getElementById('pageIcon').className = 'fas fa-database';
+                    loadRequests();
+                }
             } else {
                 document.getElementById('statsContainer').style.display = 'block';
                 document.getElementById('pageTitle').textContent = view === 'all' ? 'كل الطلبات' : (view === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
@@ -3080,41 +3070,23 @@
         // =====================================================================
         // التهيئة
         // =====================================================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            createParticles();
+        window.addEventListener('load', async function() {
+            await loadCurrentUser();
             
-            // التحقق من تسجيل الدخول
-            if (!checkAuth()) {
-                return;
-            }
-            
-            // تحميل معلومات المستخدم الحالي
-            loadCurrentUser();
-            
-            // تحديث آخر دخول للمستخدم
-            const userId = localStorage.getItem('currentUserId');
-            if (userId) {
-                await updateUserLastLogin(userId);
-            }
-            
-            // تحميل الإعدادات المحفوظة
             const savedLogo = localStorage.getItem('logo_url');
             if (savedLogo) {
                 document.getElementById('sidebarLogo').src = savedLogo;
             }
             
-            // إضافة مستمعي الأحداث لأزرار التنقل
             document.getElementById('navAll').addEventListener('click', () => changeView('all'));
             document.getElementById('navComplaints').addEventListener('click', () => changeView('شكوى'));
             document.getElementById('navSuggestions').addEventListener('click', () => changeView('اقتراح'));
             document.getElementById('navUsers').addEventListener('click', () => changeView('users'));
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
-            // تحميل البيانات
             changeView('all');
         });
         
-        // تنظيف عند إغلاق الصفحة
         window.addEventListener('beforeunload', function() {
             if (unsubscribeRequests) {
                 unsubscribeRequests();
