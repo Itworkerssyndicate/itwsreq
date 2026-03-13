@@ -2,65 +2,101 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     
-    // ==================== قواعد عامة ====================
+    // =====================================================================
+    // دوال المساعدة
+    // =====================================================================
+    
     function isAuthenticated() {
       return request.auth != null;
     }
     
-    function isAdmin() {
+    function isSuperAdmin() {
       return isAuthenticated() && 
         firestore.get(/databases/(default)/documents/Users/$(request.auth.uid)).data.role == 'super_admin';
     }
     
-    // ==================== مجلد الصور الشخصية ====================
-    match /avatars/{userId}/{fileName} {
-      // قراءة الصور الشخصية (للجميع)
-      allow read: if true;
-      
-      // رفع الصور الشخصية (للمستخدم نفسه)
-      allow write: if isAuthenticated() && userId == request.auth.uid && (
-        request.resource.contentType.matches('image/.*') &&
-        request.resource.size < 5 * 1024 * 1024 // 5MB كحد أقصى
-      );
-      
-      // حذف الصور الشخصية (للمستخدم أو الأدمن)
-      allow delete: if isAuthenticated() && (userId == request.auth.uid || isAdmin());
+    function isAdmin() {
+      return isAuthenticated() && 
+        (firestore.get(/databases/(default)/documents/Users/$(request.auth.uid)).data.role in 
+          ['super_admin', 'admin']);
     }
     
-    // ==================== مجلد مرفقات الطلبات ====================
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    function isPDF() {
+      return request.resource.contentType == 'application/pdf';
+    }
+    
+    // =====================================================================
+    // قواعد مجلد الصور الشخصية
+    // =====================================================================
+    match /avatars/{userId}/{fileName} {
+      
+      // قراءة الصور الشخصية - للجميع
+      allow read: if true;
+      
+      // رفع الصور الشخصية - للمستخدم نفسه أو الأدمن
+      allow write: if isAuthenticated() && 
+        (userId == request.auth.uid || isAdmin()) && 
+        isImage() &&
+        request.resource.size < 5 * 1024 * 1024; // 5MB كحد أقصى
+      
+      // حذف الصور الشخصية - للمستخدم نفسه أو الأدمن
+      allow delete: if isAuthenticated() && 
+        (userId == request.auth.uid || isAdmin());
+    }
+    
+    // =====================================================================
+    // قواعد مجلد مرفقات الطلبات
+    // =====================================================================
     match /request-attachments/{requestId}/{fileName} {
-      // قراءة المرفقات (للمشاهدين)
+      
+      // قراءة المرفقات - للمستخدمين المصادق عليهم
       allow read: if isAuthenticated();
       
-      // رفع المرفقات (لأي شخص يقدم طلب)
+      // رفع المرفقات - لأي شخص يقدم طلب
       allow write: if (
-        request.resource.contentType.matches('application/pdf|image/.*') &&
+        (isImage() || isPDF()) &&
         request.resource.size < 10 * 1024 * 1024 // 10MB كحد أقصى
       );
     }
     
-    // ==================== مجلد التقارير ====================
+    // =====================================================================
+    // قواعد مجلد التقارير
+    // =====================================================================
     match /reports/{reportId}/{fileName} {
-      // قراءة التقارير (للمراجعين)
+      
+      // قراءة التقارير - للمستخدمين المصادق عليهم
       allow read: if isAuthenticated();
       
-      // إنشاء تقارير (للمشرفين فقط)
-      allow write: if isAdmin();
+      // إنشاء تقارير - للأدمن فقط
+      allow write: if isAdmin() && isPDF();
     }
     
-    // ==================== مجلد النسخ الاحتياطية ====================
+    // =====================================================================
+    // قواعد مجلد النسخ الاحتياطية
+    // =====================================================================
     match /backups/{backupId}/{fileName} {
-      // الوصول للنسخ الاحتياطية (للمشرفين فقط)
-      allow read, write: if isAdmin();
+      
+      // الوصول للنسخ الاحتياطية - للسوبر أدمن فقط
+      allow read, write: if isSuperAdmin();
     }
     
-    // ==================== منع الملفات الضارة ====================
+    // =====================================================================
+    // قواعد عامة للأمان
+    // =====================================================================
     match /{allPaths=**} {
+      
       // منع أنواع الملفات الخطيرة
       allow write: if !request.resource.contentType.matches('application/x-executable|application/x-msdownload|text/html|application/javascript');
       
       // التحقق من حجم الملفات
       allow write: if request.resource.size < 50 * 1024 * 1024; // 50MB كحد أقصى عام
+      
+      // منع الوصول لأي مجلدات غير معرفة
+      allow read, write: if false;
     }
   }
 }
