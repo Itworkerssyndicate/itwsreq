@@ -1568,7 +1568,7 @@
                     
                     <div class="input-group">
                         <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                        <input type="password" id="login-password" placeholder="كلمة المرور" class="neon-input" onkeydown="handleLoginKeyDown(event, 'password')">
+                        <input type="password" id="login-password" placeholder="كلمة المرور (رقم الهاتف)" class="neon-input" onkeydown="handleLoginKeyDown(event, 'password')">
                     </div>
                     
                     <button class="btn-main" onclick="handleLogin()">
@@ -1576,7 +1576,7 @@
                     </button>
                     
                     <div class="login-info">
-                        <i class="fas fa-info-circle"></i> استخدم بيانات المستخدم المسجلة
+                        <i class="fas fa-info-circle"></i> استخدم اسم المستخدم ورقم الهاتف المسجل
                     </div>
                 </div>
             </section>
@@ -2179,7 +2179,7 @@
         };
         
         // =====================================================================
-        // تسجيل الدخول - (تم التعديل هنا فقط)
+        // تسجيل الدخول - (باستخدام رقم الهاتف ككلمة مرور)
         // =====================================================================
         window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
@@ -2205,7 +2205,7 @@
                     background: '#030514' 
                 });
                 
-                // البحث عن المستخدم
+                // البحث عن المستخدم باسم المستخدم
                 const snapshot = await db.collection('Users').where('username', '==', username).get();
                 
                 if (snapshot.empty) {
@@ -2235,40 +2235,13 @@
                     return;
                 }
                 
-                // التحقق من كلمة المرور - استخدام bcrypt إذا كان متاحاً
-                let passwordValid = false;
-                
-                try {
-                    // محاولة استخدام bcrypt للمقارنة
-                    if (typeof bcrypt !== 'undefined' && userData.password && userData.password.startsWith('$2')) {
-                        passwordValid = await bcrypt.compare(password, userData.password);
-                    } else {
-                        // إذا لم يكن bcrypt متاحاً أو كلمة المرور غير مشفرة بـ bcrypt
-                        // نستخدم المقارنة المباشرة (للتطوير فقط)
-                        const validPasswords = {
-                            'admin': 'keyatech@',
-                            'reviewer': 'review@2026',
-                            'data_entry': 'data@2026'
-                        };
-                        passwordValid = validPasswords[username] === password;
-                    }
-                } catch (error) {
-                    console.error('خطأ في مقارنة كلمة المرور:', error);
-                    // في حالة الخطأ، نستخدم المقارنة المباشرة كبديل
-                    const validPasswords = {
-                        'admin': 'keyatech@',
-                        'reviewer': 'review@2026',
-                        'data_entry': 'data@2026'
-                    };
-                    passwordValid = validPasswords[username] === password;
-                }
-                
-                if (!passwordValid) {
+                // التحقق من كلمة المرور - مقارنة مع رقم الهاتف
+                if (userData.phone !== password) {
                     Swal.close();
                     Swal.fire({ 
                         icon: 'error', 
                         title: 'خطأ', 
-                        text: 'كلمة المرور غير صحيحة', 
+                        text: 'رقم الهاتف غير صحيح', 
                         background: '#030514', 
                         confirmButtonColor: '#00ffff' 
                     });
