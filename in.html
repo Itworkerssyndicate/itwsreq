@@ -2,13 +2,13 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تهيئة قاعدة البيانات - نقابة تكنولوجيا المعلومات | VR 2.05.2026</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>بوابة الشكاوي - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05.2026</title>
     
     <!-- الخطوط الأساسية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Orbitron:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -16,47 +16,213 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
+    <!-- bcryptjs للتشفير الآمن -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- ملف التهيئة الجديد -->
+    <script src="firebase-config.js"></script>
+    
     <style>
+        /* نفس التنسيقات السابقة - مع إضافة تأثيرات Flip as a Coin */
+        :root {
+            --bg-deep: #030514;
+            --bg-dark: #0a0f1f;
+            --bg-medium: #111827;
+            --bg-light: #1e293b;
+            --bg-card: rgba(15, 23, 42, 0.25);
+            --bg-card-solid: #0f172a;
+            --bg-sidebar: rgba(3, 5, 20, 0.7);
+            --bg-input: rgba(3, 5, 20, 0.5);
+            --bg-hover: rgba(0, 255, 255, 0.1);
+            
+            --neon-cyan: #00ffff;
+            --neon-cyan-light: #7fffff;
+            --neon-cyan-dark: #00cccc;
+            --neon-cyan-glow: rgba(0, 255, 255, 0.7);
+            --neon-cyan-soft: rgba(0, 255, 255, 0.15);
+            
+            --neon-blue: #3b82f6;
+            --neon-blue-light: #60a5fa;
+            --neon-blue-dark: #2563eb;
+            --neon-blue-glow: rgba(59, 130, 246, 0.7);
+            
+            --neon-purple: #a855f7;
+            --neon-purple-light: #c084fc;
+            --neon-purple-dark: #9333ea;
+            --neon-purple-glow: rgba(168, 85, 247, 0.7);
+            --neon-purple-soft: rgba(168, 85, 247, 0.15);
+            
+            --neon-pink: #ec4899;
+            --neon-pink-light: #f472b6;
+            --neon-pink-dark: #db2777;
+            --neon-pink-glow: rgba(236, 72, 153, 0.7);
+            
+            --neon-green: #10b981;
+            --neon-green-glow: rgba(16, 185, 129, 0.7);
+            
+            --neon-red: #ef4444;
+            --neon-red-glow: rgba(239, 68, 68, 0.7);
+            
+            --neon-orange: #f97316;
+            --neon-orange-glow: rgba(249, 115, 22, 0.7);
+            
+            --gradient-prime: linear-gradient(135deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
+            --gradient-warm: linear-gradient(45deg, var(--neon-orange), var(--neon-pink), var(--neon-purple));
+            --gradient-cold: linear-gradient(315deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple));
+            --gradient-rainbow: linear-gradient(90deg, var(--neon-cyan), var(--neon-blue), var(--neon-purple), var(--neon-pink), var(--neon-orange));
+            
+            --gradient-primary: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            --gradient-secondary: linear-gradient(45deg, var(--neon-blue), var(--neon-pink));
+            --gradient-danger: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+            --gradient-success: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            
+            --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
+            --shadow-xl: 0 30px 60px rgba(0, 0, 0, 0.6);
+            --shadow-2xl: 0 40px 80px rgba(0, 0, 0, 0.7);
+            --shadow-3d: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
+            --shadow-neon: 0 0 30px var(--neon-cyan), 0 0 60px var(--neon-purple);
+            --shadow-neon-strong: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple), 0 0 150px var(--neon-pink);
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+            --space-2xl: 40px;
+            --space-3xl: 60px;
+            
+            --text-xs: 12px;
+            --text-sm: 14px;
+            --text-md: 16px;
+            --text-lg: 18px;
+            --text-xl: 20px;
+            --text-2xl: 24px;
+            --text-3xl: 30px;
+            --text-4xl: 36px;
+            --text-5xl: 48px;
+            
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
+            
+            --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+            --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+            
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-hover: var(--neon-cyan);
+            --border-radius-sm: 8px;
+            --border-radius-md: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 24px;
+            --border-radius-2xl: 32px;
+            --border-radius-3xl: 40px;
+            --border-radius-full: 50%;
+            
+            --perspective: 1000px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        body {
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #030514, #0a0f1f, #1a1f3a);
-            color: #fff;
-            direction: rtl;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
         }
         
+        body {
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            background: var(--bg-deep);
+            color: #ffffff;
+            direction: rtl;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        /* الخلفيات والجزيئات - نفس التنسيقات السابقة */
         body::before {
             content: '';
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 40%);
-            animation: cosmicWave 20s ease infinite;
-            z-index: -1;
+                radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 40% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+            animation: cosmicDrift 35s ease-in-out infinite alternate;
+            z-index: -2;
+            pointer-events: none;
         }
         
-        @keyframes cosmicWave {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
+        @keyframes cosmicDrift {
+            0% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.02); }
+            100% { opacity: 0.6; transform: scale(1); }
+        }
+        
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 30s linear infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(40px) translateX(20px); }
         }
         
         .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
             position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 50%;
+            animation: particleFloat 18s linear infinite;
+            opacity: 0.4;
+            box-shadow: 0 0 15px var(--neon-cyan);
+        }
+        
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0.4; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(720deg); opacity: 0; }
+        }
+        
+        .floating-elements {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -65,801 +231,1779 @@
             z-index: 0;
         }
         
-        .particle {
+        .floating-element {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: linear-gradient(135deg, #00ffff, #a855f7);
             border-radius: 50%;
-            animation: particleFloat 20s linear infinite;
-            opacity: 0.3;
+            filter: blur(70px);
+            opacity: 0.12;
+            animation: floatElegant 25s infinite alternate;
         }
         
-        @keyframes particleFloat {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        .floating-element:nth-child(1) {
+            width: 550px;
+            height: 550px;
+            top: -150px;
+            right: -150px;
+            background: radial-gradient(circle, var(--neon-cyan), transparent 80%);
+            animation-duration: 22s;
         }
         
-        .setup-container {
-            position: relative;
-            z-index: 10;
-            width: 90%;
-            max-width: 900px;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 60px;
-            padding: 50px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 50px rgba(0, 255, 255, 0.3);
-            animation: glowPulse 3s ease infinite;
+        .floating-element:nth-child(2) {
+            width: 650px;
+            height: 650px;
+            bottom: -200px;
+            left: -200px;
+            background: radial-gradient(circle, var(--neon-purple), transparent 80%);
+            animation-duration: 28s;
+            animation-delay: 2s;
         }
         
-        @keyframes glowPulse {
-            0%, 100% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 50px rgba(0, 255, 255, 0.3); }
-            50% { box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 2px rgba(0, 255, 255, 0.4) inset, 0 0 80px rgba(168, 85, 247, 0.4); }
+        @keyframes floatElegant {
+            0% { transform: translate(0, 0) scale(1); opacity: 0.1; }
+            50% { transform: translate(30px, -30px) scale(1.05); opacity: 0.15; }
+            100% { transform: translate(-20px, 20px) scale(0.95); opacity: 0.1; }
         }
         
-        .logo-wrapper {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .logo-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
-            border-radius: 50%;
+        /* شاشة الترحيب */
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #030514 0%, #0a0f1f 50%, #1a1f35 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
-            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
-            animation: rotate 10s linear infinite;
+            z-index: 9999;
+            overflow: hidden;
         }
         
-        @keyframes rotate {
+        .splash-screen.fade-out {
+            animation: splashFadeOut 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes splashFadeOut {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.1); visibility: hidden; }
+        }
+        
+        .splash-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(168, 85, 247, 0.15) 0%, transparent 50%);
+            animation: splashBgPulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes splashBgPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        
+        .splash-content {
+            text-align: center;
+            max-width: 700px;
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+            background: rgba(3, 5, 20, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 70px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
+            animation: splashContentAppear 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @keyframes splashContentAppear {
+            0% { opacity: 0; transform: scale(0.8) translateY(30px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .splash-logo-wrapper {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .splash-logo-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), transparent);
+            animation: rotateConic 6s linear infinite;
+            mask: radial-gradient(circle, transparent 60%, black 61%);
+            -webkit-mask: radial-gradient(circle, transparent 60%, black 61%);
+        }
+        
+        @keyframes rotateConic {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         
-        .logo-icon i {
-            font-size: 50px;
-            color: white;
+        .splash-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
+            animation: logoGlowPulse 3s ease-in-out infinite;
         }
         
-        .logo-wrapper h1 {
-            font-size: 36px;
+        @keyframes logoGlowPulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(168, 85, 247, 0.4); }
+        }
+        
+        .splash-title {
+            font-size: 48px;
             font-weight: 900;
-            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+            background: linear-gradient(135deg, #ffffff, var(--neon-cyan), var(--neon-purple));
             -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-        
-        .logo-wrapper p {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 16px;
-        }
-        
-        .setup-title {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .setup-title h2 {
-            font-size: 32px;
-            font-weight: 900;
-            color: #00ffff;
-            text-shadow: 0 0 20px #00ffff;
+            background-clip: text;
+            color: transparent;
             margin-bottom: 10px;
+            letter-spacing: 2px;
+            animation: titleShimmer 4s linear infinite;
+            background-size: 200% auto;
         }
         
-        .setup-title p {
+        @keyframes titleShimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .splash-subtitle {
+            font-size: 22px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+        }
+        
+        .splash-subtitle::before,
+        .splash-subtitle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+        }
+        
+        .splash-subtitle::before {
+            right: 100%;
+        }
+        
+        .splash-subtitle::after {
+            left: 100%;
+        }
+        
+        .splash-role {
+            font-size: 18px;
+            color: var(--neon-cyan);
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+        
+        .splash-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px var(--neon-purple);
+        }
+        
+        .splash-loader-container {
+            width: 280px;
+            margin: 30px auto;
+            position: relative;
+        }
+        
+        .splash-loader-bg {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .splash-loader-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
+            border-radius: 10px;
+            animation: loaderProgress 3s ease-in-out forwards;
+            position: relative;
+        }
+        
+        .splash-loader-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 100%;
+            background: white;
+            filter: blur(10px);
+            animation: loaderGlide 3s ease-in-out forwards;
+        }
+        
+        @keyframes loaderProgress {
+            0% { width: 0%; }
+            30% { width: 45%; }
+            60% { width: 75%; }
+            90% { width: 95%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes loaderGlide {
+            0% { right: 0; opacity: 0; }
+            50% { opacity: 1; }
+            100% { right: 100%; opacity: 0; }
+        }
+        
+        .splash-percentage {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--neon-cyan);
+            font-family: 'Orbitron', monospace;
+            font-size: 14px;
+            animation: percentagePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes percentagePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .splash-version {
+            margin-top: 30px;
+            font-family: 'Orbitron', monospace;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            letter-spacing: 2px;
+        }
+        
+        .splash-skip {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            color: var(--neon-cyan);
+            padding: 10px 25px;
+            border-radius: 40px;
+            font-size: 15px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .splash-skip:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px var(--neon-cyan);
+            border-color: transparent;
+        }
+        
+        /* الحاوية الرئيسية */
+        .main-wrapper {
+            max-width: 1300px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        
+        .main-wrapper.visible {
+            opacity: 1;
+        }
+        
+        /* تأثير الزجاج */
+        .glass-effect {
+            background: rgba(15, 23, 42, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-3d);
+            transition: var(--transition-normal);
+        }
+        
+        .glass-effect:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-neon), var(--shadow-3d);
+        }
+        
+        /* الهيدر مع Flip as a Coin */
+        .header-box {
+            margin-bottom: 40px;
+            padding: 25px 35px;
+            background: rgba(15, 23, 42, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 60px;
+            box-shadow: var(--shadow-3d);
+            animation: headerFloat 6s ease-in-out infinite;
+        }
+        
+        @keyframes headerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .header-logo-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            flex-shrink: 0;
+            perspective: 2000px;
+            cursor: pointer;
+        }
+        
+        .header-logo-container:hover .header-main-logo {
+            animation: flipCoin 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes flipCoin {
+            0% {
+                transform: rotateY(0deg);
+                box-shadow: 0 0 30px var(--neon-cyan);
+            }
+            25% {
+                transform: rotateY(180deg);
+                box-shadow: 0 0 50px var(--neon-purple);
+            }
+            50% {
+                transform: rotateY(360deg);
+                box-shadow: 0 0 70px var(--neon-pink);
+            }
+            75% {
+                transform: rotateY(540deg);
+                box-shadow: 0 0 50px var(--neon-purple);
+            }
+            100% {
+                transform: rotateY(720deg);
+                box-shadow: 0 0 30px var(--neon-cyan);
+            }
+        }
+        
+        .header-logo-container::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            animation: logoPulse 3s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes logoPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .header-main-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--neon-cyan);
+            box-shadow: 0 0 30px var(--neon-cyan);
+            object-fit: cover;
+            transition: all 0.5s;
+            transform-style: preserve-3d;
+            backface-visibility: visible;
+        }
+        
+        .header-main-logo.continuous-rotate {
+            animation: continuousFlip 8s infinite linear;
+        }
+        
+        @keyframes continuousFlip {
+            0% { transform: rotateY(0deg); }
+            25% { transform: rotateY(180deg); }
+            50% { transform: rotateY(360deg); }
+            75% { transform: rotateY(540deg); }
+            100% { transform: rotateY(720deg); }
+        }
+        
+        .header-titles {
+            flex: 1;
+        }
+        
+        .header-title-top {
+            display: block;
             color: rgba(255, 255, 255, 0.7);
             font-size: 16px;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
         }
         
-        .setup-card {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 40px;
-            padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .header-title-main {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
         
-        .admin-info {
-            margin-bottom: 30px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-        }
-        
-        .admin-info h3 {
-            color: #00ffff;
-            margin-bottom: 15px;
+        .header-role-box {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 20px;
-        }
-        
-        .info-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .info-item i {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #00ffff, #a855f7);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 18px;
-        }
-        
-        .info-item .label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
             margin-bottom: 3px;
         }
         
-        .info-item .value {
-            color: #00ffff;
-            font-size: 18px;
-            font-weight: 700;
-        }
-        
-        .warning-box {
-            background: rgba(239, 68, 68, 0.2);
-            border: 2px solid #ef4444;
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .warning-box i {
-            font-size: 50px;
-            color: #ef4444;
-            margin-bottom: 10px;
-        }
-        
-        .warning-box h4 {
-            color: #ef4444;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        
-        .warning-box p {
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .progress-container {
-            margin: 30px 0;
-        }
-        
-        .progress-step {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 12px;
-            border-radius: 15px;
-            transition: all 0.3s;
-            opacity: 0.5;
-        }
-        
-        .progress-step.active {
-            background: rgba(0, 255, 255, 0.1);
-            border-right: 4px solid #00ffff;
-            opacity: 1;
-        }
-        
-        .progress-step.completed {
-            opacity: 1;
-        }
-        
-        .progress-step.completed .step-number {
-            background: #10b981;
-            border-color: #10b981;
-        }
-        
-        .step-number {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: transparent;
-            border: 2px solid #00ffff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            color: #00ffff;
-        }
-        
-        .progress-step.completed .step-number {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-        
-        .step-info h4 {
+        .header-role-text {
+            color: var(--neon-cyan);
             font-size: 16px;
-            margin-bottom: 3px;
+            opacity: 0.9;
+        }
+        
+        .header-role-name {
             color: white;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
-        .step-info p {
-            font-size: 13px;
-            color: rgba(255, 255, 255, 0.5);
-        }
-        
-        .status-message {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            padding: 15px;
-            margin: 20px 0;
-            font-family: monospace;
+        .version-badge {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--neon-cyan);
+            border-radius: 40px;
+            padding: 10px 25px;
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
             font-size: 14px;
-            color: #00ffff;
-            border-left: 4px solid #00ffff;
-            max-height: 250px;
-            overflow-y: auto;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
         }
         
-        .status-message div {
-            margin-bottom: 5px;
-            padding: 5px 10px;
-            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+        .version-badge:hover {
+            background: var(--neon-cyan);
+            color: var(--bg-deep);
+            box-shadow: 0 0 30px var(--neon-cyan);
+            transform: scale(1.05);
         }
         
-        .actions {
+        /* أزرار التنقل */
+        .nav-buttons {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
         }
         
-        .btn {
+        .btn-nav {
             flex: 1;
+            min-width: 140px;
             padding: 15px 20px;
             border: none;
-            border-radius: 15px;
-            font-weight: 800;
+            border-radius: 30px;
+            background: rgba(15, 23, 42, 0.3);
+            color: #fff;
+            font-weight: 600;
             font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-nav::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .btn-nav:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-nav:hover {
+            transform: translateY(-3px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 25px var(--neon-cyan);
+        }
+        
+        .btn-nav.active {
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-color: transparent;
+            box-shadow: 0 0 30px var(--neon-cyan);
+        }
+        
+        .btn-nav.btn-admin-icon {
+            flex: 0.3;
+            min-width: 60px;
+        }
+        
+        /* الكروت */
+        .card {
+            padding: 35px;
+            border-radius: 50px;
+            margin-bottom: 30px;
+            background: rgba(15, 23, 42, 0.25);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-3d);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-neon), var(--shadow-3d);
+        }
+        
+        .card-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--neon-cyan);
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+        }
+        
+        /* الحقول */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+        }
+        
+        .input-group label i {
+            color: var(--neon-cyan);
+            margin-left: 8px;
+            width: 20px;
+        }
+        
+        .neon-input {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(3, 5, 20, 0.5);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        
+        .neon-input:focus {
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 25px var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+        
+        .neon-input:hover {
+            border-color: var(--neon-purple);
+        }
+        
+        select.neon-input {
+            cursor: pointer;
+        }
+        
+        textarea.neon-input {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .responsive-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        /* الزر الرئيسي */
+        .btn-main {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            color: #fff;
+            font-weight: 800;
+            font-size: 18px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            transition: all 0.3s ease;
+            gap: 12px;
+            margin-top: 25px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444, #f97316);
-            color: white;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        .btn-main::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg) translate(-100%, -100%);
+            transition: transform 0.6s;
         }
         
-        .btn-danger:hover:not(:disabled) {
+        .btn-main:hover::before {
+            transform: rotate(45deg) translate(100%, 100%);
+        }
+        
+        .btn-main:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 50px rgba(239, 68, 68, 0.8);
+            box-shadow: 0 0 40px var(--neon-cyan), 0 0 80px var(--neon-purple);
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #00ffff, #a855f7, #ec4899);
+        .btn-main:hover i {
+            transform: rotate(360deg);
+            transition: transform 0.5s;
+        }
+        
+        /* شاشة تسجيل الدخول */
+        .login-card {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+        
+        .login-icon i {
+            font-size: 40px;
             color: white;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
         }
         
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px rgba(0, 255, 255, 0.8);
-        }
-        
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            border-color: #00ffff;
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .footer {
+        .login-info {
             text-align: center;
-            margin-top: 20px;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 12px;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
         }
         
-        .version {
-            color: #00ffff;
+        /* كارت التصدير */
+        #request-card-container {
+            position: absolute;
+            left: -9999px;
+            top: 0;
+            width: 600px;
+        }
+        
+        .request-card-design {
+            width: 580px;
+            padding: 40px;
+            background: linear-gradient(145deg, #0f172a, #030514);
+            border-radius: 50px;
+            border: 5px solid var(--neon-cyan);
+            font-family: 'Tajawal', 'Cairo', sans-serif;
+            color: white;
+            text-align: center;
+            direction: rtl;
+            box-shadow: 0 40px 70px rgba(0, 255, 255, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .request-card-design::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.15), transparent 70%);
+            animation: rotateCard 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes rotateCard {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .request-card-logo-wrapper {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .request-card-logo-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+            animation: rotateConic 8s linear infinite;
+            mask: radial-gradient(circle, transparent 65%, black 66%);
+            -webkit-mask: radial-gradient(circle, transparent 65%, black 66%);
+        }
+        
+        .request-card-logo {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid var(--neon-cyan);
+            box-shadow: 0 0 40px var(--neon-cyan);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .request-card-title {
+            font-size: 26px;
+            background: linear-gradient(135deg, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0 5px;
+            font-weight: 900;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .request-card-subtitle {
+            font-size: 20px;
+            color: white;
+            margin: 5px 0;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .request-card-role {
+            color: var(--neon-cyan);
+            font-size: 16px;
+            margin-bottom: 25px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .request-card-content {
+            background: rgba(0, 255, 255, 0.08);
+            padding: 25px;
+            border-radius: 30px;
+            margin: 20px 0;
+            border: 2px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+            z-index: 2;
+            backdrop-filter: blur(5px);
+        }
+        
+        .request-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .request-card-row:last-child {
+            border-bottom: none;
+        }
+        
+        .request-card-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .request-card-value {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        
+        .request-card-value.ref {
+            color: var(--neon-cyan);
+            direction: ltr;
             font-family: 'Orbitron', monospace;
         }
         
-        .swal2-popup {
-            background: #030514 !important;
-            border: 2px solid #00ffff !important;
-            border-radius: 30px !important;
-            color: white !important;
+        .request-card-value.complaint {
+            color: #ef4444;
         }
         
-        .swal2-title {
-            color: #00ffff !important;
+        .request-card-value.suggestion {
+            color: #10b981;
         }
         
-        .swal2-confirm {
-            background: linear-gradient(135deg, #00ffff, #a855f7) !important;
-            border-radius: 10px !important;
+        .request-card-footer {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .request-card-version {
+            color: var(--neon-cyan);
+            font-size: 12px;
+            margin-top: 15px;
+            font-family: 'Orbitron', monospace;
+            position: relative;
+            z-index: 2;
+            opacity: 0.7;
+        }
+        
+        /* تحسينات الجوال */
+        @media (max-width: 1024px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            .responsive-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-buttons {
+                flex-direction: column;
+            }
+            .splash-logo-wrapper {
+                width: 140px;
+                height: 140px;
+            }
+            .splash-title {
+                font-size: 36px;
+            }
+            .splash-name {
+                font-size: 24px;
+            }
+            .header-title-main {
+                font-size: 26px;
+            }
+            .header-role-name {
+                font-size: 20px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-main-logo {
+                width: 80px;
+                height: 80px;
+            }
+            .header-title-main {
+                font-size: 22px;
+            }
+            .splash-content {
+                padding: 25px;
+                margin: 20px;
+            }
+            .request-card-design {
+                width: 500px;
+                padding: 30px;
+            }
+        }
+        
+        @media print {
+            * { display: none !important; }
+            body::before {
+                content: "لا يمكن طباعة هذه الصفحة";
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--bg-deep);
+                color: var(--neon-red);
+                font-size: 36px;
+                z-index: 999999;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- جزيئات متطايرة -->
     <div class="particles" id="particles"></div>
     
-    <div class="setup-container">
-        <div class="logo-wrapper">
-            <div class="logo-icon">
-                <i class="fas fa-database"></i>
+    <!-- عناصر عائمة -->
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+    
+    <!-- شاشة الترحيب -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-bg"></div>
+        
+        <div class="splash-content">
+            <div class="splash-logo-wrapper">
+                <img src="https://placehold.co/180x180/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="splash-logo" id="splash-logo">
             </div>
-            <h1>نقابة تكنولوجيا المعلومات</h1>
-            <p>تهيئة قاعدة البيانات - مسح شامل وإعادة بناء</p>
+            
+            <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
+            <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
+            
+            <div class="splash-role">النقيب العام</div>
+            <div class="splash-name">المهندس / محمود جميل</div>
+            
+            <div class="splash-loader-container">
+                <div class="splash-percentage" id="splash-percentage">0%</div>
+                <div class="splash-loader-bg">
+                    <div class="splash-loader-fill" id="splash-loader-fill"></div>
+                </div>
+            </div>
+            
+            <div class="splash-version">VR 2.05.2026</div>
         </div>
         
-        <div class="setup-title">
-            <h2>⚠️ تهيئة شاملة مع مسح كل البيانات ⚠️</h2>
-            <p>سيتم مسح جميع البيانات القديمة وإنشاء هيكل جديد بالكامل</p>
-        </div>
-        
-        <div class="setup-card">
-            <div class="admin-info">
-                <h3><i class="fas fa-user-shield"></i> المستخدم الأساسي (سوبر أدمن)</h3>
-                
-                <div class="info-item">
-                    <i class="fas fa-user"></i>
-                    <div style="flex: 1;">
-                        <div class="label">اسم المستخدم</div>
-                        <div class="value">Mahmoud Gamil</div>
-                    </div>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fas fa-lock"></i>
-                    <div style="flex: 1;">
-                        <div class="label">كلمة السر</div>
-                        <div class="value">keyatech@</div>
-                    </div>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fas fa-crown"></i>
-                    <div style="flex: 1;">
-                        <div class="label">الصلاحية</div>
-                        <div class="value">سوبر أدمن</div>
-                    </div>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fas fa-envelope"></i>
-                    <div style="flex: 1;">
-                        <div class="label">البريد الإلكتروني</div>
-                        <div class="value">mahmoud.gamil@itws.org</div>
-                    </div>
-                </div>
-            </div>
+        <button class="splash-skip" onclick="skipSplash()">
+            <i class="fas fa-forward"></i> تخطي
+        </button>
+    </div>
+    
+    <!-- المحتوى الرئيسي -->
+    <div class="main-wrapper" id="main-wrapper">
+        <div class="main-content" id="main-content">
             
-            <div class="warning-box">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h4>تحذير شديد الخطورة</h4>
-                <p>هذه العملية ستمسح <strong>جميع البيانات</strong> الموجودة حالياً في قاعدة البيانات بشكل نهائي ولا يمكن التراجع عنها.</p>
-            </div>
+            <!-- الهيدر مع اللوجو Flip as a Coin -->
+            <header class="header-box glass-effect">
+                <div class="header-content">
+                    <!-- اللوجو على اليمين مع تأثير Flip as a Coin -->
+                    <div class="header-logo-container" onclick="this.querySelector('.header-main-logo').classList.toggle('continuous-rotate')">
+                        <img src="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
+                    </div>
+                    
+                    <!-- النصوص جنب اللوجو -->
+                    <div class="header-titles">
+                        <span class="header-title-top">نقابة تكنولوجيا المعلومات والبرمجيات</span>
+                        <h1 class="header-title-main">بوابة الشكاوي والمقترحات</h1>
+                        <div class="header-role-box">
+                            <span class="header-role-text">النقيب العام</span>
+                            <span class="header-role-name">محمود جميل</span>
+                        </div>
+                    </div>
+                    
+                    <div class="version-badge">
+                        <i class="fas fa-crown"></i> VR 2.05.2026
+                    </div>
+                </div>
+            </header>
             
-            <div class="progress-container" id="progressContainer">
-                <div class="progress-step" id="step1">
-                    <div class="step-number">1</div>
-                    <div class="step-info">
-                        <h4>الاتصال بقاعدة البيانات</h4>
-                        <p>التحقق من الاتصال بـ Firebase</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step2">
-                    <div class="step-number">2</div>
-                    <div class="step-info">
-                        <h4>مسح جميع البيانات القديمة</h4>
-                        <p>حذف كل المستندات من جميع المجموعات</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step3">
-                    <div class="step-number">3</div>
-                    <div class="step-info">
-                        <h4>إنشاء هيكل Users</h4>
-                        <p>إعداد مجموعة المستخدمين</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step4">
-                    <div class="step-number">4</div>
-                    <div class="step-info">
-                        <h4>إنشاء المستخدم الأساسي</h4>
-                        <p>إضافة المستخدم Mahmoud Gamil</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step5">
-                    <div class="step-number">5</div>
-                    <div class="step-info">
-                        <h4>إنشاء هيكل Requests</h4>
-                        <p>إعداد مجموعة الطلبات</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step6">
-                    <div class="step-number">6</div>
-                    <div class="step-info">
-                        <h4>إنشاء هيكل Settings</h4>
-                        <p>إعداد إعدادات النظام</p>
-                    </div>
-                </div>
-                <div class="progress-step" id="step7">
-                    <div class="step-number">7</div>
-                    <div class="step-info">
-                        <h4>إنشاء الفهارس (Indexes)</h4>
-                        <p>تحسين أداء الاستعلامات</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="status-message" id="statusMessage">
-                <div>✨ بانتظار بدء عملية التهيئة...</div>
-            </div>
-            
-            <div class="actions">
-                <button class="btn btn-danger" id="startSetupBtn" onclick="window.startSetup()">
-                    <i class="fas fa-trash-alt"></i>
-                    بدء التهيئة والمسح
+            <!-- أزرار التنقل -->
+            <nav class="nav-buttons">
+                <button class="btn-nav active" onclick="switchView('submit')" id="btn-submit">
+                    <i class="fas fa-plus-circle"></i> تقديم طلب
                 </button>
-                <button class="btn btn-secondary" id="testConnectionBtn" onclick="window.testConnection()">
-                    <i class="fas fa-plug"></i>
-                    اختبار الاتصال
+                <button class="btn-nav" onclick="switchView('track')" id="btn-track">
+                    <i class="fas fa-search"></i> استعلام
                 </button>
-            </div>
+                <button class="btn-nav btn-admin-icon" onclick="switchView('login')" id="btn-login">
+                    <i class="fas fa-user-cog"></i>
+                </button>
+            </nav>
             
-            <div style="display: flex; gap: 10px; margin-top: 15px;">
-                <button class="btn btn-secondary" onclick="window.goToLogin()" style="flex: 1;">
-                    <i class="fas fa-sign-in-alt"></i>
-                    الذهاب لتسجيل الدخول
-                </button>
-                <button class="btn btn-secondary" onclick="window.goToAdmin()" style="flex: 1;">
-                    <i class="fas fa-tachometer-alt"></i>
-                    الذهاب للوحة التحكم
-                </button>
-            </div>
-        </div>
-        
-        <div class="footer">
-            <span>نقابة تكنولوجيا المعلومات والبرمجيات</span>
-            <span style="margin: 0 10px;">|</span>
-            <span class="version">VR 2.05.2026 SETUP</span>
+            <!-- شاشة تقديم الطلب -->
+            <section id="view-submit" class="view">
+                <div class="card">
+                    <a href="#" id="services-link" class="services-banner" style="display: none; background: var(--gradient-warm); padding: 15px; border-radius: 30px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none;">
+                        <i class="fas fa-globe"></i> <span>موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
+                    </a>
+                    
+                    <h2 class="card-title"><i class="fas fa-pen-alt"></i> نموذج تقديم طلب</h2>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-id-card"></i> نوع مقدم الطلب</label>
+                        <select id="u-member-type" class="neon-input" onchange="toggleMemberField()">
+                            <option value="عضو نقابة">عضو نقابة</option>
+                            <option value="غير عضو">غير عضو</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group" id="member-id-box">
+                        <label><i class="fas fa-qrcode"></i> رقم العضوية</label>
+                        <input type="text" id="u-member-id" placeholder="رقم العضوية" class="neon-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-user"></i> الاسم الكامل</label>
+                        <input type="text" id="u-name" placeholder="الاسم ثلاثي" class="neon-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                        <input type="text" id="u-nid" maxlength="14" placeholder="14 رقم" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+                    
+                    <div class="responsive-grid">
+                        <div class="input-group">
+                            <label><i class="fas fa-phone"></i> رقم الهاتف</label>
+                            <input type="text" id="u-phone" placeholder="01xxxxxxxxx" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                        </div>
+                        <div class="input-group">
+                            <label><i class="fas fa-map-marker-alt"></i> المحافظة</label>
+                            <select id="u-gov" class="neon-input">
+                                <option value="القاهرة">القاهرة</option>
+                                <option value="الجيزة">الجيزة</option>
+                                <option value="الإسكندرية">الإسكندرية</option>
+                                <option value="الدقهلية">الدقهلية</option>
+                                <option value="البحر الأحمر">البحر الأحمر</option>
+                                <option value="البحيرة">البحيرة</option>
+                                <option value="الفيوم">الفيوم</option>
+                                <option value="الغربية">الغربية</option>
+                                <option value="الإسماعيلية">الإسماعيلية</option>
+                                <option value="المنوفية">المنوفية</option>
+                                <option value="المنيا">المنيا</option>
+                                <option value="القليوبية">القليوبية</option>
+                                <option value="الوادي الجديد">الوادي الجديد</option>
+                                <option value="السويس">السويس</option>
+                                <option value="أسوان">أسوان</option>
+                                <option value="أسيوط">أسيوط</option>
+                                <option value="بني سويف">بني سويف</option>
+                                <option value="بورسعيد">بورسعيد</option>
+                                <option value="جنوب سيناء">جنوب سيناء</option>
+                                <option value="دمياط">دمياط</option>
+                                <option value="سوهاج">سوهاج</option>
+                                <option value="شمال سيناء">شمال سيناء</option>
+                                <option value="قنا">قنا</option>
+                                <option value="كفر الشيخ">كفر الشيخ</option>
+                                <option value="مطروح">مطروح</option>
+                                <option value="الأقصر">الأقصر</option>
+                                <option value="حلوان">حلوان</option>
+                                <option value="6 أكتوبر">6 أكتوبر</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-map-pin"></i> العنوان بالتفصيل</label>
+                        <input type="text" id="u-address" placeholder="الشارع - المنطقة - المدينة" class="neon-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-briefcase"></i> المهنة</label>
+                        <input type="text" id="u-job" placeholder="مثال: مهندس برمجيات" class="neon-input">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
+                        <select id="u-req-type" class="neon-input">
+                            <option value="شكوى">شكوى</option>
+                            <option value="اقتراح">اقتراح</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-edit"></i> تفاصيل الطلب</label>
+                        <textarea id="u-details" rows="4" placeholder="اكتب تفاصيل طلبك..." class="neon-input"></textarea>
+                    </div>
+                    
+                    <button class="btn-main" onclick="handleSubmit()">
+                        <i class="fas fa-paper-plane"></i> إرسال الطلب
+                    </button>
+                </div>
+            </section>
+            
+            <!-- شاشة الاستعلام -->
+            <section id="view-track" class="view" style="display: none;">
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <i class="fas fa-search" style="font-size: 60px; color: var(--neon-cyan);"></i>
+                        <h2 class="card-title">استعلام عن طلب</h2>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-id-card"></i> الرقم القومي</label>
+                        <input type="text" id="q-nid" placeholder="الرقم القومي" class="neon-input" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-tag"></i> نوع الطلب</label>
+                        <select id="q-type" class="neon-input">
+                            <option value="شكوى">شكوى</option>
+                            <option value="اقتراح">اقتراح</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-qrcode"></i> كود الطلب</label>
+                        <input type="text" id="q-ref" placeholder="مثال: REQ-0001-2026" class="neon-input">
+                    </div>
+                    
+                    <button class="btn-main" onclick="handleTrack()">
+                        <i class="fas fa-search"></i> استعلام
+                    </button>
+                </div>
+                
+                <div id="track-result-box" style="display: none;"></div>
+            </section>
+            
+            <!-- شاشة تسجيل الدخول -->
+            <section id="view-login" class="view" style="display: none;">
+                <div class="card login-card">
+                    <div class="login-icon">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    
+                    <h2 class="card-title">دخول المنظومة</h2>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-user"></i> اسم المستخدم</label>
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" class="neon-input" onkeydown="handleLoginKeyDown(event, 'username')">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label><i class="fas fa-lock"></i> كلمة المرور</label>
+                        <input type="password" id="login-password" placeholder="كلمة المرور" class="neon-input" onkeydown="handleLoginKeyDown(event, 'password')">
+                    </div>
+                    
+                    <button class="btn-main" onclick="handleLogin()">
+                        <i class="fas fa-sign-in-alt"></i> دخول
+                    </button>
+                    
+                    <div class="login-info">
+                        <i class="fas fa-info-circle"></i> استخدم بيانات المستخدم المسجلة
+                    </div>
+                </div>
+            </section>
         </div>
     </div>
     
-    <!-- Firebase v9 compat -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- كارت التصدير المخفي -->
+    <div id="request-card-container"></div>
     
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <script>
         // =====================================================================
-        // تعريف المتغيرات العامة في window
+        // التحقق من قاعدة البيانات عند تحميل الصفحة
         // =====================================================================
+        async function initializeApp() {
+            console.log('🔄 جاري تهيئة التطبيق...');
+            
+            try {
+                // التحقق من قاعدة البيانات
+                const dbStatus = await checkDatabase();
+                
+                if (dbStatus.success) {
+                    console.log('✅ قاعدة البيانات جاهزة');
+                    if (dbStatus.admin) {
+                        console.log('ℹ️ معلومات تسجيل الدخول:');
+                        console.log(`   👤 اسم المستخدم: ${dbStatus.admin.username}`);
+                        console.log(`   🔑 كلمة المرور: keyatech@`);
+                    }
+                } else {
+                    console.error('❌ فشل التحقق من قاعدة البيانات:', dbStatus.message);
+                }
+            } catch (error) {
+                console.error('❌ خطأ في تهيئة التطبيق:', error);
+            }
+        }
         
-        // تهيئة Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
-            authDomain: "itwsreq.firebaseapp.com",
-            projectId: "itwsreq",
-            storageBucket: "itwsreq.firebasestorage.app",
-            messagingSenderId: "417900842360",
-            appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
-            measurementId: "G-P3YQFRSBMM"
-        };
-        
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+        // تهيئة التطبيق
+        initializeApp();
         
         // =====================================================================
-        // المتغيرات العامة
+        // تحديث اللوجو في جميع الأماكن
         // =====================================================================
-        let setupInProgress = false;
-        let currentStep = 0;
+        function updateAllLogos() {
+            const savedLogo = getSavedLogo();
+            const logos = [
+                'splash-logo',
+                'header-main-logo'
+            ];
+            
+            logos.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.src = savedLogo;
+                    element.onerror = function() {
+                        this.src = 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo';
+                    };
+                }
+            });
+        }
         
-        const ADMIN_USERNAME = "Mahmoud Gamil";
-        const ADMIN_PASSWORD = "keyatech@";
-        const ADMIN_EMAIL = "mahmoud.gamil@itws.org";
+        // =====================================================================
+        // تحديث نسبة التحميل في شاشة الترحيب
+        // =====================================================================
+        function updateSplashPercentage() {
+            const percentageEl = document.getElementById('splash-percentage');
+            const loaderFill = document.getElementById('splash-loader-fill');
+            
+            let percentage = 0;
+            const interval = setInterval(() => {
+                if (percentage < 100) {
+                    percentage += 1;
+                    if (percentageEl) percentageEl.textContent = percentage + '%';
+                    
+                    if (loaderFill) {
+                        loaderFill.style.width = percentage + '%';
+                        
+                        if (percentage > 80) {
+                            loaderFill.style.background = 'linear-gradient(90deg, var(--neon-purple), var(--neon-pink))';
+                        } else if (percentage > 50) {
+                            loaderFill.style.background = 'linear-gradient(90deg, var(--neon-cyan), var(--neon-purple))';
+                        }
+                    }
+                } else {
+                    clearInterval(interval);
+                }
+            }, 30);
+        }
         
         // =====================================================================
         // إنشاء الجزيئات
         // =====================================================================
         function createParticles() {
             const container = document.getElementById('particles');
+            if (!container) return;
+            
             for (let i = 0; i < 50; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random() * 100 + '%';
-                p.style.top = Math.random() * 100 + '%';
                 p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 15 + Math.random() * 15 + 's';
                 container.appendChild(p);
             }
         }
         createParticles();
         
         // =====================================================================
-        // دوال مساعدة
+        // شاشة البداية
         // =====================================================================
-        function addStatusMessage(message, type = 'info') {
-            const statusDiv = document.getElementById('statusMessage');
-            const msgDiv = document.createElement('div');
+        window.addEventListener('load', function() {
+            // تحديث كل اللوجوهات
+            updateAllLogos();
             
-            const icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : (type === 'warning' ? '⚠️' : '🔄'));
-            const color = type === 'success' ? '#10b981' : (type === 'error' ? '#ef4444' : (type === 'warning' ? '#f97316' : '#00ffff'));
+            // بدأ تحديث نسبة التحميل
+            updateSplashPercentage();
             
-            msgDiv.style.color = color;
-            msgDiv.style.borderRight = `3px solid ${color}`;
-            msgDiv.style.paddingRight = '10px';
-            msgDiv.style.marginBottom = '8px';
-            
-            const time = new Date().toLocaleTimeString('ar-EG');
-            msgDiv.innerHTML = `${icon} [${time}] ${message}`;
-            
-            statusDiv.appendChild(msgDiv);
-            statusDiv.scrollTop = statusDiv.scrollHeight;
-        }
+            // إخفاء شاشة الترحيب بعد 4 ثواني
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('main-wrapper').classList.add('visible');
+                }, 1200);
+            }, 4000);
+        });
         
-        function updateProgressStep(step) {
-            currentStep = step;
-            for (let i = 1; i <= 7; i++) {
-                const stepEl = document.getElementById(`step${i}`);
-                stepEl.classList.remove('active', 'completed');
-                
-                if (i < step) {
-                    stepEl.classList.add('completed');
-                } else if (i === step) {
-                    stepEl.classList.add('active');
-                }
-            }
-        }
-        
-        function hashPassword(password) {
-            return btoa(password);
-        }
+        window.skipSplash = function() {
+            document.getElementById('splash-screen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-wrapper').classList.add('visible');
+            }, 1000);
+        };
         
         // =====================================================================
-        // الدوال العامة (الموجودة في window)
+        // تحديث اللوجو عند تحميل الصفحة
         // =====================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllLogos();
+        });
         
-        window.testConnection = async function() {
-            addStatusMessage('🔄 جاري اختبار الاتصال...', 'info');
+        // =====================================================================
+        // تبديل المشاهد
+        // =====================================================================
+        window.switchView = function(view) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
             
-            try {
-                const testRef = db.collection('_test_').doc('test');
-                await testRef.set({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                await testRef.delete();
-                
-                addStatusMessage('✅ الاتصال ناجح!', 'success');
-                Swal.fire({
-                    icon: 'success',
-                    title: 'اتصال ناجح',
-                    text: 'تم الاتصال بقاعدة البيانات بنجاح',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return true;
-            } catch (error) {
-                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ في الاتصال',
-                    text: error.message,
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return false;
+            document.getElementById('view-' + view).style.display = 'block';
+            
+            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
+            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
+            else if (view === 'login') document.getElementById('btn-login').classList.add('active');
+        };
+        window.switchView('submit');
+        
+        // =====================================================================
+        // حقل العضوية
+        // =====================================================================
+        window.toggleMemberField = function() {
+            const type = document.getElementById('u-member-type').value;
+            const box = document.getElementById('member-id-box');
+            const typeSelect = document.getElementById('u-req-type');
+            
+            if (type === 'عضو نقابة') {
+                box.style.display = 'block';
+                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            } else {
+                box.style.display = 'none';
+                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
             }
         };
         
-        window.startSetup = async function() {
-            if (setupInProgress) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'عملية جارية',
-                    text: 'يوجد عملية قيد التنفيذ',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return;
+        // =====================================================================
+        // التعامل مع زر Enter في تسجيل الدخول
+        // =====================================================================
+        window.handleLoginKeyDown = function(event, field) {
+            if (event.key === 'Enter') {
+                if (field === 'username') {
+                    document.getElementById('login-password').focus();
+                } else if (field === 'password') {
+                    handleLogin();
+                }
+                event.preventDefault();
             }
+        };
+        
+        // =====================================================================
+        // إنشاء كارت الطلب (الوصل)
+        // =====================================================================
+        async function generateRequestCard(data) {
+            const logo = getSavedLogo();
+            const date = getCurrentArabicDate();
+            const time = getCurrentArabicTime();
             
-            // تأكيد أول
-            const result = await Swal.fire({
-                title: '⚠️ تحذير ⚠️',
-                html: '<p style="color: #ef4444;">سيتم مسح جميع البيانات!</p><p>هل أنت متأكد؟</p>',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'نعم',
-                cancelButtonText: 'إلغاء',
-                background: '#030514',
-                confirmButtonColor: '#00ffff'
-            });
+            const container = document.getElementById('request-card-container');
+            container.innerHTML = '';
             
-            if (!result.isConfirmed) return;
+            const card = document.createElement('div');
+            card.className = 'request-card-design';
             
-            // تأكيد بكلمة السر
-            const { value: password } = await Swal.fire({
-                title: 'تأكيد التهيئة',
-                input: 'password',
-                inputPlaceholder: 'كلمة سر التهيئة (11111@)',
-                showCancelButton: true,
-                background: '#030514',
-                confirmButtonColor: '#00ffff'
-            });
+            const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
+            const typeClass = data.type === 'شكوى' ? 'complaint' : 'suggestion';
             
-            if (password !== '11111@') {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: 'كلمة السر غير صحيحة',
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                return;
-            }
+            card.innerHTML = `
+                <div class="request-card-logo-wrapper">
+                    <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo'">
+                </div>
+                <h2 class="request-card-title">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 class="request-card-subtitle">المهندس / محمود جميل</h3>
+                <p class="request-card-role">النقيب العام</p>
+                
+                <div class="request-card-content">
+                    <div class="request-card-row">
+                        <span class="request-card-label">رقم الطلب :</span>
+                        <span class="request-card-value ref">${data.refId}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">نوع الطلب :</span>
+                        <span class="request-card-value ${typeClass}" style="color: ${typeColor};">${data.type}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">اسم مقدم الطلب :</span>
+                        <span class="request-card-value">${data.name}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">الرقم القومي :</span>
+                        <span class="request-card-value">${data.nid}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">رقم الهاتف :</span>
+                        <span class="request-card-value">${data.phone}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">المحافظة :</span>
+                        <span class="request-card-value">${data.gov}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">المهنة :</span>
+                        <span class="request-card-value">${data.job}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">نوع العضوية :</span>
+                        <span class="request-card-value">${data.memberType} ${data.memberId && data.memberId !== 'غير عضو' ? '- ' + data.memberId : ''}</span>
+                    </div>
+                    <div class="request-card-row">
+                        <span class="request-card-label">تاريخ التقديم :</span>
+                        <span class="request-card-value">${date} - ${time}</span>
+                    </div>
+                </div>
+                
+                <div class="request-card-footer">
+                    هذا الإيصال معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
+                </div>
+                <div class="request-card-version">
+                    VR 2.05.2026
+                </div>
+            `;
             
-            setupInProgress = true;
-            document.getElementById('startSetupBtn').disabled = true;
-            document.getElementById('testConnectionBtn').disabled = true;
-            document.getElementById('statusMessage').innerHTML = '<div>✨ بدء التهيئة...</div>';
+            container.appendChild(card);
             
             try {
-                // الخطوة 1
-                updateProgressStep(1);
-                addStatusMessage('🚀 بدء التهيئة...', 'info');
-                await window.testConnection();
+                const canvas = await html2canvas(card, { 
+                    scale: 2,
+                    backgroundColor: '#030514',
+                    logging: false,
+                    allowTaint: false,
+                    useCORS: true
+                });
                 
-                // الخطوة 2 - مسح البيانات
-                updateProgressStep(2);
-                addStatusMessage('🔄 جاري مسح البيانات...', 'warning');
-                const collections = ['Requests', 'Users', 'Settings'];
-                let totalDeleted = 0;
+                const dataUrl = canvas.toDataURL('image/png');
                 
-                for (const col of collections) {
-                    try {
-                        const snapshot = await db.collection(col).get();
-                        if (snapshot.size > 0) {
-                            const batch = db.batch();
-                            snapshot.docs.forEach(doc => batch.delete(doc.ref));
-                            await batch.commit();
-                            totalDeleted += snapshot.size;
-                            addStatusMessage(`✅ تم مسح ${snapshot.size} من ${col}`, 'success');
-                        }
-                    } catch (e) {
-                        addStatusMessage(`ℹ️ ${col} غير موجودة`, 'info');
-                    }
+                const result = await Swal.fire({
+                    title: '✅ تم حفظ الطلب بنجاح',
+                    html: `
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <div style="color: #00ffff; font-size: 32px; font-weight: 900; margin-bottom: 15px; font-family: 'Orbitron', monospace;">${data.refId}</div>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 16px;">يمكنك تحميل الإيصال الآن</p>
+                        </div>
+                    `,
+                    imageUrl: dataUrl,
+                    imageWidth: 500,
+                    imageHeight: canvas.height * 500 / canvas.width,
+                    showCancelButton: true,
+                    confirmButtonText: '📥 تحميل الإيصال',
+                    cancelButtonText: '🔒 إغلاق',
+                    confirmButtonColor: '#00ffff',
+                    cancelButtonColor: 'rgba(255,255,255,0.2)',
+                    background: '#030514',
+                    color: '#fff',
+                    allowOutsideClick: false
+                });
+                
+                if (result.isConfirmed) {
+                    const link = document.createElement('a');
+                    link.download = `طلب_${data.refId}.png`;
+                    link.href = dataUrl;
+                    link.click();
                 }
-                addStatusMessage(`✅ تم مسح ${totalDeleted} مستند`, 'success');
                 
-                // الخطوة 3 - إنشاء Users
-                updateProgressStep(3);
-                addStatusMessage('🔄 إنشاء Users...', 'info');
-                const tempUser = db.collection('Users').doc('_temp_');
-                await tempUser.set({ temp: true });
-                await tempUser.delete();
-                
-                // الخطوة 4 - إنشاء admin
-                updateProgressStep(4);
-                addStatusMessage('🔄 إنشاء المستخدم الأساسي...', 'info');
-                const userId = ADMIN_USERNAME.replace(/\s+/g, '_').toLowerCase();
-                await db.collection('Users').doc(userId).set({
-                    username: ADMIN_USERNAME,
-                    password: hashPassword(ADMIN_PASSWORD),
-                    name: ADMIN_USERNAME,
-                    email: ADMIN_EMAIL,
-                    role: 'super_admin',
-                    isActive: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    permissions: {
-                        users: { view: true, create: true, edit: true, delete: true },
-                        requests: { view: true, create: true, edit: true, delete: true },
-                        settings: { view: true, edit: true }
-                    }
-                });
-                addStatusMessage(`✅ تم إنشاء المستخدم: ${ADMIN_USERNAME}`, 'success');
-                
-                // الخطوة 5 - إنشاء Requests
-                updateProgressStep(5);
-                addStatusMessage('🔄 إنشاء Requests...', 'info');
-                const tempReq = db.collection('Requests').doc('_temp_');
-                await tempReq.set({ temp: true });
-                await tempReq.delete();
-                
-                // الخطوة 6 - إنشاء Settings
-                updateProgressStep(6);
-                addStatusMessage('🔄 إنشاء Settings...', 'info');
-                await db.collection('Settings').doc('system').set({
-                    version: 'VR 2.05.2026',
-                    setupDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    setupBy: ADMIN_USERNAME,
-                    complaintPrefix: 'REQ',
-                    suggestionPrefix: 'REP',
-                    showServices: true,
-                    servicesUrl: 'https://services.egeng.org',
-                    servicesText: 'موقع تقديم خدمات النقابة'
-                });
-                
-                // الخطوة 7 - indexes
-                updateProgressStep(7);
-                addStatusMessage('📌 تم الانتهاء من التهيئة', 'success');
-                addStatusMessage(`🔑 كلمة السر: ${ADMIN_PASSWORD}`, 'warning');
-                
-                localStorage.setItem('system_setup_complete', 'true');
+            } catch (error) {
+                console.error('خطأ في إنشاء الكارت:', error);
                 
                 Swal.fire({
                     icon: 'success',
-                    title: '✅ تمت التهيئة',
+                    title: 'تم حفظ الطلب',
                     html: `
-                        <p>تمت تهيئة النظام بنجاح</p>
-                        <p style="color: #00ffff;">المستخدم: ${ADMIN_USERNAME}</p>
-                        <p style="color: #f97316;">كلمة السر: ${ADMIN_PASSWORD}</p>
+                        <div style="text-align: center;">
+                            <div style="color: #00ffff; font-size: 32px; margin: 20px 0; font-family: 'Orbitron', monospace;">${data.refId}</div>
+                            <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 15px;">
+                                <p style="color: #fff; font-size: 18px;">${data.name}</p>
+                                <p style="color: ${typeColor}; font-size: 16px;">${data.type}</p>
+                                <p style="color: rgba(255,255,255,0.6); font-size: 14px;">${date}</p>
+                            </div>
+                        </div>
                     `,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
+            }
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 1000);
+        }
+        
+        // =====================================================================
+        // تقديم الطلب
+        // =====================================================================
+        window.handleSubmit = async function() {
+            const name = document.getElementById('u-name')?.value.trim();
+            const nid = document.getElementById('u-nid')?.value.trim();
+            const phone = document.getElementById('u-phone')?.value.trim();
+            const gov = document.getElementById('u-gov')?.value;
+            const address = document.getElementById('u-address')?.value.trim();
+            const job = document.getElementById('u-job')?.value.trim();
+            const type = document.getElementById('u-req-type')?.value;
+            const details = document.getElementById('u-details')?.value.trim();
+            const memberType = document.getElementById('u-member-type')?.value;
+            const memberId = document.getElementById('u-member-id')?.value.trim() || "غير عضو";
+            
+            if (!name || !nid || !phone || !gov || !address || !job || !details) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                return;
+            }
+            
+            if (!validateNationalID(nid)) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي 14 رقم', background: '#030514', confirmButtonColor: '#00ffff' });
+                return;
+            }
+            
+            if (!validatePhone(phone)) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الهاتف غير صحيح', background: '#030514', confirmButtonColor: '#00ffff' });
+                return;
+            }
+            
+            try {
+                Swal.fire({ title: 'جاري حفظ الطلب', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
+                
+                const refId = await generateRequestNumber(type);
+                const initialStatus = type === 'شكوى' ? "تم الاستلام" : "لم يقرأ";
+                
+                const requestData = {
+                    refId,
+                    name, nid, phone, gov, address, job, type, details, memberType, memberId,
+                    status: initialStatus,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    tracking: [{
+                        status: initialStatus,
+                        comment: type === 'شكوى' ? 'تم استلام شكواك' : 'تم استلام اقتراحك',
+                        time: new Date().toLocaleString('ar-EG'),
+                        isFinal: false
+                    }]
+                };
+                
+                await db.collection('Requests').doc(refId).set(requestData);
+                Swal.close();
+                
+                await generateRequestCard(requestData);
+                
+                ['u-name','u-nid','u-phone','u-address','u-job','u-details','u-member-id'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = '';
+                });
                 
             } catch (error) {
-                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
-                Swal.fire({
-                    icon: 'error',
-                    title: 'خطأ',
-                    text: error.message,
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
+                console.error('خطأ في تقديم الطلب:', error);
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+            }
+        };
+        
+        // =====================================================================
+        // الاستعلام
+        // =====================================================================
+        window.handleTrack = async function() {
+            const nid = document.getElementById('q-nid')?.value.trim();
+            const ref = document.getElementById('q-ref')?.value.trim();
+            const type = document.getElementById('q-type')?.value;
+            
+            if (!nid || !ref || !type) {
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                return;
+            }
+            
+            try {
+                Swal.fire({ title: 'جاري البحث', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
+                
+                const snapshot = await db.collection('Requests')
+                    .where('nid', '==', nid)
+                    .where('refId', '==', ref)
+                    .where('type', '==', type)
+                    .get();
+                
+                Swal.close();
+                
+                if (snapshot.empty) {
+                    Swal.fire({ icon: 'error', title: 'لا يوجد', text: 'لا يوجد طلب', background: '#030514', confirmButtonColor: '#00ffff' });
+                    return;
+                }
+                
+                const data = snapshot.docs[0].data();
+                if (data.createdAt?.toDate) data.createdAtDate = data.createdAt.toDate();
+                
+                const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
+                const currentIdx = stages.indexOf(data.status);
+                const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
+                
+                const dateStr = data.createdAtDate ? data.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
+                
+                const timeline = data.tracking?.length ? data.tracking.slice().reverse().map(t => `
+                    <div class="timeline-card">
+                        <div class="timeline-header">
+                            <span class="timeline-status">${t.status}</span>
+                            <span class="timeline-time">${t.time}</span>
+                        </div>
+                        <p>${t.comment}</p>
+                    </div>
+                `).join('') : '<p style="text-align:center">لا يوجد مسار زمني</p>';
+                
+                const html = `
+                    <div class="card" style="margin-top:20px;">
+                        <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                            <div style="width:60px; height:60px; background:var(--gradient-primary); border-radius:50%; display:flex; align-items:center; justify-content:center;">
+                                <i class="fas fa-qrcode" style="font-size:30px; color:#fff;"></i>
+                            </div>
+                            <div>
+                                <h3 style="color:var(--neon-cyan);">${data.refId}</h3>
+                                <p>${data.name}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin-bottom:15px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <div><span style="color:var(--text-muted);">النوع:</span> ${data.type}</div>
+                                <div><span style="color:var(--text-muted);">الحالة:</span> ${data.status}</div>
+                                <div><span style="color:var(--text-muted);">التاريخ:</span> ${dateStr}</div>
+                                <div><span style="color:var(--text-muted);">المحافظة:</span> ${data.gov}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="track-container">
+                            <div class="track-line-bg"></div>
+                            <div class="track-line-fill" style="width:${progress}%;"></div>
+                            <div class="track-points">
+                                ${stages.map((s, i) => `
+                                    <div class="track-point">
+                                        <div class="track-dot ${i <= currentIdx ? 'active' : ''}">
+                                            ${i <= currentIdx ? '<i class="fas fa-check"></i>' : ''}
+                                        </div>
+                                        <span class="track-label">${s}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        
+                        <h4 style="color:var(--neon-cyan); margin:15px 0 10px;">المسار الزمني</h4>
+                        <div style="max-height:250px; overflow-y:auto;">${timeline}</div>
+                    </div>
+                `;
+                
+                document.getElementById('track-result-box').innerHTML = html;
+                document.getElementById('track-result-box').style.display = 'block';
+                
+            } catch (error) {
+                console.error('خطأ في الاستعلام:', error);
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+            }
+        };
+        
+        // =====================================================================
+        // تسجيل الدخول باستخدام النظام الجديد
+        // =====================================================================
+        window.handleLogin = async function() {
+            const username = document.getElementById('login-username')?.value.trim();
+            const password = document.getElementById('login-password')?.value.trim();
+            
+            if (!username || !password) {
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: 'أدخل اسم المستخدم وكلمة المرور', 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
                 });
-            } finally {
-                setupInProgress = false;
-                document.getElementById('startSetupBtn').disabled = false;
-                document.getElementById('testConnectionBtn').disabled = false;
+                return;
+            }
+            
+            try {
+                Swal.fire({ 
+                    title: 'جاري التحقق', 
+                    text: 'الرجاء الانتظار...',
+                    allowOutsideClick: false, 
+                    didOpen: () => Swal.showLoading(), 
+                    background: '#030514' 
+                });
+                
+                // استخدام دالة تسجيل الدخول الموحدة
+                const result = await loginUser(username, password);
+                
+                Swal.close();
+                
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'مرحباً بك',
+                        html: `<p style="color: #00ffff; font-size:20px;">${result.user.name || result.user.username}</p><p>جاري التحويل...</p>`,
+                        timer: 2000,
+                        showConfirmButton: false,
+                        background: '#030514'
+                    }).then(() => {
+                        window.location.href = 'admin.html';
+                    });
+                } else {
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ', 
+                        text: result.message, 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
+                }
+                
+            } catch (error) {
+                Swal.close();
+                console.error('❌ خطأ في تسجيل الدخول:', error);
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: error.message || 'حدث خطأ غير متوقع', 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
+                });
             }
         };
-        
-        window.goToLogin = function() {
-            window.location.href = 'index.html';
-        };
-        
-        window.goToAdmin = function() {
-            window.location.href = 'admin.html';
-        };
-        
-        // التحقق من التهيئة السابقة
-        window.addEventListener('load', function() {
-            if (localStorage.getItem('system_setup_complete') === 'true') {
-                addStatusMessage('ℹ️ تم تهيئة النظام مسبقاً', 'info');
-            }
-        });
     </script>
 </body>
 </html>
