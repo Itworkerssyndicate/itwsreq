@@ -91,7 +91,6 @@
             --space-xl: 32px;
             --space-2xl: 40px;
             --space-3xl: 60px;
-            --space-4xl: 80px;
             
             --text-xs: 12px;
             --text-sm: 14px;
@@ -102,21 +101,16 @@
             --text-3xl: 30px;
             --text-4xl: 36px;
             --text-5xl: 48px;
-            --text-6xl: 60px;
-            --text-7xl: 72px;
             
-            --transition-fast: 0.15s;
-            --transition-normal: 0.25s;
-            --transition-slow: 0.4s;
-            --transition-very-slow: 0.8s;
+            --transition-fast: 0.2s;
+            --transition-normal: 0.3s;
+            --transition-slow: 0.5s;
             
             --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
             --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
             --ease-elastic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
-            --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
             
             --border-color: rgba(255, 255, 255, 0.1);
-            --border-color-strong: rgba(255, 255, 255, 0.2);
             --border-hover: var(--neon-cyan);
             --border-radius-sm: 8px;
             --border-radius-md: 12px;
@@ -124,11 +118,9 @@
             --border-radius-xl: 24px;
             --border-radius-2xl: 32px;
             --border-radius-3xl: 40px;
-            --border-radius-4xl: 50px;
             --border-radius-full: 50%;
             
             --perspective: 1000px;
-            --perspective-3d: 2000px;
         }
         
         * {
@@ -143,7 +135,7 @@
         }
         
         body {
-            font-family: 'Tajawal', 'Cairo', 'Space Grotesk', sans-serif;
+            font-family: 'Tajawal', 'Cairo', sans-serif;
             background: var(--bg-deep);
             color: #ffffff;
             direction: rtl;
@@ -153,11 +145,7 @@
             line-height: 1.6;
         }
         
-        /* -------------------- مؤشر الماوس المخصص (سريع) -------------------- */
-        * {
-            cursor: none !important;
-        }
-        
+        /* مؤشر الماوس المخصص السريع */
         .custom-cursor {
             width: 24px;
             height: 24px;
@@ -196,6 +184,7 @@
             -moz-user-select: none !important;
             -ms-user-select: none !important;
             user-select: none !important;
+            cursor: none !important;
         }
         
         input, textarea, select {
@@ -211,7 +200,7 @@
             cursor: none !important;
         }
         
-        /* -------------------- الخلفية الكونية -------------------- */
+        /* خلفية متحركة */
         body::before {
             content: '';
             position: fixed;
@@ -253,7 +242,7 @@
             100% { transform: translateY(30px); }
         }
         
-        /* -------------------- عناصر عائمة -------------------- */
+        /* عناصر عائمة */
         .floating-elements {
             position: fixed;
             top: 0;
@@ -293,7 +282,7 @@
             100% { transform: translate(30px, -30px); }
         }
         
-        /* -------------------- جزيئات متطايرة -------------------- */
+        /* جزيئات متطايرة */
         .particles {
             position: fixed;
             top: 0;
@@ -319,7 +308,7 @@
             100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
         }
         
-        /* -------------------- شاشة البداية - لوجو بيلف بهدوء -------------------- */
+        /* شاشة البداية */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -353,8 +342,8 @@
         }
         
         .splash-logo-wrapper {
-            width: 250px;
-            height: 250px;
+            width: 200px;
+            height: 200px;
             margin: 0 auto 25px;
         }
         
@@ -374,7 +363,7 @@
         }
         
         .splash-title {
-            font-size: var(--text-5xl);
+            font-size: var(--text-4xl);
             font-weight: 900;
             background: var(--gradient-primary);
             -webkit-background-clip: text;
@@ -384,13 +373,13 @@
         }
         
         .splash-subtitle {
-            font-size: var(--text-xl);
+            font-size: var(--text-lg);
             color: rgba(255, 255, 255, 0.8);
             margin-bottom: 30px;
         }
         
         .splash-loader {
-            width: 300px;
+            width: 250px;
             height: 4px;
             background: rgba(255, 255, 255, 0.1);
             margin: 20px auto;
@@ -439,7 +428,7 @@
             box-shadow: 0 0 20px var(--neon-cyan);
         }
         
-        /* -------------------- الحاوية الرئيسية -------------------- */
+        /* الحاوية الرئيسية */
         .main-wrapper {
             max-width: 1300px;
             margin: 0 auto;
@@ -455,7 +444,7 @@
             opacity: 1;
         }
         
-        /* -------------------- تأثير الزجاج -------------------- */
+        /* تأثير الزجاج */
         .glass-effect {
             background: var(--bg-card);
             backdrop-filter: blur(12px);
@@ -469,7 +458,7 @@
             box-shadow: var(--shadow-neon), var(--shadow-3d);
         }
         
-        /* -------------------- الهيدر -------------------- */
+        /* الهيدر */
         .header-box {
             margin-bottom: var(--space-2xl);
             padding: var(--space-xl);
@@ -495,33 +484,27 @@
         
         .header-logo-container {
             position: relative;
-        }
-        
-        .header-logo-container::after {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border-radius: 50%;
-            background: radial-gradient(circle, var(--neon-cyan-glow), transparent 70%);
-            animation: logoPulse 2s ease infinite;
-            z-index: -1;
-        }
-        
-        @keyframes logoPulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.05); }
+            width: 130px;
+            height: 130px;
+            perspective: var(--perspective);
         }
         
         .header-main-logo {
-            width: 130px;
-            height: 130px;
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             border: 3px solid var(--neon-cyan);
             box-shadow: 0 0 30px var(--neon-cyan);
             object-fit: cover;
+            animation: flipLogo 8s infinite ease-in-out;
+        }
+        
+        @keyframes flipLogo {
+            0% { transform: rotateY(0deg); }
+            25% { transform: rotateY(180deg); }
+            50% { transform: rotateY(360deg); }
+            75% { transform: rotateY(180deg); }
+            100% { transform: rotateY(0deg); }
         }
         
         .header-titles {
@@ -552,7 +535,6 @@
             margin-bottom: 3px;
         }
         
-        /* المهندس / محمود جميل - بدون ظل */
         .header-name {
             display: block;
             font-size: var(--text-xl);
@@ -571,7 +553,7 @@
             backdrop-filter: blur(10px);
         }
         
-        /* -------------------- أزرار التنقل -------------------- */
+        /* أزرار التنقل */
         .nav-buttons {
             display: flex;
             gap: var(--space-md);
@@ -616,7 +598,7 @@
             min-width: 60px;
         }
         
-        /* -------------------- الكروت -------------------- */
+        /* الكروت */
         .card {
             padding: var(--space-xl);
             border-radius: var(--border-radius-2xl);
@@ -641,7 +623,7 @@
             text-align: center;
         }
         
-        /* -------------------- الحقول -------------------- */
+        /* الحقول */
         .input-group {
             margin-bottom: var(--space-lg);
         }
@@ -694,7 +676,7 @@
             gap: var(--space-md);
         }
         
-        /* -------------------- الزر الرئيسي -------------------- */
+        /* الزر الرئيسي */
         .btn-main {
             width: 100%;
             padding: var(--space-lg);
@@ -723,7 +705,7 @@
             transition: transform 0.4s;
         }
         
-        /* -------------------- شاشة تسجيل الدخول -------------------- */
+        /* شاشة تسجيل الدخول */
         .login-card {
             max-width: 450px;
             margin: 0 auto;
@@ -753,7 +735,7 @@
             font-size: var(--text-xs);
         }
         
-        /* -------------------- المسار الزمني -------------------- */
+        /* المسار الزمني */
         .track-container {
             position: relative;
             width: 100%;
@@ -830,6 +812,7 @@
             padding: 4px 8px;
             border-radius: 15px;
             max-width: 100px;
+            text-align: center;
         }
         
         .timeline-card {
@@ -863,7 +846,7 @@
             border-right: 1px dashed rgba(255, 255, 255, 0.1);
         }
         
-        /* -------------------- كارت التصدير -------------------- */
+        /* كارت التصدير (الوصل) */
         #request-card-container {
             position: absolute;
             left: -9999px;
@@ -871,7 +854,7 @@
             width: 600px;
         }
         
-        /* -------------------- تحسينات الجوال -------------------- */
+        /* تحسينات الجوال */
         @media (max-width: 1024px) {
             .header-content {
                 flex-direction: column;
@@ -887,11 +870,11 @@
                 flex-direction: column;
             }
             .splash-logo-wrapper {
-                width: 200px;
-                height: 200px;
+                width: 150px;
+                height: 150px;
             }
             .splash-title {
-                font-size: var(--text-3xl);
+                font-size: var(--text-2xl);
             }
             .custom-cursor {
                 display: none;
@@ -902,16 +885,12 @@
         }
         
         @media (max-width: 480px) {
-            .splash-logo-wrapper {
-                width: 150px;
-                height: 150px;
-            }
             .header-main-logo {
                 width: 100px;
                 height: 100px;
             }
             .header-title {
-                font-size: var(--text-2xl);
+                font-size: var(--text-xl);
             }
         }
         
@@ -948,11 +927,11 @@
         <div class="floating-element"></div>
     </div>
     
-    <!-- شاشة البداية - لوجو بيلف بهدوء -->
+    <!-- شاشة البداية -->
     <div class="splash-screen" id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo-wrapper">
-                <img src="https://placehold.co/250x250/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
+                <img src="https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo" alt="شعار" class="splash-logo" id="splash-logo">
             </div>
             <h1 class="splash-title">نقابة تكنولوجيا المعلومات</h1>
             <p class="splash-subtitle">بوابة الشكاوي والمقترحات</p>
@@ -971,7 +950,7 @@
     <div class="main-wrapper" id="main-wrapper">
         <div class="main-content" id="main-content">
             
-            <!-- الهيدر مع اللوجو -->
+            <!-- الهيدر مع اللوجو اللي بيلف -->
             <header class="header-box glass-effect">
                 <div class="header-content">
                     <div class="header-logo-container">
@@ -1148,12 +1127,12 @@
                     
                     <div class="input-group">
                         <label><i class="fas fa-user"></i> اسم المستخدم</label>
-                        <input type="text" id="login-username" placeholder="اسم المستخدم" class="neon-input">
+                        <input type="text" id="login-username" placeholder="اسم المستخدم" class="neon-input" onkeydown="handleLoginKeyDown(event, 'username')">
                     </div>
                     
                     <div class="input-group">
                         <label><i class="fas fa-lock"></i> كلمة المرور</label>
-                        <input type="password" id="login-password" placeholder="كلمة المرور" class="neon-input">
+                        <input type="password" id="login-password" placeholder="كلمة المرور" class="neon-input" onkeydown="handleLoginKeyDown(event, 'password')">
                     </div>
                     
                     <button class="btn-main" onclick="handleLogin()">
@@ -1197,27 +1176,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        
-        // =====================================================================
-        // متغيرات الإعدادات
-        // =====================================================================
-        const STORAGE_KEYS = {
-            LOGO_URL: 'union_logo_url',
-            SERVICES_URL: 'services_url',
-            SERVICES_TEXT: 'services_text',
-            SHOW_SERVICES: 'show_services',
-            COMPLAINT_PREFIX: 'complaint_prefix',
-            SUGGESTION_PREFIX: 'suggestion_prefix'
-        };
-        
-        const DEFAULT_SETTINGS = {
-            LOGO_URL: 'https://placehold.co/250x250/0a0f1f/00ffff/png?text=Logo',
-            SERVICES_URL: 'https://services.egeng.org',
-            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
-            SHOW_SERVICES: true,
-            COMPLAINT_PREFIX: 'REQ',
-            SUGGESTION_PREFIX: 'REP'
-        };
         
         // =====================================================================
         // مؤشر الماوس المخصص السريع
@@ -1271,25 +1229,13 @@
         };
         
         // =====================================================================
-        // تحميل اللوجو من الإعدادات
+        // تحميل اللوجو المحفوظ
         // =====================================================================
-        function getSavedLogo() {
-            return localStorage.getItem(STORAGE_KEYS.LOGO_URL) || DEFAULT_SETTINGS.LOGO_URL;
+        const savedLogo = localStorage.getItem('union_logo_url');
+        if (savedLogo) {
+            document.getElementById('splash-logo').src = savedLogo;
+            document.getElementById('header-main-logo').src = savedLogo;
         }
-        
-        function updateAllLogos() {
-            const logo = getSavedLogo();
-            const splashLogo = document.getElementById('splash-logo');
-            const headerLogo = document.getElementById('header-main-logo');
-            
-            if (splashLogo) splashLogo.src = logo;
-            if (headerLogo) headerLogo.src = logo;
-        }
-        
-        // =====================================================================
-        // تحميل الإعدادات
-        // =====================================================================
-        window.addEventListener('load', updateAllLogos);
         
         // =====================================================================
         // تبديل المشاهد
@@ -1324,6 +1270,22 @@
         };
         
         // =====================================================================
+        // التعامل مع زر Enter في تسجيل الدخول
+        // =====================================================================
+        window.handleLoginKeyDown = function(event, field) {
+            if (event.key === 'Enter') {
+                if (field === 'username') {
+                    // الانتقال إلى حقل كلمة السر
+                    document.getElementById('login-password').focus();
+                } else if (field === 'password') {
+                    // تنفيذ تسجيل الدخول
+                    handleLogin();
+                }
+                event.preventDefault();
+            }
+        };
+        
+        // =====================================================================
         // التحقق من البيانات
         // =====================================================================
         function validateNationalID(nid) {
@@ -1332,6 +1294,190 @@
         
         function validatePhone(phone) {
             return /^01[0-2,5]{1}[0-9]{8}$/.test(phone);
+        }
+        
+        // =====================================================================
+        // إنشاء رقم الطلب
+        // =====================================================================
+        async function generateRequestNumber(type) {
+            const year = new Date().getFullYear();
+            const prefix = type === 'شكوى' ? 'REQ' : 'REP';
+            
+            try {
+                const snapshot = await db.collection("Requests")
+                    .where("type", "==", type)
+                    .get();
+                
+                let maxSerial = 0;
+                snapshot.forEach(doc => {
+                    const ref = doc.data().refId;
+                    if (ref) {
+                        const serial = parseInt(ref.split('-')[1]);
+                        if (!isNaN(serial) && serial > maxSerial) maxSerial = serial;
+                    }
+                });
+                
+                return `${prefix}-${(maxSerial + 1).toString().padStart(4,'0')}-${year}`;
+            } catch (e) {
+                return `${prefix}-${Date.now().toString().slice(-6)}-${year}`;
+            }
+        }
+        
+        // =====================================================================
+        // إنشاء كارت الطلب (الوصل) - نسخة مطورة
+        // =====================================================================
+        async function generateRequestCard(data) {
+            const logo = savedLogo || 'https://placehold.co/130x130/0a0f1f/00ffff/png?text=Logo';
+            const date = new Date().toLocaleDateString('ar-EG');
+            const time = new Date().toLocaleTimeString('ar-EG');
+            
+            const container = document.getElementById('request-card-container');
+            container.innerHTML = '';
+            
+            // إنشاء الكارت
+            const card = document.createElement('div');
+            card.style.cssText = `
+                width: 550px;
+                padding: 35px;
+                background: linear-gradient(135deg, #0a0f1f, #030514);
+                border-radius: 30px;
+                border: 4px solid #00ffff;
+                font-family: 'Tajawal', 'Cairo', sans-serif;
+                color: white;
+                text-align: center;
+                direction: rtl;
+                box-shadow: 0 20px 40px rgba(0,255,255,0.4);
+                position: relative;
+                overflow: hidden;
+            `;
+            
+            // خلفية متحركة خفيفة
+            const glow = document.createElement('div');
+            glow.style.cssText = `
+                position: absolute;
+                top: -50%;
+                left: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(0,255,255,0.1), transparent 70%);
+                animation: rotate 20s linear infinite;
+                pointer-events: none;
+            `;
+            card.appendChild(glow);
+            
+            // الشعار
+            const logoImg = document.createElement('img');
+            logoImg.src = logo;
+            logoImg.style.cssText = `
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                border: 3px solid #00ffff;
+                margin: 0 auto 15px;
+                display: block;
+                box-shadow: 0 0 30px #00ffff;
+                object-fit: cover;
+                position: relative;
+                z-index: 2;
+            `;
+            
+            // نوع الطلب (شكوى أو اقتراح)
+            const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
+            
+            // المحتوى
+            const contentDiv = document.createElement('div');
+            contentDiv.style.cssText = 'position: relative; z-index: 2;';
+            contentDiv.innerHTML = `
+                <h2 style="font-size: 24px; background: linear-gradient(135deg, #00ffff, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 5px 0;">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
+                <h3 style="font-size: 18px; color: white; margin: 5px 0;">المهندس / محمود جميل</h3>
+                <p style="color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 20px;">النقيب العام</p>
+                
+                <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 20px; margin: 15px 0; border: 2px solid rgba(0,255,255,0.3);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 16px;">رقم الطلب :</span>
+                        <span style="color: #00ffff; font-weight: 700; font-size: 18px; direction: ltr;">${data.refId}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 16px;">نوع الطلب :</span>
+                        <span style="color: ${typeColor}; font-weight: 700; font-size: 18px;">${data.type}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 16px;">اسم مقدم الطلب :</span>
+                        <span style="font-weight: 600; font-size: 18px;">${data.name}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 0;">
+                        <span style="color: rgba(255,255,255,0.6); font-weight: 600; font-size: 16px;">تاريخ التقديم :</span>
+                        <span style="font-weight: 600; font-size: 18px;">${date} - ${time}</span>
+                    </div>
+                </div>
+                
+                <div style="color: rgba(255,255,255,0.4); font-size: 14px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 10px;">
+                    هذا الإيصال معتمد من نقابة تكنولوجيا المعلومات والبرمجيات
+                </div>
+                <div style="color: #00ffff; font-size: 12px; margin-top: 10px; font-family: 'Orbitron', monospace;">
+                    VR 2.05.2026
+                </div>
+            `;
+            
+            card.appendChild(logoImg);
+            card.appendChild(contentDiv);
+            container.appendChild(card);
+            
+            try {
+                // التقاط الكارت كصورة
+                const canvas = await html2canvas(card, { 
+                    scale: 2, 
+                    backgroundColor: '#030514',
+                    logging: false
+                });
+                
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // عرض الكارت في SweetAlert
+                const result = await Swal.fire({
+                    title: '✅ تم حفظ الطلب بنجاح',
+                    html: `
+                        <div style="text-align: center; margin-bottom: 10px;">
+                            <div style="color: #00ffff; font-size: 28px; font-weight: 900; margin-bottom: 10px;">${data.refId}</div>
+                            <p style="color: rgba(255,255,255,0.8);">يمكنك تحميل الإيصال الآن</p>
+                        </div>
+                    `,
+                    imageUrl: dataUrl,
+                    imageWidth: 450,
+                    imageHeight: canvas.height * 450 / canvas.width,
+                    showCancelButton: true,
+                    confirmButtonText: '📥 تحميل الإيصال',
+                    cancelButtonText: '🔒 إغلاق',
+                    confirmButtonColor: '#00ffff',
+                    cancelButtonColor: 'rgba(255,255,255,0.2)',
+                    background: '#030514',
+                    color: '#fff',
+                    allowOutsideClick: false
+                });
+                
+                if (result.isConfirmed) {
+                    // تحميل الصورة
+                    const link = document.createElement('a');
+                    link.download = `طلب_${data.refId}.png`;
+                    link.href = dataUrl;
+                    link.click();
+                }
+                
+            } catch (error) {
+                console.error('خطأ في إنشاء الكارت:', error);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم حفظ الطلب',
+                    html: `<div style="color: #00ffff; font-size: 28px;">${data.refId}</div>`,
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+            
+            // تنظيف
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 1000);
         }
         
         // =====================================================================
@@ -1367,17 +1513,16 @@
             try {
                 Swal.fire({ title: 'جاري الحفظ', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
                 
-                const year = new Date().getFullYear();
-                const prefix = type === 'شكوى' ? 'REQ' : 'REP';
-                const refId = prefix + '-0001-' + year;
+                const refId = await generateRequestNumber(type);
+                const initialStatus = type === 'شكوى' ? "تم الاستلام" : "لم يقرأ";
                 
                 const requestData = {
                     refId,
                     name, nid, phone, gov, address, job, type, details, memberType, memberId,
-                    status: type === 'شكوى' ? 'تم الاستلام' : 'لم يقرأ',
+                    status: initialStatus,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     tracking: [{
-                        status: type === 'شكوى' ? 'تم الاستلام' : 'لم يقرأ',
+                        status: initialStatus,
                         comment: type === 'شكوى' ? 'تم استلام شكواك' : 'تم استلام اقتراحك',
                         time: new Date().toLocaleString('ar-EG'),
                         isFinal: false
@@ -1387,14 +1532,10 @@
                 await db.collection('Requests').doc(refId).set(requestData);
                 Swal.close();
                 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم الحفظ',
-                    text: refId,
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
+                // إنشاء كارت الطلب
+                await generateRequestCard(requestData);
                 
+                // مسح الحقول
                 ['u-name','u-nid','u-phone','u-address','u-job','u-details','u-member-id'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
@@ -1435,10 +1576,13 @@
                 }
                 
                 const data = snapshot.docs[0].data();
+                if (data.createdAt?.toDate) data.createdAtDate = data.createdAt.toDate();
                 
                 const stages = [...(data.tracking?.map(t => t.status) || []), "تم الإغلاق النهائي"];
                 const currentIdx = stages.indexOf(data.status);
                 const progress = stages.length > 0 ? (currentIdx / (stages.length - 1)) * 100 : 0;
+                
+                const dateStr = data.createdAtDate ? data.createdAtDate.toLocaleDateString('ar-EG') : 'غير محدد';
                 
                 const timeline = data.tracking?.length ? data.tracking.slice().reverse().map(t => `
                     <div class="timeline-card">
@@ -1459,6 +1603,15 @@
                             <div>
                                 <h3 style="color:var(--neon-cyan);">${data.refId}</h3>
                                 <p>${data.name}</p>
+                            </div>
+                        </div>
+                        
+                        <div style="background:rgba(0,0,0,0.3); padding:15px; border-radius:15px; margin-bottom:15px;">
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                <div><span style="color:var(--text-muted);">النوع:</span> ${data.type}</div>
+                                <div><span style="color:var(--text-muted);">الحالة:</span> ${data.status}</div>
+                                <div><span style="color:var(--text-muted);">التاريخ:</span> ${dateStr}</div>
+                                <div><span style="color:var(--text-muted);">المحافظة:</span> ${data.gov}</div>
                             </div>
                         </div>
                         
@@ -1540,13 +1693,14 @@
                 localStorage.setItem('currentUserId', userDoc.id);
                 localStorage.setItem('currentUser', userData.username);
                 localStorage.setItem('currentUserRole', userData.role);
+                localStorage.setItem('currentUserLastLogin', lastLoginStr);
                 
                 Swal.close();
                 
                 Swal.fire({
                     icon: 'success',
                     title: 'مرحباً بك',
-                    html: `<p style="color: #00ffff;">${userData.name || userData.username}</p><p>جاري التحويل...</p>`,
+                    html: `<p style="color: #00ffff; font-size:20px;">${userData.name || userData.username}</p><p>جاري التحويل...</p>`,
                     timer: 2000,
                     showConfirmButton: false,
                     background: '#030514'
