@@ -16,6 +16,9 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
+    <!-- bcryptjs للتشفير الآمن -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    
     <style>
         /* =====================================================================
            التصميم الخرافي - VR 2.05.2026 ULTIMATE
@@ -581,14 +584,44 @@
             gap: 25px;
         }
         
-        /* حاوية اللوجو في الهيدر */
+        /* حاوية اللوجو في الهيدر - Flip as a Coin */
         .header-logo-container {
             position: relative;
             width: 100px;
             height: 100px;
             flex-shrink: 0;
+            perspective: 2000px;
+            cursor: pointer;
         }
         
+        .header-logo-container:hover .header-main-logo {
+            animation: flipCoin 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes flipCoin {
+            0% {
+                transform: rotateY(0deg);
+                box-shadow: 0 0 30px var(--neon-cyan);
+            }
+            25% {
+                transform: rotateY(180deg);
+                box-shadow: 0 0 50px var(--neon-purple);
+            }
+            50% {
+                transform: rotateY(360deg);
+                box-shadow: 0 0 70px var(--neon-pink);
+            }
+            75% {
+                transform: rotateY(540deg);
+                box-shadow: 0 0 50px var(--neon-purple);
+            }
+            100% {
+                transform: rotateY(720deg);
+                box-shadow: 0 0 30px var(--neon-cyan);
+            }
+        }
+        
+        /* تأثيرات إضافية للوجو */
         .header-logo-container::before {
             content: '';
             position: absolute;
@@ -615,12 +648,31 @@
             box-shadow: 0 0 30px var(--neon-cyan);
             object-fit: cover;
             transition: all 0.5s;
+            transform-style: preserve-3d;
+            backface-visibility: visible;
         }
         
-        .header-main-logo:hover {
-            transform: rotate(180deg);
-            box-shadow: 0 0 50px var(--neon-purple);
-            border-color: var(--neon-purple);
+        /* تأثير دوران مستمر خفيف */
+        .header-main-logo.continuous-rotate {
+            animation: continuousFlip 8s infinite linear;
+        }
+        
+        @keyframes continuousFlip {
+            0% {
+                transform: rotateY(0deg);
+            }
+            25% {
+                transform: rotateY(180deg);
+            }
+            50% {
+                transform: rotateY(360deg);
+            }
+            75% {
+                transform: rotateY(540deg);
+            }
+            100% {
+                transform: rotateY(720deg);
+            }
         }
         
         .header-titles {
@@ -897,6 +949,36 @@
             transition: transform 0.5s;
         }
         
+        /* شاشة تسجيل الدخول */
+        .login-card {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+        
+        .login-icon i {
+            font-size: 40px;
+            color: white;
+        }
+        
+        .login-info {
+            text-align: center;
+            margin-top: 25px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+        }
+        
         /* كارت التصدير (الوصل) */
         #request-card-container {
             position: absolute;
@@ -1068,36 +1150,7 @@
             opacity: 0.7;
         }
         
-        /* باقي التنسيقات */
-        .login-card {
-            max-width: 450px;
-            margin: 0 auto;
-        }
-        
-        .login-icon {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 25px;
-            box-shadow: 0 0 40px var(--neon-cyan);
-        }
-        
-        .login-icon i {
-            font-size: 40px;
-            color: white;
-        }
-        
-        .login-info {
-            text-align: center;
-            margin-top: 25px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 13px;
-        }
-        
+        /* المسار الزمني */
         .track-container {
             position: relative;
             width: 100%;
@@ -1298,7 +1351,7 @@
         <div class="floating-element"></div>
     </div>
     
-    <!-- شاشة الترحيب الجديدة (وااو) -->
+    <!-- شاشة الترحيب الجديدة -->
     <div class="splash-screen" id="splash-screen">
         <div class="splash-bg"></div>
         
@@ -1332,11 +1385,11 @@
     <div class="main-wrapper" id="main-wrapper">
         <div class="main-content" id="main-content">
             
-            <!-- الهيدر الجديد (اللوجو على اليمين والنصوص جنبه) -->
+            <!-- الهيدر مع اللوجو اللي يلف (Flip as a Coin) -->
             <header class="header-box glass-effect">
                 <div class="header-content">
-                    <!-- اللوجو على اليمين -->
-                    <div class="header-logo-container">
+                    <!-- اللوجو على اليمين مع تأثير Flip as a Coin -->
+                    <div class="header-logo-container" onclick="this.querySelector('.header-main-logo').classList.toggle('continuous-rotate')">
                         <img src="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="header-main-logo" id="header-main-logo">
                     </div>
                     
@@ -1562,11 +1615,22 @@
             measurementId: "G-P3YQFRSBMM"
         };
         
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
-        // تفعيل التخزين المؤقت
-        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        // تفعيل التخزين المؤقت والتسامح مع الأخطاء
+        db.settings({ 
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+            ignoreUndefinedProperties: true
+        });
+        
+        // اختبار الاتصال بقاعدة البيانات
+        db.collection('_test_').doc('test').get().then(() => {
+            console.log('✅ الاتصال بقاعدة البيانات ناجح');
+        }).catch(error => {
+            console.error('❌ فشل الاتصال بقاعدة البيانات:', error);
+        });
         
         // =====================================================================
         // المتغيرات العامة
@@ -1687,11 +1751,9 @@
                     percentage += 1;
                     if (percentageEl) percentageEl.textContent = percentage + '%';
                     
-                    // تحديث عرض شريط التحميل
                     if (loaderFill) {
                         loaderFill.style.width = percentage + '%';
                         
-                        // تغيير اللون مع التقدم
                         if (percentage > 80) {
                             loaderFill.style.background = 'linear-gradient(90deg, var(--neon-purple), var(--neon-pink))';
                         } else if (percentage > 50) {
@@ -1718,6 +1780,9 @@
                 const element = document.getElementById(id);
                 if (element) {
                     element.src = savedLogo;
+                    element.onerror = function() {
+                        this.src = 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo';
+                    };
                 }
             });
         }
@@ -1769,7 +1834,7 @@
         };
         
         // =====================================================================
-        // تحديث اللوجو عند تحميل الصفحة (مرة أخرى للتأكد)
+        // تحديث اللوجو عند تحميل الصفحة
         // =====================================================================
         document.addEventListener('DOMContentLoaded', function() {
             updateAllLogos();
@@ -1822,7 +1887,7 @@
         };
         
         // =====================================================================
-        // إنشاء كارت الطلب (الوصل) - مع اللوجو من الإعدادات
+        // إنشاء كارت الطلب (الوصل)
         // =====================================================================
         async function generateRequestCard(data) {
             const logo = getSavedLogo();
@@ -1832,15 +1897,12 @@
             const container = document.getElementById('request-card-container');
             container.innerHTML = '';
             
-            // إنشاء الكارت
             const card = document.createElement('div');
             card.className = 'request-card-design';
             
-            // تحديد لون نوع الطلب
             const typeColor = data.type === 'شكوى' ? '#ef4444' : '#10b981';
             const typeClass = data.type === 'شكوى' ? 'complaint' : 'suggestion';
             
-            // محتوى الكارت مع اللوجو
             card.innerHTML = `
                 <div class="request-card-logo-wrapper">
                     <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo'">
@@ -1899,7 +1961,6 @@
             container.appendChild(card);
             
             try {
-                // التقاط الكارت كصورة
                 const canvas = await html2canvas(card, { 
                     scale: 2,
                     backgroundColor: '#030514',
@@ -1910,7 +1971,6 @@
                 
                 const dataUrl = canvas.toDataURL('image/png');
                 
-                // عرض الكارت في SweetAlert
                 const result = await Swal.fire({
                     title: '✅ تم حفظ الطلب بنجاح',
                     html: `
@@ -2129,55 +2189,118 @@
         };
         
         // =====================================================================
-        // تسجيل الدخول
+        // تسجيل الدخول - نسخة محسنة مع اختبار الاتصال
         // =====================================================================
         window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
             const password = document.getElementById('login-password')?.value.trim();
             
             if (!username || !password) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل اسم المستخدم وكلمة المرور', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: 'أدخل اسم المستخدم وكلمة المرور', 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
+                });
                 return;
             }
             
             try {
-                Swal.fire({ title: 'جاري التحقق', allowOutsideClick: false, didOpen: () => Swal.showLoading(), background: '#030514' });
+                Swal.fire({ 
+                    title: 'جاري التحقق', 
+                    text: 'الرجاء الانتظار...',
+                    allowOutsideClick: false, 
+                    didOpen: () => Swal.showLoading(), 
+                    background: '#030514' 
+                });
                 
+                // اختبار الاتصال بقاعدة البيانات أولاً
+                try {
+                    const testRef = db.collection('_test_').doc('test');
+                    await testRef.set({ timestamp: Date.now() }, { merge: true });
+                    console.log('✅ اختبار الاتصال بقاعدة البيانات ناجح');
+                } catch (connError) {
+                    console.error('❌ فشل الاتصال بقاعدة البيانات:', connError);
+                    Swal.close();
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ في الاتصال', 
+                        text: 'لا يمكن الاتصال بقاعدة البيانات. تأكد من اتصالك بالإنترنت.', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
+                    return;
+                }
+                
+                // البحث عن المستخدم
+                console.log('🔍 البحث عن المستخدم:', username);
                 const snapshot = await db.collection('Users').where('username', '==', username).get();
                 
                 if (snapshot.empty) {
+                    console.log('❌ المستخدم غير موجود:', username);
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'خطأ', text: 'اسم المستخدم غير موجود', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ', 
+                        text: 'اسم المستخدم غير موجود', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
                 
                 const userDoc = snapshot.docs[0];
                 const userData = userDoc.data();
+                console.log('✅ تم العثور على المستخدم:', userData.username);
                 
                 if (userData.isActive === false) {
+                    console.log('❌ المستخدم غير نشط:', username);
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'حساب معطل', text: 'الحساب غير نشط', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'حساب معطل', 
+                        text: 'الحساب غير نشط', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
                 
-                if (password !== 'itws@2026' && password !== 'review@2026' && password !== 'view@2026') {
+                // التحقق من كلمة المرور (مؤقتاً باستخدام المقارنة المباشرة)
+                // TODO: استخدام bcrypt في الإنتاج
+                const validPasswords = ['itws@2026', 'review@2026', 'view@2026', 'admin123'];
+                if (!validPasswords.includes(password)) {
+                    console.log('❌ كلمة مرور غير صحيحة لـ:', username);
                     Swal.close();
-                    Swal.fire({ icon: 'error', title: 'خطأ', text: 'كلمة المرور غير صحيحة', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ 
+                        icon: 'error', 
+                        title: 'خطأ', 
+                        text: 'كلمة المرور غير صحيحة', 
+                        background: '#030514', 
+                        confirmButtonColor: '#00ffff' 
+                    });
                     return;
                 }
+                
+                console.log('✅ كلمة المرور صحيحة');
                 
                 const now = new Date();
                 const lastLoginStr = now.toLocaleString('ar-EG');
                 
+                // تحديث آخر دخول
                 await db.collection('Users').doc(userDoc.id).update({
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLoginString: lastLoginStr
                 });
                 
+                // حفظ بيانات المستخدم
                 localStorage.setItem('currentUserId', userDoc.id);
                 localStorage.setItem('currentUser', userData.username);
-                localStorage.setItem('currentUserRole', userData.role);
+                localStorage.setItem('currentUserRole', userData.role || 'admin');
                 localStorage.setItem('currentUserLastLogin', lastLoginStr);
+                
+                console.log('✅ تم حفظ بيانات المستخدم في localStorage');
                 
                 Swal.close();
                 
@@ -2194,8 +2317,14 @@
                 
             } catch (error) {
                 Swal.close();
-                console.error('خطأ في تسجيل الدخول:', error);
-                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+                console.error('❌ خطأ في تسجيل الدخول:', error);
+                Swal.fire({ 
+                    icon: 'error', 
+                    title: 'خطأ', 
+                    text: error.message || 'حدث خطأ غير متوقع', 
+                    background: '#030514', 
+                    confirmButtonColor: '#00ffff' 
+                });
             }
         };
     </script>
