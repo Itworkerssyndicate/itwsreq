@@ -87,11 +87,11 @@
             position: relative;
             z-index: 10;
             width: 90%;
-            max-width: 800px;
+            max-width: 900px;
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(20px);
             border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 50px;
+            border-radius: 60px;
             padding: 50px;
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(0, 255, 255, 0.2) inset, 0 0 50px rgba(0, 255, 255, 0.3);
             animation: glowPulse 3s ease infinite;
@@ -152,7 +152,7 @@
         }
         
         .setup-title h2 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 900;
             color: #00ffff;
             text-shadow: 0 0 20px #00ffff;
@@ -167,7 +167,7 @@
         /* بطاقة التهيئة */
         .setup-card {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 30px;
+            border-radius: 40px;
             padding: 30px;
             margin-bottom: 30px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -176,14 +176,27 @@
         /* معلومات المستخدم الأساسي */
         .admin-info {
             margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .admin-info h3 {
+            color: #00ffff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
         }
         
         .info-item {
             display: flex;
             align-items: center;
             gap: 15px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
             margin-bottom: 10px;
         }
@@ -210,7 +223,32 @@
             color: #00ffff;
             font-size: 18px;
             font-weight: 700;
-            font-family: monospace;
+        }
+        
+        /* تحذير المسح */
+        .warning-box {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid #ef4444;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .warning-box i {
+            font-size: 50px;
+            color: #ef4444;
+            margin-bottom: 10px;
+        }
+        
+        .warning-box h4 {
+            color: #ef4444;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .warning-box p {
+            color: rgba(255, 255, 255, 0.8);
         }
         
         /* شريط التقدم */
@@ -276,20 +314,20 @@
         /* رسائل الحالة */
         .status-message {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 15px;
             margin: 20px 0;
             font-family: monospace;
             font-size: 14px;
             color: #00ffff;
             border-left: 4px solid #00ffff;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
         }
         
         .status-message div {
             margin-bottom: 5px;
-            padding: 5px;
+            padding: 5px 10px;
             border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
         }
         
@@ -313,6 +351,17 @@
             justify-content: center;
             gap: 10px;
             transition: all 0.3s ease;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            transform: translateY(-5px);
+            box-shadow: 0 0 50px rgba(239, 68, 68, 0.8);
         }
         
         .btn-primary {
@@ -386,37 +435,36 @@
                 <i class="fas fa-database"></i>
             </div>
             <h1>نقابة تكنولوجيا المعلومات</h1>
-            <p>تهيئة قاعدة البيانات وإنشاء الهيكل الأساسي</p>
+            <p>تهيئة قاعدة البيانات - مسح شامل وإعادة بناء</p>
         </div>
         
         <!-- العنوان -->
         <div class="setup-title">
-            <h2>⚡ إعداد النظام لأول مرة ⚡</h2>
-            <p>سيتم إنشاء جميع المجموعات والفهارس والمستخدم الأساسي</p>
+            <h2>⚠️ تهيئة شاملة مع مسح كل البيانات ⚠️</h2>
+            <p>سيتم مسح جميع البيانات القديمة وإنشاء هيكل جديد بالكامل</p>
         </div>
         
         <!-- بطاقة معلومات المستخدم الأساسي -->
         <div class="setup-card">
-            <h3 style="color: #00ffff; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <i class="fas fa-user-shield"></i>
-                المستخدم الأساسي (سوبر أدمن)
-            </h3>
-            
             <div class="admin-info">
+                <h3><i class="fas fa-user-shield"></i> المستخدم الأساسي (سوبر أدمن)</h3>
+                
                 <div class="info-item">
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-user"></i>
                     <div style="flex: 1;">
-                        <div class="label">البريد الإلكتروني</div>
-                        <div class="value" id="admin-email">admin@itws.org</div>
+                        <div class="label">اسم المستخدم</div>
+                        <div class="value" id="admin-username">Mahmoud Gamil</div>
                     </div>
                 </div>
+                
                 <div class="info-item">
                     <i class="fas fa-lock"></i>
                     <div style="flex: 1;">
-                        <div class="label">كلمة المرور المؤقتة</div>
-                        <div class="value" id="admin-password">سيتم إنشاؤها تلقائياً</div>
+                        <div class="label">كلمة السر</div>
+                        <div class="value" id="admin-password">keyatech@</div>
                     </div>
                 </div>
+                
                 <div class="info-item">
                     <i class="fas fa-crown"></i>
                     <div style="flex: 1;">
@@ -424,6 +472,22 @@
                         <div class="value">سوبر أدمن (Super Admin)</div>
                     </div>
                 </div>
+                
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <div style="flex: 1;">
+                        <div class="label">البريد الإلكتروني (للاستخدام)</div>
+                        <div class="value">mahmoud.gamil@itws.org</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- تحذير المسح -->
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h4>تحذير شديد الخطورة</h4>
+                <p>هذه العملية ستمسح <strong>جميع البيانات</strong> الموجودة حالياً في قاعدة البيانات (الطلبات، المستخدمين، الإعدادات) بشكل نهائي ولا يمكن التراجع عنها.</p>
+                <p style="margin-top: 10px; color: #ef4444;">يرجى أخذ نسخة احتياطية إذا لزم الأمر قبل المتابعة.</p>
             </div>
             
             <!-- شريط التقدم -->
@@ -438,33 +502,40 @@
                 <div class="progress-step" id="step2">
                     <div class="step-number">2</div>
                     <div class="step-info">
-                        <h4>إنشاء مجموعة Users</h4>
-                        <p>إضافة هيكل المستخدمين</p>
+                        <h4>مسح جميع البيانات القديمة</h4>
+                        <p>حذف كل المستندات من جميع المجموعات</p>
                     </div>
                 </div>
                 <div class="progress-step" id="step3">
                     <div class="step-number">3</div>
                     <div class="step-info">
-                        <h4>إنشاء المستخدم الأساسي</h4>
-                        <p>إضافة المستخدم admin بصلاحيات كاملة</p>
+                        <h4>إنشاء هيكل Users</h4>
+                        <p>إعداد مجموعة المستخدمين</p>
                     </div>
                 </div>
                 <div class="progress-step" id="step4">
                     <div class="step-number">4</div>
                     <div class="step-info">
-                        <h4>إنشاء مجموعة Requests</h4>
-                        <p>إعداد هيكل الطلبات</p>
+                        <h4>إنشاء المستخدم الأساسي</h4>
+                        <p>إضافة المستخدم Mahmoud Gamil</p>
                     </div>
                 </div>
                 <div class="progress-step" id="step5">
                     <div class="step-number">5</div>
                     <div class="step-info">
-                        <h4>إنشاء مجموعة Settings</h4>
-                        <p>إعداد إعدادات النظام</p>
+                        <h4>إنشاء هيكل Requests</h4>
+                        <p>إعداد مجموعة الطلبات</p>
                     </div>
                 </div>
                 <div class="progress-step" id="step6">
                     <div class="step-number">6</div>
+                    <div class="step-info">
+                        <h4>إنشاء هيكل Settings</h4>
+                        <p>إعداد إعدادات النظام</p>
+                    </div>
+                </div>
+                <div class="progress-step" id="step7">
+                    <div class="step-number">7</div>
                     <div class="step-info">
                         <h4>إنشاء الفهارس (Indexes)</h4>
                         <p>تحسين أداء الاستعلامات</p>
@@ -479,9 +550,9 @@
             
             <!-- الأزرار -->
             <div class="actions">
-                <button class="btn btn-primary" id="startSetupBtn" onclick="startSetup()">
-                    <i class="fas fa-play"></i>
-                    بدء التهيئة
+                <button class="btn btn-danger" id="startSetupBtn" onclick="startSetup()">
+                    <i class="fas fa-trash-alt"></i>
+                    بدء التهيئة والمسح
                 </button>
                 <button class="btn btn-secondary" id="testConnectionBtn" onclick="testConnection()">
                     <i class="fas fa-plug"></i>
@@ -489,7 +560,7 @@
                 </button>
             </div>
             
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
                 <button class="btn btn-secondary" onclick="goToLogin()" style="flex: 1;">
                     <i class="fas fa-sign-in-alt"></i>
                     الذهاب لتسجيل الدخول
@@ -509,18 +580,22 @@
         </div>
     </div>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <script>
-        // =====================================================================
-        // تهيئة Firebase
-        // =====================================================================
+    <!-- Firebase v12.10.0 (CDN) -->
+    <script type="import">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDocs, 
+            deleteDoc, 
+            serverTimestamp,
+            query,
+            where
+        } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -530,33 +605,49 @@
             appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
             measurementId: "G-P3YQFRSBMM"
         };
-
-        // تهيئة Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
         
-        // تفعيل التخزين المؤقت
-        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
         
+        // Make db available globally
+        window.db = db;
+        window.collection = collection;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDocs = getDocs;
+        window.deleteDoc = deleteDoc;
+        window.serverTimestamp = serverTimestamp;
+        window.query = query;
+        window.where = where;
+        
+        console.log("🔥 Firebase initialized successfully");
+    </script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Main JavaScript -->
+    <script type="module">
         // =====================================================================
-        // المتغيرات العامة
+        // انتظار Firebase
         // =====================================================================
-        let setupInProgress = false;
-        let setupCompleted = false;
-        let statusLog = [];
-        let currentStep = 0;
-        let adminPassword = generateRandomPassword();
-        
-        // عرض كلمة المرور
-        document.getElementById('admin-password').textContent = adminPassword;
+        function waitForFirebase() {
+            return new Promise((resolve) => {
+                if (window.db) {
+                    resolve();
+                } else {
+                    setTimeout(() => waitForFirebase().then(resolve), 100);
+                }
+            });
+        }
         
         // =====================================================================
         // إنشاء الجزيئات المتطايرة
         // =====================================================================
         function createParticles() {
             const container = document.getElementById('particles');
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 50; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 particle.style.left = Math.random() * 100 + '%';
@@ -566,16 +657,7 @@
                 container.appendChild(particle);
             }
         }
-        
-        // إنشاء كلمة مرور عشوائية
-        function generateRandomPassword() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-            let password = '';
-            for (let i = 0; i < 12; i++) {
-                password += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return password;
-        }
+        createParticles();
         
         // =====================================================================
         // إضافة رسالة إلى سجل الحالة
@@ -597,15 +679,13 @@
             
             statusDiv.appendChild(msgDiv);
             statusDiv.scrollTop = statusDiv.scrollHeight;
-            
-            statusLog.push({ time, message, type });
         }
         
         // =====================================================================
         // تحديث خطوات التقدم
         // =====================================================================
-        function updateProgressStep(step, status = 'active') {
-            for (let i = 1; i <= 6; i++) {
+        function updateProgressStep(step) {
+            for (let i = 1; i <= 7; i++) {
                 const stepEl = document.getElementById(`step${i}`);
                 stepEl.classList.remove('active', 'completed');
                 
@@ -618,18 +698,17 @@
         }
         
         // =====================================================================
-        // اختبار الاتصال بقاعدة البيانات
+        // اختبار الاتصال
         // =====================================================================
-        async function testConnection() {
-            addStatusMessage('جاري اختبار الاتصال بقاعدة البيانات...', 'info');
+        window.testConnection = async function() {
+            addStatusMessage('جاري اختبار الاتصال...', 'info');
             
             try {
-                // محاولة قراءة أي مستند بسيط
-                const testRef = db.collection('_test_').doc('test');
-                await testRef.set({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
-                await testRef.delete();
+                const testRef = doc(db, '_test_', 'test');
+                await setDoc(testRef, { timestamp: serverTimestamp() });
+                await deleteDoc(testRef);
                 
-                addStatusMessage('✅ الاتصال بقاعدة البيانات ناجح!', 'success');
+                addStatusMessage('✅ الاتصال ناجح!', 'success');
                 Swal.fire({
                     icon: 'success',
                     title: 'اتصال ناجح',
@@ -639,64 +718,104 @@
                 });
                 return true;
             } catch (error) {
-                addStatusMessage(`❌ خطأ في الاتصال: ${error.message}`, 'error');
+                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطأ في الاتصال',
+                    title: 'خطأ',
                     text: error.message,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
                 return false;
             }
+        };
+        
+        // =====================================================================
+        // مسح جميع البيانات
+        // =====================================================================
+        async function clearAllData() {
+            addStatusMessage('جاري مسح جميع البيانات...', 'warning');
+            updateProgressStep(2);
+            
+            const collections = ['Requests', 'Users', 'Settings'];
+            let totalDeleted = 0;
+            
+            for (const collectionName of collections) {
+                try {
+                    const querySnapshot = await getDocs(collection(db, collectionName));
+                    if (querySnapshot.size > 0) {
+                        for (const document of querySnapshot.docs) {
+                            await deleteDoc(doc(db, collectionName, document.id));
+                            totalDeleted++;
+                        }
+                        addStatusMessage(`✅ تم مسح ${querySnapshot.size} مستند من ${collectionName}`, 'success');
+                    } else {
+                        addStatusMessage(`ℹ️ مجموعة ${collectionName} فارغة`, 'info');
+                    }
+                } catch (error) {
+                    addStatusMessage(`ℹ️ مجموعة ${collectionName} غير موجودة`, 'info');
+                }
+            }
+            
+            addStatusMessage(`✅ تم مسح إجمالي ${totalDeleted} مستند`, 'success');
+            return true;
         }
         
         // =====================================================================
-        // إنشاء مجموعة Users وهيكلها
+        // إنشاء هيكل Users
         // =====================================================================
-        async function createUsersCollection() {
-            addStatusMessage('جاري إنشاء مجموعة Users...', 'info');
-            updateProgressStep(2);
+        async function createUsersStructure() {
+            addStatusMessage('جاري إنشاء هيكل Users...', 'info');
+            updateProgressStep(3);
             
             try {
-                // إنشاء مستخدم تجريبي للتأكد من وجود المجموعة
-                const testUserRef = db.collection('Users').doc('_test_');
-                await testUserRef.set({
-                    _temp: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                await testUserRef.delete();
+                const tempRef = doc(db, 'Users', '_temp_');
+                await setDoc(tempRef, { _temp: true, createdAt: serverTimestamp() });
+                await deleteDoc(tempRef);
                 
-                addStatusMessage('✅ تم إنشاء مجموعة Users بنجاح', 'success');
+                addStatusMessage('✅ تم إنشاء هيكل Users', 'success');
                 return true;
             } catch (error) {
-                addStatusMessage(`❌ خطأ في إنشاء مجموعة Users: ${error.message}`, 'error');
+                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
                 throw error;
             }
         }
         
         // =====================================================================
-        // إنشاء المستخدم الأساسي (سوبر أدمن)
+        // تشفير بسيط
+        // =====================================================================
+        function hashPassword(password) {
+            return btoa(password);
+        }
+        
+        // =====================================================================
+        // إنشاء المستخدم الأساسي
         // =====================================================================
         async function createAdminUser() {
             addStatusMessage('جاري إنشاء المستخدم الأساسي...', 'info');
-            updateProgressStep(3);
+            updateProgressStep(4);
             
             try {
-                // إنشاء المستخدم في Firebase Authentication
-                const userCredential = await auth.createUserWithEmailAndPassword('admin@itws.org', adminPassword);
-                const user = userCredential.user;
+                const ADMIN_USERNAME = "Mahmoud Gamil";
+                const ADMIN_PASSWORD = "keyatech@";
+                const ADMIN_EMAIL = "mahmoud.gamil@itws.org";
                 
-                // إضافة بيانات المستخدم في Firestore
-                await db.collection('Users').doc(user.uid).set({
-                    uid: user.uid,
-                    email: 'admin@itws.org',
-                    displayName: 'المشرف العام',
+                const hashedPassword = hashPassword(ADMIN_PASSWORD);
+                const userId = ADMIN_USERNAME.replace(/\s+/g, '_').toLowerCase();
+                
+                const userData = {
+                    username: ADMIN_USERNAME,
+                    password: hashedPassword,
+                    name: ADMIN_USERNAME,
+                    email: ADMIN_EMAIL,
                     role: 'super_admin',
                     isActive: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    createdAt: serverTimestamp(),
                     lastLogin: null,
-                    provider: 'email',
+                    lastLoginString: null,
+                    phone: '',
+                    address: '',
+                    photoURL: '',
                     permissions: {
                         users: { view: true, create: true, edit: true, delete: true },
                         requests: { view: true, create: true, edit: true, delete: true },
@@ -704,231 +823,191 @@
                         reports: { view: true, export: true },
                         system: { backup: true, restore: true }
                     }
-                });
+                };
                 
-                addStatusMessage(`✅ تم إنشاء المستخدم الأساسي بنجاح`, 'success');
-                addStatusMessage(`📧 البريد: admin@itws.org`, 'info');
-                addStatusMessage(`🔑 كلمة المرور: ${adminPassword}`, 'warning');
+                await setDoc(doc(db, 'Users', userId), userData);
+                
+                addStatusMessage(`✅ تم إنشاء المستخدم: ${ADMIN_USERNAME}`, 'success');
+                addStatusMessage(`🔑 كلمة السر: ${ADMIN_PASSWORD}`, 'warning');
                 
                 return true;
             } catch (error) {
-                if (error.code === 'auth/email-already-in-use') {
-                    addStatusMessage('⚠️ المستخدم admin@itws.org موجود بالفعل', 'warning');
-                    
-                    // البحث عن المستخدم في Firestore
-                    const usersSnapshot = await db.collection('Users').where('email', '==', 'admin@itws.org').get();
-                    if (!usersSnapshot.empty) {
-                        addStatusMessage('✅ المستخدم موجود بالفعل في قاعدة البيانات', 'success');
-                        return true;
-                    }
-                } else {
-                    addStatusMessage(`❌ خطأ في إنشاء المستخدم: ${error.message}`, 'error');
-                    throw error;
-                }
-            }
-        }
-        
-        // =====================================================================
-        // إنشاء مجموعة Requests وهيكلها
-        // =====================================================================
-        async function createRequestsCollection() {
-            addStatusMessage('جاري إنشاء مجموعة Requests...', 'info');
-            updateProgressStep(4);
-            
-            try {
-                // إنشاء مستند تجريبي للتأكد من وجود المجموعة
-                const testRequestRef = db.collection('Requests').doc('_test_');
-                await testRequestRef.set({
-                    _temp: true,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                await testRequestRef.delete();
-                
-                addStatusMessage('✅ تم إنشاء مجموعة Requests بنجاح', 'success');
-                return true;
-            } catch (error) {
-                addStatusMessage(`❌ خطأ في إنشاء مجموعة Requests: ${error.message}`, 'error');
+                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
                 throw error;
             }
         }
         
         // =====================================================================
-        // إنشاء مجموعة Settings وهيكلها
+        // إنشاء هيكل Requests
         // =====================================================================
-        async function createSettingsCollection() {
-            addStatusMessage('جاري إنشاء مجموعة Settings...', 'info');
+        async function createRequestsStructure() {
+            addStatusMessage('جاري إنشاء هيكل Requests...', 'info');
             updateProgressStep(5);
             
             try {
-                // إنشاء إعدادات النظام
-                await db.collection('Settings').doc('system').set({
+                const tempRef = doc(db, 'Requests', '_temp_');
+                await setDoc(tempRef, { _temp: true, createdAt: serverTimestamp() });
+                await deleteDoc(tempRef);
+                
+                addStatusMessage('✅ تم إنشاء هيكل Requests', 'success');
+                return true;
+            } catch (error) {
+                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+        
+        // =====================================================================
+        // إنشاء هيكل Settings
+        // =====================================================================
+        async function createSettingsStructure() {
+            addStatusMessage('جاري إنشاء هيكل Settings...', 'info');
+            updateProgressStep(6);
+            
+            try {
+                const settingsData = {
                     version: 'VR 2.05.2026',
-                    setupDate: firebase.firestore.FieldValue.serverTimestamp(),
-                    setupBy: 'system',
+                    setupDate: serverTimestamp(),
+                    setupBy: 'Mahmoud Gamil',
+                    lastReset: serverTimestamp(),
                     complaintPrefix: 'REQ',
                     suggestionPrefix: 'REP',
                     showServices: true,
                     servicesUrl: 'https://services.egeng.org',
-                    servicesText: 'موقع تقديم خدمات النقابة'
-                });
+                    servicesText: 'موقع تقديم خدمات النقابة',
+                    defaultLogo: 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo'
+                };
                 
-                addStatusMessage('✅ تم إنشاء مجموعة Settings بنجاح', 'success');
+                await setDoc(doc(db, 'Settings', 'system'), settingsData);
+                
+                addStatusMessage('✅ تم إنشاء هيكل Settings', 'success');
                 return true;
             } catch (error) {
-                addStatusMessage(`❌ خطأ في إنشاء مجموعة Settings: ${error.message}`, 'error');
+                addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
                 throw error;
             }
         }
         
         // =====================================================================
-        // إنشاء الفهارس المطلوبة
+        // إنشاء الفهارس
         // =====================================================================
         async function createRequiredIndexes() {
-            addStatusMessage('جاري إعداد الفهارس المطلوبة...', 'info');
-            updateProgressStep(6);
+            addStatusMessage('جاري إعداد الفهارس...', 'info');
+            updateProgressStep(7);
             
-            addStatusMessage('📌 الفهارس يتم إنشاؤها تلقائياً في Firebase Console', 'info');
-            addStatusMessage('🔗 يرجى إنشاء الفهارس التالية يدوياً:', 'warning');
-            addStatusMessage('• Collection: Requests', 'info');
-            addStatusMessage('  Fields: type (Ascending), createdAt (Descending)', 'info');
-            addStatusMessage('• Collection: Users', 'info');
-            addStatusMessage('  Fields: email (Ascending)', 'info');
-            addStatusMessage('• Collection: Users', 'info');
-            addStatusMessage('  Fields: role (Ascending), createdAt (Descending)', 'info');
+            addStatusMessage('📌 الفهارس يتم إنشاؤها في Firebase Console', 'info');
+            addStatusMessage('🔗 أنشئ الفهارس التالية يدوياً:', 'warning');
+            addStatusMessage('• Requests: type (Asc), createdAt (Desc)', 'info');
+            addStatusMessage('• Users: role (Asc), createdAt (Desc)', 'info');
             
             return true;
         }
         
         // =====================================================================
-        // بدء عملية التهيئة
+        // بدء التهيئة
         // =====================================================================
-        async function startSetup() {
-            if (setupInProgress) {
+        window.startSetup = async function() {
+            const result = await Swal.fire({
+                title: '⚠️ تحذير ⚠️',
+                html: `
+                    <p style="color: #ef4444;">سيتم مسح جميع البيانات!</p>
+                    <p>هل أنت متأكد من المتابعة؟</p>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'نعم، قم بالتهيئة',
+                cancelButtonText: 'إلغاء',
+                background: '#030514',
+                confirmButtonColor: '#00ffff'
+            });
+            
+            if (!result.isConfirmed) return;
+            
+            const { value: password } = await Swal.fire({
+                title: 'تأكيد',
+                input: 'password',
+                inputPlaceholder: 'كلمة سر التهيئة (11111@)',
+                showCancelButton: true,
+                background: '#030514',
+                confirmButtonColor: '#00ffff'
+            });
+            
+            if (password !== '11111@') {
                 Swal.fire({
-                    icon: 'warning',
-                    title: 'عملية جارية',
-                    text: 'يوجد عملية تهيئة قيد التنفيذ حالياً',
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'كلمة السر غير صحيحة',
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
             }
             
-            const result = await Swal.fire({
-                title: '⚠️ تحذير ⚠️',
-                html: `
-                    <p style="color: #ef4444; font-size: 18px; margin-bottom: 15px;">أنت على وشك تهيئة قاعدة البيانات!</p>
-                    <p style="color: #94a3b8; margin-bottom: 10px;">سيتم إنشاء:</p>
-                    <ul style="color: #94a3b8; text-align: right; margin-bottom: 20px;">
-                        <li>✓ مجموعة Users</li>
-                        <li>✓ مستخدم أساسي (admin@itws.org)</li>
-                        <li>✓ مجموعة Requests</li>
-                        <li>✓ مجموعة Settings</li>
-                    </ul>
-                    <p style="color: #f97316;">إذا كانت البيانات موجودة بالفعل، سيتم الاحتفاظ بها</p>
-                `,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'نعم، قم بالتهيئة',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#00ffff',
-                cancelButtonColor: '#3085d6',
-                background: '#030514',
-                color: '#fff'
-            });
-            
-            if (!result.isConfirmed) return;
-            
-            setupInProgress = true;
             document.getElementById('startSetupBtn').disabled = true;
             document.getElementById('testConnectionBtn').disabled = true;
-            
-            // مسح سجل الحالة
             document.getElementById('statusMessage').innerHTML = '';
-            statusLog = [];
             
             try {
-                // الخطوة 1: اختبار الاتصال
+                await waitForFirebase();
+                
                 updateProgressStep(1);
-                addStatusMessage('🚀 بدء عملية تهيئة قاعدة البيانات...', 'info');
+                addStatusMessage('🚀 بدء التهيئة...', 'info');
+                
                 await testConnection();
-                
-                // الخطوة 2: إنشاء مجموعة Users
-                await createUsersCollection();
-                
-                // الخطوة 3: إنشاء المستخدم الأساسي
+                await clearAllData();
+                await createUsersStructure();
                 await createAdminUser();
-                
-                // الخطوة 4: إنشاء مجموعة Requests
-                await createRequestsCollection();
-                
-                // الخطوة 5: إنشاء مجموعة Settings
-                await createSettingsCollection();
-                
-                // الخطوة 6: إنشاء الفهارس
+                await createRequestsStructure();
+                await createSettingsStructure();
                 await createRequiredIndexes();
                 
-                // اكتمال التهيئة
-                updateProgressStep(6);
-                addStatusMessage('🎉 تمت تهيئة قاعدة البيانات بنجاح!', 'success');
-                addStatusMessage(`👤 يمكنك تسجيل الدخول باستخدام: admin@itws.org`, 'success');
-                addStatusMessage(`🔑 كلمة المرور: ${adminPassword}`, 'warning');
+                updateProgressStep(7);
+                addStatusMessage('🎉 تمت التهيئة بنجاح!', 'success');
                 
-                setupCompleted = true;
-                
-                // حفظ علامة في localStorage أن التهيئة تمت
                 localStorage.setItem('system_setup_complete', 'true');
                 
                 Swal.fire({
                     icon: 'success',
-                    title: '✅ تهيئة قاعدة البيانات',
-                    html: `
-                        <p style="color: #10b981; font-size: 18px;">تمت تهيئة قاعدة البيانات بنجاح!</p>
-                        <p style="color: #94a3b8; margin-top: 10px;">يمكنك الآن الذهاب لتسجيل الدخول</p>
-                        <p style="color: #f97316; margin-top: 10px;">🔑 كلمة المرور: ${adminPassword}</p>
-                    `,
+                    title: 'تم',
+                    text: 'تمت تهيئة النظام بنجاح',
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
                 
             } catch (error) {
-                addStatusMessage(`❌ فشلت عملية التهيئة: ${error.message}`, 'error');
-                
+                addStatusMessage(`❌ فشل: ${error.message}`, 'error');
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطأ في التهيئة',
+                    title: 'خطأ',
                     text: error.message,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
             } finally {
-                setupInProgress = false;
                 document.getElementById('startSetupBtn').disabled = false;
                 document.getElementById('testConnectionBtn').disabled = false;
             }
-        }
+        };
         
         // =====================================================================
-        // دوال التنقل
+        // التنقل
         // =====================================================================
-        function goToLogin() {
+        window.goToLogin = function() {
             window.location.href = 'index.html';
-        }
+        };
         
-        function goToAdmin() {
+        window.goToAdmin = function() {
             window.location.href = 'admin.html';
-        }
+        };
         
         // =====================================================================
-        // التهيئة عند تحميل الصفحة
+        // التحقق من التهيئة السابقة
         // =====================================================================
-        window.addEventListener('load', function() {
-            createParticles();
+        window.addEventListener('load', async function() {
+            await waitForFirebase();
             
-            // التحقق مما إذا كانت التهيئة قد تمت سابقاً
-            const setupComplete = localStorage.getItem('system_setup_complete');
-            if (setupComplete === 'true') {
-                addStatusMessage('ℹ️ تم تهيئة قاعدة البيانات مسبقاً', 'info');
+            if (localStorage.getItem('system_setup_complete') === 'true') {
+                addStatusMessage('ℹ️ تم تهيئة النظام مسبقاً', 'info');
             }
         });
     </script>
