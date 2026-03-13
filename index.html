@@ -1677,8 +1677,6 @@
             <!-- ==================== شاشة تقديم الطلب ==================== -->
             <section id="view-submit" class="view">
                 <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
                     <!-- زر موقع تقديم الخدمات -->
                     <a href="#" id="services-link" target="_blank" class="services-banner" style="display: none;">
                         <i class="fas fa-globe"></i>
@@ -1796,8 +1794,6 @@
             <!-- ==================== شاشة الاستعلام ==================== -->
             <section id="view-track" class="view" style="display:none;">
                 <div class="card glass-effect">
-                    <div class="card-glow"></div>
-                    
                     <div style="text-align: center; margin-bottom: var(--space-xl);">
                         <i class="fas fa-search" style="font-size: 60px; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: var(--space-md);"></i>
                         <h2 class="card-title" style="margin-bottom: 0;">استعلام عن طلب</h2>
@@ -1839,8 +1835,6 @@
             <!-- ==================== شاشة تسجيل الدخول ==================== -->
             <section id="view-login" class="view" style="display:none;">
                 <div class="card glass-effect login-card">
-                    <div class="card-glow"></div>
-                    
                     <div class="login-icon">
                         <i class="fas fa-user-shield"></i>
                     </div>
@@ -1891,7 +1885,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
     
-    <!-- ==================== كود JavaScript الرئيسي ==================== -->
     <script>
         // =====================================================================
         // تهيئة Firebase
@@ -2034,7 +2027,9 @@
         }
         
         function getSavedLogo() {
-            return getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+            const savedLogo = getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+            console.log('تحميل الشعار المحفوظ:', savedLogo);
+            return savedLogo;
         }
         
         function getServicesUrl() {
@@ -2075,6 +2070,24 @@
             }
         }
         
+        function updateAllLogos() {
+            const savedLogo = getSavedLogo();
+            console.log('تحديث جميع الشعارات إلى:', savedLogo);
+            
+            const splashLogo = document.getElementById('splash-logo');
+            const headerLogo = document.getElementById('header-main-logo');
+            
+            if (splashLogo) {
+                splashLogo.src = savedLogo;
+                console.log('تم تحديث شعار شاشة الترحيب');
+            }
+            
+            if (headerLogo) {
+                headerLogo.src = savedLogo;
+                console.log('تم تحديث شعار الهيدر');
+            }
+        }
+        
         // =====================================================================
         // دوال مساعدة
         // =====================================================================
@@ -2098,13 +2111,14 @@
             });
         }
         
-        // دالة آمنة لتشفير كلمة السر
+        // دالة آمنة لتشفير كلمة السر (SHA-256)
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
             const hashBuffer = await crypto.subtle.digest('SHA-256', data);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
-            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
         }
         
         async function generateRequestNumber(type) {
@@ -2182,9 +2196,8 @@
             createParticles();
             startSplashLoader();
             
-            const savedLogo = getSavedLogo();
-            document.getElementById('splash-logo').src = savedLogo;
-            document.getElementById('header-main-logo').src = savedLogo;
+            // تحديث جميع الشعارات
+            updateAllLogos();
             
             updateServicesButton();
             switchView('submit');
@@ -2530,6 +2543,8 @@
             const username = document.getElementById('login-username')?.value.trim();
             const password = document.getElementById('login-password')?.value.trim();
             
+            console.log('محاولة تسجيل الدخول للمستخدم:', username);
+            
             if (!username || !password) {
                 Swal.fire({
                     icon: 'error',
@@ -2551,8 +2566,11 @@
                 });
                 
                 // البحث عن المستخدم في قاعدة البيانات
+                console.log('جاري البحث عن المستخدم في قاعدة البيانات...');
                 const usersRef = db.collection('Users');
                 const snapshot = await usersRef.where('username', '==', username).get();
+                
+                console.log('نتيجة البحث:', snapshot.empty ? 'لا يوجد مستخدم' : 'تم العثور على مستخدم');
                 
                 if (snapshot.empty) {
                     Swal.close();
@@ -2569,6 +2587,13 @@
                 const userDoc = snapshot.docs[0];
                 const userData = userDoc.data();
                 
+                console.log('بيانات المستخدم:', { 
+                    username: userData.username, 
+                    role: userData.role, 
+                    isActive: userData.isActive,
+                    hasPassword: !!userData.password
+                });
+                
                 // التحقق من حالة الحساب
                 if (userData.isActive === false) {
                     Swal.close();
@@ -2583,7 +2608,12 @@
                 }
                 
                 // تشفير كلمة المرور المدخلة ومقارنتها بالمخزنة
+                console.log('تشفير كلمة المرور المدخلة...');
                 const hashedInputPassword = await hashPassword(password);
+                
+                console.log('مقارنة كلمات المرور...');
+                console.log('المدخلة (مشفرة):', hashedInputPassword);
+                console.log('المخزنة:', userData.password);
                 
                 if (hashedInputPassword !== userData.password) {
                     Swal.close();
@@ -2596,6 +2626,8 @@
                     });
                     return;
                 }
+                
+                console.log('✓ تم التحقق من كلمة المرور بنجاح');
                 
                 // تسجيل الدخول ناجح - تخزين معلومات المستخدم
                 const now = new Date();
@@ -2612,6 +2644,9 @@
                 localStorage.setItem('currentUser', userData.username);
                 localStorage.setItem('currentUserRole', userData.role);
                 localStorage.setItem('currentUserLastLogin', lastLoginStr);
+                
+                // للحفاظ على التوافق مع النظام القديم
+                localStorage.setItem('admin', 'true');
                 
                 Swal.close();
                 
@@ -2633,12 +2668,12 @@
                 });
                 
             } catch (error) {
-                console.error("خطأ في تسجيل الدخول:", error);
+                console.error("❌ خطأ في تسجيل الدخول:", error);
                 Swal.close();
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
-                    text: 'حدث خطأ في تسجيل الدخول',
+                    text: 'حدث خطأ في تسجيل الدخول: ' + error.message,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
