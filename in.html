@@ -476,7 +476,7 @@
                 <div class="info-item">
                     <i class="fas fa-envelope"></i>
                     <div style="flex: 1;">
-                        <div class="label">البريد الإلكتروني (للاستخدام)</div>
+                        <div class="label">البريد الإلكتروني</div>
                         <div class="value">mahmoud.gamil@itws.org</div>
                     </div>
                 </div>
@@ -486,7 +486,7 @@
             <div class="warning-box">
                 <i class="fas fa-exclamation-triangle"></i>
                 <h4>تحذير شديد الخطورة</h4>
-                <p>هذه العملية ستمسح <strong>جميع البيانات</strong> الموجودة حالياً في قاعدة البيانات (الطلبات، المستخدمين، الإعدادات) بشكل نهائي ولا يمكن التراجع عنها.</p>
+                <p>هذه العملية ستمسح <strong>جميع البيانات</strong> الموجودة حالياً في قاعدة البيانات بشكل نهائي ولا يمكن التراجع عنها.</p>
                 <p style="margin-top: 10px; color: #ef4444;">يرجى أخذ نسخة احتياطية إذا لزم الأمر قبل المتابعة.</p>
             </div>
             
@@ -580,22 +580,17 @@
         </div>
     </div>
     
-    <!-- Firebase v12.10.0 (CDN) -->
-    <script type="import">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            doc, 
-            setDoc, 
-            getDocs, 
-            deleteDoc, 
-            serverTimestamp,
-            query,
-            where
-        } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
-        
-        // Firebase configuration
+    <!-- Firebase v9 (compat) - الأكثر استقراراً -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+        // =====================================================================
+        // تهيئة Firebase (نسخة compat - أسهل وأكثر استقراراً)
+        // =====================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -606,41 +601,9 @@
             measurementId: "G-P3YQFRSBMM"
         };
         
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        
-        // Make db available globally
-        window.db = db;
-        window.collection = collection;
-        window.doc = doc;
-        window.setDoc = setDoc;
-        window.getDocs = getDocs;
-        window.deleteDoc = deleteDoc;
-        window.serverTimestamp = serverTimestamp;
-        window.query = query;
-        window.where = where;
-        
-        console.log("🔥 Firebase initialized successfully");
-    </script>
-    
-    <!-- SweetAlert2 -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
-    <!-- Main JavaScript -->
-    <script type="module">
-        // =====================================================================
-        // انتظار Firebase
-        // =====================================================================
-        function waitForFirebase() {
-            return new Promise((resolve) => {
-                if (window.db) {
-                    resolve();
-                } else {
-                    setTimeout(() => waitForFirebase().then(resolve), 100);
-                }
-            });
-        }
+        // تهيئة Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         
         // =====================================================================
         // إنشاء الجزيئات المتطايرة
@@ -658,6 +621,17 @@
             }
         }
         createParticles();
+        
+        // =====================================================================
+        // متغيرات عامة
+        // =====================================================================
+        let setupInProgress = false;
+        let currentStep = 0;
+        
+        // بيانات المستخدم الأساسي
+        const ADMIN_USERNAME = "Mahmoud Gamil";
+        const ADMIN_PASSWORD = "keyatech@";
+        const ADMIN_EMAIL = "mahmoud.gamil@itws.org";
         
         // =====================================================================
         // إضافة رسالة إلى سجل الحالة
@@ -685,6 +659,7 @@
         // تحديث خطوات التقدم
         // =====================================================================
         function updateProgressStep(step) {
+            currentStep = step;
             for (let i = 1; i <= 7; i++) {
                 const stepEl = document.getElementById(`step${i}`);
                 stepEl.classList.remove('active', 'completed');
@@ -701,12 +676,12 @@
         // اختبار الاتصال
         // =====================================================================
         window.testConnection = async function() {
-            addStatusMessage('جاري اختبار الاتصال...', 'info');
+            addStatusMessage('🔄 جاري اختبار الاتصال...', 'info');
             
             try {
-                const testRef = doc(db, '_test_', 'test');
-                await setDoc(testRef, { timestamp: serverTimestamp() });
-                await deleteDoc(testRef);
+                const testRef = db.collection('_test_').doc('test');
+                await testRef.set({ timestamp: firebase.firestore.FieldValue.serverTimestamp() });
+                await testRef.delete();
                 
                 addStatusMessage('✅ الاتصال ناجح!', 'success');
                 Swal.fire({
@@ -721,7 +696,7 @@
                 addStatusMessage(`❌ خطأ: ${error.message}`, 'error');
                 Swal.fire({
                     icon: 'error',
-                    title: 'خطأ',
+                    title: 'خطأ في الاتصال',
                     text: error.message,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
@@ -734,7 +709,7 @@
         // مسح جميع البيانات
         // =====================================================================
         async function clearAllData() {
-            addStatusMessage('جاري مسح جميع البيانات...', 'warning');
+            addStatusMessage('🔄 جاري مسح جميع البيانات...', 'warning');
             updateProgressStep(2);
             
             const collections = ['Requests', 'Users', 'Settings'];
@@ -742,13 +717,15 @@
             
             for (const collectionName of collections) {
                 try {
-                    const querySnapshot = await getDocs(collection(db, collectionName));
-                    if (querySnapshot.size > 0) {
-                        for (const document of querySnapshot.docs) {
-                            await deleteDoc(doc(db, collectionName, document.id));
-                            totalDeleted++;
-                        }
-                        addStatusMessage(`✅ تم مسح ${querySnapshot.size} مستند من ${collectionName}`, 'success');
+                    const snapshot = await db.collection(collectionName).get();
+                    if (snapshot.size > 0) {
+                        const batch = db.batch();
+                        snapshot.docs.forEach(doc => {
+                            batch.delete(doc.ref);
+                        });
+                        await batch.commit();
+                        totalDeleted += snapshot.size;
+                        addStatusMessage(`✅ تم مسح ${snapshot.size} مستند من ${collectionName}`, 'success');
                     } else {
                         addStatusMessage(`ℹ️ مجموعة ${collectionName} فارغة`, 'info');
                     }
@@ -765,13 +742,13 @@
         // إنشاء هيكل Users
         // =====================================================================
         async function createUsersStructure() {
-            addStatusMessage('جاري إنشاء هيكل Users...', 'info');
+            addStatusMessage('🔄 جاري إنشاء هيكل Users...', 'info');
             updateProgressStep(3);
             
             try {
-                const tempRef = doc(db, 'Users', '_temp_');
-                await setDoc(tempRef, { _temp: true, createdAt: serverTimestamp() });
-                await deleteDoc(tempRef);
+                const tempRef = db.collection('Users').doc('_temp_');
+                await tempRef.set({ _temp: true, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                await tempRef.delete();
                 
                 addStatusMessage('✅ تم إنشاء هيكل Users', 'success');
                 return true;
@@ -792,14 +769,10 @@
         // إنشاء المستخدم الأساسي
         // =====================================================================
         async function createAdminUser() {
-            addStatusMessage('جاري إنشاء المستخدم الأساسي...', 'info');
+            addStatusMessage('🔄 جاري إنشاء المستخدم الأساسي...', 'info');
             updateProgressStep(4);
             
             try {
-                const ADMIN_USERNAME = "Mahmoud Gamil";
-                const ADMIN_PASSWORD = "keyatech@";
-                const ADMIN_EMAIL = "mahmoud.gamil@itws.org";
-                
                 const hashedPassword = hashPassword(ADMIN_PASSWORD);
                 const userId = ADMIN_USERNAME.replace(/\s+/g, '_').toLowerCase();
                 
@@ -810,7 +783,7 @@
                     email: ADMIN_EMAIL,
                     role: 'super_admin',
                     isActive: true,
-                    createdAt: serverTimestamp(),
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLogin: null,
                     lastLoginString: null,
                     phone: '',
@@ -825,7 +798,7 @@
                     }
                 };
                 
-                await setDoc(doc(db, 'Users', userId), userData);
+                await db.collection('Users').doc(userId).set(userData);
                 
                 addStatusMessage(`✅ تم إنشاء المستخدم: ${ADMIN_USERNAME}`, 'success');
                 addStatusMessage(`🔑 كلمة السر: ${ADMIN_PASSWORD}`, 'warning');
@@ -841,13 +814,13 @@
         // إنشاء هيكل Requests
         // =====================================================================
         async function createRequestsStructure() {
-            addStatusMessage('جاري إنشاء هيكل Requests...', 'info');
+            addStatusMessage('🔄 جاري إنشاء هيكل Requests...', 'info');
             updateProgressStep(5);
             
             try {
-                const tempRef = doc(db, 'Requests', '_temp_');
-                await setDoc(tempRef, { _temp: true, createdAt: serverTimestamp() });
-                await deleteDoc(tempRef);
+                const tempRef = db.collection('Requests').doc('_temp_');
+                await tempRef.set({ _temp: true, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
+                await tempRef.delete();
                 
                 addStatusMessage('✅ تم إنشاء هيكل Requests', 'success');
                 return true;
@@ -861,15 +834,15 @@
         // إنشاء هيكل Settings
         // =====================================================================
         async function createSettingsStructure() {
-            addStatusMessage('جاري إنشاء هيكل Settings...', 'info');
+            addStatusMessage('🔄 جاري إنشاء هيكل Settings...', 'info');
             updateProgressStep(6);
             
             try {
                 const settingsData = {
                     version: 'VR 2.05.2026',
-                    setupDate: serverTimestamp(),
-                    setupBy: 'Mahmoud Gamil',
-                    lastReset: serverTimestamp(),
+                    setupDate: firebase.firestore.FieldValue.serverTimestamp(),
+                    setupBy: ADMIN_USERNAME,
+                    lastReset: firebase.firestore.FieldValue.serverTimestamp(),
                     complaintPrefix: 'REQ',
                     suggestionPrefix: 'REP',
                     showServices: true,
@@ -878,7 +851,7 @@
                     defaultLogo: 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo'
                 };
                 
-                await setDoc(doc(db, 'Settings', 'system'), settingsData);
+                await db.collection('Settings').doc('system').set(settingsData);
                 
                 addStatusMessage('✅ تم إنشاء هيكل Settings', 'success');
                 return true;
@@ -892,7 +865,7 @@
         // إنشاء الفهارس
         // =====================================================================
         async function createRequiredIndexes() {
-            addStatusMessage('جاري إعداد الفهارس...', 'info');
+            addStatusMessage('🔄 جاري إعداد الفهارس...', 'info');
             updateProgressStep(7);
             
             addStatusMessage('📌 الفهارس يتم إنشاؤها في Firebase Console', 'info');
@@ -907,29 +880,47 @@
         // بدء التهيئة
         // =====================================================================
         window.startSetup = async function() {
+            if (setupInProgress) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'عملية جارية',
+                    text: 'يوجد عملية قيد التنفيذ',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
             const result = await Swal.fire({
                 title: '⚠️ تحذير ⚠️',
                 html: `
-                    <p style="color: #ef4444;">سيتم مسح جميع البيانات!</p>
-                    <p>هل أنت متأكد من المتابعة؟</p>
+                    <p style="color: #ef4444; font-size: 18px;">سيتم مسح جميع البيانات!</p>
+                    <p style="color: #fff; margin-top: 10px;">هل أنت متأكد من المتابعة؟</p>
                 `,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonText: 'نعم، قم بالتهيئة',
                 cancelButtonText: 'إلغاء',
                 background: '#030514',
-                confirmButtonColor: '#00ffff'
+                confirmButtonColor: '#00ffff',
+                cancelButtonColor: '#6b7280'
             });
             
             if (!result.isConfirmed) return;
             
             const { value: password } = await Swal.fire({
-                title: 'تأكيد',
+                title: 'تأكيد التهيئة',
+                html: '<p style="color: #fff;">أدخل كلمة سر التهيئة</p>',
                 input: 'password',
                 inputPlaceholder: 'كلمة سر التهيئة (11111@)',
                 showCancelButton: true,
+                confirmButtonText: 'تأكيد',
+                cancelButtonText: 'إلغاء',
                 background: '#030514',
-                confirmButtonColor: '#00ffff'
+                confirmButtonColor: '#00ffff',
+                inputAttributes: {
+                    style: 'width: 100%; padding: 10px; background: #1f2937; border: 2px solid #00ffff; border-radius: 10px; color: white;'
+                }
             });
             
             if (password !== '11111@') {
@@ -943,22 +934,33 @@
                 return;
             }
             
+            setupInProgress = true;
             document.getElementById('startSetupBtn').disabled = true;
             document.getElementById('testConnectionBtn').disabled = true;
-            document.getElementById('statusMessage').innerHTML = '';
+            document.getElementById('statusMessage').innerHTML = '<div>✨ بدء عملية التهيئة...</div>';
             
             try {
-                await waitForFirebase();
-                
+                // الخطوة 1: اختبار الاتصال
                 updateProgressStep(1);
                 addStatusMessage('🚀 بدء التهيئة...', 'info');
-                
                 await testConnection();
+                
+                // الخطوة 2: مسح البيانات
                 await clearAllData();
+                
+                // الخطوة 3: إنشاء هيكل Users
                 await createUsersStructure();
+                
+                // الخطوة 4: إنشاء المستخدم
                 await createAdminUser();
+                
+                // الخطوة 5: إنشاء هيكل Requests
                 await createRequestsStructure();
+                
+                // الخطوة 6: إنشاء هيكل Settings
                 await createSettingsStructure();
+                
+                // الخطوة 7: إنشاء الفهارس
                 await createRequiredIndexes();
                 
                 updateProgressStep(7);
@@ -968,14 +970,18 @@
                 
                 Swal.fire({
                     icon: 'success',
-                    title: 'تم',
-                    text: 'تمت تهيئة النظام بنجاح',
+                    title: '✅ تمت التهيئة',
+                    html: `
+                        <p style="color: #10b981;">تمت تهيئة النظام بنجاح</p>
+                        <p style="color: #00ffff; margin-top: 10px;">المستخدم: ${ADMIN_USERNAME}</p>
+                        <p style="color: #f97316;">كلمة السر: ${ADMIN_PASSWORD}</p>
+                    `,
                     background: '#030514',
                     confirmButtonColor: '#00ffff'
                 });
                 
             } catch (error) {
-                addStatusMessage(`❌ فشل: ${error.message}`, 'error');
+                addStatusMessage(`❌ فشلت التهيئة: ${error.message}`, 'error');
                 Swal.fire({
                     icon: 'error',
                     title: 'خطأ',
@@ -984,6 +990,7 @@
                     confirmButtonColor: '#00ffff'
                 });
             } finally {
+                setupInProgress = false;
                 document.getElementById('startSetupBtn').disabled = false;
                 document.getElementById('testConnectionBtn').disabled = false;
             }
@@ -1003,9 +1010,7 @@
         // =====================================================================
         // التحقق من التهيئة السابقة
         // =====================================================================
-        window.addEventListener('load', async function() {
-            await waitForFirebase();
-            
+        window.addEventListener('load', function() {
             if (localStorage.getItem('system_setup_complete') === 'true') {
                 addStatusMessage('ℹ️ تم تهيئة النظام مسبقاً', 'info');
             }
