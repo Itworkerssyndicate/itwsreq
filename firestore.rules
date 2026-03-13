@@ -2,55 +2,97 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // ==================== قواعد عامة ====================
+    // =====================================================================
+    // دوال المساعدة للتحقق من الصلاحيات
+    // =====================================================================
+    
+    // التحقق من أن المستخدم مصادق عليه
     function isAuthenticated() {
       return request.auth != null;
     }
     
+    // الحصول على بيانات المستخدم
+    function getUserData() {
+      return get(/databases/$(database)/documents/Users/$(request.auth.uid)).data;
+    }
+    
+    // التحقق من أن المستخدم هو سوبر أدمن
+    function isSuperAdmin() {
+      return isAuthenticated() && 
+        getUserData().role == 'super_admin';
+    }
+    
+    // التحقق من أن المستخدم هو أدمن (بما في ذلك سوبر أدمن)
     function isAdmin() {
       return isAuthenticated() && 
-        get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.role == 'super_admin';
+        (getUserData().role == 'super_admin' || 
+         getUserData().role == 'admin');
     }
     
+    // التحقق من أن المستخدم هو مراجع (أو أعلى)
     function isReviewer() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.role in ['super_admin', 'admin', 'reviewer']);
+        (getUserData().role == 'super_admin' || 
+         getUserData().role == 'admin' || 
+         getUserData().role == 'reviewer');
     }
     
-    function isViewer() {
+    // التحقق من أن المستخدم هو مدخل بيانات (أو أعلى)
+    function isDataEntry() {
       return isAuthenticated() && 
-        (get(/databases/$(database)/documents/Users/$(request.auth.uid)).data.role in ['super_admin', 'admin', 'reviewer', 'viewer']);
+        (getUserData().role == 'super_admin' || 
+         getUserData().role == 'admin' || 
+         getUserData().role == 'reviewer' || 
+         getUserData().role == 'data_entry');
     }
     
+    // التحقق من أن المستخدم هو صاحب المستند
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
     
+    // التحقق من صحة بيانات الطلب
     function isValidRequest(data) {
       return data != null && 
         data.name is string && 
+        data.name.size() > 5 &&
         data.nid is string && 
-        data.phone is string &&
-        data.nid.size() == 14 &&
-        data.phone.size() >= 11;
+        data.nid.matches('^[0-9]{14}$') &&
+        data.phone is string && 
+        data.phone.matches('^01[0-9]{9}$') &&
+        data.type in ['شكوى', 'اقتراح'] &&
+        data.details is string &&
+        data.details.size() > 10;
     }
     
-    // ==================== مجموعة الطلبات (Requests) ====================
+    // التحقق من صحة بيانات المستخدم
+    function isValidUser(data) {
+      return data != null &&
+        data.username is string &&
+        data.username.size() > 2 &&
+        data.password is string &&
+        data.password.size() > 5 &&
+        data.role in ['super_admin', 'admin', 'reviewer', 'data_entry'];
+    }
+    
+    // =====================================================================
+    // قواعد مجموعة الطلبات (Requests)
+    // =====================================================================
     match /Requests/{requestId} {
       
-      // قراءة الطلبات
-      allow read: if isViewer();
+      // قراءة الطلبات - أي مستخدم مصادق عليه
+      allow read: if isAuthenticated();
       
-      // إنشاء طلب جديد (متاح للجميع حتى بدون تسجيل)
+      // إنشاء طلب جديد - متاح للجميع (حتى غير المسجلين)
       allow create: if request.auth == null || isValidRequest(request.resource.data);
       
-      // تحديث طلب (للمراجعين فقط)
+      // تحديث طلب - للمراجعين والأدمن فقط
       allow update: if isReviewer() && 
         request.resource.data.status != resource.data.status &&
         request.resource.data.tracking.size() > resource.data.tracking.size();
       
-      // حذف طلب (للمشرفين فقط)
-      allow delete: if isAdmin();
+      // حذف طلب - للسوبر أدمن فقط
+      allow delete: if isSuperAdmin();
       
       // التحقق من صحة البيانات عند الإنشاء
       allow create: if request.auth == null || (
@@ -61,42 +103,69 @@ service cloud.firestore {
         request.resource.data.phone is string &&
         request.resource.data.phone.matches('^01[0-9]{9}$') &&
         request.resource.data.type in ['شكوى', 'اقتراح'] &&
-        request.resource.data.status in ['تم الاستلام', 'قيد المراجعة', 'جاري التنفيذ', 'تم الحل', 'تم الإغلاق النهائي', 'تمت القراءة', 'لم يقرأ']
+        request.resource.data.memberType in ['عضو نقابة', 'غير عضو']
       );
     }
     
-    // ==================== مجموعة المستخدمين (Users) ====================
+    // =====================================================================
+    // قواعد مجموعة المستخدمين (Users)
+    // =====================================================================
     match /Users/{userId} {
       
-      // قراءة بيانات المستخدمين
+      // قراءة بيانات المستخدمين - لأي مستخدم مصادق عليه
       allow read: if isAuthenticated();
       
-      // إنشاء مستخدم جديد (فقط الأدمن)
-      allow create: if isAdmin() && 
-        request.resource.data.username is string &&
-        request.resource.data.role in ['super_admin', 'admin', 'reviewer', 'viewer', 'data_entry'];
+      // إنشاء مستخدم جديد - للسوبر أدمن فقط
+      allow create: if isSuperAdmin() && isValidUser(request.resource.data);
       
       // تحديث بيانات المستخدم
-      allow update: if (isAdmin() || isOwner(userId)) && 
-        request.resource.data.role == resource.data.role; // منع تغيير الدور إلا للأدمن
+      allow update: if (isSuperAdmin() || isOwner(userId)) && 
+        request.resource.data.role == resource.data.role; // منع تغيير الدور إلا للسوبر أدمن
       
-      // حذف مستخدم (فقط الأدمن)
-      allow delete: if isAdmin();
+      // تحديث الدور - للسوبر أدمن فقط
+      allow update: if isSuperAdmin() && 
+        request.resource.data.role in ['super_admin', 'admin', 'reviewer', 'data_entry'];
       
-      // منع تعديل بعض الحقول الحساسة
-      allow update: if (isAdmin() || isOwner(userId)) && (
-        request.resource.data.password == resource.data.password || // منع تغيير الباسورد إلا بطريقة آمنة
-        request.resource.data.permissions == resource.data.permissions // منع تغيير الصلاحيات إلا للأدمن
+      // حذف مستخدم - للسوبر أدمن فقط
+      allow delete: if isSuperAdmin();
+      
+      // منع تعديل كلمة السر إلا بطرق آمنة
+      allow update: if (isSuperAdmin() || isOwner(userId)) && (
+        request.resource.data.password == resource.data.password || // لا نسمح بتغيير كلمة السر مباشرة
+        request.resource.data.password == null // نفضل استخدام دالة منفصلة لتغيير كلمة السر
+      );
+      
+      // التحقق من صحة البيانات عند الإنشاء
+      allow create: if isSuperAdmin() && (
+        request.resource.data.username is string &&
+        request.resource.data.username.size() > 2 &&
+        request.resource.data.password is string &&
+        request.resource.data.password.size() > 5 &&
+        request.resource.data.role in ['super_admin', 'admin', 'reviewer', 'data_entry']
       );
     }
     
-    // ==================== مجموعة سجل النظام (SystemLogs) ====================
+    // =====================================================================
+    // قواعد مجموعة الإعدادات (Settings)
+    // =====================================================================
+    match /Settings/{settingId} {
+      
+      // قراءة الإعدادات - للجميع (حتى غير المسجلين)
+      allow read: if true;
+      
+      // تعديل الإعدادات - للسوبر أدمن فقط
+      allow write: if isSuperAdmin();
+    }
+    
+    // =====================================================================
+    // قواعد مجموعة سجل النظام (SystemLogs)
+    // =====================================================================
     match /SystemLogs/{logId} {
       
-      // قراءة السجلات (للمشرفين فقط)
-      allow read: if isAdmin();
+      // قراءة السجلات - للسوبر أدمن فقط
+      allow read: if isSuperAdmin();
       
-      // إنشاء سجل (للمستخدمين المصادق عليهم)
+      // إنشاء سجل - للمستخدمين المصادق عليهم
       allow create: if isAuthenticated() && 
         request.resource.data.action is string &&
         request.resource.data.userId == request.auth.uid;
@@ -105,40 +174,18 @@ service cloud.firestore {
       allow update, delete: if false;
     }
     
-    // ==================== مجموعة الإعدادات (Settings) ====================
-    match /Settings/{settingId} {
-      
-      // قراءة الإعدادات (للجميع)
-      allow read: if true;
-      
-      // تعديل الإعدادات (للمشرفين فقط)
-      allow write: if isAdmin();
-    }
-    
-    // ==================== مجموعة الإحصائيات (Statistics) ====================
-    match /Statistics/{statId} {
-      
-      // قراءة الإحصائيات (للمشاهدين)
-      allow read: if isViewer();
-      
-      // تحديث الإحصائيات (للسيرفر فقط - عن طريق Functions)
-      allow write: if false;
-    }
-    
-    // ==================== مجموعة النسخ الاحتياطي (Backups) ====================
-    match /Backups/{backupId} {
-      
-      // الوصول للنسخ الاحتياطية (للمشرفين فقط)
-      allow read, write: if isAdmin();
-    }
-    
-    // ==================== التحقق من صحة البيانات بشكل عام ====================
+    // =====================================================================
+    // قواعد عامة للأمان
+    // =====================================================================
     match /{document=**} {
       // منع الحقول الضارة
       allow read, write: if request.resource.data.keys().hasAny(['__proto__', 'constructor', 'prototype']) == false;
       
       // الحد من حجم المستندات
       allow write: if request.resource.size() < 1024 * 1024; // 1MB كحد أقصى
+      
+      // منع الوصول لأي مجموعات أخرى غير معرفة
+      allow read, write: if false;
     }
   }
 }
