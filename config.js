@@ -1,5 +1,5 @@
 // =====================================================================
-// VR 2.05.2026 - تهيئة Firebase والإعدادات العامة
+// VR 2.05.2026 - إعدادات Firebase والثوابت العامة
 // الإصدار الماسي - النسخة النهائية
 // جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
 // =====================================================================
@@ -14,16 +14,6 @@ const firebaseConfig = {
     appId: "1:417900842360:web:83d9310f36fef5bbbe4c8d",
     measurementId: "G-P3YQFRSBMM"
 };
-
-// تهيئة Firebase (مع التحقق من عدم تكرار التهيئة)
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-} else {
-    firebase.app(); // استخدام التهيئة الموجودة
-}
-
-// تعريف Firestore
-const db = firebase.firestore();
 
 // ------------------------------ مفاتيح التخزين المحلي ------------------------------
 const STORAGE_KEYS = {
@@ -41,13 +31,19 @@ const STORAGE_KEYS = {
     
     // إعدادات الأدمن
     ADMIN_AUTH: 'admin',
-    SYSTEM_RESET_DONE: 'system_reset_done'
+    SYSTEM_RESET_DONE: 'system_reset_done',
+    
+    // معلومات المستخدم الحالي
+    CURRENT_USER_ID: 'currentUserId',
+    CURRENT_USER: 'currentUser',
+    CURRENT_USER_ROLE: 'currentUserRole',
+    CURRENT_USER_LAST_LOGIN: 'currentUserLastLogin'
 };
 
 // ------------------------------ الإعدادات الافتراضية ------------------------------
 const DEFAULT_SETTINGS = {
     // الشعار الافتراضي
-    LOGO_URL: 'https://via.placeholder.com/200x200?text=Logo',
+    LOGO_URL: 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo',
     
     // موقع الخدمات الافتراضي
     SERVICES_URL: 'https://services.egeng.org',
@@ -66,8 +62,76 @@ const DEFAULT_SETTINGS = {
     SYSTEM_VERSION: 'VR 2.05.2026'
 };
 
-// ------------------------------ متغيرات عامة ------------------------------
-let autoSaveTimeout; // مؤقت للحفظ التلقائي
+// ------------------------------ أدوار المستخدمين ------------------------------
+const USER_ROLES = {
+    SUPER_ADMIN: 'super_admin',
+    ADMIN: 'admin',
+    REVIEWER: 'reviewer',
+    DATA_ENTRY: 'data_entry'
+};
+
+// ------------------------------ أسماء الأدوار بالعربية ------------------------------
+const ROLE_NAMES = {
+    [USER_ROLES.SUPER_ADMIN]: 'سوبر أدمن',
+    [USER_ROLES.ADMIN]: 'أدمن',
+    [USER_ROLES.REVIEWER]: 'مراجع',
+    [USER_ROLES.DATA_ENTRY]: 'مدخل بيانات'
+};
+
+// ------------------------------ حالات الطلبات ------------------------------
+const REQUEST_STATUS = {
+    RECEIVED: 'تم الاستلام',
+    UNDER_REVIEW: 'قيد المراجعة',
+    IN_PROGRESS: 'جاري التنفيذ',
+    SOLVED: 'تم الحل',
+    FINAL_CLOSED: 'تم الإغلاق النهائي',
+    READ: 'تمت القراءة',
+    UNREAD: 'لم يقرأ'
+};
+
+// ------------------------------ أنواع الطلبات ------------------------------
+const REQUEST_TYPES = {
+    COMPLAINT: 'شكوى',
+    SUGGESTION: 'اقتراح'
+};
+
+// ------------------------------ أنواع العضوية ------------------------------
+const MEMBERSHIP_TYPES = {
+    MEMBER: 'عضو نقابة',
+    NON_MEMBER: 'غير عضو'
+};
+
+// ------------------------------ المحافظات المصرية ------------------------------
+const EGYPT_GOVS = [
+    'القاهرة',
+    'الجيزة',
+    'الإسكندرية',
+    'الدقهلية',
+    'البحر الأحمر',
+    'البحيرة',
+    'الفيوم',
+    'الغربية',
+    'الإسماعيلية',
+    'المنوفية',
+    'المنيا',
+    'القليوبية',
+    'الوادي الجديد',
+    'السويس',
+    'أسوان',
+    'أسيوط',
+    'بني سويف',
+    'بورسعيد',
+    'جنوب سيناء',
+    'دمياط',
+    'سوهاج',
+    'شمال سيناء',
+    'قنا',
+    'كفر الشيخ',
+    'مطروح',
+    'الأقصر',
+    'حلوان',
+    '6 أكتوبر'
+];
 
 // ------------------------------ دوال الإعدادات الأساسية ------------------------------
 
@@ -78,8 +142,26 @@ let autoSaveTimeout; // مؤقت للحفظ التلقائي
  * @returns {any} قيمة الإعداد
  */
 function getSetting(key, defaultValue) {
-    const value = localStorage.getItem(key);
-    return value !== null ? value : defaultValue;
+    try {
+        const value = localStorage.getItem(key);
+        return value !== null ? value : defaultValue;
+    } catch (error) {
+        console.error('خطأ في قراءة الإعدادات:', error);
+        return defaultValue;
+    }
+}
+
+/**
+ * حفظ قيمة إعداد في التخزين المحلي
+ * @param {string} key - مفتاح الإعداد
+ * @param {any} value - القيمة المراد حفظها
+ */
+function setSetting(key, value) {
+    try {
+        localStorage.setItem(key, value);
+    } catch (error) {
+        console.error('خطأ في حفظ الإعدادات:', error);
+    }
 }
 
 /**
@@ -129,6 +211,15 @@ function getComplaintPrefix() {
  */
 function getSuggestionPrefix() {
     return getSetting(STORAGE_KEYS.SUGGESTION_PREFIX, DEFAULT_SETTINGS.SUGGESTION_PREFIX);
+}
+
+/**
+ * الحصول على اسم الدور بالعربية
+ * @param {string} role - الدور بالإنجليزية
+ * @returns {string} اسم الدور بالعربية
+ */
+function getRoleName(role) {
+    return ROLE_NAMES[role] || role;
 }
 
 // ------------------------------ دوال حفظ الإعدادات ------------------------------
@@ -184,59 +275,16 @@ function showAutoSaveMessage() {
 }
 
 /**
- * الحفظ التلقائي (يتم استدعاؤه عند التغيير)
- */
-function autoSaveSettings() {
-    // إلغاء المؤقت السابق
-    if (autoSaveTimeout) {
-        clearTimeout(autoSaveTimeout);
-    }
-    
-    // تعيين مؤقت جديد للحفظ بعد 500ms من آخر تغيير
-    autoSaveTimeout = setTimeout(() => {
-        // جمع الإعدادات من الحقول
-        const settings = {
-            logoUrl: document.getElementById('logo-url')?.value,
-            servicesUrl: document.getElementById('services-url')?.value,
-            servicesText: document.getElementById('services-text')?.value,
-            showServices: document.getElementById('show-services-btn')?.checked,
-            complaintPrefix: document.getElementById('complaint-prefix')?.value,
-            suggestionPrefix: document.getElementById('suggestion-prefix')?.value
-        };
-        
-        // تصفية القيم غير المعرفة
-        Object.keys(settings).forEach(key => {
-            if (settings[key] === undefined) {
-                delete settings[key];
-            }
-        });
-        
-        // حفظ الإعدادات مع إظهار الرسالة
-        saveSettings(settings, true);
-    }, 500);
-}
-
-// ------------------------------ دوال التحديث البصري ------------------------------
-
-/**
- * تحديث جميع الشعارات في الصفحات المختلفة
+ * تحديث الشعار في جميع الصفحات
  * @param {string} url - رابط الشعار الجديد
  */
 function updateAllLogos(url) {
-    // شاشة البداية
     const splashLogo = document.getElementById('splash-logo');
-    if (splashLogo) splashLogo.src = url;
-    
-    // الهيدر الرئيسي
     const headerLogo = document.getElementById('header-main-logo');
+    const sidebarLogo = document.getElementById('sidebar-logo') || document.getElementById('admin-logo') || document.getElementById('sidebarLogo');
+    
+    if (splashLogo) splashLogo.src = url;
     if (headerLogo) headerLogo.src = url;
-    
-    // شعار صفحة الأدمن
-    const adminLogo = document.getElementById('admin-logo');
-    if (adminLogo) adminLogo.src = url;
-    
-    // شعار الشريط الجانبي في الأدمن
-    const sidebarLogo = document.getElementById('sidebar-logo');
     if (sidebarLogo) sidebarLogo.src = url;
 }
 
@@ -274,13 +322,71 @@ function formatText(text) {
 }
 
 /**
+ * التحقق من صحة الرقم القومي المصري
+ * @param {string} nid - الرقم القومي
+ * @returns {boolean} صحة الرقم
+ */
+function validateNationalID(nid) {
+    // الرقم القومي المصري: 14 رقم
+    return /^\d{14}$/.test(nid);
+}
+
+/**
+ * التحقق من صحة رقم الهاتف المصري
+ * @param {string} phone - رقم الهاتف
+ * @returns {boolean} صحة الرقم
+ */
+function validatePhone(phone) {
+    // أرقام الهواتف المصرية: 01xxxxxxxxx
+    return /^01[0-2,5]{1}[0-9]{8}$/.test(phone);
+}
+
+/**
+ * تشفير بسيط (للاستخدام الداخلي)
+ * @param {string} password - كلمة المرور
+ * @returns {string} كلمة المرور المشفرة
+ */
+function hashPassword(password) {
+    // في الإنتاج استخدم SHA-256
+    return btoa(password);
+}
+
+/**
+ * الحصول على التاريخ الحالي بتنسيق عربي
+ * @returns {string} التاريخ بالتنسيق العربي
+ */
+function getCurrentArabicDate() {
+    const now = new Date();
+    return now.toLocaleDateString('ar-EG', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+/**
+ * الحصول على الوقت الحالي بتنسيق عربي
+ * @returns {string} الوقت بالتنسيق العربي
+ */
+function getCurrentArabicTime() {
+    const now = new Date();
+    return now.toLocaleTimeString('ar-EG', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+}
+
+/**
  * إنشاء رقم طلب متسلسل من Firestore
+ * @param {Object} db - كائن قاعدة البيانات
  * @param {string} type - نوع الطلب (شكوى أو اقتراح)
  * @returns {Promise<string>} رقم الطلب المتسلسل
  */
-async function generateRequestNumber(type) {
+async function generateRequestNumber(db, type) {
     const year = new Date().getFullYear();
-    const prefix = type === 'شكوى' ? getComplaintPrefix() : getSuggestionPrefix();
+    const prefix = type === REQUEST_TYPES.COMPLAINT ? getComplaintPrefix() : getSuggestionPrefix();
     
     try {
         // جلب جميع الطلبات من نفس النوع
@@ -331,139 +437,56 @@ async function generateRequestNumber(type) {
     }
 }
 
-/**
- * التحقق من صحة الرقم القومي
- * @param {string} nid - الرقم القومي
- * @returns {boolean} صحة الرقم
- */
-function validateNationalID(nid) {
-    // الرقم القومي المصري: 14 رقم
-    return /^\d{14}$/.test(nid);
-}
+// ------------------------------ دوال جلب الإعدادات ------------------------------
 
 /**
- * التحقق من صحة رقم الهاتف
- * @param {string} phone - رقم الهاتف
- * @returns {boolean} صحة الرقم
+ * تحميل إعدادات الشعار المحفوظة
  */
-function validatePhone(phone) {
-    // أرقام الهواتف المصرية: 01xxxxxxxxx
-    return /^01[0-2,5]{1}[0-9]{8}$/.test(phone);
-}
-
-/**
- * الحصول على تاريخ اليوم بتنسيق عربي
- * @returns {string} التاريخ بالتنسيق العربي
- */
-function getCurrentArabicDate() {
-    const now = new Date();
-    return now.toLocaleDateString('ar-EG', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    });
-}
-
-/**
- * الحصول على الوقت الحالي بتنسيق عربي
- * @returns {string} الوقت بالتنسيق العربي
- */
-function getCurrentArabicTime() {
-    const now = new Date();
-    return now.toLocaleTimeString('ar-EG', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-}
-
-// ------------------------------ دوال تهيئة النظام ------------------------------
-
-/**
- * إعادة ضبط النظام (مسح جميع البيانات)
- * @returns {Promise<boolean>} نجاح العملية
- */
-async function resetSystem() {
-    try {
-        // جلب جميع المستندات
-        const snapshot = await db.collection("Requests").get();
-        
-        // حذفها دفعة واحدة
-        const batch = db.batch();
-        snapshot.docs.forEach(doc => {
-            batch.delete(doc.ref);
-        });
-        
-        await batch.commit();
-        
-        // تخزين أن التهيئة تمت
-        localStorage.setItem(STORAGE_KEYS.SYSTEM_RESET_DONE, 'true');
-        
-        return true;
-    } catch (error) {
-        console.error("خطأ في تهيئة النظام:", error);
-        return false;
-    }
-}
-
-/**
- * إنشاء مستخدم أدمن افتراضي (للاستقبال المستقبلي)
- */
-async function createDefaultAdmin() {
-    // هذه الدالة للاستخدام المستقبلي عند إضافة نظام المستخدمين
-    console.log("سيتم إضافة نظام المستخدمين قريباً");
-}
-
-// ------------------------------ التهيئة عند تحميل الصفحة ------------------------------
-
-document.addEventListener('DOMContentLoaded', function() {
-    // تحميل الإعدادات المحفوظة
+function loadSavedLogo() {
     const savedLogo = getSavedLogo();
     updateAllLogos(savedLogo);
-    
-    // تحديث زر الخدمات
+}
+
+/**
+ * تحميل إعدادات الخدمات المحفوظة
+ */
+function loadServicesSettings() {
     updateServicesButton();
-    
-    // التحقق من تهيئة النظام
-    const systemResetDone = localStorage.getItem(STORAGE_KEYS.SYSTEM_RESET_DONE);
-    if (systemResetDone === 'true') {
-        console.log('تم تهيئة النظام مسبقاً');
-    }
-    
-    // إضافة معلومات الإصدار
-    console.log(`%c
-    ╔══════════════════════════════════════╗
-    ║     نقابة تكنولوجيا المعلومات        ║
-    ║     ${DEFAULT_SETTINGS.SYSTEM_VERSION}          ║
-    ║     جميع الحقوق محفوظة © 2026        ║
-    ╚══════════════════════════════════════╝
-    `, 'color: #00ffff; font-family: monospace; font-size: 12px;');
-});
+}
 
-// ------------------------------ دوال التصدير (للإستخدام في الملفات الأخرى) ------------------------------
-// هذه الدوال متاحة عالمياً للاستخدام في أي مكان
+// ------------------------------ التصدير ------------------------------
 
+// تصدير الثوابت والدوال للاستخدام العام
+window.firebaseConfig = firebaseConfig;
+window.STORAGE_KEYS = STORAGE_KEYS;
+window.DEFAULT_SETTINGS = DEFAULT_SETTINGS;
+window.USER_ROLES = USER_ROLES;
+window.ROLE_NAMES = ROLE_NAMES;
+window.REQUEST_STATUS = REQUEST_STATUS;
+window.REQUEST_TYPES = REQUEST_TYPES;
+window.MEMBERSHIP_TYPES = MEMBERSHIP_TYPES;
+window.EGYPT_GOVS = EGYPT_GOVS;
+
+window.getSetting = getSetting;
+window.setSetting = setSetting;
 window.getSavedLogo = getSavedLogo;
 window.getServicesUrl = getServicesUrl;
 window.getServicesText = getServicesText;
 window.shouldShowServices = shouldShowServices;
 window.getComplaintPrefix = getComplaintPrefix;
 window.getSuggestionPrefix = getSuggestionPrefix;
+window.getRoleName = getRoleName;
 window.saveSettings = saveSettings;
-window.autoSaveSettings = autoSaveSettings;
 window.updateAllLogos = updateAllLogos;
 window.updateServicesButton = updateServicesButton;
-window.generateRequestNumber = generateRequestNumber;
+window.formatText = formatText;
 window.validateNationalID = validateNationalID;
 window.validatePhone = validatePhone;
+window.hashPassword = hashPassword;
 window.getCurrentArabicDate = getCurrentArabicDate;
 window.getCurrentArabicTime = getCurrentArabicTime;
-window.resetSystem = resetSystem;
-
-// تصدير الثوابت
-window.STORAGE_KEYS = STORAGE_KEYS;
-window.DEFAULT_SETTINGS = DEFAULT_SETTINGS;
-window.db = db;
+window.generateRequestNumber = generateRequestNumber;
+window.loadSavedLogo = loadSavedLogo;
+window.loadServicesSettings = loadServicesSettings;
 
 // ------------------------------ نهاية ملف الإعدادات ------------------------------
