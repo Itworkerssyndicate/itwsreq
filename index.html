@@ -16,12 +16,18 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- bcryptjs للتشفير الآمن -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    <!-- FingerprintJS لتحديد الأجهزة الفريدة -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- bcryptjs للتشفير الآمن -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    
+    <!-- html2canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         /* =====================================================================
@@ -1414,8 +1420,9 @@
             <!-- شاشة تقديم الطلب -->
             <section id="view-submit" class="view">
                 <div class="card">
-                    <a href="#" id="services-link" class="services-banner" style="display: none; background: var(--gradient-warm); padding: 15px; border-radius: 30px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none;">
-                        <i class="fas fa-globe"></i> <span>موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
+                    <!-- زر موقع الخدمات - مع tracking -->
+                    <a href="#" id="services-link" class="services-banner" style="display: none; background: var(--gradient-warm); padding: 15px; border-radius: 30px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none;" onclick="trackServicesClick(event)">
+                        <i class="fas fa-globe"></i> <span id="services-link-text">موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
                     </a>
                     
                     <h2 class="card-title"><i class="fas fa-pen-alt"></i> نموذج تقديم طلب</h2>
@@ -1637,107 +1644,55 @@
         };
         
         // =====================================================================
-        // نظام اللوجو المتكامل - حل مشكلة المزامنة بين الأجهزة
+        // نظام اللوجو المتكامل
         // =====================================================================
         
         /**
-         * تحميل اللوجو من Firebase (المصدر الرئيسي)
+         * تحميل جميع الإعدادات من Firebase
          */
-        async function loadLogoFromFirebase() {
+        async function loadAllSettingsFromFirebase() {
             try {
-                console.log('🔄 جاري تحميل اللوجو من Firebase...');
+                console.log('🔄 جاري تحميل جميع الإعدادات من Firebase...');
                 
-                // محاولة جلب اللوجو من Firebase
                 const settingsDoc = await db.collection('Settings').doc('system').get();
                 
                 if (settingsDoc.exists) {
                     const settings = settingsDoc.data();
                     
-                    // إذا كان فيه لوجو في Firebase
-                    if (settings.logo && settings.logo.trim() !== '') {
-                        // حفظ في localStorage كنسخة احتياطية
-                        localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
-                        console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
-                        return settings.logo;
-                    }
+                    // تحديث localStorage كنسخة احتياطية
+                    if (settings.logo) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                    if (settings.servicesUrl) localStorage.setItem(STORAGE_KEYS.SERVICES_URL, settings.servicesUrl);
+                    if (settings.servicesText) localStorage.setItem(STORAGE_KEYS.SERVICES_TEXT, settings.servicesText);
+                    if (settings.showServices !== undefined) localStorage.setItem(STORAGE_KEYS.SHOW_SERVICES, settings.showServices);
+                    if (settings.complaintPrefix) localStorage.setItem(STORAGE_KEYS.COMPLAINT_PREFIX, settings.complaintPrefix);
+                    if (settings.suggestionPrefix) localStorage.setItem(STORAGE_KEYS.SUGGESTION_PREFIX, settings.suggestionPrefix);
+                    
+                    console.log('✅ تم تحميل الإعدادات من Firebase:', settings);
+                    return settings;
                 }
                 
-                // لو مفيش لوجو في Firebase، نشوف localStorage
-                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
-                if (localLogo && localLogo.trim() !== '') {
-                    console.log('✅ استخدام اللوجو من localStorage:', localLogo);
-                    
-                    // حفظ اللوجو المحلي في Firebase للمزامنة
-                    await saveLogoToFirebase(localLogo, false);
-                    
-                    return localLogo;
-                }
-                
-                // استخدام اللوجو الافتراضي
-                console.log('✅ استخدام اللوجو الافتراضي');
-                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
-                return DEFAULT_SETTINGS.LOGO_URL;
+                console.log('⚠️ لا توجد إعدادات في Firebase، استخدام الافتراضية');
+                return DEFAULT_SETTINGS;
                 
             } catch (error) {
-                console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
-                
-                // في حالة الخطأ، نستخدم المخزن المحلي أو الافتراضي
-                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
-                if (localLogo && localLogo.trim() !== '') {
-                    return localLogo;
-                }
-                
-                return DEFAULT_SETTINGS.LOGO_URL;
+                console.error('❌ خطأ في تحميل الإعدادات من Firebase:', error);
+                return DEFAULT_SETTINGS;
             }
         }
         
         /**
-         * حفظ اللوجو في Firebase (المصدر الرئيسي)
+         * تحميل اللوجو من Firebase
          */
-        async function saveLogoToFirebase(logoUrl, showLog = true) {
-            try {
-                // التحقق من صحة الرابط
-                if (!logoUrl || logoUrl.trim() === '') {
-                    logoUrl = DEFAULT_SETTINGS.LOGO_URL;
-                }
-                
-                // حفظ في localStorage أولاً
-                localStorage.setItem(STORAGE_KEYS.LOGO_URL, logoUrl);
-                
-                // الحصول على اسم المستخدم الحالي
-                const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || 'system';
-                
-                // حفظ في Firebase
-                await db.collection('Settings').doc('system').set({
-                    logo: logoUrl,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedBy: currentUser
-                }, { merge: true });
-                
-                if (showLog) {
-                    console.log('✅ تم حفظ اللوجو في Firebase:', logoUrl);
-                }
-                
-                return true;
-                
-            } catch (error) {
-                console.error('❌ خطأ في حفظ اللوجو في Firebase:', error);
-                return false;
-            }
-        }
-        
-        /**
-         * الحصول على اللوجو (يحاول Firebase أولاً)
-         */
-        async function getLogo() {
-            return await loadLogoFromFirebase();
+        async function loadLogoFromFirebase() {
+            const settings = await loadAllSettingsFromFirebase();
+            return settings.logo || DEFAULT_SETTINGS.LOGO_URL;
         }
         
         /**
          * تحديث جميع اللوجوهات في الصفحة
          */
         async function updateAllLogos() {
-            const logo = await getLogo();
+            const logo = await loadLogoFromFirebase();
             
             // قائمة بكل العناصر التي تحمل اللوجو
             const logoElements = [
@@ -1761,130 +1716,295 @@
             return logo;
         }
         
-        // =====================================================================
-        // إنشاء الجزيئات
-        // =====================================================================
-        function createParticles() {
-            const container = document.getElementById('particles');
-            if (!container) return;
+        /**
+         * تحديث زر الخدمات حسب الإعدادات
+         */
+        async function updateServicesButton() {
+            const settings = await loadAllSettingsFromFirebase();
+            const servicesBtn = document.getElementById('services-link');
+            const servicesText = document.getElementById('services-link-text');
             
-            for (let i = 0; i < 50; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = 15 + Math.random() * 15 + 's';
-                container.appendChild(p);
-            }
-        }
-        
-        // =====================================================================
-        // تحديث نسبة التحميل في شاشة الترحيب
-        // =====================================================================
-        function updateSplashPercentage() {
-            const percentageEl = document.getElementById('splash-percentage');
-            const loaderFill = document.getElementById('splash-loader-fill');
+            if (!servicesBtn) return;
             
-            let percentage = 0;
-            const interval = setInterval(() => {
-                if (percentage < 100) {
-                    percentage += 1;
-                    if (percentageEl) percentageEl.textContent = percentage + '%';
-                    
-                    if (loaderFill) {
-                        loaderFill.style.width = percentage + '%';
-                        
-                        if (percentage > 80) {
-                            loaderFill.style.background = 'linear-gradient(90deg, #a855f7, #ec4899)';
-                        } else if (percentage > 50) {
-                            loaderFill.style.background = 'linear-gradient(90deg, #00ffff, #a855f7)';
-                        }
-                    }
-                } else {
-                    clearInterval(interval);
-                }
-            }, 30);
-        }
-        
-        // =====================================================================
-        // شاشة البداية - مع تحميل اللوجو
-        // =====================================================================
-        window.addEventListener('load', async function() {
-            // إنشاء الجزيئات
-            createParticles();
+            const showServices = settings.showServices !== undefined ? settings.showServices : DEFAULT_SETTINGS.SHOW_SERVICES;
+            const servicesUrl = settings.servicesUrl || DEFAULT_SETTINGS.SERVICES_URL;
+            const servicesTextValue = settings.servicesText || DEFAULT_SETTINGS.SERVICES_TEXT;
             
-            // تحميل اللوجو من Firebase أولاً
-            await updateAllLogos();
-            
-            // بدأ تحديث نسبة التحميل
-            updateSplashPercentage();
-            
-            // إخفاء شاشة الترحيب بعد 4 ثواني
-            setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('fade-out');
-                setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
-                    document.getElementById('main-wrapper').classList.add('visible');
-                }, 1200);
-            }, 4000);
-        });
-        
-        window.skipSplash = function() {
-            document.getElementById('splash-screen').classList.add('fade-out');
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('main-wrapper').classList.add('visible');
-            }, 1000);
-        };
-        
-        // تحديث اللوجو عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAllLogos();
-        });
-        
-        // =====================================================================
-        // تبديل المشاهد
-        // =====================================================================
-        window.switchView = function(view) {
-            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById('view-' + view).style.display = 'block';
-            
-            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
-            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
-            else if (view === 'login') document.getElementById('btn-login').classList.add('active');
-        };
-        window.switchView('submit');
-        
-        // =====================================================================
-        // حقل العضوية
-        // =====================================================================
-        window.toggleMemberField = function() {
-            const type = document.getElementById('u-member-type').value;
-            const box = document.getElementById('member-id-box');
-            const typeSelect = document.getElementById('u-req-type');
-            
-            if (type === 'عضو نقابة') {
-                box.style.display = 'block';
-                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            if (showServices && servicesUrl) {
+                servicesBtn.style.display = 'flex';
+                servicesBtn.href = servicesUrl;
+                if (servicesText) servicesText.textContent = servicesTextValue;
             } else {
-                box.style.display = 'none';
-                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
+                servicesBtn.style.display = 'none';
             }
-        };
+        }
         
         // =====================================================================
-        // التعامل مع زر Enter في تسجيل الدخول
+        // نظام تتبع الزوار
         // =====================================================================
-        window.handleLoginKeyDown = function(event, field) {
-            if (event.key === 'Enter') {
-                if (field === 'username') {
-                    document.getElementById('login-password').focus();
-                } else if (field === 'password') {
-                    handleLogin();
+        
+        let visitorFingerprint = null;
+        let sessionStartTime = Date.now();
+        
+        /**
+         * إنشاء بصمة فريدة للجهاز
+         */
+        async function generateFingerprint() {
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                return result.visitorId;
+            } catch (error) {
+                console.error('خطأ في إنشاء البصمة:', error);
+                return 'browser_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+            }
+        }
+        
+        /**
+         * استخراج معلومات الجهاز
+         */
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            const screen = `${window.screen.width}×${window.screen.height}`;
+            
+            // تحديد نوع الجهاز
+            let deviceType = 'desktop';
+            if (/mobile|android|iphone|ipad|ipod/i.test(ua)) {
+                deviceType = /ipad|tablet/i.test(ua) ? 'tablet' : 'mobile';
+            }
+            
+            // تحديد نظام التشغيل
+            let os = 'Unknown';
+            if (ua.indexOf('Windows') > -1) os = 'Windows';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+            else if (ua.indexOf('Mac') > -1) os = 'MacOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            
+            // تحديد المتصفح
+            let browser = 'Unknown';
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+            
+            // تقدير البلد من اللغة والمنطقة الزمنية
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const language = navigator.language;
+            
+            let country = 'أخرى';
+            if (timezone.includes('Cairo') || language.includes('EG')) country = 'مصر';
+            else if (timezone.includes('Riyadh') || language.includes('SA')) country = 'السعودية';
+            else if (timezone.includes('Dubai') || language.includes('AE')) country = 'الإمارات';
+            else if (timezone.includes('Kuwait') || language.includes('KW')) country = 'الكويت';
+            
+            return {
+                type: deviceType,
+                os: os,
+                browser: browser,
+                screen: screen,
+                language: language,
+                timezone: timezone,
+                country: country
+            };
+        }
+        
+        /**
+         * تسجيل الزيارة
+         */
+        async function trackVisit() {
+            try {
+                // إنشاء بصمة الجهاز
+                visitorFingerprint = await generateFingerprint();
+                
+                // معلومات الجهاز
+                const deviceInfo = getDeviceInfo();
+                const now = new Date();
+                const todayStr = now.toISOString().split('T')[0];
+                const currentPage = window.location.pathname;
+                
+                // التحقق من وجود الزائر في قاعدة البيانات
+                const visitorRef = db.collection('Visitors').doc(visitorFingerprint);
+                const visitorDoc = await visitorRef.get();
+                
+                if (visitorDoc.exists) {
+                    // زائر قديم - تحديث البيانات
+                    const visitorData = visitorDoc.data();
+                    
+                    // إضافة زيارة جديدة (بدون serverTimestamp في الـ array)
+                    const newVisit = {
+                        date: now.toISOString(),
+                        duration: 0, // هيتحسب عند المغادرة
+                        pages: [currentPage]
+                    };
+                    
+                    // تحديث المستند
+                    await visitorRef.update({
+                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                        visitCount: firebase.firestore.FieldValue.increment(1),
+                        visits: firebase.firestore.FieldValue.arrayUnion(newVisit)
+                    });
+                    
+                    // تحديث إحصائيات الزوار
+                    const statsRef = db.collection('Visitors').doc('stats');
+                    await statsRef.update({
+                        totalVisits: firebase.firestore.FieldValue.increment(1),
+                        [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
+                    });
+                    
+                    console.log('✅ تم تحديث زيارة الزائر:', visitorFingerprint);
+                    
+                } else {
+                    // زائر جديد
+                    const newVisitor = {
+                        fingerprint: visitorFingerprint,
+                        firstVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                        lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                        visitCount: 1,
+                        totalTimeSpent: 0,
+                        deviceInfo: deviceInfo,
+                        visits: [{
+                            date: now.toISOString(), // استخدام نص تاريخ
+                            duration: 0,
+                            pages: [currentPage]
+                        }]
+                    };
+                    
+                    await visitorRef.set(newVisitor);
+                    
+                    // تحديث إحصائيات الزوار
+                    const statsRef = db.collection('Visitors').doc('stats');
+                    const statsDoc = await statsRef.get();
+                    
+                    if (statsDoc.exists) {
+                        await statsRef.update({
+                            totalUniqueVisitors: firebase.firestore.FieldValue.increment(1),
+                            totalVisits: firebase.firestore.FieldValue.increment(1),
+                            [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
+                        });
+                    } else {
+                        await statsRef.set({
+                            totalUniqueVisitors: 1,
+                            totalVisits: 1,
+                            totalServicesClicks: 0,
+                            lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                            dailyStats: {
+                                [todayStr]: 1
+                            }
+                        });
+                    }
+                    
+                    console.log('✅ تم تسجيل زائر جديد:', visitorFingerprint);
                 }
-                event.preventDefault();
+                
+            } catch (error) {
+                console.error('❌ خطأ في تتبع الزيارة:', error);
+            }
+        }
+        
+        /**
+         * تسجيل وقت المغادرة
+         */
+        async function trackLeave() {
+            if (!visitorFingerprint) return;
+            
+            try {
+                const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000); // بالثواني
+                
+                const visitorRef = db.collection('Visitors').doc(visitorFingerprint);
+                const visitorDoc = await visitorRef.get();
+                
+                if (visitorDoc.exists) {
+                    const visitorData = visitorDoc.data();
+                    const totalTimeSpent = (visitorData.totalTimeSpent || 0) + sessionDuration;
+                    
+                    // تحديث آخر زيارة في الـ array (صعب شوية، هنعملها بطريقة مبسطة)
+                    await visitorRef.update({
+                        totalTimeSpent: totalTimeSpent
+                    });
+                    
+                    console.log('✅ تم تسجيل وقت الجلسة:', sessionDuration, 'ثانية');
+                }
+                
+            } catch (error) {
+                console.error('❌ خطأ في تتبع المغادرة:', error);
+            }
+        }
+        
+        // =====================================================================
+        // تتبع نقرات موقع الخدمات
+        // =====================================================================
+        
+        /**
+         * تسجيل نقرة على موقع الخدمات
+         */
+        window.trackServicesClick = async function(event) {
+            // مش هنمنع الحدث عشان الرابط يشتغل
+            // event.preventDefault();
+            
+            try {
+                if (!visitorFingerprint) {
+                    visitorFingerprint = await generateFingerprint();
+                }
+                
+                const deviceInfo = getDeviceInfo();
+                const now = new Date();
+                const todayStr = now.toISOString().split('T')[0];
+                
+                // إنشاء معرف فريد للنقرة
+                const clickId = 'click_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+                
+                // تسجيل النقرة
+                await db.collection('ServicesClicks').doc(clickId).set({
+                    id: clickId,
+                    fingerprint: visitorFingerprint,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: todayStr,
+                    deviceInfo: deviceInfo,
+                    userAgent: navigator.userAgent,
+                    page: window.location.pathname
+                });
+                
+                // تحديث إحصائيات النقرات
+                const statsRef = db.collection('ServicesClicks').doc('stats');
+                const statsDoc = await statsRef.get();
+                
+                // التحقق من أول نقرة لهذا الجهاز اليوم
+                const todayClicksQuery = await db.collection('ServicesClicks')
+                    .where('fingerprint', '==', visitorFingerprint)
+                    .where('date', '==', todayStr)
+                    .get();
+                
+                const isFirstToday = todayClicksQuery.size <= 1;
+                
+                if (statsDoc.exists) {
+                    await statsRef.update({
+                        totalClicks: firebase.firestore.FieldValue.increment(1),
+                        [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
+                    });
+                    
+                    // إذا كانت أول نقرة اليوم للجهاز، نزيد uniqueVisitors
+                    if (isFirstToday) {
+                        await statsRef.update({
+                            uniqueVisitors: firebase.firestore.FieldValue.increment(1)
+                        });
+                    }
+                    
+                } else {
+                    await statsRef.set({
+                        totalClicks: 1,
+                        uniqueVisitors: 1,
+                        lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                        dailyStats: {
+                            [todayStr]: 1
+                        }
+                    });
+                }
+                
+                console.log('✅ تم تسجيل نقرة على موقع الخدمات:', clickId);
+                
+            } catch (error) {
+                console.error('❌ خطأ في تتبع النقرة:', error);
             }
         };
         
@@ -1922,7 +2042,10 @@
         // =====================================================================
         async function generateRequestNumber(type) {
             const year = new Date().getFullYear();
-            const prefix = type === 'شكوى' ? 'REQ' : 'REP';
+            const settings = await loadAllSettingsFromFirebase();
+            const prefix = type === 'شكوى' 
+                ? (settings.complaintPrefix || DEFAULT_SETTINGS.COMPLAINT_PREFIX)
+                : (settings.suggestionPrefix || DEFAULT_SETTINGS.SUGGESTION_PREFIX);
             
             try {
                 const counterRef = db.collection('Counters').doc(type === 'شكوى' ? 'complaints' : 'suggestions');
@@ -1963,10 +2086,136 @@
         }
         
         // =====================================================================
-        // إنشاء كارت الطلب (الوصل) - مع اللوجو من Firebase
+        // تحديث نسبة التحميل في شاشة الترحيب
+        // =====================================================================
+        function updateSplashPercentage() {
+            const percentageEl = document.getElementById('splash-percentage');
+            const loaderFill = document.getElementById('splash-loader-fill');
+            
+            let percentage = 0;
+            const interval = setInterval(() => {
+                if (percentage < 100) {
+                    percentage += 1;
+                    if (percentageEl) percentageEl.textContent = percentage + '%';
+                    
+                    if (loaderFill) {
+                        loaderFill.style.width = percentage + '%';
+                        
+                        if (percentage > 80) {
+                            loaderFill.style.background = 'linear-gradient(90deg, #a855f7, #ec4899)';
+                        } else if (percentage > 50) {
+                            loaderFill.style.background = 'linear-gradient(90deg, #00ffff, #a855f7)';
+                        }
+                    }
+                } else {
+                    clearInterval(interval);
+                }
+            }, 30);
+        }
+        
+        // =====================================================================
+        // إنشاء الجزيئات
+        // =====================================================================
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 15 + Math.random() * 15 + 's';
+                container.appendChild(p);
+            }
+        }
+        createParticles();
+        
+        // =====================================================================
+        // شاشة البداية - مع تحميل اللوجو وتسجيل الزيارة
+        // =====================================================================
+        window.addEventListener('load', async function() {
+            // تسجيل الزيارة
+            await trackVisit();
+            
+            // تحميل الإعدادات وتحديث اللوجو وزر الخدمات
+            await loadAllSettingsFromFirebase();
+            await updateAllLogos();
+            await updateServicesButton();
+            
+            // بدأ تحديث نسبة التحميل
+            updateSplashPercentage();
+            
+            // إخفاء شاشة الترحيب بعد 4 ثواني
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('main-wrapper').classList.add('visible');
+                }, 1200);
+            }, 4000);
+        });
+        
+        // تسجيل وقت المغادرة
+        window.addEventListener('beforeunload', function() {
+            trackLeave();
+        });
+        
+        window.skipSplash = function() {
+            document.getElementById('splash-screen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-wrapper').classList.add('visible');
+            }, 1000);
+        };
+        
+        // تحديث اللوجو عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllLogos();
+        });
+        
+        window.switchView = function(view) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('view-' + view).style.display = 'block';
+            
+            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
+            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
+            else if (view === 'login') document.getElementById('btn-login').classList.add('active');
+        };
+        window.switchView('submit');
+        
+        window.toggleMemberField = function() {
+            const type = document.getElementById('u-member-type').value;
+            const box = document.getElementById('member-id-box');
+            const typeSelect = document.getElementById('u-req-type');
+            
+            if (type === 'عضو نقابة') {
+                box.style.display = 'block';
+                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            } else {
+                box.style.display = 'none';
+                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
+            }
+        };
+        
+        window.handleLoginKeyDown = function(event, field) {
+            if (event.key === 'Enter') {
+                if (field === 'username') {
+                    document.getElementById('login-password').focus();
+                } else if (field === 'password') {
+                    handleLogin();
+                }
+                event.preventDefault();
+            }
+        };
+        
+        // =====================================================================
+        // إنشاء كارت الطلب (الوصل)
         // =====================================================================
         async function generateRequestCard(data) {
-            const logo = await getLogo(); // استخدام اللوجو من Firebase
+            const logo = await loadLogoFromFirebase();
             const date = getCurrentArabicDate();
             const time = getCurrentArabicTime();
             
