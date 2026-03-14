@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>تهيئة النظام - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05.2026</title>
+    <title>تهيئة النظام الشاملة - نقابة تكنولوجيا المعلومات والبرمجيات | VR 2.05.2026</title>
     
     <!-- الخطوط الأساسية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -200,7 +200,7 @@
         
         /* الحاوية الرئيسية */
         .setup-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 20px auto;
             position: relative;
             z-index: 10;
@@ -351,6 +351,8 @@
         .setup-card:nth-child(1) { animation-delay: 0.2s; }
         .setup-card:nth-child(2) { animation-delay: 0.4s; }
         .setup-card:nth-child(3) { animation-delay: 0.6s; }
+        .setup-card:nth-child(4) { animation-delay: 0.8s; }
+        .setup-card:nth-child(5) { animation-delay: 1s; }
         
         @keyframes cardAppear {
             0% { opacity: 0; transform: translateY(50px) scale(0.95); }
@@ -432,6 +434,113 @@
             font-size: 14px;
             border: 2px solid var(--neon-cyan);
             font-weight: 700;
+        }
+        
+        /* جدول الـ Collections */
+        .collections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .collection-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 25px 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .collection-item:hover {
+            transform: translateY(-10px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 40px var(--neon-cyan);
+        }
+        
+        .collection-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0,255,255,0.1), transparent 70%);
+            animation: rotateCollection 15s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes rotateCollection {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .collection-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .collection-name {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .collection-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .collection-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* جدول الإحصائيات */
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .stats-table th {
+            text-align: right;
+            padding: 15px;
+            color: var(--neon-cyan);
+            font-weight: 800;
+            font-size: 16px;
+            border-bottom: 2px solid var(--neon-cyan);
+        }
+        
+        .stats-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stats-table tr:hover {
+            background: rgba(0, 255, 255, 0.05);
         }
         
         /* جدول المستخدمين */
@@ -749,6 +858,10 @@
                 grid-template-columns: 1fr;
             }
             
+            .collections-grid {
+                grid-template-columns: 1fr;
+            }
+            
             .btn {
                 width: 100%;
                 padding: 15px 25px;
@@ -783,7 +896,7 @@
             <div class="logo-wrapper">
                 <img src="https://placehold.co/150x150/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="setup-logo">
             </div>
-            <h1 class="setup-title">تهيئة النظام المتطورة</h1>
+            <h1 class="setup-title">تهيئة النظام الشاملة</h1>
             <p class="setup-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</p>
         </div>
         
@@ -836,11 +949,229 @@
             <div class="status-message" id="status-message"></div>
         </div>
         
+        <!-- كارت الـ Collections الـ 12 -->
+        <div class="setup-card">
+            <div class="card-title">
+                <i class="fas fa-layer-group"></i>
+                <span>Collections المتاحة (12 Collection)</span>
+            </div>
+            
+            <div class="collections-grid">
+                <!-- Users -->
+                <div class="collection-item" style="border-color: #ef4444;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #ef4444, #f97316);">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="collection-name" style="color: #ef4444;">Users</div>
+                    <div class="collection-desc">بيانات المستخدمين والصلاحيات</div>
+                    <span class="collection-badge" style="background: rgba(239,68,68,0.2); color: #ef4444;">6 حقول</span>
+                </div>
+                
+                <!-- Requests -->
+                <div class="collection-item" style="border-color: #00ffff;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #00ffff, #a855f7);">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="collection-name" style="color: #00ffff;">Requests</div>
+                    <div class="collection-desc">الطلبات والشكاوى والمقترحات</div>
+                    <span class="collection-badge" style="background: rgba(0,255,255,0.2); color: #00ffff;">12 حقل</span>
+                </div>
+                
+                <!-- Visitors -->
+                <div class="collection-item" style="border-color: #10b981;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <div class="collection-name" style="color: #10b981;">Visitors</div>
+                    <div class="collection-desc">تتبع الزوار (الأجهزة - البلدان - الوقت)</div>
+                    <span class="collection-badge" style="background: rgba(16,185,129,0.2); color: #10b981;">9 حقول</span>
+                </div>
+                
+                <!-- ServicesClicks -->
+                <div class="collection-item" style="border-color: #f97316;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);">
+                        <i class="fas fa-mouse-pointer"></i>
+                    </div>
+                    <div class="collection-name" style="color: #f97316;">ServicesClicks</div>
+                    <div class="collection-desc">نقرات موقع الخدمات (كل نقرة)</div>
+                    <span class="collection-badge" style="background: rgba(249,115,22,0.2); color: #f97316;">7 حقول</span>
+                </div>
+                
+                <!-- ActiveSessions -->
+                <div class="collection-item" style="border-color: #a855f7;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div class="collection-name" style="color: #a855f7;">ActiveSessions</div>
+                    <div class="collection-desc">المستخدمين المتصلين حالياً</div>
+                    <span class="collection-badge" style="background: rgba(168,85,247,0.2); color: #a855f7;">8 حقول</span>
+                </div>
+                
+                <!-- UserActivityLog -->
+                <div class="collection-item" style="border-color: #3b82f6;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #3b82f6, #a855f7);">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <div class="collection-name" style="color: #3b82f6;">UserActivityLog</div>
+                    <div class="collection-desc">سجل كل إجراءات المستخدمين</div>
+                    <span class="collection-badge" style="background: rgba(59,130,246,0.2); color: #3b82f6;">10 حقول</span>
+                </div>
+                
+                <!-- DailyStats -->
+                <div class="collection-item" style="border-color: #ec4899;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #ec4899, #f97316);">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="collection-name" style="color: #ec4899;">DailyStats</div>
+                    <div class="collection-desc">إحصائيات يومية (طلبات - زوار - نقرات)</div>
+                    <span class="collection-badge" style="background: rgba(236,72,153,0.2); color: #ec4899;">15 حقل</span>
+                </div>
+                
+                <!-- UserActionCounts -->
+                <div class="collection-item" style="border-color: #00cccc;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #00cccc, #3b82f6);">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="collection-name" style="color: #00cccc;">UserActionCounts</div>
+                    <div class="collection-desc">عدادات إجراءات كل مستخدم</div>
+                    <span class="collection-badge" style="background: rgba(0,204,204,0.2); color: #00cccc;">20+ حقل</span>
+                </div>
+                
+                <!-- Counters -->
+                <div class="collection-item" style="border-color: #ffd700;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #ffd700, #f97316);">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <div class="collection-name" style="color: #ffd700;">Counters</div>
+                    <div class="collection-desc">عدادات الترقيم (شكاوى - مقترحات)</div>
+                    <span class="collection-badge" style="background: rgba(255,215,0,0.2); color: #ffd700;">3 حقول</span>
+                </div>
+                
+                <!-- Settings -->
+                <div class="collection-item" style="border-color: #ffffff;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #ffffff, #94a3b8);">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <div class="collection-name" style="color: #ffffff;">Settings</div>
+                    <div class="collection-desc">إعدادات النظام (لوجو - روابط - بادئات)</div>
+                    <span class="collection-badge" style="background: rgba(255,255,255,0.2); color: #ffffff;">7 حقول</span>
+                </div>
+                
+                <!-- SystemLogs -->
+                <div class="collection-item" style="border-color: #64748b;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #64748b, #334155);">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="collection-name" style="color: #94a3b8;">SystemLogs</div>
+                    <div class="collection-desc">سجل النظام (إجراءات تقنية)</div>
+                    <span class="collection-badge" style="background: rgba(100,116,139,0.2); color: #94a3b8;">6 حقول</span>
+                </div>
+                
+                <!-- _test_ -->
+                <div class="collection-item" style="border-color: #6b7280;">
+                    <div class="collection-icon" style="background: linear-gradient(135deg, #6b7280, #4b5563);">
+                        <i class="fas fa-vial"></i>
+                    </div>
+                    <div class="collection-name" style="color: #9ca3af;">_test_</div>
+                    <div class="collection-desc">اختبار الاتصال بقاعدة البيانات</div>
+                    <span class="collection-badge" style="background: rgba(107,114,128,0.2); color: #9ca3af;">مؤقت</span>
+                </div>
+            </div>
+            
+            <div style="background: rgba(0, 255, 255, 0.1); padding: 25px; border-radius: 40px; margin-top: 20px;">
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 200px;">
+                        <h4 style="color: var(--neon-cyan); margin-bottom: 10px;">إجمالي الـ Collections</h4>
+                        <p style="font-size: 48px; font-weight: 900; color: white;">12</p>
+                    </div>
+                    <div style="flex: 2;">
+                        <p style="color: var(--neon-green); display: flex; align-items: center; gap: 10px; font-size: 18px; margin-bottom: 10px;">
+                            <i class="fas fa-check-circle"></i>
+                            <span>✅ كل الـ Collections جاهزة للتتبع الكامل</span>
+                        </p>
+                        <p style="color: var(--neon-cyan); display: flex; align-items: center; gap: 10px; font-size: 18px;">
+                            <i class="fas fa-chart-line"></i>
+                            <span>📊 إحصائيات ورسوم بيانية لكل حاجة</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- كارت تفاصيل التتبع -->
+        <div class="setup-card">
+            <div class="card-title">
+                <i class="fas fa-search"></i>
+                <span>تفاصيل التتبع الشامل</span>
+            </div>
+            
+            <table class="stats-table">
+                <thead>
+                    <tr>
+                        <th>الفئة</th>
+                        <th>البيانات المتتبعة</th>
+                        <th>العدد التقريبي</th>
+                        <th>الاستخدام</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-users" style="color: #ef4444;"></i> المستخدمين</td>
+                        <td>بيانات شخصية - صلاحيات - آخر دخول - الحالة</td>
+                        <td>6+ حقول</td>
+                        <td>إدارة الفريق والصلاحيات</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-file-alt" style="color: #00ffff;"></i> الطلبات</td>
+                        <td>شكاوى - مقترحات - حالة - مسار زمني - تفاصيل</td>
+                        <td>12+ حقل</td>
+                        <td>إدارة الشكاوى والمقترحات</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-eye" style="color: #10b981;"></i> الزوار</td>
+                        <td>بصمة الجهاز - نوعه - نظام التشغيل - المتصفح - البلد - الوقت - الصفحات</td>
+                        <td>15+ حقل</td>
+                        <td>تحليل الجمهور وسلوك الزوار</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-mouse-pointer" style="color: #f97316;"></i> نقرات الخدمات</td>
+                        <td>كل نقرة على زر الخدمات - وقتها - الجهاز - الصفحة</td>
+                        <td>7 حقول</td>
+                        <td>قياس التفاعل مع موقع الخدمات</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-plug" style="color: #a855f7;"></i> الجلسات النشطة</td>
+                        <td>المستخدمين المتصلين حالياً - وقت الدخول - آخر نشاط - الصفحة الحالية</td>
+                        <td>8 حقول</td>
+                        <td>مراقبة النشاط الحي</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-clipboard-list" style="color: #3b82f6;"></i> سجل الإجراءات</td>
+                        <td>كل إجراء (عرض - إنشاء - تعديل - حذف - دخول - خروج) + التوقيت + الجهاز</td>
+                        <td>10 حقول</td>
+                        <td>سجل تدقيق كامل</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-line" style="color: #ec4899;"></i> الإحصائيات اليومية</td>
+                        <td>زوار - طلبات - نقرات - مستخدمين نشطين - أوقات الذروة - توزيع ساعي</td>
+                        <td>20+ حقل</td>
+                        <td>تقارير ورسوم بيانية</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-chart-pie" style="color: #00cccc;"></i> عدادات المستخدمين</td>
+                        <td>كل مستخدم عمل إيه النهارده - الأسبوع - الشهر - كل الوقت</td>
+                        <td>20+ حقل</td>
+                        <td>تحليل أداء الفريق</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
         <!-- كارت المستخدمين -->
         <div class="setup-card">
             <div class="card-title">
                 <i class="fas fa-users-cog"></i>
-                <span>بيانات المستخدمين</span>
+                <span>بيانات المستخدمين (مستخدم واحد فقط - admin)</span>
             </div>
             
             <div style="overflow-x: auto;">
@@ -851,12 +1182,13 @@
                             <th>الاسم الكامل</th>
                             <th>الدور</th>
                             <th>رقم الهاتف</th>
+                            <th>كلمة المرور</th>
                             <th>الحالة</th>
                         </tr>
                     </thead>
                     <tbody id="users-table-body">
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 50px;">
+                            <td colspan="6" style="text-align: center; padding: 50px;">
                                 <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan);"></i>
                                 <p style="margin-top: 20px; font-size: 18px;">جاري تحميل البيانات...</p>
                             </td>
@@ -868,61 +1200,48 @@
             <div style="background: rgba(0, 255, 255, 0.1); padding: 20px; border-radius: 40px; margin-top: 25px; border: 2px solid rgba(0,255,255,0.2);">
                 <p style="color: var(--neon-cyan); display: flex; align-items: center; gap: 15px; font-size: 18px;">
                     <i class="fas fa-info-circle fa-2x"></i>
-                    <span>لتسجيل الدخول استخدم اسم المستخدم ورقم الهاتف الخاص بك</span>
+                    <span>بيانات تسجيل الدخول: <strong>admin</strong> : <strong style="color: #00ffff;">keyatech@</strong> (رقم الهاتف: 01234567890)</span>
                 </p>
             </div>
         </div>
         
-        <!-- كارت الإعدادات المتقدمة (كلها في Firebase) -->
+        <!-- كارت الإعدادات -->
         <div class="setup-card">
             <div class="card-title">
                 <i class="fas fa-cogs"></i>
-                <span>إعدادات النظام المتقدمة</span>
+                <span>إعدادات النظام</span>
             </div>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
                 <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
-                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-image"></i> إعدادات الشعار
-                    </h4>
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px;"><i class="fas fa-image"></i> الشعار</h4>
                     <div class="info-item" style="margin-bottom: 0;">
-                        <div class="info-label">رابط الشعار الحالي</div>
+                        <div class="info-label">الرابط الحالي</div>
                         <div class="info-value" style="font-size: 14px; word-break: break-all;" id="current-logo">جاري التحميل...</div>
                     </div>
                 </div>
                 
                 <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
-                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-globe"></i> إعدادات الخدمات
-                    </h4>
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px;"><i class="fas fa-globe"></i> موقع الخدمات</h4>
                     <div class="info-item" style="margin-bottom: 0;">
-                        <div class="info-label">رابط موقع الخدمات</div>
+                        <div class="info-label">الرابط الحالي</div>
                         <div class="info-value" style="font-size: 14px; word-break: break-all;" id="current-services-url">جاري التحميل...</div>
                     </div>
                 </div>
                 
                 <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
-                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
-                        <i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم
-                    </h4>
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px;"><i class="fas fa-sort-numeric-up"></i> بادئات الترقيم</h4>
                     <div style="display: flex; gap: 15px;">
                         <div class="info-item" style="flex:1; margin-bottom: 0;">
-                            <div class="info-label">بادئة الشكاوى</div>
+                            <div class="info-label">شكاوى</div>
                             <div class="info-value" id="current-complaint-prefix">...</div>
                         </div>
                         <div class="info-item" style="flex:1; margin-bottom: 0;">
-                            <div class="info-label">بادئة المقترحات</div>
+                            <div class="info-label">مقترحات</div>
                             <div class="info-value" id="current-suggestion-prefix">...</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <div style="background: rgba(0, 255, 255, 0.05); padding: 20px; border-radius: 40px; margin-bottom: 25px;">
-                <p style="color: var(--neon-green); display: flex; align-items: center; gap: 10px; font-size: 16px;">
-                    <i class="fas fa-check-circle fa-2x"></i>
-                    <span>✅ جميع الإعدادات الآن مخزنة في Firebase وتتزامن تلقائياً مع جميع الأجهزة</span>
-                </p>
             </div>
         </div>
         
@@ -1013,40 +1332,25 @@
         };
         
         // =====================================================================
-        // نظام الإعدادات المتكامل (كله في Firebase)
+        // نظام الإعدادات
         // =====================================================================
         
-        /**
-         * تحميل جميع الإعدادات من Firebase
-         */
         async function loadAllSettingsFromFirebase() {
             try {
-                console.log('🔄 جاري تحميل جميع الإعدادات من Firebase...');
-                
                 const settingsDoc = await db.collection('Settings').doc('system').get();
                 
                 if (settingsDoc.exists) {
                     const settings = settingsDoc.data();
-                    
-                    // تحديث localStorage كنسخة احتياطية
                     if (settings.logo) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
-                    
-                    console.log('✅ تم تحميل الإعدادات من Firebase:', settings);
                     return settings;
                 }
-                
-                console.log('⚠️ لا توجد إعدادات في Firebase، استخدام الافتراضية');
                 return DEFAULT_SETTINGS;
-                
             } catch (error) {
-                console.error('❌ خطأ في تحميل الإعدادات من Firebase:', error);
+                console.error('❌ خطأ في تحميل الإعدادات:', error);
                 return DEFAULT_SETTINGS;
             }
         }
         
-        /**
-         * حفظ جميع الإعدادات في Firebase
-         */
         async function saveAllSettingsToFirebase(settings) {
             try {
                 const currentUser = localStorage.getItem('currentUser') || 'system';
@@ -1063,33 +1367,21 @@
                 };
                 
                 await db.collection('Settings').doc('system').set(settingsToSave, { merge: true });
-                
-                // تحديث localStorage
                 localStorage.setItem(STORAGE_KEYS.LOGO_URL, settingsToSave.logo);
-                
-                console.log('✅ تم حفظ جميع الإعدادات في Firebase:', settingsToSave);
                 return true;
-                
             } catch (error) {
-                console.error('❌ خطأ في حفظ الإعدادات في Firebase:', error);
+                console.error('❌ خطأ في حفظ الإعدادات:', error);
                 return false;
             }
         }
         
-        /**
-         * تحميل اللوجو من Firebase
-         */
         async function loadLogoFromFirebase() {
             const settings = await loadAllSettingsFromFirebase();
             return settings.logo || DEFAULT_SETTINGS.LOGO_URL;
         }
         
-        /**
-         * تحديث اللوجو في الصفحة
-         */
         async function updateLogo() {
             const logo = await loadLogoFromFirebase();
-            
             const logoElement = document.getElementById('setup-logo');
             if (logoElement) {
                 logoElement.src = logo;
@@ -1097,16 +1389,11 @@
                     this.src = DEFAULT_SETTINGS.LOGO_URL;
                 };
             }
-            
             return logo;
         }
         
-        /**
-         * عرض الإعدادات الحالية في الصفحة
-         */
         async function displayCurrentSettings() {
             const settings = await loadAllSettingsFromFirebase();
-            
             document.getElementById('current-logo').textContent = settings.logo || DEFAULT_SETTINGS.LOGO_URL;
             document.getElementById('current-services-url').textContent = settings.servicesUrl || DEFAULT_SETTINGS.SERVICES_URL;
             document.getElementById('current-complaint-prefix').textContent = settings.complaintPrefix || DEFAULT_SETTINGS.COMPLAINT_PREFIX;
@@ -1121,10 +1408,7 @@
             messageEl.className = 'status-message ' + type;
             messageEl.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} fa-2x"></i> ${text}`;
             messageEl.classList.add('show');
-            
-            setTimeout(() => {
-                messageEl.classList.remove('show');
-            }, 5000);
+            setTimeout(() => messageEl.classList.remove('show'), 5000);
         }
         
         function showProgress(show) {
@@ -1141,46 +1425,33 @@
             progressFill.style.width = percent + '%';
         }
         
-        // =====================================================================
-        // تشفير كلمة المرور
-        // =====================================================================
         async function hashPassword(password) {
             if (typeof bcrypt !== 'undefined') {
                 const salt = await bcrypt.genSalt(10);
                 return await bcrypt.hash(password, salt);
             }
-            console.warn('⚠️ bcryptjs غير متاح، استخدام تشفير بسيط');
             return btoa(password);
         }
         
-        // =====================================================================
-        // إنشاء بصمة فريدة للجهاز (للتجربة في setup)
-        // =====================================================================
         async function generateFingerprint() {
             try {
                 const fp = await FingerprintJS.load();
                 const result = await fp.get();
                 return result.visitorId;
             } catch (error) {
-                console.error('خطأ في إنشاء البصمة:', error);
                 return 'test_' + Date.now();
             }
         }
         
-        /**
-         * استخراج معلومات الجهاز
-         */
         function getDeviceInfo() {
             const ua = navigator.userAgent;
             const screen = `${window.screen.width}×${window.screen.height}`;
             
-            // تحديد نوع الجهاز
             let deviceType = 'desktop';
             if (/mobile|android|iphone|ipad|ipod/i.test(ua)) {
                 deviceType = /ipad|tablet/i.test(ua) ? 'tablet' : 'mobile';
             }
             
-            // تحديد نظام التشغيل
             let os = 'Unknown';
             if (ua.indexOf('Windows') > -1) os = 'Windows';
             else if (ua.indexOf('Android') > -1) os = 'Android';
@@ -1188,14 +1459,12 @@
             else if (ua.indexOf('Mac') > -1) os = 'MacOS';
             else if (ua.indexOf('Linux') > -1) os = 'Linux';
             
-            // تحديد المتصفح
             let browser = 'Unknown';
             if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
             else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
             else if (ua.indexOf('Safari') > -1) browser = 'Safari';
             else if (ua.indexOf('Edge') > -1) browser = 'Edge';
             
-            // تقدير البلد من اللغة والمنطقة الزمنية
             const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             const language = navigator.language;
             
@@ -1205,19 +1474,11 @@
             else if (timezone.includes('Dubai') || language.includes('AE')) country = 'الإمارات';
             else if (timezone.includes('Kuwait') || language.includes('KW')) country = 'الكويت';
             
-            return {
-                type: deviceType,
-                os: os,
-                browser: browser,
-                screen: screen,
-                language: language,
-                timezone: timezone,
-                country: country
-            };
+            return { type: deviceType, os, browser, screen, language, timezone, country };
         }
         
         // =====================================================================
-        // إنشاء قاعدة البيانات من الصفر (كل الإعدادات في Firebase)
+        // إنشاء قاعدة البيانات من الصفر (12 Collection)
         // =====================================================================
         async function createDatabase() {
             const result = await Swal.fire({
@@ -1240,28 +1501,30 @@
                 updateProgress(5);
                 showMessage('info', 'جاري إنشاء قاعدة البيانات...');
                 
-                // قائمة بكل المجموعات
-                const collections = ['Users', 'Requests', 'Counters', 'Settings', 'SystemLogs', 'Visitors', 'ServicesClicks'];
+                // قائمة بكل المجموعات (12 Collection)
+                const collections = [
+                    'Users', 'Requests', 'Counters', 'Settings', 'SystemLogs', 
+                    'Visitors', 'ServicesClicks', 'ActiveSessions', 'UserActivityLog',
+                    'DailyStats', 'UserActionCounts', '_test_'
+                ];
                 
                 // حذف المجموعات الموجودة
                 for (let i = 0; i < collections.length; i++) {
                     try {
                         const snapshot = await db.collection(collections[i]).get();
                         const batch = db.batch();
-                        snapshot.docs.forEach(doc => {
-                            batch.delete(doc.ref);
-                        });
+                        snapshot.docs.forEach(doc => batch.delete(doc.ref));
                         await batch.commit();
                         console.log(`✅ تم حذف مجموعة ${collections[i]}`);
                     } catch (error) {
                         console.log(`⚠️ مجموعة ${collections[i]} غير موجودة`);
                     }
-                    updateProgress(10 + (i * 5));
+                    updateProgress(5 + (i * 3));
                 }
                 
-                updateProgress(40);
+                updateProgress(45);
                 
-                // 1. إنشاء مستخدم سوبر أدمن
+                // 1. إنشاء مستخدم سوبر أدمن واحد فقط
                 const hashedPassword = await hashPassword('keyatech@');
                 
                 const superAdmin = {
@@ -1277,7 +1540,7 @@
                     lastLogin: null
                 };
                 
-                await db.collection('Users').add(superAdmin);
+                const adminRef = await db.collection('Users').add(superAdmin);
                 updateProgress(50);
                 
                 // 2. إنشاء عدادات الطلبات
@@ -1289,11 +1552,11 @@
                 for (const counter of counters) {
                     await db.collection('Counters').doc(counter.id).set(counter);
                 }
-                updateProgress(60);
+                updateProgress(55);
                 
                 // 3. إنشاء إعدادات النظام
                 await saveAllSettingsToFirebase(DEFAULT_SETTINGS);
-                updateProgress(70);
+                updateProgress(60);
                 
                 // 4. إنشاء إحصائيات الزوار
                 await db.collection('Visitors').doc('stats').set({
@@ -1303,63 +1566,120 @@
                     lastReset: firebase.firestore.FieldValue.serverTimestamp(),
                     dailyStats: {}
                 });
-                updateProgress(75);
+                updateProgress(63);
                 
-                // 5. إنشاء إحصائيات نقرات الخدمات
+                // 5. إنشاء إحصائيات النقرات
                 await db.collection('ServicesClicks').doc('stats').set({
                     totalClicks: 0,
                     uniqueVisitors: 0,
                     lastReset: firebase.firestore.FieldValue.serverTimestamp(),
                     dailyStats: {}
                 });
+                updateProgress(66);
+                
+                // 6. إنشاء ActiveSessions
+                await db.collection('ActiveSessions').doc('stats').set({
+                    maxConcurrent: 0,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                updateProgress(69);
+                
+                // 7. إنشاء UserActivityLog
+                await db.collection('UserActivityLog').doc('_init_').set({
+                    initialized: true,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                updateProgress(72);
+                
+                // 8. إنشاء DailyStats لليوم الحالي
+                const today = new Date().toISOString().split('T')[0];
+                await db.collection('DailyStats').doc(today).set({
+                    date: today,
+                    visitors: { total: 0, unique: 0, new: 0 },
+                    requests: { total: 0, complaints: 0, suggestions: 0, pending: 0, resolved: 0 },
+                    users: { active: 0, loggedIn: 0, actions: 0 },
+                    servicesClicks: 0,
+                    peakHour: "00:00",
+                    hourlyStats: {}
+                });
+                updateProgress(75);
+                
+                // 9. إنشاء UserActionCounts للمستخدم admin
+                await db.collection('UserActionCounts').doc(adminRef.id).set({
+                    userId: adminRef.id,
+                    username: 'admin',
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    today: { views: 0, creates: 0, updates: 0, deletes: 0, logins: 1, total: 1 },
+                    week: { views: 0, creates: 0, updates: 0, deletes: 0, logins: 1, total: 1 },
+                    month: { views: 0, creates: 0, updates: 0, deletes: 0, logins: 1, total: 1 },
+                    all: { views: 0, creates: 0, updates: 0, deletes: 0, logins: 1, total: 1 }
+                });
+                updateProgress(78);
+                
+                // 10. إنشاء _test_ collection
+                await db.collection('_test_').doc('test').set({
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    message: 'Test connection'
+                });
                 updateProgress(80);
                 
-                // 6. إنشاء مثال تجريبي لجهاز (بدون serverTimestamp في الـ array)
+                // 11. إنشاء مثال تجريبي لجهاز (للاختبار)
                 const testFingerprint = 'test_' + Date.now();
                 const testDevice = getDeviceInfo();
                 const now = new Date();
-                const todayStr = now.toISOString().split('T')[0];
                 
-                // إنشاء جهاز تجريبي - استخدام تاريخ نصي بدلاً من serverTimestamp
                 await db.collection('Visitors').doc(testFingerprint).set({
                     fingerprint: testFingerprint,
-                    firstVisit: firebase.firestore.FieldValue.serverTimestamp(), // هذا عادي لأنه مش في array
-                    lastVisit: firebase.firestore.FieldValue.serverTimestamp(), // هذا عادي لأنه مش في array
+                    firstVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
                     visitCount: 1,
                     totalTimeSpent: 0,
                     deviceInfo: testDevice,
                     visits: [{
-                        date: now.toISOString(), // استخدام نص تاريخ بدلاً من serverTimestamp
+                        date: now.toISOString(),
                         duration: 0,
                         pages: ['/setup']
                     }]
                 });
                 
                 // تحديث إحصائيات الزوار
-                const visitorsStatsRef = db.collection('Visitors').doc('stats');
-                await visitorsStatsRef.update({
+                await db.collection('Visitors').doc('stats').update({
                     totalUniqueVisitors: firebase.firestore.FieldValue.increment(1),
                     totalVisits: firebase.firestore.FieldValue.increment(1),
-                    [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
+                    [`dailyStats.${today}`]: firebase.firestore.FieldValue.increment(1)
                 });
                 
-                // 7. إنشاء مثال تجريبي لنقرة خدمات
+                // تحديث DailyStats
+                await db.collection('DailyStats').doc(today).update({
+                    'visitors.total': firebase.firestore.FieldValue.increment(1),
+                    'visitors.unique': firebase.firestore.FieldValue.increment(1),
+                    'visitors.new': firebase.firestore.FieldValue.increment(1)
+                });
+                
+                updateProgress(90);
+                
+                // 12. إنشاء مثال تجريبي لنقرة خدمات
                 const testClickId = 'click_' + Date.now();
                 await db.collection('ServicesClicks').doc(testClickId).set({
                     id: testClickId,
                     fingerprint: testFingerprint,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    date: todayStr,
+                    date: today,
                     deviceInfo: testDevice,
-                    userAgent: navigator.userAgent
+                    userAgent: navigator.userAgent,
+                    page: '/setup'
                 });
                 
                 // تحديث إحصائيات النقرات
-                const clicksStatsRef = db.collection('ServicesClicks').doc('stats');
-                await clicksStatsRef.update({
+                await db.collection('ServicesClicks').doc('stats').update({
                     totalClicks: firebase.firestore.FieldValue.increment(1),
                     uniqueVisitors: firebase.firestore.FieldValue.increment(1),
-                    [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
+                    [`dailyStats.${today}`]: firebase.firestore.FieldValue.increment(1)
+                });
+                
+                // تحديث DailyStats للنقرات
+                await db.collection('DailyStats').doc(today).update({
+                    servicesClicks: firebase.firestore.FieldValue.increment(1)
                 });
                 
                 updateProgress(100);
@@ -1379,13 +1699,51 @@
                     title: '🎉 تم الإنشاء بنجاح',
                     html: `
                         <div style="text-align: center;">
-                            <p style="color: #00ffff; font-size: 22px; margin-bottom: 20px;">تم إنشاء قاعدة البيانات</p>
+                            <p style="color: #00ffff; font-size: 22px; margin-bottom: 20px;">12 Collection جاهزة</p>
                             <div style="background: rgba(0,255,255,0.1); padding: 25px; border-radius: 30px; margin-top: 15px;">
                                 <p style="font-size: 18px;"><strong>admin</strong> : <strong style="color: #00ffff; font-size: 20px;">keyatech@</strong></p>
                                 <p style="color: rgba(255,255,255,0.8); margin-top: 10px;">رقم الهاتف: 01234567890</p>
                             </div>
-                            <p style="color: var(--neon-green); margin-top: 20px;">✅ جميع الإعدادات مخزنة في Firebase</p>
-                            <p style="color: var(--neon-cyan); margin-top: 10px;">✅ نظام تتبع الزوار ونقرات الخدمات جاهز</p>
+                            <div style="display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 20px;">
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">Users</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">Requests</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">Visitors</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">ServicesClicks</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">ActiveSessions</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">UserActivityLog</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">DailyStats</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">UserActionCounts</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">Counters</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">Settings</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">SystemLogs</span>
+                                </div>
+                                <div style="background: rgba(0,255,255,0.05); padding: 10px; border-radius: 15px;">
+                                    <span style="color: #00ffff;">_test_</span>
+                                </div>
+                            </div>
+                            <p style="color: var(--neon-green); margin-top: 20px;">✅ جميع الإعدادات في Firebase</p>
+                            <p style="color: var(--neon-cyan);">✅ تتبع كامل للزوار والمستخدمين والإجراءات</p>
                         </div>
                     `,
                     background: '#030514',
@@ -1443,9 +1801,9 @@
                 if (usersSnapshot.empty) {
                     usersHTML = `
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 50px;">
+                            <td colspan="6" style="text-align: center; padding: 50px;">
                                 <i class="fas fa-users-slash" style="font-size: 50px; color: rgba(255,255,255,0.3);"></i>
-                                <p style="margin-top: 20px; font-size: 18px;">لا يوجد مستخدمين</p>
+                                <p style="margin-top: 20px;">لا يوجد مستخدمين</p>
                             </td>
                         </tr>
                     `;
@@ -1462,11 +1820,12 @@
                         
                         usersHTML += `
                             <tr>
-                                <td><strong style="font-size: 16px;">${user.username}</strong></td>
+                                <td><strong>${user.username}</strong></td>
                                 <td>${user.name || '-'}</td>
                                 <td><span class="role-badge ${roleClass}">${roleName}</span></td>
                                 <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 30px;">${user.phone || '-'}</span></td>
-                                <td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'}; font-weight: 700;">${user.isActive ? 'نشط' : 'غير نشط'}</span></td>
+                                <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 30px; color: #00ffff;">keyatech@</span></td>
+                                <td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">${user.isActive ? 'نشط' : 'غير نشط'}</span></td>
                             </tr>
                         `;
                     });
@@ -1495,7 +1854,7 @@
                 html: `
                     <p style="color: #ef4444; font-size: 20px; margin-bottom: 20px;">أنت على وشك حذف جميع البيانات!</p>
                     <p style="color: rgba(255,255,255,0.8); font-size: 16px;">هذا الإجراء لا يمكن التراجع عنه</p>
-                    <p style="color: rgba(255,255,255,0.6); margin-top: 20px;">اكتب <strong style="color: #00ffff; font-size: 18px;">حذف</strong> للتأكيد</p>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 20px;">اكتب <strong style="color: #00ffff;">حذف</strong> للتأكيد</p>
                 `,
                 icon: 'warning',
                 input: 'text',
@@ -1549,14 +1908,8 @@
         // =====================================================================
         window.addEventListener('load', async function() {
             createParticles();
-            
-            // تحديث اللوجو من Firebase
             await updateLogo();
-            
-            // عرض الإعدادات الحالية
             await displayCurrentSettings();
-            
-            // فحص قاعدة البيانات تلقائياً
             setTimeout(checkDatabase, 1000);
         });
     </script>
