@@ -584,6 +584,7 @@
             display: flex;
             align-items: center;
             gap: 25px;
+            flex-wrap: wrap;
         }
         
         /* حاوية اللوجو في الهيدر - Flip as a Coin */
@@ -666,6 +667,7 @@
         
         .header-titles {
             flex: 1;
+            min-width: 250px;
         }
         
         .header-title-top {
@@ -712,6 +714,62 @@
             color: transparent;
         }
         
+        /* ==================== زر موقع الخدمات في الهيدر ==================== */
+        .services-header-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            border: 2px solid transparent;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+            transition: all 0.3s var(--ease-bounce);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 10px;
+        }
+        
+        .services-header-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            pointer-events: none;
+        }
+        
+        .services-header-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .services-header-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 0 40px var(--neon-orange), 0 0 60px var(--neon-pink);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .services-header-btn i {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .services-header-btn:hover i {
+            transform: rotate(360deg);
+        }
+        
         .version-badge {
             background: rgba(0, 255, 255, 0.1);
             border: 1px solid var(--neon-cyan);
@@ -723,6 +781,7 @@
             white-space: nowrap;
             backdrop-filter: blur(10px);
             transition: all 0.3s;
+            margin-right: 10px;
         }
         
         .version-badge:hover {
@@ -1266,11 +1325,16 @@
         /* تحسينات الجوال */
         @media (max-width: 1024px) {
             .header-content {
-                flex-direction: column;
+                justify-content: center;
+            }
+            .header-titles {
                 text-align: center;
             }
             .responsive-grid {
                 grid-template-columns: 1fr;
+            }
+            .services-header-btn {
+                margin: 10px 0;
             }
         }
         
@@ -1293,6 +1357,16 @@
             }
             .header-role-name {
                 font-size: 20px;
+            }
+            .header-content {
+                flex-direction: column;
+            }
+            .services-header-btn {
+                width: 100%;
+                margin: 10px 0;
+            }
+            .version-badge {
+                margin-right: 0;
             }
         }
         
@@ -1379,7 +1453,7 @@
     <div class="main-wrapper" id="main-wrapper">
         <div class="main-content" id="main-content">
             
-            <!-- الهيدر الجديد - النقيب العام فوق المهندس محمود جميل -->
+            <!-- الهيدر الجديد - مع زر الخدمات في النص -->
             <header class="header-box glass-effect">
                 <div class="header-content">
                     <!-- اللوجو على اليمين مع Flip as a Coin -->
@@ -1397,6 +1471,13 @@
                             <span class="header-role-name">المهندس / محمود جميل</span>
                         </div>
                     </div>
+                    
+                    <!-- زر موقع الخدمات في النص -->
+                    <a href="#" id="services-header-btn" class="services-header-btn" onclick="trackServicesClick(event)" style="display: none;">
+                        <i class="fas fa-globe"></i>
+                        <span id="services-header-text">موقع تقديم خدمات النقابة</span>
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
                     
                     <div class="version-badge">
                         <i class="fas fa-crown"></i> VR 2.05.2026
@@ -1420,11 +1501,6 @@
             <!-- شاشة تقديم الطلب -->
             <section id="view-submit" class="view">
                 <div class="card">
-                    <!-- زر موقع الخدمات - مع tracking -->
-                    <a href="#" id="services-link" class="services-banner" style="display: none; background: var(--gradient-warm); padding: 15px; border-radius: 30px; margin-bottom: 20px; text-align: center; color: white; text-decoration: none;" onclick="trackServicesClick(event)">
-                        <i class="fas fa-globe"></i> <span id="services-link-text">موقع تقديم خدمات النقابة</span> <i class="fas fa-arrow-left"></i>
-                    </a>
-                    
                     <h2 class="card-title"><i class="fas fa-pen-alt"></i> نموذج تقديم طلب</h2>
                     
                     <div class="input-group">
@@ -1644,7 +1720,7 @@
         };
         
         // =====================================================================
-        // نظام اللوجو المتكامل
+        // نظام اللوجو والإعدادات المتكامل
         // =====================================================================
         
         /**
@@ -1721,8 +1797,8 @@
          */
         async function updateServicesButton() {
             const settings = await loadAllSettingsFromFirebase();
-            const servicesBtn = document.getElementById('services-link');
-            const servicesText = document.getElementById('services-link-text');
+            const servicesBtn = document.getElementById('services-header-btn');
+            const servicesText = document.getElementById('services-header-text');
             
             if (!servicesBtn) return;
             
@@ -1731,7 +1807,7 @@
             const servicesTextValue = settings.servicesText || DEFAULT_SETTINGS.SERVICES_TEXT;
             
             if (showServices && servicesUrl) {
-                servicesBtn.style.display = 'flex';
+                servicesBtn.style.display = 'inline-flex';
                 servicesBtn.href = servicesUrl;
                 if (servicesText) servicesText.textContent = servicesTextValue;
             } else {
