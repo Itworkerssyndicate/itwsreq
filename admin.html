@@ -16,6 +16,9 @@
     <!-- SweetAlert2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
+    <!-- Chart.js للرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <!-- html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
@@ -31,7 +34,7 @@
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام الصلاحيات
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام التتبع
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
@@ -759,13 +762,13 @@
             padding: 5px;
         }
         
-        #main-table, .users-table {
+        #main-table, .users-table, .activity-table, .sessions-table {
             width: 100%;
             border-collapse: collapse;
             min-width: 1300px;
         }
         
-        #main-table th, .users-table th {
+        #main-table th, .users-table th, .activity-table th, .sessions-table th {
             padding: 15px 12px;
             font-size: 13px;
             font-weight: 800;
@@ -776,7 +779,7 @@
             white-space: nowrap;
         }
         
-        #main-table td, .users-table td {
+        #main-table td, .users-table td, .activity-table td, .sessions-table td {
             padding: 12px;
             font-size: 13px;
             border-bottom: 1px solid var(--border-color);
@@ -784,11 +787,11 @@
             vertical-align: middle;
         }
         
-        #main-table tbody tr, .users-table tbody tr {
+        #main-table tbody tr, .users-table tbody tr, .activity-table tbody tr, .sessions-table tbody tr {
             transition: var(--transition);
         }
         
-        #main-table tbody tr:hover, .users-table tbody tr:hover {
+        #main-table tbody tr:hover, .users-table tbody tr:hover, .activity-table tbody tr:hover, .sessions-table tbody tr:hover {
             background: var(--bg-hover);
             transform: scale(1.01);
             box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
@@ -877,6 +880,39 @@
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
             border: 1px solid #f97316;
+        }
+        
+        /* شارات نوع المستخدم */
+        .user-type-badge {
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        
+        .user-type-badge.visitor {
+            background: rgba(148, 163, 184, 0.2);
+            color: #94a3b8;
+            border: 1px solid #94a3b8;
+        }
+        
+        .user-type-badge.user {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border: 1px solid #3b82f6;
+        }
+        
+        .user-type-badge.admin {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+        
+        .user-type-badge.super_admin {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
         }
         
         .type-badge {
@@ -1190,6 +1226,43 @@
             border: 1px solid var(--neon-green);
         }
         
+        /* بطاقات الإحصائيات المتقدمة */
+        .advanced-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+        }
+        
+        .chart-title {
+            color: var(--neon-cyan);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chart-title i {
+            font-size: 20px;
+        }
+        
+        canvas {
+            max-height: 250px;
+            max-width: 100%;
+        }
+        
         /* تخصيص SweetAlert */
         .swal2-popup {
             background: var(--bg-sidebar) !important;
@@ -1206,11 +1279,15 @@
         .swal2-confirm {
             background: var(--gradient-primary) !important;
             border-radius: 10px !important;
+            font-size: 14px !important;
+            padding: 8px 20px !important;
         }
         
         .swal2-cancel {
             background: rgba(255, 255, 255, 0.1) !important;
             border-radius: 10px !important;
+            font-size: 14px !important;
+            padding: 8px 20px !important;
         }
         
         /* تحسينات للأجهزة المحمولة */
@@ -1219,6 +1296,9 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             .search-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .advanced-stats {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
@@ -1244,6 +1324,9 @@
                 grid-template-columns: 1fr;
             }
             .search-grid {
+                grid-template-columns: 1fr;
+            }
+            .advanced-stats {
                 grid-template-columns: 1fr;
             }
             .page-header {
@@ -1295,13 +1378,10 @@
         <div class="settings-section">
             <h5><i class="fas fa-globe"></i> إعدادات موقع الخدمات</h5>
             <input type="url" id="servicesUrl" class="luxury-input" placeholder="رابط موقع الخدمات" value="https://services.egeng.org">
-            <input type="text" id="servicesText" class="luxury-input" placeholder="نص الزر (مثال: خدمات النقابة)" value="موقع تقديم خدمات النقابة">
+            <input type="text" id="servicesText" class="luxury-input" placeholder="نص الزر" value="موقع تقديم خدمات النقابة">
             <div class="checkbox-group">
                 <input type="checkbox" id="showServices" checked>
                 <label>إظهار زر موقع الخدمات في الصفحة الرئيسية</label>
-            </div>
-            <div style="margin-top: 10px; color: var(--text-muted); font-size: 12px;">
-                <i class="fas fa-info-circle"></i> الزر هيظهر في الهيدر جنب اسم البوابة
             </div>
         </div>
         
@@ -1354,7 +1434,11 @@
         </div>
         
         <nav class="sidebar-nav">
-            <button class="nav-item active" data-view="all" id="navAll">
+            <button class="nav-item active" data-view="dashboard" id="navDashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span>لوحة التحكم الرئيسية</span>
+            </button>
+            <button class="nav-item" data-view="all" id="navAll">
                 <i class="fas fa-list"></i>
                 <span>كل الطلبات</span>
             </button>
@@ -1369,6 +1453,10 @@
             <button class="nav-item" data-view="visitors" id="navVisitors">
                 <i class="fas fa-chart-line"></i>
                 <span>إحصائيات الزوار</span>
+            </button>
+            <button class="nav-item" data-view="activity" id="navActivity">
+                <i class="fas fa-history"></i>
+                <span>النشاط الحي</span>
             </button>
             <button class="nav-item" data-view="users" id="navUsers">
                 <i class="fas fa-users-cog"></i>
@@ -1387,8 +1475,8 @@
         <!-- رأس الصفحة -->
         <header class="page-header">
             <div class="page-title">
-                <i class="fas fa-database" id="pageIcon"></i>
-                <h1 id="pageTitle">كل الطلبات</h1>
+                <i class="fas fa-chart-pie" id="pageIcon"></i>
+                <h1 id="pageTitle">لوحة التحكم الرئيسية</h1>
             </div>
             <div class="header-actions">
                 <button class="btn-icon" onclick="exportToPDF()" title="تصدير PDF" id="exportBtn">
@@ -1406,49 +1494,7 @@
             </div>
         </header>
         
-        <!-- بطاقات الإحصائيات (تظهر فقط للطلبات) -->
-        <div id="statsContainer">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>إجمالي الطلبات</h3>
-                        <p id="totalCount">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-exclamation-circle"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>شكاوى</h3>
-                        <p id="complaintsCount">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-lightbulb"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>مقترحات</h3>
-                        <p id="suggestionsCount">0</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>قيد الانتظار</h3>
-                        <p id="pendingCount">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- قسم عرض المحتوى (الطلبات أو المستخدمين أو الإحصائيات) -->
+        <!-- قسم عرض المحتوى -->
         <div id="contentArea">
             <!-- هنا بيتم تحميل المحتوى ديناميكياً -->
         </div>
@@ -1465,7 +1511,7 @@
         </div>
     </main>
     
-    <!-- نافذة إدارة الطلب -->
+    <!-- النوافذ المنبثقة -->
     <div class="modal" id="requestModal">
         <div class="modal-content">
             <button class="modal-close" onclick="closeModal('requestModal')">&times;</button>
@@ -1473,7 +1519,6 @@
         </div>
     </div>
     
-    <!-- نافذة إضافة/تعديل مستخدم -->
     <div class="modal" id="userModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('userModal')">&times;</button>
@@ -1481,7 +1526,6 @@
         </div>
     </div>
     
-    <!-- نافذة حذف الطلب/المستخدم -->
     <div class="modal" id="deleteModal">
         <div class="modal-content" style="max-width: 400px;">
             <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
@@ -1489,7 +1533,6 @@
         </div>
     </div>
     
-    <!-- نافذة إغلاق الشكوى -->
     <div class="modal" id="closeRequestModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('closeRequestModal')">&times;</button>
@@ -1497,7 +1540,6 @@
         </div>
     </div>
     
-    <!-- نافذة تمييز كمقروء -->
     <div class="modal" id="readModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('readModal')">&times;</button>
@@ -1505,7 +1547,6 @@
         </div>
     </div>
     
-    <!-- نافذة إضافة مستخدم جديد (صلاحية السوبر أدمن فقط) -->
     <div class="modal" id="addUserModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('addUserModal')">&times;</button>
@@ -1513,7 +1554,6 @@
         </div>
     </div>
     
-    <!-- نافذة تعديل مستخدم -->
     <div class="modal" id="editUserModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('editUserModal')">&times;</button>
@@ -1521,7 +1561,6 @@
         </div>
     </div>
     
-    <!-- نافذة تغيير كلمة السر -->
     <div class="modal" id="changePasswordModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="modal-close" onclick="closeModal('changePasswordModal')">&times;</button>
@@ -1529,11 +1568,17 @@
         </div>
     </div>
     
-    <!-- نافذة عرض تفاصيل الزائر -->
     <div class="modal" id="visitorModal">
         <div class="modal-content" style="max-width: 700px;">
             <button class="modal-close" onclick="closeModal('visitorModal')">&times;</button>
             <div id="visitorModalContent"></div>
+        </div>
+    </div>
+    
+    <div class="modal" id="activityModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close" onclick="closeModal('activityModal')">&times;</button>
+            <div id="activityModalContent"></div>
         </div>
     </div>
     
@@ -1708,6 +1753,7 @@
                     title: 'خطأ',
                     text: 'الرجاء إدخال رابط الشعار',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -1735,6 +1781,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في حفظ الشعار',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -1774,6 +1821,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في حفظ الإعدادات',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -1786,26 +1834,26 @@
         let allUsers = [];
         let allVisitors = [];
         let allServicesClicks = [];
-        let currentView = 'all';
+        let allSessions = [];
+        let allActivities = [];
+        let currentView = 'dashboard';
         let unsubscribeRequests = null;
         let unsubscribeUsers = null;
         let unsubscribeVisitors = null;
         let unsubscribeServicesClicks = null;
+        let unsubscribeSessions = null;
+        let unsubscribeActivities = null;
         let currentRequestId = null;
         let currentUserId = null;
         let currentVisitorFingerprint = null;
+        let currentSessionId = null;
         let currentUser = null;
         let isSuperAdmin = false;
-        let searchFilters = {
-            ref: '',
-            name: '',
-            nid: '',
-            member: '',
-            dateFrom: '',
-            dateTo: '',
-            type: 'all',
-            status: 'all'
-        };
+        
+        // متغيرات الرسوم البيانية
+        let requestsChart = null;
+        let visitorsChart = null;
+        let activityChart = null;
         
         // =====================================================================
         // إنشاء الجزيئات
@@ -1943,10 +1991,12 @@
                 item.classList.remove('active');
             });
             
-            if (view === 'all') document.getElementById('navAll').classList.add('active');
+            if (view === 'dashboard') document.getElementById('navDashboard').classList.add('active');
+            else if (view === 'all') document.getElementById('navAll').classList.add('active');
             else if (view === 'شكوى') document.getElementById('navComplaints').classList.add('active');
             else if (view === 'اقتراح') document.getElementById('navSuggestions').classList.add('active');
             else if (view === 'visitors') document.getElementById('navVisitors').classList.add('active');
+            else if (view === 'activity') document.getElementById('navActivity').classList.add('active');
             else if (view === 'users') document.getElementById('navUsers').classList.add('active');
         }
         
@@ -1983,6 +2033,7 @@
                     title: 'خطأ',
                     text: 'لا يوجد محتوى للتصدير',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -2027,6 +2078,12 @@
                 if (unsubscribeVisitors) unsubscribeVisitors();
                 if (unsubscribeServicesClicks) unsubscribeServicesClicks();
                 loadVisitorsStats();
+            } else if (currentView === 'activity') {
+                if (unsubscribeSessions) unsubscribeSessions();
+                if (unsubscribeActivities) unsubscribeActivities();
+                loadActivityDashboard();
+            } else if (currentView === 'dashboard') {
+                loadDashboard();
             } else {
                 if (unsubscribeRequests) unsubscribeRequests();
                 loadRequests();
@@ -2043,6 +2100,282 @@
                     background: '#030514'
                 });
             }, 1000);
+        }
+        
+        // =====================================================================
+        // لوحة التحكم الرئيسية (Dashboard)
+        // =====================================================================
+        async function loadDashboard() {
+            document.getElementById('pageTitle').textContent = 'لوحة التحكم الرئيسية';
+            document.getElementById('pageIcon').className = 'fas fa-chart-pie';
+            
+            document.getElementById('contentArea').innerHTML = `
+                <div class="table-card">
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                        <p style="color: var(--text-muted);">جاري تحميل البيانات...</p>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                // جلب إحصائيات الطلبات
+                const requestsSnapshot = await db.collection('Requests').get();
+                const totalRequests = requestsSnapshot.size;
+                const complaints = requestsSnapshot.docs.filter(d => d.data().type === 'شكوى').length;
+                const suggestions = requestsSnapshot.docs.filter(d => d.data().type === 'اقتراح').length;
+                
+                // جلب إحصائيات الزوار
+                const visitorsStatsDoc = await db.collection('Visitors').doc('stats').get();
+                const visitorsStats = visitorsStatsDoc.exists ? visitorsStatsDoc.data() : { totalUniqueVisitors: 0, totalVisits: 0 };
+                
+                // جلب إحصائيات النقرات
+                const clicksStatsDoc = await db.collection('ServicesClicks').doc('stats').get();
+                const clicksStats = clicksStatsDoc.exists ? clicksStatsDoc.data() : { totalClicks: 0, uniqueVisitors: 0 };
+                
+                // جلب الجلسات النشطة
+                const sessionsSnapshot = await db.collection('ActiveSessions').where('isActive', '==', true).get();
+                const activeSessions = sessionsSnapshot.size;
+                
+                // جلب آخر الأنشطة
+                const activitiesSnapshot = await db.collection('UserActivityLog').orderBy('timestamp', 'desc').limit(10).get();
+                
+                let activitiesHTML = '';
+                activitiesSnapshot.forEach(doc => {
+                    const activity = doc.data();
+                    const time = activity.timestamp?.toDate ? activity.timestamp.toDate().toLocaleString('ar-EG') : 'منذ قليل';
+                    
+                    let actionText = '';
+                    let actionColor = '';
+                    
+                    switch(activity.action) {
+                        case 'login':
+                            actionText = 'تسجيل دخول';
+                            actionColor = '#10b981';
+                            break;
+                        case 'logout':
+                            actionText = 'تسجيل خروج';
+                            actionColor = '#ef4444';
+                            break;
+                        case 'create_request':
+                            actionText = 'إنشاء طلب';
+                            actionColor = '#00ffff';
+                            break;
+                        case 'update_request':
+                            actionText = 'تحديث طلب';
+                            actionColor = '#f97316';
+                            break;
+                        case 'delete_request':
+                            actionText = 'حذف طلب';
+                            actionColor = '#ef4444';
+                            break;
+                        default:
+                            actionText = activity.action;
+                            actionColor = '#94a3b8';
+                    }
+                    
+                    activitiesHTML += `
+                        <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 5px; border-right: 3px solid ${actionColor};">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: ${actionColor};">${actionText}</span>
+                                <span style="color: var(--text-muted); font-size: 11px;">${time}</span>
+                            </div>
+                            <div style="margin-top: 5px; font-size: 12px;">
+                                <span style="color: var(--neon-cyan);">${activity.username || 'زائر'}</span>
+                                <span style="color: var(--text-muted);"> - </span>
+                                <span>${activity.details || ''}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                const html = `
+                    <div class="stats-grid" style="margin-bottom: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>إجمالي الطلبات</h3>
+                                <p>${totalRequests}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>الشكاوى</h3>
+                                <p>${complaints}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>المقترحات</h3>
+                                <p>${suggestions}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>الزوار الفريدين</h3>
+                                <p>${visitorsStats.totalUniqueVisitors || 0}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="advanced-stats">
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-pie"></i>
+                                <span>توزيع الطلبات</span>
+                            </div>
+                            <canvas id="requestsChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-line"></i>
+                                <span>نشاط الزوار</span>
+                            </div>
+                            <canvas id="visitorsChart"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <div class="chart-title">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>الأنشطة الأخيرة</span>
+                            </div>
+                            <div style="max-height: 250px; overflow-y: auto;">
+                                ${activitiesHTML || '<p style="color: var(--text-muted);">لا توجد أنشطة</p>'}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid" style="margin-top: 30px;">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>نقرات الخدمات</h3>
+                                <p>${clicksStats.totalClicks || 0}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                                <i class="fas fa-plug"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>متصلين الآن</h3>
+                                <p>${activeSessions}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>إجمالي الزيارات</h3>
+                                <p>${visitorsStats.totalVisits || 0}</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #a855f7);">
+                                <i class="fas fa-users-cog"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>المستخدمين</h3>
+                                <p>${allUsers.length}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('contentArea').innerHTML = html;
+                
+                // إنشاء الرسوم البيانية
+                setTimeout(() => {
+                    if (document.getElementById('requestsChart')) {
+                        if (requestsChart) requestsChart.destroy();
+                        requestsChart = new Chart(document.getElementById('requestsChart'), {
+                            type: 'doughnut',
+                            data: {
+                                labels: ['شكاوى', 'مقترحات'],
+                                datasets: [{
+                                    data: [complaints, suggestions],
+                                    backgroundColor: ['#ef4444', '#10b981'],
+                                    borderColor: ['#ef4444', '#10b981'],
+                                    borderWidth: 2
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom',
+                                        labels: { color: '#fff' }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    
+                    if (document.getElementById('visitorsChart')) {
+                        // بيانات وهمية للرسم البياني (يمكن تحسينها لاحقاً)
+                        if (visitorsChart) visitorsChart.destroy();
+                        visitorsChart = new Chart(document.getElementById('visitorsChart'), {
+                            type: 'line',
+                            data: {
+                                labels: ['الأسبوع الماضي', 'قبل 6 أيام', 'قبل 5 أيام', 'قبل 4 أيام', 'قبل 3 أيام', 'أمس', 'اليوم'],
+                                datasets: [{
+                                    label: 'الزيارات',
+                                    data: [12, 19, 15, 17, 24, 30, visitorsStats.totalVisits || 0],
+                                    borderColor: '#00ffff',
+                                    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+                                    tension: 0.4,
+                                    fill: true
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    legend: {
+                                        labels: { color: '#fff' }
+                                    }
+                                },
+                                scales: {
+                                    y: {
+                                        ticks: { color: '#fff' }
+                                    },
+                                    x: {
+                                        ticks: { color: '#fff' }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+                
+            } catch (error) {
+                console.error('خطأ في تحميل لوحة التحكم:', error);
+                document.getElementById('contentArea').innerHTML = `
+                    <div class="table-card">
+                        <div style="text-align: center; padding: 50px; color: var(--neon-red);">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i>
+                            <h3 style="color: var(--neon-red);">حدث خطأ في تحميل البيانات</h3>
+                            <p style="color: var(--text-muted);">${error.message}</p>
+                        </div>
+                    </div>
+                `;
+            }
         }
         
         // =====================================================================
@@ -2094,7 +2427,6 @@
                 
                 updateStats();
                 createRequestsView();
-                Swal.close();
                 
             }, (error) => {
                 console.error("خطأ في تحميل الطلبات:", error);
@@ -2111,7 +2443,6 @@
                         </div>
                     </div>
                 `;
-                Swal.close();
             });
         }
         
@@ -2208,6 +2539,69 @@
         
         function renderRequests(requests) {
             let tableHTML = `
+                <div class="search-card">
+                    <div class="search-header" onclick="toggleSearch()">
+                        <i class="fas fa-search"></i>
+                        <span>بحث متقدم</span>
+                        <i class="fas fa-chevron-down" id="searchArrow"></i>
+                    </div>
+                    <div class="search-body" id="searchBody">
+                        <div class="search-grid">
+                            <div class="search-field">
+                                <label>رقم الطلب</label>
+                                <input type="text" id="searchRef" placeholder="مثال: REQ-0001-2026" oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الاسم</label>
+                                <input type="text" id="searchName" placeholder="بحث بالاسم..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>الرقم القومي</label>
+                                <input type="text" id="searchNid" placeholder="بحث بالرقم القومي..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>رقم العضوية</label>
+                                <input type="text" id="searchMember" placeholder="بحث برقم العضوية..." oninput="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>من تاريخ</label>
+                                <input type="date" id="searchDateFrom" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>إلى تاريخ</label>
+                                <input type="date" id="searchDateTo" onchange="updateFilters()">
+                            </div>
+                            <div class="search-field">
+                                <label>نوع الطلب</label>
+                                <select id="searchType" onchange="updateFilters()">
+                                    <option value="all">الكل</option>
+                                    <option value="شكوى">شكوى</option>
+                                    <option value="اقتراح">اقتراح</option>
+                                </select>
+                            </div>
+                            <div class="search-field">
+                                <label>الحالة</label>
+                                <select id="searchStatus" onchange="updateFilters()">
+                                    <option value="all">الكل</option>
+                                    <option value="تم الاستلام">تم الاستلام</option>
+                                    <option value="قيد المراجعة">قيد المراجعة</option>
+                                    <option value="جاري التنفيذ">جاري التنفيذ</option>
+                                    <option value="تم الحل">تم الحل</option>
+                                    <option value="تم الإغلاق النهائي">تم الإغلاق النهائي</option>
+                                    <option value="تمت القراءة">تمت القراءة</option>
+                                    <option value="لم يقرأ">لم يقرأ</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="search-actions">
+                            <button class="btn btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-undo"></i> إعادة ضبط
+                            </button>
+                            <span class="results-count" id="resultsCount">${requests.length} نتيجة</span>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="table-card">
                     <div class="table-responsive">
                         <table id="main-table">
@@ -2271,9 +2665,11 @@
                                 <button class="action-btn" onclick="manageRequest('${request.refId}')" title="إدارة الطلب">
                                     <i class="fas fa-cog"></i>
                                 </button>
-                                <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')" title="حذف">
-                                    <i class="fas fa-trash"></i>
-                                </button>
+                                ${isSuperAdmin ? `
+                                    <button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')" title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
                             </td>
                         </tr>
                     `;
@@ -2290,86 +2686,6 @@
             document.getElementById('contentArea').innerHTML = tableHTML;
         }
         
-        function createRequestsView() {
-            const allStatuses = new Set();
-            allRequests.forEach(request => {
-                if (request.status) allStatuses.add(request.status);
-                if (request.tracking) {
-                    request.tracking.forEach(t => {
-                        if (t.status) allStatuses.add(t.status);
-                    });
-                }
-            });
-            
-            const sortedStatuses = Array.from(allStatuses).sort();
-            
-            let statusOptions = '<option value="all">الكل</option>';
-            sortedStatuses.forEach(status => {
-                statusOptions += `<option value="${status}">${status}</option>`;
-            });
-            
-            const searchHTML = `
-                <div class="search-card">
-                    <div class="search-header" onclick="toggleSearch()">
-                        <i class="fas fa-search"></i>
-                        <span>بحث متقدم</span>
-                        <i class="fas fa-chevron-down" id="searchArrow"></i>
-                    </div>
-                    <div class="search-body" id="searchBody">
-                        <div class="search-grid">
-                            <div class="search-field">
-                                <label>رقم الطلب</label>
-                                <input type="text" id="searchRef" placeholder="مثال: REQ-0001-2026" oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>الاسم</label>
-                                <input type="text" id="searchName" placeholder="بحث بالاسم..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>الرقم القومي</label>
-                                <input type="text" id="searchNid" placeholder="بحث بالرقم القومي..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>رقم العضوية</label>
-                                <input type="text" id="searchMember" placeholder="بحث برقم العضوية..." oninput="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>من تاريخ</label>
-                                <input type="date" id="searchDateFrom" onchange="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>إلى تاريخ</label>
-                                <input type="date" id="searchDateTo" onchange="updateFilters()">
-                            </div>
-                            <div class="search-field">
-                                <label>نوع الطلب</label>
-                                <select id="searchType" onchange="updateFilters()">
-                                    <option value="all">الكل</option>
-                                    <option value="شكوى">شكوى</option>
-                                    <option value="اقتراح">اقتراح</option>
-                                </select>
-                            </div>
-                            <div class="search-field">
-                                <label>الحالة</label>
-                                <select id="searchStatus" onchange="updateFilters()">
-                                    ${statusOptions}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="search-actions">
-                            <button class="btn btn-secondary" onclick="resetFilters()">
-                                <i class="fas fa-undo"></i> إعادة ضبط
-                            </button>
-                            <span class="results-count" id="resultsCount">${allRequests.length} نتيجة</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('contentArea').innerHTML = searchHTML;
-            filterRequests();
-        }
-        
         // =====================================================================
         // إدارة الطلب
         // =====================================================================
@@ -2382,6 +2698,7 @@
                     title: 'خطأ',
                     text: 'الطلب غير موجود',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -2479,6 +2796,7 @@
                     title: 'خطأ',
                     text: 'اكتب اسم المرحلة الجديدة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -2490,6 +2808,7 @@
                     title: 'خطأ',
                     text: 'اكتب تعليق على التحديث',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -2506,11 +2825,19 @@
                     })
                 });
                 
+                // تسجيل الإجراء في UserActivityLog
+                await logUserActivity('update_request', {
+                    requestId: currentRequestId,
+                    newStatus: newStatus,
+                    comment: comment
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
                     text: 'تم تحديث حالة الطلب بنجاح',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -2523,6 +2850,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في تحديث الحالة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -2558,6 +2886,7 @@
                     title: 'خطأ',
                     text: 'اكتب سبب الإغلاق',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -2574,11 +2903,18 @@
                     })
                 });
                 
+                // تسجيل الإجراء
+                await logUserActivity('close_request', {
+                    requestId: currentRequestId,
+                    comment: comment
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم الإغلاق',
                     text: 'تم إغلاق الشكوى بنجاح',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -2591,6 +2927,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في إغلاق الشكوى',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -2631,11 +2968,18 @@
                     })
                 });
                 
+                // تسجيل الإجراء
+                await logUserActivity('mark_as_read', {
+                    requestId: currentRequestId,
+                    comment: comment
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم التحديث',
                     text: 'تم تمييز الاقتراح كمقروء',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -2648,9 +2992,429 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في تحديث الحالة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
+        }
+        
+        // =====================================================================
+        // نظام تتبع أنشطة المستخدمين
+        // =====================================================================
+        
+        /**
+         * تسجيل نشاط المستخدم
+         */
+        async function logUserActivity(action, details = {}) {
+            if (!currentUser) return;
+            
+            try {
+                const deviceInfo = await getDeviceInfo();
+                
+                await db.collection('UserActivityLog').add({
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    role: currentUser.role,
+                    action: action,
+                    details: details,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    deviceInfo: deviceInfo,
+                    userAgent: navigator.userAgent,
+                    page: window.location.pathname
+                });
+                
+                // تحديث UserActionCounts
+                const today = new Date().toISOString().split('T')[0];
+                const countsRef = db.collection('UserActionCounts').doc(currentUser.id);
+                const countsDoc = await countsRef.get();
+                
+                if (countsDoc.exists) {
+                    const data = countsDoc.data();
+                    await countsRef.update({
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                        [`today.${action}`]: firebase.firestore.FieldValue.increment(1),
+                        [`today.total`]: firebase.firestore.FieldValue.increment(1),
+                        [`week.${action}`]: firebase.firestore.FieldValue.increment(1),
+                        [`week.total`]: firebase.firestore.FieldValue.increment(1),
+                        [`month.${action}`]: firebase.firestore.FieldValue.increment(1),
+                        [`month.total`]: firebase.firestore.FieldValue.increment(1),
+                        [`all.${action}`]: firebase.firestore.FieldValue.increment(1),
+                        [`all.total`]: firebase.firestore.FieldValue.increment(1)
+                    });
+                } else {
+                    await countsRef.set({
+                        userId: currentUser.id,
+                        username: currentUser.username,
+                        lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                        today: { [action]: 1, total: 1 },
+                        week: { [action]: 1, total: 1 },
+                        month: { [action]: 1, total: 1 },
+                        all: { [action]: 1, total: 1 }
+                    });
+                }
+                
+                // تحديث DailyStats
+                const dailyStatsRef = db.collection('DailyStats').doc(today);
+                const dailyStatsDoc = await dailyStatsRef.get();
+                
+                if (dailyStatsDoc.exists) {
+                    await dailyStatsRef.update({
+                        'users.actions': firebase.firestore.FieldValue.increment(1)
+                    });
+                }
+                
+            } catch (error) {
+                console.error('خطأ في تسجيل النشاط:', error);
+            }
+        }
+        
+        /**
+         * الحصول على معلومات الجهاز
+         */
+        async function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            const screen = `${window.screen.width}×${window.screen.height}`;
+            
+            let deviceType = 'desktop';
+            if (/mobile|android|iphone|ipad|ipod/i.test(ua)) {
+                deviceType = /ipad|tablet/i.test(ua) ? 'tablet' : 'mobile';
+            }
+            
+            let os = 'Unknown';
+            if (ua.indexOf('Windows') > -1) os = 'Windows';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+            else if (ua.indexOf('Mac') > -1) os = 'MacOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            
+            let browser = 'Unknown';
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+            
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const language = navigator.language;
+            
+            return {
+                type: deviceType,
+                os: os,
+                browser: browser,
+                screen: screen,
+                language: language,
+                timezone: timezone
+            };
+        }
+        
+        // =====================================================================
+        // لوحة النشاط الحي
+        // =====================================================================
+        
+        function loadActivityDashboard() {
+            if (!isSuperAdmin) {
+                changeView('dashboard');
+                return;
+            }
+            
+            document.getElementById('pageTitle').textContent = 'النشاط الحي';
+            document.getElementById('pageIcon').className = 'fas fa-history';
+            
+            document.getElementById('contentArea').innerHTML = `
+                <div class="table-card">
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i>
+                        <p style="color: var(--text-muted);">جاري تحميل النشاط الحي...</p>
+                    </div>
+                </div>
+            `;
+            
+            // الاستماع للتغييرات في الجلسات النشطة
+            if (unsubscribeSessions) unsubscribeSessions();
+            unsubscribeSessions = db.collection("ActiveSessions")
+                .where("isActive", "==", true)
+                .orderBy("lastActivity", "desc")
+                .onSnapshot((snapshot) => {
+                    allSessions = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.loginTime?.toDate) {
+                            data.loginTimeDate = data.loginTime.toDate();
+                        }
+                        if (data.lastActivity?.toDate) {
+                            data.lastActivityDate = data.lastActivity.toDate();
+                        }
+                        allSessions.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                    
+                    renderActivityDashboard();
+                });
+            
+            // الاستماع للتغييرات في سجل الأنشطة
+            if (unsubscribeActivities) unsubscribeActivities();
+            unsubscribeActivities = db.collection("UserActivityLog")
+                .orderBy("timestamp", "desc")
+                .limit(50)
+                .onSnapshot((snapshot) => {
+                    allActivities = [];
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if (data.timestamp?.toDate) {
+                            data.timestampDate = data.timestamp.toDate();
+                        }
+                        allActivities.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    });
+                    
+                    renderActivityDashboard();
+                });
+        }
+        
+        function renderActivityDashboard() {
+            // جلب إحصائيات DailyStats
+            const today = new Date().toISOString().split('T')[0];
+            
+            db.collection('DailyStats').doc(today).get().then(dailyDoc => {
+                const dailyStats = dailyDoc.exists ? dailyDoc.data() : { visitors: { total: 0 }, users: { loggedIn: 0, actions: 0 } };
+                
+                // جلب UserActionCounts
+                db.collection('UserActionCounts').get().then(countsSnapshot => {
+                    const userCounts = [];
+                    countsSnapshot.forEach(doc => {
+                        userCounts.push({ id: doc.id, ...doc.data() });
+                    });
+                    
+                    let sessionsHTML = '';
+                    allSessions.forEach(session => {
+                        const loginTime = session.loginTimeDate ? session.loginTimeDate.toLocaleTimeString('ar-EG') : 'منذ قليل';
+                        const lastActivity = session.lastActivityDate ? session.lastActivityDate.toLocaleTimeString('ar-EG') : 'الآن';
+                        
+                        const userTypeClass = session.userType === 'visitor' ? 'visitor' : 
+                                            (session.role === 'super_admin' ? 'super_admin' : 
+                                            (session.role ? 'admin' : 'user'));
+                        
+                        const userTypeText = session.userType === 'visitor' ? 'زائر' : 
+                                           (session.role === 'super_admin' ? 'سوبر أدمن' : 
+                                           (session.role === 'admin' ? 'أدمن' : 
+                                           (session.role === 'reviewer' ? 'مراجع' : 
+                                           (session.role === 'data_entry' ? 'مدخل بيانات' : 'مستخدم'))));
+                        
+                        sessionsHTML += `
+                            <tr>
+                                <td>
+                                    <span class="user-type-badge ${userTypeClass}">${userTypeText}</span>
+                                </td>
+                                <td><strong>${session.username || 'زائر'}</strong></td>
+                                <td><i class="fas fa-${session.deviceInfo?.type === 'mobile' ? 'mobile-alt' : (session.deviceInfo?.type === 'tablet' ? 'tablet-alt' : 'desktop')}" style="color: var(--neon-cyan);"></i> ${session.deviceInfo?.type || 'غير معروف'}</td>
+                                <td>${session.deviceInfo?.os || 'غير معروف'}</td>
+                                <td>${session.deviceInfo?.browser || 'غير معروف'}</td>
+                                <td>${loginTime}</td>
+                                <td>${lastActivity}</td>
+                                <td><span style="color: #10b981;">نشط</span></td>
+                            </tr>
+                        `;
+                    });
+                    
+                    let activitiesHTML = '';
+                    allActivities.forEach(activity => {
+                        const time = activity.timestampDate ? activity.timestampDate.toLocaleString('ar-EG') : 'منذ قليل';
+                        
+                        let actionText = '';
+                        let actionColor = '';
+                        
+                        switch(activity.action) {
+                            case 'login':
+                                actionText = 'تسجيل دخول';
+                                actionColor = '#10b981';
+                                break;
+                            case 'logout':
+                                actionText = 'تسجيل خروج';
+                                actionColor = '#ef4444';
+                                break;
+                            case 'create_request':
+                                actionText = 'إنشاء طلب';
+                                actionColor = '#00ffff';
+                                break;
+                            case 'update_request':
+                                actionText = 'تحديث طلب';
+                                actionColor = '#f97316';
+                                break;
+                            case 'delete_request':
+                                actionText = 'حذف طلب';
+                                actionColor = '#ef4444';
+                                break;
+                            case 'close_request':
+                                actionText = 'إغلاق شكوى';
+                                actionColor = '#ef4444';
+                                break;
+                            case 'mark_as_read':
+                                actionText = 'تمييز كمقروء';
+                                actionColor = '#10b981';
+                                break;
+                            case 'add_user':
+                                actionText = 'إضافة مستخدم';
+                                actionColor = '#a855f7';
+                                break;
+                            case 'update_user':
+                                actionText = 'تعديل مستخدم';
+                                actionColor = '#3b82f6';
+                                break;
+                            case 'delete_user':
+                                actionText = 'حذف مستخدم';
+                                actionColor = '#ef4444';
+                                break;
+                            default:
+                                actionText = activity.action;
+                                actionColor = '#94a3b8';
+                        }
+                        
+                        activitiesHTML += `
+                            <tr>
+                                <td><span style="color: ${actionColor};">${actionText}</span></td>
+                                <td><strong>${activity.username || 'نظام'}</strong></td>
+                                <td><span class="user-type-badge ${activity.role === 'super_admin' ? 'super_admin' : (activity.role ? 'admin' : 'visitor')}">${activity.role ? getRoleName(activity.role) : 'زائر'}</span></td>
+                                <td>${JSON.stringify(activity.details) || '-'}</td>
+                                <td>${time}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    let userCountsHTML = '';
+                    userCounts.forEach(count => {
+                        userCountsHTML += `
+                            <tr>
+                                <td><strong>${count.username}</strong></td>
+                                <td><span class="user-type-badge ${count.role === 'super_admin' ? 'super_admin' : 'admin'}">${getRoleName(count.role)}</span></td>
+                                <td style="color: #00ffff;">${count.today?.views || 0}</td>
+                                <td style="color: #f97316;">${count.today?.creates || 0}</td>
+                                <td style="color: #3b82f6;">${count.today?.updates || 0}</td>
+                                <td style="color: #ef4444;">${count.today?.deletes || 0}</td>
+                                <td style="color: #10b981;">${count.today?.logins || 0}</td>
+                                <td style="color: #a855f7;">${count.today?.total || 0}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    const html = `
+                        <div class="stats-grid" style="margin-bottom: 30px;">
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>متصلين الآن</h3>
+                                    <p>${allSessions.length}</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>زيارات اليوم</h3>
+                                    <p>${dailyStats.visitors?.total || 0}</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>أنشطة اليوم</h3>
+                                    <p>${dailyStats.users?.actions || 0}</p>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #a855f7);">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <h3>آخر الأنشطة</h3>
+                                    <p>${allActivities.length}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-card" style="margin-bottom: 30px;">
+                            <div class="table-responsive">
+                                <h3 style="color: var(--neon-cyan); padding: 20px; margin: 0;">
+                                    <i class="fas fa-plug"></i> الجلسات النشطة حالياً (${allSessions.length})
+                                </h3>
+                                <table class="sessions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>النوع</th>
+                                            <th>المستخدم</th>
+                                            <th>الجهاز</th>
+                                            <th>نظام التشغيل</th>
+                                            <th>المتصفح</th>
+                                            <th>وقت الدخول</th>
+                                            <th>آخر نشاط</th>
+                                            <th>الحالة</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sessionsHTML || '<tr><td colspan="8" style="text-align: center; padding: 30px;">لا توجد جلسات نشطة</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="table-card" style="margin-bottom: 30px;">
+                            <div class="table-responsive">
+                                <h3 style="color: var(--neon-cyan); padding: 20px; margin: 0;">
+                                    <i class="fas fa-history"></i> آخر 50 نشاط
+                                </h3>
+                                <table class="activity-table">
+                                    <thead>
+                                        <tr>
+                                            <th>الإجراء</th>
+                                            <th>المستخدم</th>
+                                            <th>النوع</th>
+                                            <th>التفاصيل</th>
+                                            <th>الوقت</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${activitiesHTML || '<tr><td colspan="5" style="text-align: center; padding: 30px;">لا توجد أنشطة</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <div class="table-card">
+                            <div class="table-responsive">
+                                <h3 style="color: var(--neon-cyan); padding: 20px; margin: 0;">
+                                    <i class="fas fa-chart-pie"></i> إحصائيات المستخدمين (اليوم)
+                                </h3>
+                                <table class="users-table">
+                                    <thead>
+                                        <tr>
+                                            <th>المستخدم</th>
+                                            <th>الدور</th>
+                                            <th>مشاهدات</th>
+                                            <th>إضافات</th>
+                                            <th>تحديثات</th>
+                                            <th>حذف</th>
+                                            <th>دخول</th>
+                                            <th>الإجمالي</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${userCountsHTML || '<tr><td colspan="8" style="text-align: center; padding: 30px;">لا توجد إحصائيات</td></tr>'}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.getElementById('contentArea').innerHTML = html;
+                });
+            });
         }
         
         // =====================================================================
@@ -2659,18 +3423,10 @@
         
         function loadVisitorsStats() {
             if (!isSuperAdmin) {
-                changeView('all');
+                changeView('dashboard');
                 return;
             }
             
-            if (unsubscribeVisitors) {
-                unsubscribeVisitors();
-            }
-            if (unsubscribeServicesClicks) {
-                unsubscribeServicesClicks();
-            }
-            
-            document.getElementById('statsContainer').style.display = 'none';
             document.getElementById('pageTitle').textContent = 'إحصائيات الزوار';
             document.getElementById('pageIcon').className = 'fas fa-chart-line';
             
@@ -2684,12 +3440,19 @@
             `;
             
             // تحميل إحصائيات الزوار
+            if (unsubscribeVisitors) unsubscribeVisitors();
             unsubscribeVisitors = db.collection("Visitors").onSnapshot((snapshot) => {
                 allVisitors = [];
                 
                 snapshot.forEach(doc => {
                     if (doc.id !== 'stats') {
                         const data = doc.data();
+                        if (data.firstVisit?.toDate) {
+                            data.firstVisitDate = data.firstVisit.toDate();
+                        }
+                        if (data.lastVisit?.toDate) {
+                            data.lastVisitDate = data.lastVisit.toDate();
+                        }
                         allVisitors.push({
                             id: doc.id,
                             ...data
@@ -2698,18 +3461,21 @@
                 });
                 
                 renderVisitorsStats();
-                
             }, (error) => {
                 console.error("خطأ في تحميل الزوار:", error);
             });
             
             // تحميل إحصائيات النقرات
-            unsubscribeServicesClicks = db.collection("ServicesClicks").where("date", "==", new Date().toISOString().split('T')[0]).onSnapshot((snapshot) => {
+            if (unsubscribeServicesClicks) unsubscribeServicesClicks();
+            unsubscribeServicesClicks = db.collection("ServicesClicks").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
                 allServicesClicks = [];
                 
                 snapshot.forEach(doc => {
                     if (doc.id !== 'stats') {
                         const data = doc.data();
+                        if (data.timestamp?.toDate) {
+                            data.timestampDate = data.timestamp.toDate();
+                        }
                         allServicesClicks.push({
                             id: doc.id,
                             ...data
@@ -2718,7 +3484,6 @@
                 });
                 
                 renderVisitorsStats();
-                
             }, (error) => {
                 console.error("خطأ في تحميل نقرات الخدمات:", error);
             });
@@ -2771,7 +3536,7 @@
                 .slice(0, 5);
             
             let visitorsHTML = `
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
+                <div class="stats-grid" style="margin-bottom: 30px;">
                     <div class="stat-card">
                         <div class="stat-icon" style="background: linear-gradient(135deg, #00ffff, #a855f7);">
                             <i class="fas fa-users"></i>
@@ -2799,83 +3564,52 @@
                             <p style="font-size: 32px;">${clicksStats.totalClicks || 0}</p>
                         </div>
                     </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px;">
-                    <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
-                        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 15px;">
-                            <h3 style="color: var(--neon-cyan);">إحصائيات اليوم</h3>
-                            <span style="color: var(--neon-cyan);">${today}</span>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">
+                            <i class="fas fa-calendar-day"></i>
                         </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-                            <span>زوار جدد:</span>
-                            <span style="color: #00ffff; font-weight: 700;">${todayVisitors}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-                            <span>نقرات خدمات:</span>
-                            <span style="color: #f97316; font-weight: 700;">${todayClicks}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0;">
-                            <span>معدل النقرات لكل زائر:</span>
-                            <span style="color: #10b981; font-weight: 700;">${todayVisitors > 0 ? (todayClicks / todayVisitors).toFixed(2) : 0}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
-                        <div style="display: flex; justify-content: space-between; width: 100%; margin-bottom: 15px;">
-                            <h3 style="color: var(--neon-cyan);">حسب نوع الجهاز</h3>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-                            <span><i class="fas fa-mobile-alt" style="color: #00ffff;"></i> موبايل:</span>
-                            <span style="color: #00ffff; font-weight: 700;">${deviceStats.mobile}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
-                            <span><i class="fas fa-tablet-alt" style="color: #a855f7;"></i> تابلت:</span>
-                            <span style="color: #a855f7; font-weight: 700;">${deviceStats.tablet}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; width: 100%; padding: 10px 0;">
-                            <span><i class="fas fa-desktop" style="color: #ec4899;"></i> ديسكتوب:</span>
-                            <span style="color: #ec4899; font-weight: 700;">${deviceStats.desktop}</span>
+                        <div class="stat-info">
+                            <h3>زوار اليوم</h3>
+                            <p style="font-size: 32px;">${todayVisitors}</p>
                         </div>
                     </div>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;">
-                    <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
-                        <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">أكثر 5 بلدان</h3>
-                        ${sortedCountries.map(([country, count]) => `
-                            <div style="display: flex; justify-content: space-between; width: 100%; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                <span><i class="fas fa-map-marker-alt" style="color: #f97316;"></i> ${country}:</span>
-                                <span style="color: #f97316; font-weight: 700;">${count}</span>
-                            </div>
-                        `).join('')}
-                        ${sortedCountries.length === 0 ? '<p style="color: var(--text-muted);">لا توجد بيانات</p>' : ''}
+                <div class="advanced-stats">
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-pie"></i>
+                            <span>توزيع الأجهزة</span>
+                        </div>
+                        <canvas id="deviceChart"></canvas>
                     </div>
                     
-                    <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
-                        <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">أكثر المتصفحات</h3>
-                        ${Object.entries(browserStats).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([browser, count]) => `
-                            <div style="display: flex; justify-content: space-between; width: 100%; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                <span><i class="fas fa-globe" style="color: #3b82f6;"></i> ${browser}:</span>
-                                <span style="color: #3b82f6; font-weight: 700;">${count}</span>
-                            </div>
-                        `).join('')}
-                        ${Object.keys(browserStats).length === 0 ? '<p style="color: var(--text-muted);">لا توجد بيانات</p>' : ''}
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-globe"></i>
+                            <span>أكثر 5 بلدان</span>
+                        </div>
+                        <div style="max-height: 250px; overflow-y: auto;">
+                            ${sortedCountries.map(([country, count]) => `
+                                <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--border-color);">
+                                    <span><i class="fas fa-map-marker-alt" style="color: #f97316;"></i> ${country}</span>
+                                    <span style="color: #f97316; font-weight: 700;">${count}</span>
+                                </div>
+                            `).join('')}
+                            ${sortedCountries.length === 0 ? '<p style="color: var(--text-muted);">لا توجد بيانات</p>' : ''}
+                        </div>
                     </div>
                     
-                    <div class="stat-card" style="flex-direction: column; align-items: flex-start;">
-                        <h3 style="color: var(--neon-cyan); margin-bottom: 15px;">أنظمة التشغيل</h3>
-                        ${Object.entries(osStats).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([os, count]) => `
-                            <div style="display: flex; justify-content: space-between; width: 100%; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
-                                <span><i class="fas fa-laptop" style="color: #10b981;"></i> ${os}:</span>
-                                <span style="color: #10b981; font-weight: 700;">${count}</span>
-                            </div>
-                        `).join('')}
-                        ${Object.keys(osStats).length === 0 ? '<p style="color: var(--text-muted);">لا توجد بيانات</p>' : ''}
+                    <div class="chart-container">
+                        <div class="chart-title">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>المتصفحات</span>
+                        </div>
+                        <canvas id="browserChart"></canvas>
                     </div>
                 </div>
                 
-                <div class="table-card">
+                <div class="table-card" style="margin-top: 30px;">
                     <div class="table-responsive">
                         <h3 style="color: var(--neon-cyan); padding: 20px; margin: 0;">آخر الزوار</h3>
                         <table class="users-table" style="min-width: 1000px;">
@@ -2895,8 +3629,8 @@
                             </thead>
                             <tbody>
                                 ${allVisitors.slice(0, 10).map(visitor => {
-                                    const firstVisit = visitor.firstVisit?.toDate ? visitor.firstVisit.toDate().toLocaleString('ar-EG') : 'غير معروف';
-                                    const lastVisit = visitor.lastVisit?.toDate ? visitor.lastVisit.toDate().toLocaleString('ar-EG') : 'غير معروف';
+                                    const firstVisit = visitor.firstVisitDate ? visitor.firstVisitDate.toLocaleString('ar-EG') : 'غير معروف';
+                                    const lastVisit = visitor.lastVisitDate ? visitor.lastVisitDate.toLocaleString('ar-EG') : 'غير معروف';
                                     const deviceType = visitor.deviceInfo?.type || 'غير معروف';
                                     const deviceIcon = deviceType === 'mobile' ? 'fa-mobile-alt' : (deviceType === 'tablet' ? 'fa-tablet-alt' : 'fa-desktop');
                                     
@@ -2950,7 +3684,7 @@
                             </thead>
                             <tbody>
                                 ${allServicesClicks.slice(0, 10).map(click => {
-                                    const time = click.timestamp?.toDate ? click.timestamp.toDate().toLocaleString('ar-EG') : 'غير معروف';
+                                    const time = click.timestampDate ? click.timestampDate.toLocaleString('ar-EG') : 'غير معروف';
                                     
                                     return `
                                         <tr>
@@ -2977,6 +3711,67 @@
             `;
             
             document.getElementById('contentArea').innerHTML = visitorsHTML;
+            
+            // إنشاء الرسوم البيانية
+            setTimeout(() => {
+                if (document.getElementById('deviceChart')) {
+                    new Chart(document.getElementById('deviceChart'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['موبايل', 'تابلت', 'ديسكتوب'],
+                            datasets: [{
+                                data: [deviceStats.mobile, deviceStats.tablet, deviceStats.desktop],
+                                backgroundColor: ['#00ffff', '#a855f7', '#ec4899'],
+                                borderColor: ['#00ffff', '#a855f7', '#ec4899'],
+                                borderWidth: 2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { color: '#fff' }
+                                }
+                            }
+                        }
+                    });
+                }
+                
+                if (document.getElementById('browserChart')) {
+                    new Chart(document.getElementById('browserChart'), {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(browserStats).slice(0, 5),
+                            datasets: [{
+                                label: 'عدد المستخدمين',
+                                data: Object.values(browserStats).slice(0, 5),
+                                backgroundColor: '#00ffff',
+                                borderColor: '#00ffff',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    ticks: { color: '#fff' }
+                                },
+                                x: {
+                                    ticks: { color: '#fff' }
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
         }
         
         async function showVisitorDetails(fingerprint) {
@@ -2985,8 +3780,8 @@
             
             const visitorClicks = allServicesClicks.filter(c => c.fingerprint === fingerprint);
             
-            const firstVisit = visitor.firstVisit?.toDate ? visitor.firstVisit.toDate().toLocaleString('ar-EG') : 'غير معروف';
-            const lastVisit = visitor.lastVisit?.toDate ? visitor.lastVisit.toDate().toLocaleString('ar-EG') : 'غير معروف';
+            const firstVisit = visitor.firstVisitDate ? visitor.firstVisitDate.toLocaleString('ar-EG') : 'غير معروف';
+            const lastVisit = visitor.lastVisitDate ? visitor.lastVisitDate.toLocaleString('ar-EG') : 'غير معروف';
             
             const visitsList = visitor.visits?.map((v, i) => `
                 <div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 5px; border-right: 2px solid var(--neon-cyan);">
@@ -3003,7 +3798,7 @@
                 <div style="background: rgba(249,115,22,0.1); padding: 10px; border-radius: 10px; margin-bottom: 5px; border-right: 2px solid #f97316;">
                     <div style="display: flex; justify-content: space-between;">
                         <span style="color: #f97316;">نقرة ${i + 1}</span>
-                        <span style="color: var(--text-muted);">${c.timestamp?.toDate ? c.timestamp.toDate().toLocaleString('ar-EG') : 'غير معروف'}</span>
+                        <span style="color: var(--text-muted);">${c.timestampDate ? c.timestampDate.toLocaleString('ar-EG') : 'غير معروف'}</span>
                     </div>
                     <div style="margin-top: 5px;">الصفحة: ${c.page || '/'}</div>
                 </div>
@@ -3052,7 +3847,7 @@
         // =====================================================================
         function loadUsers() {
             if (!isSuperAdmin) {
-                changeView('all');
+                changeView('dashboard');
                 return;
             }
             
@@ -3060,7 +3855,6 @@
                 unsubscribeUsers();
             }
             
-            document.getElementById('statsContainer').style.display = 'none';
             document.getElementById('pageTitle').textContent = 'إدارة المستخدمين';
             document.getElementById('pageIcon').className = 'fas fa-users-cog';
             
@@ -3225,6 +4019,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية إضافة مستخدمين',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3303,6 +4098,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية إضافة مستخدمين',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3322,6 +4118,7 @@
                     title: 'خطأ',
                     text: 'اسم المستخدم وكلمة السر مطلوبان',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3334,6 +4131,7 @@
                     title: 'خطأ',
                     text: 'اسم المستخدم موجود بالفعل',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3342,7 +4140,7 @@
             try {
                 const hashedPassword = hashPassword(password);
                 
-                await db.collection("Users").add({
+                const userRef = await db.collection("Users").add({
                     username,
                     password: hashedPassword,
                     name: name || '',
@@ -3356,11 +4154,19 @@
                     createdBy: currentUser?.username || 'system'
                 });
                 
+                // تسجيل الإجراء
+                await logUserActivity('add_user', {
+                    userId: userRef.id,
+                    username: username,
+                    role: role
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم',
                     text: 'تم إضافة المستخدم بنجاح',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -3373,6 +4179,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في إضافة المستخدم',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -3385,6 +4192,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية تعديل المستخدمين',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3457,6 +4265,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية تعديل المستخدمين',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3477,11 +4286,18 @@
                     isActive: isActive !== undefined ? isActive : true
                 });
                 
+                // تسجيل الإجراء
+                await logUserActivity('update_user', {
+                    userId: userId,
+                    updates: { name, email, phone, role, isActive }
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم',
                     text: 'تم تحديث بيانات المستخدم بنجاح',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -3494,6 +4310,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في تحديث البيانات',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -3506,6 +4323,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية تغيير كلمات السر',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3555,6 +4373,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية تغيير كلمات السر',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3569,6 +4388,7 @@
                     title: 'خطأ',
                     text: 'كلمة السر مطلوبة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3580,6 +4400,7 @@
                     title: 'خطأ',
                     text: 'كلمة السر غير متطابقة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3592,11 +4413,17 @@
                     password: hashedPassword
                 });
                 
+                // تسجيل الإجراء
+                await logUserActivity('change_password', {
+                    userId: userId
+                });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'تم',
                     text: 'تم تغيير كلمة السر بنجاح',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -3609,6 +4436,7 @@
                     title: 'خطأ',
                     text: 'حدث خطأ في تغيير كلمة السر',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -3626,6 +4454,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية الحذف',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3681,6 +4510,7 @@
                     title: 'غير مصرح',
                     text: 'أنت لا تملك صلاحية الحذف',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3694,6 +4524,7 @@
                     title: 'خطأ',
                     text: 'كلمة السر غير صحيحة',
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 return;
@@ -3702,8 +4533,19 @@
             try {
                 if (type === 'request') {
                     await db.collection("Requests").doc(currentDeleteId).delete();
+                    
+                    // تسجيل الإجراء
+                    await logUserActivity('delete_request', {
+                        requestId: currentDeleteId
+                    });
+                    
                 } else {
                     await db.collection("Users").doc(currentDeleteId).delete();
+                    
+                    // تسجيل الإجراء
+                    await logUserActivity('delete_user', {
+                        userId: currentDeleteId
+                    });
                 }
                 
                 Swal.fire({
@@ -3711,6 +4553,7 @@
                     title: 'تم الحذف',
                     text: `تم حذف ${type === 'request' ? 'الطلب' : 'المستخدم'} بنجاح`,
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
                 
@@ -3726,6 +4569,7 @@
                     title: 'خطأ',
                     text: `حدث خطأ في حذف ${type === 'request' ? 'الطلب' : 'المستخدم'}`,
                     background: '#030514',
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -3738,35 +4582,110 @@
             currentView = view;
             setActiveNav(view);
             
-            if (view === 'users') {
+            if (view === 'dashboard') {
+                loadDashboard();
+            } else if (view === 'users') {
                 if (isSuperAdmin) {
                     loadUsers();
                 } else {
-                    currentView = 'all';
-                    setActiveNav('all');
-                    document.getElementById('statsContainer').style.display = 'block';
-                    document.getElementById('pageTitle').textContent = 'كل الطلبات';
-                    document.getElementById('pageIcon').className = 'fas fa-database';
-                    loadRequests();
+                    currentView = 'dashboard';
+                    setActiveNav('dashboard');
+                    loadDashboard();
                 }
             } else if (view === 'visitors') {
                 if (isSuperAdmin) {
                     loadVisitorsStats();
                 } else {
-                    currentView = 'all';
-                    setActiveNav('all');
-                    document.getElementById('statsContainer').style.display = 'block';
-                    document.getElementById('pageTitle').textContent = 'كل الطلبات';
-                    document.getElementById('pageIcon').className = 'fas fa-database';
-                    loadRequests();
+                    currentView = 'dashboard';
+                    setActiveNav('dashboard');
+                    loadDashboard();
+                }
+            } else if (view === 'activity') {
+                if (isSuperAdmin) {
+                    loadActivityDashboard();
+                } else {
+                    currentView = 'dashboard';
+                    setActiveNav('dashboard');
+                    loadDashboard();
                 }
             } else {
-                document.getElementById('statsContainer').style.display = 'block';
-                document.getElementById('pageTitle').textContent = view === 'all' ? 'كل الطلبات' : (view === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
-                document.getElementById('pageIcon').className = 'fas fa-database';
                 loadRequests();
             }
         }
+        
+        // =====================================================================
+        // تسجيل دخول المستخدم الحالي في الجلسات النشطة
+        // =====================================================================
+        async function registerCurrentSession() {
+            if (!currentUser) return;
+            
+            try {
+                const deviceInfo = await getDeviceInfo();
+                
+                // إنهاء أي جلسات سابقة لنفس المستخدم
+                const oldSessions = await db.collection('ActiveSessions')
+                    .where('userId', '==', currentUser.id)
+                    .where('isActive', '==', true)
+                    .get();
+                
+                const batch = db.batch();
+                oldSessions.docs.forEach(doc => {
+                    batch.update(doc.ref, { isActive: false });
+                });
+                await batch.commit();
+                
+                // إنشاء جلسة جديدة
+                const sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+                currentSessionId = sessionId;
+                
+                await db.collection('ActiveSessions').doc(sessionId).set({
+                    sessionId: sessionId,
+                    userId: currentUser.id,
+                    username: currentUser.username,
+                    role: currentUser.role,
+                    userType: 'user',
+                    loginTime: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+                    currentPage: window.location.pathname,
+                    deviceInfo: deviceInfo,
+                    userAgent: navigator.userAgent,
+                    isActive: true
+                });
+                
+                console.log('✅ تم تسجيل الجلسة النشطة');
+                
+            } catch (error) {
+                console.error('❌ خطأ في تسجيل الجلسة:', error);
+            }
+        }
+        
+        // تحديث آخر نشاط كل 30 ثانية
+        setInterval(async () => {
+            if (currentSessionId && currentUser) {
+                try {
+                    await db.collection('ActiveSessions').doc(currentSessionId).update({
+                        lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+                        currentPage: window.location.pathname
+                    });
+                } catch (error) {
+                    console.error('❌ خطأ في تحديث الجلسة:', error);
+                }
+            }
+        }, 30000);
+        
+        // إنهاء الجلسة عند الخروج
+        window.addEventListener('beforeunload', async function() {
+            if (currentSessionId) {
+                try {
+                    await db.collection('ActiveSessions').doc(currentSessionId).update({
+                        isActive: false,
+                        endedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                } catch (error) {
+                    console.error('❌ خطأ في إنهاء الجلسة:', error);
+                }
+            }
+        });
         
         // =====================================================================
         // التهيئة
@@ -3780,29 +4699,25 @@
             // تحميل الإعدادات
             await loadAllSettingsFromFirebase();
             
+            // تسجيل الجلسة النشطة
+            await registerCurrentSession();
+            
+            // تسجيل نشاط تسجيل الدخول
+            await logUserActivity('login', {});
+            
+            document.getElementById('navDashboard').addEventListener('click', () => changeView('dashboard'));
             document.getElementById('navAll').addEventListener('click', () => changeView('all'));
             document.getElementById('navComplaints').addEventListener('click', () => changeView('شكوى'));
             document.getElementById('navSuggestions').addEventListener('click', () => changeView('اقتراح'));
             document.getElementById('navVisitors').addEventListener('click', () => changeView('visitors'));
+            document.getElementById('navActivity').addEventListener('click', () => changeView('activity'));
             document.getElementById('navUsers').addEventListener('click', () => changeView('users'));
-            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                await logUserActivity('logout', {});
+                logout();
+            });
             
-            changeView('all');
-        });
-        
-        window.addEventListener('beforeunload', function() {
-            if (unsubscribeRequests) {
-                unsubscribeRequests();
-            }
-            if (unsubscribeUsers) {
-                unsubscribeUsers();
-            }
-            if (unsubscribeVisitors) {
-                unsubscribeVisitors();
-            }
-            if (unsubscribeServicesClicks) {
-                unsubscribeServicesClicks();
-            }
+            changeView('dashboard');
         });
     </script>
 </body>
