@@ -371,7 +371,7 @@
             border: 1px solid var(--neon-cyan);
         }
         
-        /* جدول المستخدمين */
+        /* جدول المستخدمين - بدون تعديل */
         .users-table {
             width: 100%;
             border-collapse: collapse;
@@ -667,6 +667,7 @@
         <!-- الهيدر -->
         <div class="setup-header">
             <div class="logo-wrapper">
+                <!-- اللوجو في شاشة التهيئة - هيتم تحديثه من Firebase -->
                 <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="setup-logo">
             </div>
             <h1 class="setup-title">تهيئة النظام</h1>
@@ -722,7 +723,7 @@
             <div class="status-message" id="status-message"></div>
         </div>
         
-        <!-- كارت المستخدمين -->
+        <!-- كارت المستخدمين - بدون تعديل، هيعرض المستخدمين اللي عندك -->
         <div class="setup-card">
             <div class="card-title">
                 <i class="fas fa-users-cog"></i>
@@ -736,7 +737,7 @@
                             <th>اسم المستخدم</th>
                             <th>الاسم الكامل</th>
                             <th>الدور</th>
-                            <th>كلمة المرور</th>
+                            <th>رقم الهاتف</th>
                             <th>الحالة</th>
                         </tr>
                     </thead>
@@ -754,7 +755,7 @@
             <div style="background: rgba(0, 255, 255, 0.05); padding: 15px; border-radius: 20px; margin-top: 20px;">
                 <p style="color: var(--neon-cyan); display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-info-circle"></i>
-                    <span>للوصول إلى لوحة التحكم استخدم: <strong style="background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 30px;">admin</strong> : <strong style="background: rgba(0,0,0,0.3); padding: 5px 15px; border-radius: 30px;">keyatech@</strong></span>
+                    <span>لتسجيل الدخول استخدم اسم المستخدم ورقم الهاتف الخاص بك</span>
                 </p>
             </div>
         </div>
@@ -780,11 +781,6 @@
                 <button class="btn btn-danger" onclick="resetDatabase()">
                     <i class="fas fa-trash-alt"></i>
                     إعادة تعيين الكل
-                </button>
-                
-                <button class="btn btn-warning" onclick="changeAdminPassword()">
-                    <i class="fas fa-key"></i>
-                    تغيير كلمة السر
                 </button>
                 
                 <button class="btn btn-secondary" onclick="goToLogin()">
@@ -844,6 +840,69 @@
         const DEFAULT_LOGO = 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo';
         
         // =====================================================================
+        // نظام اللوجو - نفس النظام في index و admin
+        // =====================================================================
+        
+        /**
+         * تحميل اللوجو من Firebase
+         */
+        async function loadLogoFromFirebase() {
+            try {
+                console.log('🔄 جاري تحميل اللوجو من Firebase...');
+                
+                const settingsDoc = await db.collection('Settings').doc('system').get();
+                
+                if (settingsDoc.exists) {
+                    const settings = settingsDoc.data();
+                    
+                    if (settings.logo && settings.logo.trim() !== '') {
+                        localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                        console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
+                        return settings.logo;
+                    }
+                }
+                
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+                if (localLogo && localLogo.trim() !== '') {
+                    console.log('✅ استخدام اللوجو من localStorage:', localLogo);
+                    return localLogo;
+                }
+                
+                console.log('✅ استخدام اللوجو الافتراضي');
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_LOGO);
+                return DEFAULT_LOGO;
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
+                
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+                if (localLogo && localLogo.trim() !== '') {
+                    return localLogo;
+                }
+                
+                return DEFAULT_LOGO;
+            }
+        }
+        
+        /**
+         * تحديث اللوجو في الصفحة
+         */
+        async function updateLogo() {
+            const logo = await loadLogoFromFirebase();
+            
+            const logoElement = document.getElementById('setup-logo');
+            if (logoElement) {
+                logoElement.src = logo;
+                logoElement.onerror = function() {
+                    this.src = DEFAULT_LOGO;
+                };
+            }
+            
+            console.log('✅ تم تحديث اللوجو في صفحة التهيئة');
+            return logo;
+        }
+        
+        // =====================================================================
         // دوال مساعدة
         // =====================================================================
         function showMessage(type, text) {
@@ -884,7 +943,7 @@
         }
         
         // =====================================================================
-        // إنشاء قاعدة البيانات من الصفر
+        // إنشاء قاعدة البيانات من الصفر (بدون لمس المستخدمين)
         // =====================================================================
         async function createDatabase() {
             const result = await Swal.fire({
@@ -928,53 +987,23 @@
                 updateProgress(60);
                 
                 // تشفير كلمات المرور
-                const hashedAdminPassword = await hashPassword('keyatech@');
-                const hashedReviewerPassword = await hashPassword('review@2026');
-                const hashedDataPassword = await hashPassword('data@2026');
+                const hashedPassword = await hashPassword('keyatech@');
                 
-                // إنشاء المستخدمين
-                const users = [
-                    {
-                        username: 'admin',
-                        password: hashedAdminPassword,
-                        name: 'المشرف العام',
-                        email: 'admin@itws.org',
-                        phone: '01234567890',
-                        role: 'super_admin',
-                        isActive: true,
-                        permissions: { all: true },
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: null
-                    },
-                    {
-                        username: 'reviewer',
-                        password: hashedReviewerPassword,
-                        name: 'مراجع الطلبات',
-                        email: 'reviewer@itws.org',
-                        phone: '01234567891',
-                        role: 'reviewer',
-                        isActive: true,
-                        permissions: { all: false },
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: null
-                    },
-                    {
-                        username: 'data_entry',
-                        password: hashedDataPassword,
-                        name: 'مدخل بيانات',
-                        email: 'data@itws.org',
-                        phone: '01234567892',
-                        role: 'data_entry',
-                        isActive: true,
-                        permissions: { all: false },
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        lastLogin: null
-                    }
-                ];
+                // إنشاء مستخدم واحد فقط (سوبر أدمن) - بدون لمس المستخدمين التانيين
+                const superAdmin = {
+                    username: 'admin',
+                    password: hashedPassword,
+                    name: 'المشرف العام',
+                    email: 'admin@itws.org',
+                    phone: '01234567890',
+                    role: 'super_admin',
+                    isActive: true,
+                    permissions: { all: true },
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLogin: null
+                };
                 
-                for (const user of users) {
-                    await db.collection('Users').add(user);
-                }
+                await db.collection('Users').add(superAdmin);
                 
                 updateProgress(80);
                 
@@ -988,7 +1017,7 @@
                     await db.collection('Counters').doc(counter.id).set(counter);
                 }
                 
-                // إنشاء إعدادات النظام
+                // إنشاء إعدادات النظام مع اللوجو الافتراضي
                 await db.collection('Settings').doc('system').set({
                     logo: DEFAULT_LOGO,
                     complaintPrefix: 'REQ',
@@ -1003,11 +1032,13 @@
                 updateProgress(100);
                 
                 localStorage.setItem(STORAGE_KEYS.SYSTEM_RESET_DONE, 'true');
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_LOGO);
                 
                 showMessage('success', '✅ تم إنشاء قاعدة البيانات بنجاح');
                 
                 // تحديث الشاشة
                 await checkDatabase();
+                await updateLogo();
                 
                 Swal.fire({
                     icon: 'success',
@@ -1017,8 +1048,7 @@
                             <p style="color: #00ffff; font-size: 18px;">تم إنشاء قاعدة البيانات</p>
                             <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 15px;">
                                 <p><strong>admin</strong> : <strong style="color: #00ffff;">keyatech@</strong></p>
-                                <p><strong>reviewer</strong> : <strong style="color: #00ffff;">review@2026</strong></p>
-                                <p><strong>data_entry</strong> : <strong style="color: #00ffff;">data@2026</strong></p>
+                                <p style="color: rgba(255,255,255,0.6);">رقم الهاتف: 01234567890</p>
                             </div>
                         </div>
                     `,
@@ -1035,7 +1065,7 @@
         }
         
         // =====================================================================
-        // فحص قاعدة البيانات
+        // فحص قاعدة البيانات - بدون تعديل (هيعرض المستخدمين اللي عندك)
         // =====================================================================
         async function checkDatabase() {
             try {
@@ -1071,7 +1101,7 @@
                 const requestsSnapshot = await db.collection('Requests').get();
                 document.getElementById('requests-count').textContent = requestsSnapshot.size;
                 
-                // عرض المستخدمين في الجدول
+                // عرض المستخدمين في الجدول (كل المستخدمين اللي عندك)
                 let usersHTML = '';
                 
                 if (usersSnapshot.empty) {
@@ -1094,15 +1124,12 @@
                             'data_entry': 'مدخل بيانات'
                         }[user.role] || user.role;
                         
-                        // كلمة المرور تظهر فقط للمستخدم admin
-                        const passwordDisplay = user.username === 'admin' ? 'keyatech@' : '••••••••';
-                        
                         usersHTML += `
                             <tr>
                                 <td><strong>${user.username}</strong></td>
                                 <td>${user.name || '-'}</td>
                                 <td><span class="role-badge ${roleClass}">${roleName}</span></td>
-                                <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 20px;">${passwordDisplay}</span></td>
+                                <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 20px;">${user.phone || '-'}</span></td>
                                 <td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">${user.isActive ? 'نشط' : 'غير نشط'}</span></td>
                             </tr>
                         `;
@@ -1110,6 +1137,9 @@
                 }
                 
                 document.getElementById('users-table-body').innerHTML = usersHTML;
+                
+                // تحديث اللوجو
+                await updateLogo();
                 
                 showMessage('success', '✅ تم فحص قاعدة البيانات بنجاح');
                 
@@ -1120,7 +1150,7 @@
         }
         
         // =====================================================================
-        // إعادة تعيين قاعدة البيانات
+        // إعادة تعيين قاعدة البيانات - بدون لمس المستخدمين
         // =====================================================================
         async function resetDatabase() {
             const result = await Swal.fire({
@@ -1153,95 +1183,6 @@
         }
         
         // =====================================================================
-        // تغيير كلمة سر الأدمن
-        // =====================================================================
-        async function changeAdminPassword() {
-            const { value: newPassword } = await Swal.fire({
-                title: 'تغيير كلمة سر الأدمن',
-                html: `
-                    <p style="color: rgba(255,255,255,0.8); margin-bottom: 15px;">أدخل كلمة المرور الجديدة</p>
-                    <input type="password" id="new-password" class="swal2-input" placeholder="كلمة المرور الجديدة" style="background: rgba(3,5,20,0.8); color: white; border: 2px solid #00ffff;">
-                    <input type="password" id="confirm-password" class="swal2-input" placeholder="تأكيد كلمة المرور" style="background: rgba(3,5,20,0.8); color: white; border: 2px solid #00ffff;">
-                `,
-                focusConfirm: false,
-                showCancelButton: true,
-                confirmButtonText: 'تغيير',
-                cancelButtonText: 'إلغاء',
-                confirmButtonColor: '#00ffff',
-                cancelButtonColor: 'rgba(255,255,255,0.2)',
-                background: '#030514',
-                color: '#fff',
-                preConfirm: () => {
-                    const newPass = document.getElementById('new-password').value;
-                    const confirmPass = document.getElementById('confirm-password').value;
-                    
-                    if (!newPass) {
-                        Swal.showValidationMessage('كلمة المرور مطلوبة');
-                        return false;
-                    }
-                    
-                    if (newPass !== confirmPass) {
-                        Swal.showValidationMessage('كلمة المرور غير متطابقة');
-                        return false;
-                    }
-                    
-                    if (newPass.length < 6) {
-                        Swal.showValidationMessage('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-                        return false;
-                    }
-                    
-                    return newPass;
-                }
-            });
-            
-            if (!newPassword) return;
-            
-            try {
-                showProgress(true);
-                updateProgress(30);
-                
-                // البحث عن مستخدم admin
-                const snapshot = await db.collection('Users').where('username', '==', 'admin').get();
-                
-                if (snapshot.empty) {
-                    showMessage('error', '❌ لم يتم العثور على مستخدم admin');
-                    return;
-                }
-                
-                updateProgress(60);
-                
-                // تشفير كلمة المرور الجديدة
-                const hashedPassword = await hashPassword(newPassword);
-                
-                // تحديث كلمة المرور
-                const adminDoc = snapshot.docs[0];
-                await db.collection('Users').doc(adminDoc.id).update({
-                    password: hashedPassword
-                });
-                
-                updateProgress(100);
-                
-                showMessage('success', '✅ تم تغيير كلمة السر بنجاح');
-                
-                Swal.fire({
-                    icon: 'success',
-                    title: 'تم التغيير',
-                    html: `<p style="color: #00ffff;">كلمة السر الجديدة: <strong>${newPassword}</strong></p>`,
-                    background: '#030514',
-                    confirmButtonColor: '#00ffff'
-                });
-                
-                await checkDatabase();
-                
-            } catch (error) {
-                console.error('❌ خطأ في تغيير كلمة السر:', error);
-                showMessage('error', '❌ ' + error.message);
-            } finally {
-                showProgress(false);
-            }
-        }
-        
-        // =====================================================================
         // الذهاب لتسجيل الدخول
         // =====================================================================
         function goToLogin() {
@@ -1266,21 +1207,13 @@
         }
         
         // =====================================================================
-        // تحميل اللوجو المحفوظ
-        // =====================================================================
-        function loadSavedLogo() {
-            const savedLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
-            if (savedLogo) {
-                document.getElementById('setup-logo').src = savedLogo;
-            }
-        }
-        
-        // =====================================================================
         // التهيئة
         // =====================================================================
-        window.addEventListener('load', function() {
+        window.addEventListener('load', async function() {
             createParticles();
-            loadSavedLogo();
+            
+            // تحديث اللوجو من Firebase
+            await updateLogo();
             
             // فحص قاعدة البيانات تلقائياً
             setTimeout(checkDatabase, 1000);
