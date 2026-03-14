@@ -23,9 +23,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- ملف Firebase Config الجديد -->
-    <script src="firebase-config.js"></script>
-    
     <style>
         /* =====================================================================
            التصميم الخرافي - VR 2.05.2026 ULTIMATE
@@ -457,8 +454,8 @@
             height: 100%;
             background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
             border-radius: 10px;
-            animation: loaderProgress 3s ease-in-out forwards;
             position: relative;
+            transition: width 0.3s ease;
         }
         
         .splash-loader-fill::after {
@@ -470,19 +467,11 @@
             height: 100%;
             background: white;
             filter: blur(10px);
-            animation: loaderGlide 3s ease-in-out forwards;
-        }
-        
-        @keyframes loaderProgress {
-            0% { width: 0%; }
-            30% { width: 45%; }
-            60% { width: 75%; }
-            90% { width: 95%; }
-            100% { width: 100%; }
+            animation: loaderGlide 1.5s linear infinite;
         }
         
         @keyframes loaderGlide {
-            0% { right: 0; opacity: 0; }
+            0% { right: -20px; opacity: 0; }
             50% { opacity: 1; }
             100% { right: 100%; opacity: 0; }
         }
@@ -1599,10 +1588,8 @@
     
     <script>
         // =====================================================================
-        // تهيئة Firebase - باستخدام المكتبة الجديدة
+        // تهيئة Firebase
         // =====================================================================
-        
-        // Firebase Config من الملف الخارجي
         const firebaseConfig = {
             apiKey: "AIzaSyC71PVDTouBkQ4hRTANelbwRo4AYI6LwnE",
             authDomain: "itwsreq.firebaseapp.com",
@@ -1624,70 +1611,103 @@
         });
         
         // =====================================================================
-        // دوال اللوجو - مدمجة هنا لضمان عدم الاعتماد على ملف خارجي
+        // الثوابت العامة
+        // =====================================================================
+        const STORAGE_KEYS = {
+            LOGO_URL: 'union_logo_url',
+            COMPLAINT_PREFIX: 'complaint_prefix',
+            SUGGESTION_PREFIX: 'suggestion_prefix',
+            SERVICES_URL: 'services_url',
+            SERVICES_TEXT: 'services_text',
+            SHOW_SERVICES: 'show_services',
+            CURRENT_USER_ID: 'currentUserId',
+            CURRENT_USER: 'currentUser',
+            CURRENT_USER_ROLE: 'currentUserRole',
+            CURRENT_USER_LAST_LOGIN: 'currentUserLastLogin'
+        };
+        
+        const DEFAULT_SETTINGS = {
+            LOGO_URL: 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo',
+            COMPLAINT_PREFIX: 'REQ',
+            SUGGESTION_PREFIX: 'REP',
+            SERVICES_URL: 'https://services.egeng.org',
+            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
+            SHOW_SERVICES: true,
+            SYSTEM_VERSION: 'VR 2.05.2026'
+        };
+        
+        // =====================================================================
+        // نظام اللوجو المتكامل - حل مشكلة المزامنة بين الأجهزة
         // =====================================================================
         
-        const LOGO_STORAGE_KEY = 'union_logo_url';
-        const DEFAULT_LOGO_URL = 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo';
-        
         /**
-         * تحميل اللوجو من Firebase
+         * تحميل اللوجو من Firebase (المصدر الرئيسي)
          */
         async function loadLogoFromFirebase() {
             try {
                 console.log('🔄 جاري تحميل اللوجو من Firebase...');
                 
+                // محاولة جلب اللوجو من Firebase
                 const settingsDoc = await db.collection('Settings').doc('system').get();
                 
                 if (settingsDoc.exists) {
                     const settings = settingsDoc.data();
                     
+                    // إذا كان فيه لوجو في Firebase
                     if (settings.logo && settings.logo.trim() !== '') {
-                        localStorage.setItem(LOGO_STORAGE_KEY, settings.logo);
+                        // حفظ في localStorage كنسخة احتياطية
+                        localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
                         console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
                         return settings.logo;
                     }
                 }
                 
-                const localLogo = localStorage.getItem(LOGO_STORAGE_KEY);
+                // لو مفيش لوجو في Firebase، نشوف localStorage
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
                 if (localLogo && localLogo.trim() !== '') {
                     console.log('✅ استخدام اللوجو من localStorage:', localLogo);
                     
-                    // حفظ في Firebase للمزامنة
+                    // حفظ اللوجو المحلي في Firebase للمزامنة
                     await saveLogoToFirebase(localLogo, false);
                     
                     return localLogo;
                 }
                 
+                // استخدام اللوجو الافتراضي
                 console.log('✅ استخدام اللوجو الافتراضي');
-                localStorage.setItem(LOGO_STORAGE_KEY, DEFAULT_LOGO_URL);
-                return DEFAULT_LOGO_URL;
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+                return DEFAULT_SETTINGS.LOGO_URL;
                 
             } catch (error) {
                 console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
                 
-                const localLogo = localStorage.getItem(LOGO_STORAGE_KEY);
+                // في حالة الخطأ، نستخدم المخزن المحلي أو الافتراضي
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
                 if (localLogo && localLogo.trim() !== '') {
                     return localLogo;
                 }
                 
-                return DEFAULT_LOGO_URL;
+                return DEFAULT_SETTINGS.LOGO_URL;
             }
         }
         
         /**
-         * حفظ اللوجو في Firebase
+         * حفظ اللوجو في Firebase (المصدر الرئيسي)
          */
         async function saveLogoToFirebase(logoUrl, showLog = true) {
             try {
+                // التحقق من صحة الرابط
                 if (!logoUrl || logoUrl.trim() === '') {
-                    logoUrl = DEFAULT_LOGO_URL;
+                    logoUrl = DEFAULT_SETTINGS.LOGO_URL;
                 }
                 
-                localStorage.setItem(LOGO_STORAGE_KEY, logoUrl);
+                // حفظ في localStorage أولاً
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, logoUrl);
                 
-                const currentUser = localStorage.getItem('currentUser') || 'system';
+                // الحصول على اسم المستخدم الحالي
+                const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || 'system';
                 
+                // حفظ في Firebase
                 await db.collection('Settings').doc('system').set({
                     logo: logoUrl,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -1707,7 +1727,7 @@
         }
         
         /**
-         * الحصول على اللوجو الحالي
+         * الحصول على اللوجو (يحاول Firebase أولاً)
          */
         async function getLogo() {
             return await loadLogoFromFirebase();
@@ -1719,19 +1739,20 @@
         async function updateAllLogos() {
             const logo = await getLogo();
             
-            // قائمة بكل عناصر اللوجو في الصفحة
+            // قائمة بكل العناصر التي تحمل اللوجو
             const logoElements = [
                 'splash-logo',
                 'header-main-logo'
             ];
             
+            // تحديث كل العناصر
             logoElements.forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
                     element.src = logo;
                     element.onerror = function() {
                         console.warn(`⚠️ فشل تحميل اللوجو للمعرف: ${id}، استخدام الافتراضي`);
-                        this.src = DEFAULT_LOGO_URL;
+                        this.src = DEFAULT_SETTINGS.LOGO_URL;
                     };
                 }
             });
@@ -1739,6 +1760,133 @@
             console.log('✅ تم تحديث جميع اللوجوهات في الصفحة');
             return logo;
         }
+        
+        // =====================================================================
+        // إنشاء الجزيئات
+        // =====================================================================
+        function createParticles() {
+            const container = document.getElementById('particles');
+            if (!container) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = 15 + Math.random() * 15 + 's';
+                container.appendChild(p);
+            }
+        }
+        
+        // =====================================================================
+        // تحديث نسبة التحميل في شاشة الترحيب
+        // =====================================================================
+        function updateSplashPercentage() {
+            const percentageEl = document.getElementById('splash-percentage');
+            const loaderFill = document.getElementById('splash-loader-fill');
+            
+            let percentage = 0;
+            const interval = setInterval(() => {
+                if (percentage < 100) {
+                    percentage += 1;
+                    if (percentageEl) percentageEl.textContent = percentage + '%';
+                    
+                    if (loaderFill) {
+                        loaderFill.style.width = percentage + '%';
+                        
+                        if (percentage > 80) {
+                            loaderFill.style.background = 'linear-gradient(90deg, #a855f7, #ec4899)';
+                        } else if (percentage > 50) {
+                            loaderFill.style.background = 'linear-gradient(90deg, #00ffff, #a855f7)';
+                        }
+                    }
+                } else {
+                    clearInterval(interval);
+                }
+            }, 30);
+        }
+        
+        // =====================================================================
+        // شاشة البداية - مع تحميل اللوجو
+        // =====================================================================
+        window.addEventListener('load', async function() {
+            // إنشاء الجزيئات
+            createParticles();
+            
+            // تحميل اللوجو من Firebase أولاً
+            await updateAllLogos();
+            
+            // بدأ تحديث نسبة التحميل
+            updateSplashPercentage();
+            
+            // إخفاء شاشة الترحيب بعد 4 ثواني
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    document.getElementById('main-wrapper').classList.add('visible');
+                }, 1200);
+            }, 4000);
+        });
+        
+        window.skipSplash = function() {
+            document.getElementById('splash-screen').classList.add('fade-out');
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-wrapper').classList.add('visible');
+            }, 1000);
+        };
+        
+        // تحديث اللوجو عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAllLogos();
+        });
+        
+        // =====================================================================
+        // تبديل المشاهد
+        // =====================================================================
+        window.switchView = function(view) {
+            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
+            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('view-' + view).style.display = 'block';
+            
+            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
+            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
+            else if (view === 'login') document.getElementById('btn-login').classList.add('active');
+        };
+        window.switchView('submit');
+        
+        // =====================================================================
+        // حقل العضوية
+        // =====================================================================
+        window.toggleMemberField = function() {
+            const type = document.getElementById('u-member-type').value;
+            const box = document.getElementById('member-id-box');
+            const typeSelect = document.getElementById('u-req-type');
+            
+            if (type === 'عضو نقابة') {
+                box.style.display = 'block';
+                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
+            } else {
+                box.style.display = 'none';
+                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
+            }
+        };
+        
+        // =====================================================================
+        // التعامل مع زر Enter في تسجيل الدخول
+        // =====================================================================
+        window.handleLoginKeyDown = function(event, field) {
+            if (event.key === 'Enter') {
+                if (field === 'username') {
+                    document.getElementById('login-password').focus();
+                } else if (field === 'password') {
+                    handleLogin();
+                }
+                event.preventDefault();
+            }
+        };
         
         // =====================================================================
         // دوال مساعدة
@@ -1815,122 +1963,6 @@
         }
         
         // =====================================================================
-        // تحديث نسبة التحميل في شاشة الترحيب
-        // =====================================================================
-        function updateSplashPercentage() {
-            const percentageEl = document.getElementById('splash-percentage');
-            const loaderFill = document.getElementById('splash-loader-fill');
-            
-            let percentage = 0;
-            const interval = setInterval(() => {
-                if (percentage < 100) {
-                    percentage += 1;
-                    if (percentageEl) percentageEl.textContent = percentage + '%';
-                    
-                    if (loaderFill) {
-                        loaderFill.style.width = percentage + '%';
-                        
-                        if (percentage > 80) {
-                            loaderFill.style.background = 'linear-gradient(90deg, #a855f7, #ec4899)';
-                        } else if (percentage > 50) {
-                            loaderFill.style.background = 'linear-gradient(90deg, #00ffff, #a855f7)';
-                        }
-                    }
-                } else {
-                    clearInterval(interval);
-                }
-            }, 30);
-        }
-        
-        // =====================================================================
-        // إنشاء الجزيئات
-        // =====================================================================
-        function createParticles() {
-            const container = document.getElementById('particles');
-            if (!container) return;
-            
-            for (let i = 0; i < 50; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = 15 + Math.random() * 15 + 's';
-                container.appendChild(p);
-            }
-        }
-        createParticles();
-        
-        // =====================================================================
-        // شاشة البداية - مع تحميل اللوجو
-        // =====================================================================
-        window.addEventListener('load', async function() {
-            // تحميل اللوجو من Firebase أولاً
-            await updateAllLogos();
-            
-            // بدأ تحديث نسبة التحميل
-            updateSplashPercentage();
-            
-            // إخفاء شاشة الترحيب بعد 4 ثواني
-            setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('fade-out');
-                setTimeout(() => {
-                    document.getElementById('splash-screen').style.display = 'none';
-                    document.getElementById('main-wrapper').classList.add('visible');
-                }, 1200);
-            }, 4000);
-        });
-        
-        window.skipSplash = function() {
-            document.getElementById('splash-screen').classList.add('fade-out');
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('main-wrapper').classList.add('visible');
-            }, 1000);
-        };
-        
-        // تحديث اللوجو عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            updateAllLogos();
-        });
-        
-        window.switchView = function(view) {
-            document.querySelectorAll('.view').forEach(v => v.style.display = 'none');
-            document.querySelectorAll('.btn-nav').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById('view-' + view).style.display = 'block';
-            
-            if (view === 'submit') document.getElementById('btn-submit').classList.add('active');
-            else if (view === 'track') document.getElementById('btn-track').classList.add('active');
-            else if (view === 'login') document.getElementById('btn-login').classList.add('active');
-        };
-        window.switchView('submit');
-        
-        window.toggleMemberField = function() {
-            const type = document.getElementById('u-member-type').value;
-            const box = document.getElementById('member-id-box');
-            const typeSelect = document.getElementById('u-req-type');
-            
-            if (type === 'عضو نقابة') {
-                box.style.display = 'block';
-                typeSelect.innerHTML = '<option value="شكوى">شكوى</option><option value="اقتراح">اقتراح</option>';
-            } else {
-                box.style.display = 'none';
-                typeSelect.innerHTML = '<option value="اقتراح">اقتراح فقط</option>';
-            }
-        };
-        
-        window.handleLoginKeyDown = function(event, field) {
-            if (event.key === 'Enter') {
-                if (field === 'username') {
-                    document.getElementById('login-password').focus();
-                } else if (field === 'password') {
-                    handleLogin();
-                }
-                event.preventDefault();
-            }
-        };
-        
-        // =====================================================================
         // إنشاء كارت الطلب (الوصل) - مع اللوجو من Firebase
         // =====================================================================
         async function generateRequestCard(data) {
@@ -1950,7 +1982,7 @@
             card.innerHTML = `
                 <div class="request-card-logo-wrapper">
                     <!-- اللوجو في كارت الوصل - من Firebase -->
-                    <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='${DEFAULT_LOGO_URL}'">
+                    <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='${DEFAULT_SETTINGS.LOGO_URL}'">
                 </div>
                 <h2 class="request-card-title">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
                 <div class="request-card-subtitle">النقيب العام</div>
@@ -2243,7 +2275,7 @@
         };
         
         // =====================================================================
-        // تسجيل الدخول
+        // تسجيل الدخول - باستخدام رقم الهاتف
         // =====================================================================
         window.handleLogin = async function() {
             const username = document.getElementById('login-username')?.value.trim();
@@ -2269,6 +2301,7 @@
                     background: '#030514' 
                 });
                 
+                // البحث عن المستخدم باسم المستخدم
                 const snapshot = await db.collection('Users').where('username', '==', username).get();
                 
                 if (snapshot.empty) {
@@ -2314,15 +2347,17 @@
                 const now = new Date();
                 const lastLoginStr = now.toLocaleString('ar-EG');
                 
+                // تحديث آخر دخول
                 await db.collection('Users').doc(userDoc.id).update({
                     lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
                     lastLoginString: lastLoginStr
                 });
                 
-                localStorage.setItem('currentUserId', userDoc.id);
-                localStorage.setItem('currentUser', userData.username);
-                localStorage.setItem('currentUserRole', userData.role || 'admin');
-                localStorage.setItem('currentUserLastLogin', lastLoginStr);
+                // حفظ بيانات المستخدم
+                localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ID, userDoc.id);
+                localStorage.setItem(STORAGE_KEYS.CURRENT_USER, userData.username);
+                localStorage.setItem(STORAGE_KEYS.CURRENT_USER_ROLE, userData.role || 'admin');
+                localStorage.setItem(STORAGE_KEYS.CURRENT_USER_LAST_LOGIN, lastLoginStr);
                 
                 Swal.close();
                 
