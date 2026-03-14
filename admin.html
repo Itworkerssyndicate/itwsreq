@@ -19,6 +19,13 @@
     <!-- html2pdf -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <!-- bcryptjs للتشفير الآمن -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+    
     <style>
         /* =====================================================================
            التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام الصلاحيات
@@ -105,6 +112,11 @@
             pointer-events: none;
         }
         
+        @keyframes cosmicWave {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.1); }
+        }
+        
         body::after {
             content: '';
             position: fixed;
@@ -119,11 +131,6 @@
             animation: gridMove 30s linear infinite;
             z-index: -1;
             pointer-events: none;
-        }
-        
-        @keyframes cosmicWave {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.1); }
         }
         
         @keyframes gridMove {
@@ -1218,6 +1225,9 @@
         <div class="settings-section">
             <h5><i class="fas fa-image"></i> إعدادات الشعار</h5>
             <input type="url" id="logoUrl" class="luxury-input" placeholder="رابط الشعار" value="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo">
+            <button class="btn btn-primary" onclick="saveLogoSettings()" style="width: 100%; margin-top: 10px;">
+                <i class="fas fa-save"></i> حفظ الشعار
+            </button>
         </div>
         
         <div class="settings-section">
@@ -1239,7 +1249,7 @@
         </div>
         
         <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%;">
-            <i class="fas fa-save"></i> حفظ الإعدادات
+            <i class="fas fa-save"></i> حفظ جميع الإعدادات
         </button>
         
         <div class="auto-save-message" id="autoSaveMessage" style="display: none;">
@@ -1251,7 +1261,8 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <div class="logo-wrapper">
-                <img src="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo" alt="شعار" id="sidebarLogo">
+                <!-- اللوجو في الشريط الجانبي - سيتم تحديثه من Firebase -->
+                <img src="https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo" alt="شعار" id="sidebar-logo">
             </div>
             <h2 class="sidebar-title">بوابة الشكاوي</h2>
             <p class="sidebar-sub">نقابة تكنولوجيا المعلومات</p>
@@ -1444,10 +1455,6 @@
         </div>
     </div>
     
-    <!-- Firebase v9 compat -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
@@ -1465,11 +1472,207 @@
             measurementId: "G-P3YQFRSBMM"
         };
 
+        // تهيئة Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         
         // تفعيل التخزين المؤقت
-        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED });
+        db.settings({ cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED, ignoreUndefinedProperties: true });
+        
+        // =====================================================================
+        // الثوابت العامة
+        // =====================================================================
+        const STORAGE_KEYS = {
+            LOGO_URL: 'union_logo_url',
+            COMPLAINT_PREFIX: 'complaint_prefix',
+            SUGGESTION_PREFIX: 'suggestion_prefix',
+            SERVICES_URL: 'services_url',
+            SERVICES_TEXT: 'services_text',
+            SHOW_SERVICES: 'show_services',
+            CURRENT_USER_ID: 'currentUserId',
+            CURRENT_USER: 'currentUser',
+            CURRENT_USER_ROLE: 'currentUserRole',
+            CURRENT_USER_LAST_LOGIN: 'currentUserLastLogin'
+        };
+        
+        const DEFAULT_SETTINGS = {
+            LOGO_URL: 'https://placehold.co/200x200/0a0f1f/00ffff/png?text=Logo',
+            COMPLAINT_PREFIX: 'REQ',
+            SUGGESTION_PREFIX: 'REP',
+            SERVICES_URL: 'https://services.egeng.org',
+            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
+            SHOW_SERVICES: true,
+            SYSTEM_VERSION: 'VR 2.05.2026'
+        };
+        
+        // =====================================================================
+        // نظام اللوجو المتكامل - حل مشكلة المزامنة بين الأجهزة
+        // =====================================================================
+        
+        /**
+         * تحميل اللوجو من Firebase (المصدر الرئيسي)
+         */
+        async function loadLogoFromFirebase() {
+            try {
+                console.log('🔄 جاري تحميل اللوجو من Firebase...');
+                
+                // محاولة جلب اللوجو من Firebase
+                const settingsDoc = await db.collection('Settings').doc('system').get();
+                
+                if (settingsDoc.exists) {
+                    const settings = settingsDoc.data();
+                    
+                    // إذا كان فيه لوجو في Firebase
+                    if (settings.logo && settings.logo.trim() !== '') {
+                        // حفظ في localStorage كنسخة احتياطية
+                        localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                        console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
+                        return settings.logo;
+                    }
+                }
+                
+                // لو مفيش لوجو في Firebase، نشوف localStorage
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+                if (localLogo && localLogo.trim() !== '') {
+                    console.log('✅ استخدام اللوجو من localStorage:', localLogo);
+                    
+                    // حفظ اللوجو المحلي في Firebase للمزامنة
+                    await saveLogoToFirebase(localLogo, false);
+                    
+                    return localLogo;
+                }
+                
+                // استخدام اللوجو الافتراضي
+                console.log('✅ استخدام اللوجو الافتراضي');
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+                return DEFAULT_SETTINGS.LOGO_URL;
+                
+            } catch (error) {
+                console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
+                
+                // في حالة الخطأ، نستخدم المخزن المحلي أو الافتراضي
+                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+                if (localLogo && localLogo.trim() !== '') {
+                    return localLogo;
+                }
+                
+                return DEFAULT_SETTINGS.LOGO_URL;
+            }
+        }
+        
+        /**
+         * حفظ اللوجو في Firebase (المصدر الرئيسي)
+         */
+        async function saveLogoToFirebase(logoUrl, showLog = true) {
+            try {
+                // التحقق من صحة الرابط
+                if (!logoUrl || logoUrl.trim() === '') {
+                    logoUrl = DEFAULT_SETTINGS.LOGO_URL;
+                }
+                
+                // حفظ في localStorage أولاً
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, logoUrl);
+                
+                // الحصول على اسم المستخدم الحالي
+                const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || 'system';
+                
+                // حفظ في Firebase
+                await db.collection('Settings').doc('system').set({
+                    logo: logoUrl,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser
+                }, { merge: true });
+                
+                if (showLog) {
+                    console.log('✅ تم حفظ اللوجو في Firebase:', logoUrl);
+                }
+                
+                return true;
+                
+            } catch (error) {
+                console.error('❌ خطأ في حفظ اللوجو في Firebase:', error);
+                return false;
+            }
+        }
+        
+        /**
+         * الحصول على اللوجو (يحاول Firebase أولاً)
+         */
+        async function getLogo() {
+            return await loadLogoFromFirebase();
+        }
+        
+        /**
+         * تحديث جميع اللوجوهات في الصفحة
+         */
+        async function updateAllLogos() {
+            const logo = await getLogo();
+            
+            // قائمة بكل العناصر التي تحمل اللوجو في صفحة admin
+            const logoElements = [
+                'sidebar-logo',
+                'admin-logo'
+            ];
+            
+            // تحديث كل العناصر
+            logoElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.src = logo;
+                    element.onerror = function() {
+                        console.warn(`⚠️ فشل تحميل اللوجو للمعرف: ${id}، استخدام الافتراضي`);
+                        this.src = DEFAULT_SETTINGS.LOGO_URL;
+                    };
+                }
+            });
+            
+            console.log('✅ تم تحديث جميع اللوجوهات في صفحة admin');
+            return logo;
+        }
+        
+        /**
+         * حفظ إعدادات الشعار من نافذة الإعدادات
+         */
+        async function saveLogoSettings() {
+            const logoUrl = document.getElementById('logoUrl')?.value.trim();
+            
+            if (!logoUrl) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'الرجاء إدخال رابط الشعار',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+                return;
+            }
+            
+            const result = await saveLogoToFirebase(logoUrl);
+            
+            if (result) {
+                await updateAllLogos();
+                
+                // تحديث قيمة حقل الإدخال
+                document.getElementById('logoUrl').value = logoUrl;
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'تم الحفظ',
+                    text: 'تم حفظ الشعار بنجاح',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    background: '#030514'
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'خطأ',
+                    text: 'حدث خطأ في حفظ الشعار',
+                    background: '#030514',
+                    confirmButtonColor: '#00ffff'
+                });
+            }
+        }
         
         // =====================================================================
         // المتغيرات العامة
@@ -1481,7 +1684,7 @@
         let unsubscribeUsers = null;
         let currentRequestId = null;
         let currentUserId = null;
-        let currentUser = null; // المستخدم الحالي
+        let currentUser = null;
         let isSuperAdmin = false;
         let searchFilters = {
             ref: '',
@@ -1515,8 +1718,8 @@
         // التحقق من تسجيل الدخول
         // =====================================================================
         function checkAuth() {
-            const userId = localStorage.getItem('currentUserId');
-            const userName = localStorage.getItem('currentUser');
+            const userId = localStorage.getItem(STORAGE_KEYS.CURRENT_USER_ID);
+            const userName = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
             
             if (!userId && !userName) {
                 window.location.href = 'index.html';
@@ -1530,13 +1733,12 @@
         // تحميل معلومات المستخدم الحالي
         // =====================================================================
         async function loadCurrentUser() {
-            const userId = localStorage.getItem('currentUserId');
-            const userName = localStorage.getItem('currentUser');
-            const userRole = localStorage.getItem('currentUserRole');
+            const userId = localStorage.getItem(STORAGE_KEYS.CURRENT_USER_ID);
+            const userName = localStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+            const userRole = localStorage.getItem(STORAGE_KEYS.CURRENT_USER_ROLE);
             
             if (userId && userName) {
                 try {
-                    // محاولة جلب بيانات المستخدم من Firestore
                     const userDoc = await db.collection('Users').doc(userId).get();
                     
                     if (userDoc.exists) {
@@ -1548,7 +1750,6 @@
                             name: userData.name || userName
                         };
                     } else {
-                        // استخدام البيانات المخزنة في localStorage
                         currentUser = {
                             id: userId,
                             username: userName,
@@ -1574,24 +1775,20 @@
                 };
             }
             
-            // تحديث الواجهة
             document.getElementById('currentUserName').textContent = currentUser.name || currentUser.username;
             
             const roleName = getRoleName(currentUser.role);
             document.getElementById('currentUserRole').textContent = roleName;
             document.getElementById('currentUserRoleBadge').textContent = roleName;
             
-            // التحقق من صلاحية السوبر أدمن
             isSuperAdmin = (currentUser.role === 'super_admin');
             
-            // إظهار/إخفاء زر الإعدادات
             const settingsBtn = document.getElementById('settingsBtn');
             if (settingsBtn) {
                 settingsBtn.style.display = isSuperAdmin ? 'flex' : 'none';
             }
             
-            // تحديث آخر دخول
-            const lastLogin = localStorage.getItem('currentUserLastLogin');
+            const lastLogin = localStorage.getItem(STORAGE_KEYS.CURRENT_USER_LAST_LOGIN);
             if (lastLogin) {
                 document.getElementById('currentUserLastLogin').textContent = lastLogin;
             }
@@ -1643,11 +1840,10 @@
         }
         
         function logout() {
-            localStorage.removeItem('admin');
-            localStorage.removeItem('currentUserId');
-            localStorage.removeItem('currentUser');
-            localStorage.removeItem('currentUserRole');
-            localStorage.removeItem('currentUserLastLogin');
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER_ID);
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER_ROLE);
+            localStorage.removeItem(STORAGE_KEYS.CURRENT_USER_LAST_LOGIN);
             window.location.href = 'index.html';
         }
         
@@ -1655,23 +1851,23 @@
         // دوال الإعدادات
         // =====================================================================
         function loadSettings() {
-            document.getElementById('logoUrl').value = localStorage.getItem('logo_url') || 'https://placehold.co/100x100/0a0f1f/00ffff/png?text=Logo';
-            document.getElementById('servicesUrl').value = localStorage.getItem('services_url') || 'https://services.egeng.org';
-            document.getElementById('servicesText').value = localStorage.getItem('services_text') || 'موقع تقديم خدمات النقابة';
-            document.getElementById('showServices').checked = localStorage.getItem('show_services') !== 'false';
-            document.getElementById('complaintPrefix').value = localStorage.getItem('complaint_prefix') || 'REQ';
-            document.getElementById('suggestionPrefix').value = localStorage.getItem('suggestion_prefix') || 'REP';
+            document.getElementById('logoUrl').value = localStorage.getItem(STORAGE_KEYS.LOGO_URL) || DEFAULT_SETTINGS.LOGO_URL;
+            document.getElementById('servicesUrl').value = localStorage.getItem(STORAGE_KEYS.SERVICES_URL) || DEFAULT_SETTINGS.SERVICES_URL;
+            document.getElementById('servicesText').value = localStorage.getItem(STORAGE_KEYS.SERVICES_TEXT) || DEFAULT_SETTINGS.SERVICES_TEXT;
+            document.getElementById('showServices').checked = localStorage.getItem(STORAGE_KEYS.SHOW_SERVICES) !== 'false';
+            document.getElementById('complaintPrefix').value = localStorage.getItem(STORAGE_KEYS.COMPLAINT_PREFIX) || DEFAULT_SETTINGS.COMPLAINT_PREFIX;
+            document.getElementById('suggestionPrefix').value = localStorage.getItem(STORAGE_KEYS.SUGGESTION_PREFIX) || DEFAULT_SETTINGS.SUGGESTION_PREFIX;
         }
         
         function saveSettings() {
-            localStorage.setItem('logo_url', document.getElementById('logoUrl').value);
-            localStorage.setItem('services_url', document.getElementById('servicesUrl').value);
-            localStorage.setItem('services_text', document.getElementById('servicesText').value);
-            localStorage.setItem('show_services', document.getElementById('showServices').checked);
-            localStorage.setItem('complaint_prefix', document.getElementById('complaintPrefix').value);
-            localStorage.setItem('suggestion_prefix', document.getElementById('suggestionPrefix').value);
+            localStorage.setItem(STORAGE_KEYS.SERVICES_URL, document.getElementById('servicesUrl').value);
+            localStorage.setItem(STORAGE_KEYS.SERVICES_TEXT, document.getElementById('servicesText').value);
+            localStorage.setItem(STORAGE_KEYS.SHOW_SERVICES, document.getElementById('showServices').checked);
+            localStorage.setItem(STORAGE_KEYS.COMPLAINT_PREFIX, document.getElementById('complaintPrefix').value);
+            localStorage.setItem(STORAGE_KEYS.SUGGESTION_PREFIX, document.getElementById('suggestionPrefix').value);
             
-            document.getElementById('sidebarLogo').src = document.getElementById('logoUrl').value;
+            // حفظ اللوجو
+            saveLogoSettings();
             
             const msg = document.getElementById('autoSaveMessage');
             msg.style.display = 'flex';
@@ -2362,7 +2558,6 @@
         // =====================================================================
         function loadUsers() {
             if (!isSuperAdmin) {
-                // إذا لم يكن سوبر أدمن، العودة للطلبات
                 changeView('all');
                 return;
             }
@@ -2928,6 +3123,8 @@
         // =====================================================================
         // دوال الحذف المشتركة (للسوبر أدمن فقط)
         // =====================================================================
+        let currentDeleteId = null;
+        
         function openDeleteModal(type, id) {
             if (!isSuperAdmin) {
                 Swal.fire({
@@ -3051,7 +3248,6 @@
                 if (isSuperAdmin) {
                     loadUsers();
                 } else {
-                    // إذا لم يكن سوبر أدمن، العودة للطلبات
                     currentView = 'all';
                     setActiveNav('all');
                     document.getElementById('statsContainer').style.display = 'block';
@@ -3073,9 +3269,13 @@
         window.addEventListener('load', async function() {
             await loadCurrentUser();
             
-            const savedLogo = localStorage.getItem('logo_url');
+            // تحميل اللوجو من Firebase وتحديثه
+            await updateAllLogos();
+            
+            // تحميل الإعدادات المخزنة
+            const savedLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
             if (savedLogo) {
-                document.getElementById('sidebarLogo').src = savedLogo;
+                document.getElementById('sidebar-logo').src = savedLogo;
             }
             
             document.getElementById('navAll').addEventListener('click', () => changeView('all'));
