@@ -1037,7 +1037,7 @@
             width: 600px;
         }
         
-        /* تصميم كارت الوصل الجديد - بدون مستطيل ملون تحت اسم النقابة */
+        /* تصميم كارت الوصل الجديد - محسن بالكامل */
         .request-card-design {
             width: 580px;
             padding: 40px;
@@ -1103,7 +1103,7 @@
             z-index: 2;
         }
         
-        /* اسم النقابة بدون مستطيل ملون - بلون أبيض عادي */
+        /* اسم النقابة */
         .request-card-title {
             font-size: 26px;
             color: white;
@@ -1112,9 +1112,11 @@
             position: relative;
             z-index: 2;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            line-height: 1.4;
+            word-break: break-word;
         }
         
-        /* تعديل ترتيب النقيب العام والمهندس محمود جميل */
+        /* النقيب العام */
         .request-card-subtitle {
             font-size: 20px;
             color: var(--neon-cyan);
@@ -1122,8 +1124,10 @@
             font-weight: 700;
             position: relative;
             z-index: 2;
+            line-height: 1.4;
         }
         
+        /* المهندس محمود جميل */
         .request-card-name {
             font-size: 22px;
             color: white;
@@ -1132,8 +1136,10 @@
             position: relative;
             z-index: 2;
             text-shadow: 0 0 15px var(--neon-purple);
+            line-height: 1.4;
         }
         
+        /* محتوى الكارت */
         .request-card-content {
             background: rgba(0, 255, 255, 0.08);
             padding: 25px;
@@ -1145,12 +1151,15 @@
             backdrop-filter: blur(5px);
         }
         
+        /* صفوف البيانات */
         .request-card-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            flex-wrap: wrap;
+            gap: 8px;
         }
         
         .request-card-row:last-child {
@@ -1161,11 +1170,16 @@
             color: rgba(255, 255, 255, 0.7);
             font-weight: 600;
             font-size: 15px;
+            white-space: nowrap;
         }
         
         .request-card-value {
             font-weight: 700;
             font-size: 16px;
+            text-align: left;
+            direction: ltr;
+            word-break: break-word;
+            max-width: 60%;
         }
         
         .request-card-value.ref {
@@ -1182,6 +1196,7 @@
             color: #10b981;
         }
         
+        /* تذييل الكارت */
         .request-card-footer {
             color: rgba(255, 255, 255, 0.4);
             font-size: 14px;
@@ -1190,6 +1205,7 @@
             margin-top: 20px;
             position: relative;
             z-index: 2;
+            line-height: 1.6;
         }
         
         .request-card-version {
@@ -1283,6 +1299,7 @@
             max-width: 120px;
             text-align: center;
             backdrop-filter: blur(5px);
+            word-break: break-word;
         }
         
         .timeline-card {
@@ -1322,7 +1339,7 @@
             border-right: 1px dashed rgba(255, 255, 255, 0.1);
         }
         
-        /* تحسينات الجوال */
+        /* تحسينات الجوال - تم تعديل حجم اللوجو */
         @media (max-width: 1024px) {
             .header-content {
                 justify-content: center;
@@ -1343,8 +1360,8 @@
                 flex-direction: column;
             }
             .splash-logo-wrapper {
-                width: 140px;
-                height: 140px;
+                width: 150px;
+                height: 150px;
             }
             .splash-title {
                 font-size: 36px;
@@ -1369,17 +1386,58 @@
                 margin-right: 0;
             }
             
-            /* ========== تعديل حجم اللوجو في الموبايل فقط ========== */
+            /* ========== تعديل حجم اللوجو في الموبايل ========== */
+            .splash-logo-wrapper {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .splash-logo {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scale(1.15);
+            }
+            
+            .header-logo-container {
+                width: 90px;
+                height: 90px;
+            }
+            
+            .header-main-logo {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: scale(1.15);
+            }
+            
+            /* تحسين عرض الكارت في الموبايل */
+            .request-card-design {
+                width: 95%;
+                max-width: 580px;
+                padding: 30px;
+            }
+            
+            .request-card-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .request-card-value {
+                max-width: 100%;
+                text-align: right;
+            }
+        }
+        
+        @media (max-width: 480px) {
             .splash-logo-wrapper {
                 width: 140px;
                 height: 140px;
             }
             
             .splash-logo {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                transform: scale(1.1);
+                transform: scale(1.2);
             }
             
             .header-logo-container {
@@ -1388,30 +1446,7 @@
             }
             
             .header-main-logo {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                transform: scale(1.1);
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .splash-logo-wrapper {
-                width: 120px;
-                height: 120px;
-            }
-            
-            .splash-logo {
-                transform: scale(1.15);
-            }
-            
-            .header-logo-container {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .header-main-logo {
-                transform: scale(1.15);
+                transform: scale(1.2);
             }
             
             .header-title-main {
@@ -1422,28 +1457,61 @@
                 margin: 20px;
             }
             .request-card-design {
-                width: 500px;
-                padding: 30px;
+                width: 100%;
+                padding: 25px;
+            }
+            
+            .request-card-logo-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .request-card-title {
+                font-size: 22px;
+            }
+            
+            .request-card-subtitle {
+                font-size: 18px;
+            }
+            
+            .request-card-name {
+                font-size: 20px;
+            }
+            
+            .request-card-label {
+                font-size: 14px;
+            }
+            
+            .request-card-value {
+                font-size: 14px;
             }
         }
         
         @media (max-width: 360px) {
             .splash-logo-wrapper {
-                width: 100px;
-                height: 100px;
+                width: 120px;
+                height: 120px;
             }
             
             .splash-logo {
-                transform: scale(1.2);
+                transform: scale(1.25);
             }
             
             .header-logo-container {
-                width: 60px;
-                height: 60px;
+                width: 70px;
+                height: 70px;
             }
             
             .header-main-logo {
-                transform: scale(1.2);
+                transform: scale(1.25);
+            }
+            
+            .request-card-design {
+                padding: 20px;
+            }
+            
+            .request-card-content {
+                padding: 15px;
             }
         }
         
@@ -1875,11 +1943,12 @@
         }
         
         // =====================================================================
-        // نظام تتبع الزوار
+        // نظام تتبع الزوار المتكامل
         // =====================================================================
         
         let visitorFingerprint = null;
         let sessionStartTime = Date.now();
+        let sessionId = null;
         
         /**
          * إنشاء بصمة فريدة للجهاز
@@ -1945,7 +2014,7 @@
         }
         
         /**
-         * تسجيل الزيارة
+         * تسجيل الزيارة في Visitors و ActiveSessions
          */
         async function trackVisit() {
             try {
@@ -1999,7 +2068,7 @@
                         totalTimeSpent: 0,
                         deviceInfo: deviceInfo,
                         visits: [{
-                            date: now.toISOString(), // استخدام نص تاريخ
+                            date: now.toISOString(),
                             duration: 0,
                             pages: [currentPage]
                         }]
@@ -2029,8 +2098,49 @@
                         });
                     }
                     
+                    // تحديث DailyStats
+                    const dailyStatsRef = db.collection('DailyStats').doc(todayStr);
+                    const dailyStatsDoc = await dailyStatsRef.get();
+                    
+                    if (dailyStatsDoc.exists) {
+                        await dailyStatsRef.update({
+                            'visitors.total': firebase.firestore.FieldValue.increment(1),
+                            'visitors.unique': firebase.firestore.FieldValue.increment(1),
+                            'visitors.new': firebase.firestore.FieldValue.increment(1)
+                        });
+                    } else {
+                        await dailyStatsRef.set({
+                            date: todayStr,
+                            visitors: { total: 1, unique: 1, new: 1 },
+                            requests: { total: 0, complaints: 0, suggestions: 0, pending: 0, resolved: 0 },
+                            users: { active: 0, loggedIn: 0, actions: 0 },
+                            servicesClicks: 0,
+                            peakHour: now.getHours() + ':00',
+                            hourlyStats: {
+                                [now.getHours()]: { visitors: 1, actions: 0 }
+                            }
+                        });
+                    }
+                    
                     console.log('✅ تم تسجيل زائر جديد:', visitorFingerprint);
                 }
+                
+                // إنشاء جلسة نشطة (ActiveSession)
+                sessionId = 'session_' + Date.now() + '_' + Math.random().toString(36).substring(2);
+                await db.collection('ActiveSessions').doc(sessionId).set({
+                    sessionId: sessionId,
+                    fingerprint: visitorFingerprint,
+                    userType: 'visitor',
+                    userId: null,
+                    username: null,
+                    role: null,
+                    loginTime: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+                    currentPage: currentPage,
+                    deviceInfo: deviceInfo,
+                    userAgent: navigator.userAgent,
+                    isActive: true
+                });
                 
             } catch (error) {
                 console.error('❌ خطأ في تتبع الزيارة:', error);
@@ -2038,7 +2148,7 @@
         }
         
         /**
-         * تسجيل وقت المغادرة
+         * تسجيل وقت المغادرة وتحديث الجلسة
          */
         async function trackLeave() {
             if (!visitorFingerprint) return;
@@ -2046,6 +2156,7 @@
             try {
                 const sessionDuration = Math.floor((Date.now() - sessionStartTime) / 1000); // بالثواني
                 
+                // تحديث Visitors
                 const visitorRef = db.collection('Visitors').doc(visitorFingerprint);
                 const visitorDoc = await visitorRef.get();
                 
@@ -2053,7 +2164,6 @@
                     const visitorData = visitorDoc.data();
                     const totalTimeSpent = (visitorData.totalTimeSpent || 0) + sessionDuration;
                     
-                    // تحديث آخر زيارة في الـ array (صعب شوية، هنعملها بطريقة مبسطة)
                     await visitorRef.update({
                         totalTimeSpent: totalTimeSpent
                     });
@@ -2061,10 +2171,38 @@
                     console.log('✅ تم تسجيل وقت الجلسة:', sessionDuration, 'ثانية');
                 }
                 
+                // إنهاء الجلسة النشطة
+                if (sessionId) {
+                    await db.collection('ActiveSessions').doc(sessionId).update({
+                        isActive: false,
+                        endedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        duration: sessionDuration
+                    });
+                }
+                
             } catch (error) {
                 console.error('❌ خطأ في تتبع المغادرة:', error);
             }
         }
+        
+        /**
+         * تحديث آخر نشاط في الجلسة
+         */
+        async function updateLastActivity() {
+            if (!sessionId) return;
+            
+            try {
+                await db.collection('ActiveSessions').doc(sessionId).update({
+                    lastActivity: firebase.firestore.FieldValue.serverTimestamp(),
+                    currentPage: window.location.pathname
+                });
+            } catch (error) {
+                console.error('❌ خطأ في تحديث آخر نشاط:', error);
+            }
+        }
+        
+        // تحديث آخر نشاط كل 30 ثانية
+        setInterval(updateLastActivity, 30000);
         
         // =====================================================================
         // تتبع نقرات موقع الخدمات
@@ -2133,6 +2271,16 @@
                         dailyStats: {
                             [todayStr]: 1
                         }
+                    });
+                }
+                
+                // تحديث DailyStats
+                const dailyStatsRef = db.collection('DailyStats').doc(todayStr);
+                const dailyStatsDoc = await dailyStatsRef.get();
+                
+                if (dailyStatsDoc.exists) {
+                    await dailyStatsRef.update({
+                        servicesClicks: firebase.firestore.FieldValue.increment(1)
                     });
                 }
                 
@@ -2347,7 +2495,7 @@
         };
         
         // =====================================================================
-        // إنشاء كارت الطلب (الوصل)
+        // إنشاء كارت الطلب (الوصل) - نسخة محسنة بالكامل
         // =====================================================================
         async function generateRequestCard(data) {
             const logo = await loadLogoFromFirebase();
@@ -2365,7 +2513,6 @@
             
             card.innerHTML = `
                 <div class="request-card-logo-wrapper">
-                    <!-- اللوجو في كارت الوصل - من Firebase -->
                     <img src="${logo}" alt="شعار النقابة" class="request-card-logo" onerror="this.src='${DEFAULT_SETTINGS.LOGO_URL}'">
                 </div>
                 <h2 class="request-card-title">نقابة تكنولوجيا المعلومات والبرمجيات</h2>
@@ -2444,8 +2591,8 @@
                     imageWidth: 500,
                     imageHeight: canvas.height * 500 / canvas.width,
                     showCancelButton: true,
-                    confirmButtonText: '📥 تحميل الإيصال',
-                    cancelButtonText: '🔒 إغلاق',
+                    confirmButtonText: 'تحميل الإيصال',
+                    cancelButtonText: 'إغلاق',
                     confirmButtonColor: '#00ffff',
                     cancelButtonColor: 'rgba(255,255,255,0.2)',
                     background: '#030514',
@@ -2477,6 +2624,7 @@
                         </div>
                     `,
                     background: '#030514',
+                    confirmButtonText: 'تم',
                     confirmButtonColor: '#00ffff'
                 });
             }
@@ -2502,17 +2650,17 @@
             const memberId = document.getElementById('u-member-id')?.value.trim() || "غير عضو";
             
             if (!name || !nid || !phone || !gov || !address || !job || !details) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'املأ جميع البيانات', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
                 return;
             }
             
             if (!validateNationalID(nid)) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي 14 رقم', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'الرقم القومي 14 رقم', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
                 return;
             }
             
             if (!validatePhone(phone)) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الهاتف غير صحيح', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'رقم الهاتف غير صحيح', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
                 return;
             }
             
@@ -2549,6 +2697,7 @@
                 
                 await generateRequestCard(requestData);
                 
+                // مسح الحقول
                 ['u-name','u-nid','u-phone','u-address','u-job','u-details','u-member-id'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.value = '';
@@ -2556,7 +2705,7 @@
                 
             } catch (error) {
                 console.error('خطأ في تقديم الطلب:', error);
-                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
             }
         };
         
@@ -2569,7 +2718,7 @@
             const type = document.getElementById('q-type')?.value;
             
             if (!nid || !ref || !type) {
-                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل جميع البيانات', background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: 'أدخل جميع البيانات', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
                 return;
             }
             
@@ -2585,7 +2734,7 @@
                 Swal.close();
                 
                 if (snapshot.empty) {
-                    Swal.fire({ icon: 'error', title: 'لا يوجد', text: 'لا يوجد طلب', background: '#030514', confirmButtonColor: '#00ffff' });
+                    Swal.fire({ icon: 'error', title: 'لا يوجد', text: 'لا يوجد طلب بهذه البيانات', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
                     return;
                 }
                 
@@ -2654,7 +2803,7 @@
                 
             } catch (error) {
                 console.error('خطأ في الاستعلام:', error);
-                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonColor: '#00ffff' });
+                Swal.fire({ icon: 'error', title: 'خطأ', text: error.message, background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
             }
         };
         
@@ -2671,6 +2820,7 @@
                     title: 'خطأ', 
                     text: 'أدخل اسم المستخدم وكلمة المرور', 
                     background: '#030514', 
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff' 
                 });
                 return;
@@ -2695,6 +2845,7 @@
                         title: 'خطأ', 
                         text: 'اسم المستخدم غير موجود', 
                         background: '#030514', 
+                        confirmButtonText: 'حسناً',
                         confirmButtonColor: '#00ffff' 
                     });
                     return;
@@ -2710,6 +2861,7 @@
                         title: 'حساب معطل', 
                         text: 'الحساب غير نشط', 
                         background: '#030514', 
+                        confirmButtonText: 'حسناً',
                         confirmButtonColor: '#00ffff' 
                     });
                     return;
@@ -2723,6 +2875,7 @@
                         title: 'خطأ', 
                         text: 'رقم الهاتف غير صحيح', 
                         background: '#030514', 
+                        confirmButtonText: 'حسناً',
                         confirmButtonColor: '#00ffff' 
                     });
                     return;
@@ -2764,6 +2917,7 @@
                     title: 'خطأ', 
                     text: error.message || 'حدث خطأ غير متوقع', 
                     background: '#030514', 
+                    confirmButtonText: 'حسناً',
                     confirmButtonColor: '#00ffff' 
                 });
             }
