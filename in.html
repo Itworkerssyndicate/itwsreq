@@ -19,13 +19,16 @@
     <!-- bcryptjs للتشفير الآمن -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
     
+    <!-- FingerprintJS لتحديد الأجهزة الفريدة -->
+    <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
+    
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
     <style>
         /* =====================================================================
-           تنسيقات صفحة التهيئة - تصميم فخم وملكي
+           تنسيقات صفحة التهيئة - تصميم فخم جداً جداً
            ===================================================================== */
         
         :root {
@@ -122,7 +125,7 @@
             padding: 20px;
         }
         
-        /* خلفية متحركة */
+        /* خلفية متحركة سينمائية */
         body::before {
             content: '';
             position: fixed;
@@ -133,15 +136,17 @@
             background: 
                 radial-gradient(circle at 20% 30%, rgba(0, 255, 255, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
-            animation: cosmicDrift 30s ease-in-out infinite alternate;
+                radial-gradient(circle at 40% 80%, rgba(236, 72, 153, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 60% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+            animation: cosmicDrift 40s ease-in-out infinite alternate;
             z-index: -2;
             pointer-events: none;
         }
         
         @keyframes cosmicDrift {
-            0% { opacity: 0.5; transform: scale(1); }
-            100% { opacity: 0.8; transform: scale(1.05); }
+            0% { opacity: 0.5; transform: scale(1); filter: hue-rotate(0deg); }
+            50% { opacity: 0.8; transform: scale(1.05); filter: hue-rotate(10deg); }
+            100% { opacity: 0.5; transform: scale(1); filter: hue-rotate(0deg); }
         }
         
         body::after {
@@ -155,17 +160,17 @@
                 linear-gradient(rgba(0, 255, 255, 0.02) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(168, 85, 247, 0.02) 1px, transparent 1px);
             background-size: 60px 60px;
-            animation: gridMove 30s linear infinite;
+            animation: gridMove 40s linear infinite;
             z-index: -1;
             pointer-events: none;
         }
         
         @keyframes gridMove {
             0% { transform: translateY(0) translateX(0); }
-            100% { transform: translateY(50px) translateX(30px); }
+            100% { transform: translateY(60px) translateX(40px); }
         }
         
-        /* جزيئات متطايرة */
+        /* جزيئات متطايرة فاخرة */
         .particles {
             position: fixed;
             top: 0;
@@ -178,68 +183,71 @@
         
         .particle {
             position: absolute;
-            width: 3px;
-            height: 3px;
+            width: 4px;
+            height: 4px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
             border-radius: 50%;
-            animation: particleFloat 20s linear infinite;
-            opacity: 0.3;
-            box-shadow: 0 0 10px var(--neon-cyan);
+            animation: particleFloat 25s linear infinite;
+            opacity: 0.4;
+            box-shadow: 0 0 15px var(--neon-cyan);
         }
         
         @keyframes particleFloat {
-            0% { transform: translateY(100vh) translateX(0); opacity: 0.3; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0.4; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(150px) rotate(720deg); opacity: 0; }
         }
         
         /* الحاوية الرئيسية */
         .setup-container {
-            max-width: 900px;
-            margin: 40px auto;
+            max-width: 1200px;
+            margin: 20px auto;
             position: relative;
             z-index: 10;
         }
         
-        /* الهيدر */
+        /* الهيدر الفخم */
         .setup-header {
             text-align: center;
-            margin-bottom: 40px;
-            animation: headerAppear 1s var(--ease-elastic);
+            margin-bottom: 50px;
+            animation: headerAppear 1.2s var(--ease-elastic);
         }
         
         @keyframes headerAppear {
-            0% { opacity: 0; transform: translateY(-30px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(-50px) scale(0.9); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         .logo-wrapper {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px;
             position: relative;
             cursor: pointer;
         }
         
         .logo-wrapper:hover .logo {
-            animation: flipLogo 1s var(--ease-elastic);
+            animation: flipLogo 1.5s var(--ease-elastic);
         }
         
         @keyframes flipLogo {
             0% { transform: rotateY(0deg); }
-            50% { transform: rotateY(180deg); }
-            100% { transform: rotateY(360deg); }
+            25% { transform: rotateY(180deg); }
+            50% { transform: rotateY(360deg); }
+            75% { transform: rotateY(540deg); }
+            100% { transform: rotateY(720deg); }
         }
         
         .logo-wrapper::before {
             content: '';
             position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
+            top: -15px;
+            left: -15px;
+            right: -15px;
+            bottom: -15px;
             border-radius: 50%;
-            background: conic-gradient(from 0deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), transparent);
-            animation: rotateConic 8s linear infinite;
+            background: conic-gradient(from 0deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-blue), transparent);
+            animation: rotateConic 10s linear infinite;
             mask: radial-gradient(circle, transparent 60%, black 61%);
             -webkit-mask: radial-gradient(circle, transparent 60%, black 61%);
         }
@@ -253,40 +261,91 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 4px solid var(--neon-cyan);
-            box-shadow: 0 0 40px var(--neon-cyan);
+            border: 5px solid var(--neon-cyan);
+            box-shadow: 0 0 50px var(--neon-cyan), 0 0 100px var(--neon-purple);
             object-fit: cover;
             position: relative;
             z-index: 2;
+            transition: all 0.5s;
         }
         
         .setup-title {
-            font-size: var(--text-4xl);
+            font-size: 52px;
             font-weight: 900;
-            background: linear-gradient(135deg, #fff, var(--neon-cyan), var(--neon-purple));
+            background: linear-gradient(135deg, #fff, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 10px;
-            letter-spacing: 2px;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            animation: titleGlow 3s ease-in-out infinite;
+            background-size: 300% 300%;
+        }
+        
+        @keyframes titleGlow {
+            0% { background-position: 0% 50%; filter: drop-shadow(0 0 20px var(--neon-cyan)); }
+            50% { background-position: 100% 50%; filter: drop-shadow(0 0 40px var(--neon-purple)); }
+            100% { background-position: 0% 50%; filter: drop-shadow(0 0 20px var(--neon-cyan)); }
         }
         
         .setup-subtitle {
-            font-size: var(--text-lg);
-            color: rgba(255, 255, 255, 0.8);
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 0 20px var(--neon-cyan);
+            position: relative;
+            display: inline-block;
+            padding: 0 30px;
         }
         
-        /* الكروت */
+        .setup-subtitle::before,
+        .setup-subtitle::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), transparent);
+            transform: translateY(-50%);
+        }
+        
+        .setup-subtitle::before {
+            right: 100%;
+        }
+        
+        .setup-subtitle::after {
+            left: 100%;
+        }
+        
+        /* الكروت الفخمة */
         .setup-card {
-            background: rgba(15, 23, 42, 0.3);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 255, 255, 0.1) inset;
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 255, 0.15);
+            border-radius: 70px;
+            padding: 45px;
+            margin-bottom: 40px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5), 0 0 0 2px rgba(0, 255, 255, 0.2) inset;
             animation: cardAppear 1s var(--ease-smooth) backwards;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .setup-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1), transparent 70%);
+            animation: cardRotate 20s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes cardRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
         .setup-card:nth-child(1) { animation-delay: 0.2s; }
@@ -294,24 +353,25 @@
         .setup-card:nth-child(3) { animation-delay: 0.6s; }
         
         @keyframes cardAppear {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
+            0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         .card-title {
-            font-size: var(--text-2xl);
+            font-size: 32px;
             font-weight: 900;
             color: var(--neon-cyan);
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid rgba(0, 255, 255, 0.2);
+            gap: 20px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid rgba(0, 255, 255, 0.3);
+            text-shadow: 0 0 20px var(--neon-cyan);
         }
         
         .card-title i {
-            font-size: 28px;
+            font-size: 36px;
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
             -webkit-background-clip: text;
             background-clip: text;
@@ -321,41 +381,43 @@
         /* شبكة المعلومات */
         .info-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
         }
         
         .info-item {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 25px;
-            padding: 20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 35px;
+            padding: 25px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             transition: all var(--transition-normal);
+            backdrop-filter: blur(5px);
         }
         
         .info-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px) scale(1.02);
             border-color: var(--neon-cyan);
-            box-shadow: 0 0 30px var(--neon-cyan);
+            box-shadow: 0 0 40px var(--neon-cyan);
         }
         
         .info-label {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: var(--text-sm);
-            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 12px;
         }
         
         .info-label i {
             color: var(--neon-cyan);
+            font-size: 20px;
         }
         
         .info-value {
-            font-size: var(--text-xl);
-            font-weight: 800;
+            font-size: 32px;
+            font-weight: 900;
             color: #fff;
             display: flex;
             align-items: center;
@@ -363,33 +425,36 @@
         }
         
         .info-badge {
-            background: rgba(0, 255, 255, 0.15);
+            background: rgba(0, 255, 255, 0.2);
             color: var(--neon-cyan);
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: var(--text-xs);
-            border: 1px solid var(--neon-cyan);
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            border: 2px solid var(--neon-cyan);
+            font-weight: 700;
         }
         
-        /* جدول المستخدمين - بدون تعديل */
+        /* جدول المستخدمين */
         .users-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
         
         .users-table th {
             text-align: right;
-            padding: 15px 10px;
+            padding: 20px 15px;
             color: var(--neon-cyan);
-            font-weight: 700;
-            font-size: var(--text-sm);
-            border-bottom: 2px solid var(--neon-cyan);
+            font-weight: 800;
+            font-size: 16px;
+            border-bottom: 3px solid var(--neon-cyan);
+            text-shadow: 0 0 15px var(--neon-cyan);
         }
         
         .users-table td {
-            padding: 12px 10px;
+            padding: 18px 15px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 15px;
         }
         
         .users-table tr {
@@ -397,65 +462,67 @@
         }
         
         .users-table tr:hover {
-            background: rgba(0, 255, 255, 0.05);
+            background: rgba(0, 255, 255, 0.1);
+            transform: scale(1.01);
         }
         
         .role-badge {
             display: inline-block;
-            padding: 5px 12px;
-            border-radius: 30px;
-            font-size: var(--text-xs);
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 14px;
             font-weight: 700;
         }
         
         .role-badge.super_admin {
             background: rgba(239, 68, 68, 0.2);
             color: #ef4444;
-            border: 1px solid #ef4444;
+            border: 2px solid #ef4444;
         }
         
         .role-badge.admin {
             background: rgba(249, 115, 22, 0.2);
             color: #f97316;
-            border: 1px solid #f97316;
+            border: 2px solid #f97316;
         }
         
         .role-badge.reviewer {
             background: rgba(59, 130, 246, 0.2);
             color: #3b82f6;
-            border: 1px solid #3b82f6;
+            border: 2px solid #3b82f6;
         }
         
         .role-badge.data_entry {
             background: rgba(16, 185, 129, 0.2);
             color: #10b981;
-            border: 1px solid #10b981;
+            border: 2px solid #10b981;
         }
         
-        /* أزرار الإجراءات */
+        /* أزرار الإجراءات الفخمة */
         .actions {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-top: 30px;
+            margin-top: 35px;
         }
         
         .btn {
-            padding: 16px 35px;
+            padding: 18px 40px;
             border: none;
-            border-radius: 40px;
-            font-size: var(--text-md);
-            font-weight: 700;
+            border-radius: 60px;
+            font-size: 18px;
+            font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 15px;
             transition: all var(--transition-normal) var(--ease-bounce);
             position: relative;
             overflow: hidden;
-            min-width: 200px;
+            min-width: 220px;
+            letter-spacing: 1px;
         }
         
         .btn::before {
@@ -466,94 +533,109 @@
             width: 0;
             height: 0;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.3);
             transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
+            transition: width 0.8s, height 0.8s;
         }
         
         .btn:hover::before {
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
         }
         
         .btn-primary {
             background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
             color: #fff;
-            box-shadow: 0 0 30px var(--neon-cyan);
+            box-shadow: 0 0 40px var(--neon-cyan);
         }
         
         .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px var(--neon-cyan), 0 0 80px var(--neon-purple);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 70px var(--neon-cyan), 0 0 120px var(--neon-purple);
         }
         
         .btn-success {
             background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
             color: #fff;
-            box-shadow: 0 0 30px var(--neon-green);
+            box-shadow: 0 0 40px var(--neon-green);
         }
         
         .btn-success:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px var(--neon-green);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 70px var(--neon-green);
         }
         
         .btn-danger {
             background: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
             color: #fff;
-            box-shadow: 0 0 30px var(--neon-red);
+            box-shadow: 0 0 40px var(--neon-red);
         }
         
         .btn-danger:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px var(--neon-red);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 70px var(--neon-red);
         }
         
         .btn-warning {
             background: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
             color: #fff;
-            box-shadow: 0 0 30px var(--neon-orange);
+            box-shadow: 0 0 40px var(--neon-orange);
         }
         
         .btn-warning:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 0 50px var(--neon-orange);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 70px var(--neon-orange);
         }
         
         .btn-secondary {
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.2);
             color: #fff;
         }
         
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.15);
             border-color: var(--neon-cyan);
-            transform: translateY(-3px);
+            transform: translateY(-8px);
+            box-shadow: 0 0 50px var(--neon-cyan);
         }
         
-        /* شريط التقدم */
+        /* شريط التقدم الفخم */
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 10px;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin: 20px 0;
+            border-radius: 15px;
+            margin: 30px 0;
             overflow: hidden;
             display: none;
+            position: relative;
         }
         
         .progress-bar.show {
             display: block;
+            animation: progressAppear 0.5s ease;
+        }
+        
+        @keyframes progressAppear {
+            from { opacity: 0; transform: scaleX(0.9); }
+            to { opacity: 1; transform: scaleX(1); }
         }
         
         .progress-fill {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink));
-            border-radius: 10px;
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-pink), var(--neon-blue));
+            border-radius: 15px;
+            transition: width 0.4s ease;
             position: relative;
+            background-size: 300% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 300% 0%; }
         }
         
         .progress-fill::after {
@@ -561,31 +643,34 @@
             position: absolute;
             top: 0;
             right: 0;
-            width: 20px;
+            width: 30px;
             height: 100%;
             background: white;
-            filter: blur(10px);
-            animation: progressGlide 1.5s linear infinite;
+            filter: blur(15px);
+            animation: progressGlide 2s linear infinite;
         }
         
         @keyframes progressGlide {
-            0% { right: -20px; }
-            100% { right: 100%; }
+            0% { right: -30px; opacity: 0; }
+            50% { opacity: 1; }
+            100% { right: 100%; opacity: 0; }
         }
         
-        /* رسالة الحالة */
+        /* رسالة الحالة الفخمة */
         .status-message {
             text-align: center;
-            padding: 15px;
-            border-radius: 30px;
-            margin: 20px 0;
+            padding: 20px;
+            border-radius: 50px;
+            margin: 25px 0;
             display: none;
-            animation: messageAppear 0.5s var(--ease-elastic);
+            animation: messageAppear 0.6s var(--ease-elastic);
+            font-size: 18px;
+            font-weight: 700;
         }
         
         @keyframes messageAppear {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
+            0% { opacity: 0; transform: scale(0.8) translateY(-10px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         
         .status-message.show {
@@ -593,47 +678,71 @@
         }
         
         .status-message.success {
-            background: rgba(16, 185, 129, 0.15);
-            border: 1px solid var(--neon-green);
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--neon-green);
             color: var(--neon-green);
+            box-shadow: 0 0 30px var(--neon-green);
         }
         
         .status-message.error {
-            background: rgba(239, 68, 68, 0.15);
-            border: 1px solid var(--neon-red);
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid var(--neon-red);
             color: var(--neon-red);
+            box-shadow: 0 0 30px var(--neon-red);
         }
         
         .status-message.warning {
-            background: rgba(249, 115, 22, 0.15);
-            border: 1px solid var(--neon-orange);
+            background: rgba(249, 115, 22, 0.2);
+            border: 2px solid var(--neon-orange);
             color: var(--neon-orange);
+            box-shadow: 0 0 30px var(--neon-orange);
         }
         
         .status-message.info {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid var(--neon-blue);
+            background: rgba(59, 130, 246, 0.2);
+            border: 2px solid var(--neon-blue);
             color: var(--neon-blue);
+            box-shadow: 0 0 30px var(--neon-blue);
         }
         
-        /* تذييل */
+        /* تذييل فخم */
         .setup-footer {
             text-align: center;
-            margin-top: 40px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: var(--text-sm);
+            margin-top: 60px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 16px;
+            position: relative;
+        }
+        
+        .setup-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), transparent);
         }
         
         .version {
             font-family: 'Orbitron', monospace;
             color: var(--neon-cyan);
-            margin-top: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            text-shadow: 0 0 20px var(--neon-cyan);
+            animation: versionPulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes versionPulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; text-shadow: 0 0 40px var(--neon-cyan); }
         }
         
         /* تحسينات الجوال */
         @media (max-width: 768px) {
             .setup-card {
-                padding: 25px;
+                padding: 30px;
             }
             
             .info-grid {
@@ -642,35 +751,39 @@
             
             .btn {
                 width: 100%;
+                padding: 15px 25px;
+                font-size: 16px;
             }
             
             .actions {
                 flex-direction: column;
             }
             
-            .users-table {
-                font-size: var(--text-sm);
+            .setup-title {
+                font-size: 36px;
             }
             
-            .users-table th,
-            .users-table td {
-                padding: 10px 5px;
+            .setup-subtitle {
+                font-size: 18px;
+            }
+            
+            .card-title {
+                font-size: 24px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- جزيئات متطايرة -->
+    <!-- جزيئات متطايرة فاخرة -->
     <div class="particles" id="particles"></div>
     
     <div class="setup-container">
-        <!-- الهيدر -->
+        <!-- الهيدر الفخم -->
         <div class="setup-header">
             <div class="logo-wrapper">
-                <!-- اللوجو في شاشة التهيئة - هيتم تحديثه من Firebase -->
-                <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="setup-logo">
+                <img src="https://placehold.co/150x150/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="setup-logo">
             </div>
-            <h1 class="setup-title">تهيئة النظام</h1>
+            <h1 class="setup-title">تهيئة النظام المتطورة</h1>
             <p class="setup-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</p>
         </div>
         
@@ -723,7 +836,7 @@
             <div class="status-message" id="status-message"></div>
         </div>
         
-        <!-- كارت المستخدمين - بدون تعديل، هيعرض المستخدمين اللي عندك -->
+        <!-- كارت المستخدمين -->
         <div class="setup-card">
             <div class="card-title">
                 <i class="fas fa-users-cog"></i>
@@ -743,19 +856,72 @@
                     </thead>
                     <tbody id="users-table-body">
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px;">
-                                <i class="fas fa-spinner fa-spin" style="color: var(--neon-cyan);"></i>
-                                <span style="margin-right: 10px;">جاري تحميل البيانات...</span>
+                            <td colspan="5" style="text-align: center; padding: 50px;">
+                                <i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan);"></i>
+                                <p style="margin-top: 20px; font-size: 18px;">جاري تحميل البيانات...</p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             
-            <div style="background: rgba(0, 255, 255, 0.05); padding: 15px; border-radius: 20px; margin-top: 20px;">
-                <p style="color: var(--neon-cyan); display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-info-circle"></i>
+            <div style="background: rgba(0, 255, 255, 0.1); padding: 20px; border-radius: 40px; margin-top: 25px; border: 2px solid rgba(0,255,255,0.2);">
+                <p style="color: var(--neon-cyan); display: flex; align-items: center; gap: 15px; font-size: 18px;">
+                    <i class="fas fa-info-circle fa-2x"></i>
                     <span>لتسجيل الدخول استخدم اسم المستخدم ورقم الهاتف الخاص بك</span>
+                </p>
+            </div>
+        </div>
+        
+        <!-- كارت الإعدادات المتقدمة (كلها في Firebase) -->
+        <div class="setup-card">
+            <div class="card-title">
+                <i class="fas fa-cogs"></i>
+                <span>إعدادات النظام المتقدمة</span>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px;">
+                <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-image"></i> إعدادات الشعار
+                    </h4>
+                    <div class="info-item" style="margin-bottom: 0;">
+                        <div class="info-label">رابط الشعار الحالي</div>
+                        <div class="info-value" style="font-size: 14px; word-break: break-all;" id="current-logo">جاري التحميل...</div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-globe"></i> إعدادات الخدمات
+                    </h4>
+                    <div class="info-item" style="margin-bottom: 0;">
+                        <div class="info-label">رابط موقع الخدمات</div>
+                        <div class="info-value" style="font-size: 14px; word-break: break-all;" id="current-services-url">جاري التحميل...</div>
+                    </div>
+                </div>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 25px; border-radius: 40px;">
+                    <h4 style="color: var(--neon-cyan); margin-bottom: 20px; font-size: 20px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-sort-numeric-up"></i> إعدادات الترقيم
+                    </h4>
+                    <div style="display: flex; gap: 15px;">
+                        <div class="info-item" style="flex:1; margin-bottom: 0;">
+                            <div class="info-label">بادئة الشكاوى</div>
+                            <div class="info-value" id="current-complaint-prefix">...</div>
+                        </div>
+                        <div class="info-item" style="flex:1; margin-bottom: 0;">
+                            <div class="info-label">بادئة المقترحات</div>
+                            <div class="info-value" id="current-suggestion-prefix">...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(0, 255, 255, 0.05); padding: 20px; border-radius: 40px; margin-bottom: 25px;">
+                <p style="color: var(--neon-green); display: flex; align-items: center; gap: 10px; font-size: 16px;">
+                    <i class="fas fa-check-circle fa-2x"></i>
+                    <span>✅ جميع الإعدادات الآن مخزنة في Firebase وتتزامن تلقائياً مع جميع الأجهزة</span>
                 </p>
             </div>
         </div>
@@ -789,13 +955,13 @@
                 </button>
             </div>
             
-            <div style="margin-top: 30px; text-align: center; color: rgba(255,255,255,0.4);">
+            <div style="margin-top: 40px; text-align: center; color: rgba(255,255,255,0.5); font-size: 16px;">
                 <i class="fas fa-exclamation-triangle" style="color: var(--neon-orange);"></i>
                 <span style="margin-right: 10px;">تحذير: إعادة تعيين قاعدة البيانات ستحذف جميع البيانات الموجودة</span>
             </div>
         </div>
         
-        <!-- تذييل -->
+        <!-- تذييل فخم -->
         <div class="setup-footer">
             <p>نقابة تكنولوجيا المعلومات والبرمجيات © 2026</p>
             <p class="version">VR 2.05.2026 | جميع الحقوق محفوظة</p>
@@ -837,51 +1003,85 @@
             SYSTEM_RESET_DONE: 'system_reset_done'
         };
         
-        const DEFAULT_LOGO = 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo';
+        const DEFAULT_SETTINGS = {
+            LOGO_URL: 'https://placehold.co/150x150/0a0f1f/00ffff/png?text=Logo',
+            SERVICES_URL: 'https://services.egeng.org',
+            SERVICES_TEXT: 'موقع تقديم خدمات النقابة',
+            SHOW_SERVICES: true,
+            COMPLAINT_PREFIX: 'REQ',
+            SUGGESTION_PREFIX: 'REP'
+        };
         
         // =====================================================================
-        // نظام اللوجو - نفس النظام في index و admin
+        // نظام الإعدادات المتكامل (كله في Firebase)
         // =====================================================================
         
         /**
-         * تحميل اللوجو من Firebase
+         * تحميل جميع الإعدادات من Firebase
          */
-        async function loadLogoFromFirebase() {
+        async function loadAllSettingsFromFirebase() {
             try {
-                console.log('🔄 جاري تحميل اللوجو من Firebase...');
+                console.log('🔄 جاري تحميل جميع الإعدادات من Firebase...');
                 
                 const settingsDoc = await db.collection('Settings').doc('system').get();
                 
                 if (settingsDoc.exists) {
                     const settings = settingsDoc.data();
                     
-                    if (settings.logo && settings.logo.trim() !== '') {
-                        localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
-                        console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
-                        return settings.logo;
-                    }
+                    // تحديث localStorage كنسخة احتياطية
+                    if (settings.logo) localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                    
+                    console.log('✅ تم تحميل الإعدادات من Firebase:', settings);
+                    return settings;
                 }
                 
-                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
-                if (localLogo && localLogo.trim() !== '') {
-                    console.log('✅ استخدام اللوجو من localStorage:', localLogo);
-                    return localLogo;
-                }
-                
-                console.log('✅ استخدام اللوجو الافتراضي');
-                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_LOGO);
-                return DEFAULT_LOGO;
+                console.log('⚠️ لا توجد إعدادات في Firebase، استخدام الافتراضية');
+                return DEFAULT_SETTINGS;
                 
             } catch (error) {
-                console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
-                
-                const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
-                if (localLogo && localLogo.trim() !== '') {
-                    return localLogo;
-                }
-                
-                return DEFAULT_LOGO;
+                console.error('❌ خطأ في تحميل الإعدادات من Firebase:', error);
+                return DEFAULT_SETTINGS;
             }
+        }
+        
+        /**
+         * حفظ جميع الإعدادات في Firebase
+         */
+        async function saveAllSettingsToFirebase(settings) {
+            try {
+                const currentUser = localStorage.getItem('currentUser') || 'system';
+                
+                const settingsToSave = {
+                    logo: settings.logo || DEFAULT_SETTINGS.LOGO_URL,
+                    servicesUrl: settings.servicesUrl || DEFAULT_SETTINGS.SERVICES_URL,
+                    servicesText: settings.servicesText || DEFAULT_SETTINGS.SERVICES_TEXT,
+                    showServices: settings.showServices !== undefined ? settings.showServices : DEFAULT_SETTINGS.SHOW_SERVICES,
+                    complaintPrefix: settings.complaintPrefix || DEFAULT_SETTINGS.COMPLAINT_PREFIX,
+                    suggestionPrefix: settings.suggestionPrefix || DEFAULT_SETTINGS.SUGGESTION_PREFIX,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser
+                };
+                
+                await db.collection('Settings').doc('system').set(settingsToSave, { merge: true });
+                
+                // تحديث localStorage
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, settingsToSave.logo);
+                
+                console.log('✅ تم حفظ جميع الإعدادات في Firebase:', settingsToSave);
+                return true;
+                
+            } catch (error) {
+                console.error('❌ خطأ في حفظ الإعدادات في Firebase:', error);
+                return false;
+            }
+        }
+        
+        /**
+         * تحميل اللوجو من Firebase
+         */
+        async function loadLogoFromFirebase() {
+            const settings = await loadAllSettingsFromFirebase();
+            return settings.logo || DEFAULT_SETTINGS.LOGO_URL;
         }
         
         /**
@@ -894,12 +1094,23 @@
             if (logoElement) {
                 logoElement.src = logo;
                 logoElement.onerror = function() {
-                    this.src = DEFAULT_LOGO;
+                    this.src = DEFAULT_SETTINGS.LOGO_URL;
                 };
             }
             
-            console.log('✅ تم تحديث اللوجو في صفحة التهيئة');
             return logo;
+        }
+        
+        /**
+         * عرض الإعدادات الحالية في الصفحة
+         */
+        async function displayCurrentSettings() {
+            const settings = await loadAllSettingsFromFirebase();
+            
+            document.getElementById('current-logo').textContent = settings.logo || DEFAULT_SETTINGS.LOGO_URL;
+            document.getElementById('current-services-url').textContent = settings.servicesUrl || DEFAULT_SETTINGS.SERVICES_URL;
+            document.getElementById('current-complaint-prefix').textContent = settings.complaintPrefix || DEFAULT_SETTINGS.COMPLAINT_PREFIX;
+            document.getElementById('current-suggestion-prefix').textContent = settings.suggestionPrefix || DEFAULT_SETTINGS.SUGGESTION_PREFIX;
         }
         
         // =====================================================================
@@ -908,7 +1119,7 @@
         function showMessage(type, text) {
             const messageEl = document.getElementById('status-message');
             messageEl.className = 'status-message ' + type;
-            messageEl.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${text}`;
+            messageEl.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'} fa-2x"></i> ${text}`;
             messageEl.classList.add('show');
             
             setTimeout(() => {
@@ -943,7 +1154,70 @@
         }
         
         // =====================================================================
-        // إنشاء قاعدة البيانات من الصفر (بدون لمس المستخدمين)
+        // إنشاء بصمة فريدة للجهاز (للتجربة في setup)
+        // =====================================================================
+        async function generateFingerprint() {
+            try {
+                const fp = await FingerprintJS.load();
+                const result = await fp.get();
+                return result.visitorId;
+            } catch (error) {
+                console.error('خطأ في إنشاء البصمة:', error);
+                return 'test_' + Date.now();
+            }
+        }
+        
+        /**
+         * استخراج معلومات الجهاز
+         */
+        function getDeviceInfo() {
+            const ua = navigator.userAgent;
+            const screen = `${window.screen.width}×${window.screen.height}`;
+            
+            // تحديد نوع الجهاز
+            let deviceType = 'desktop';
+            if (/mobile|android|iphone|ipad|ipod/i.test(ua)) {
+                deviceType = /ipad|tablet/i.test(ua) ? 'tablet' : 'mobile';
+            }
+            
+            // تحديد نظام التشغيل
+            let os = 'Unknown';
+            if (ua.indexOf('Windows') > -1) os = 'Windows';
+            else if (ua.indexOf('Android') > -1) os = 'Android';
+            else if (ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
+            else if (ua.indexOf('Mac') > -1) os = 'MacOS';
+            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            
+            // تحديد المتصفح
+            let browser = 'Unknown';
+            if (ua.indexOf('Chrome') > -1) browser = 'Chrome';
+            else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
+            else if (ua.indexOf('Safari') > -1) browser = 'Safari';
+            else if (ua.indexOf('Edge') > -1) browser = 'Edge';
+            
+            // تقدير البلد من اللغة والمنطقة الزمنية
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const language = navigator.language;
+            
+            let country = 'أخرى';
+            if (timezone.includes('Cairo') || language.includes('EG')) country = 'مصر';
+            else if (timezone.includes('Riyadh') || language.includes('SA')) country = 'السعودية';
+            else if (timezone.includes('Dubai') || language.includes('AE')) country = 'الإمارات';
+            else if (timezone.includes('Kuwait') || language.includes('KW')) country = 'الكويت';
+            
+            return {
+                type: deviceType,
+                os: os,
+                browser: browser,
+                screen: screen,
+                language: language,
+                timezone: timezone,
+                country: country
+            };
+        }
+        
+        // =====================================================================
+        // إنشاء قاعدة البيانات من الصفر (كل الإعدادات في Firebase)
         // =====================================================================
         async function createDatabase() {
             const result = await Swal.fire({
@@ -963,12 +1237,13 @@
             
             try {
                 showProgress(true);
-                updateProgress(10);
+                updateProgress(5);
                 showMessage('info', 'جاري إنشاء قاعدة البيانات...');
                 
-                // حذف المجموعات الموجودة
-                const collections = ['Users', 'Requests', 'Counters', 'Settings', 'SystemLogs'];
+                // قائمة بكل المجموعات
+                const collections = ['Users', 'Requests', 'Counters', 'Settings', 'SystemLogs', 'Visitors', 'ServicesClicks'];
                 
+                // حذف المجموعات الموجودة
                 for (let i = 0; i < collections.length; i++) {
                     try {
                         const snapshot = await db.collection(collections[i]).get();
@@ -981,15 +1256,14 @@
                     } catch (error) {
                         console.log(`⚠️ مجموعة ${collections[i]} غير موجودة`);
                     }
-                    updateProgress(20 + (i * 10));
+                    updateProgress(10 + (i * 5));
                 }
                 
-                updateProgress(60);
+                updateProgress(40);
                 
-                // تشفير كلمات المرور
+                // 1. إنشاء مستخدم سوبر أدمن
                 const hashedPassword = await hashPassword('keyatech@');
                 
-                // إنشاء مستخدم واحد فقط (سوبر أدمن) - بدون لمس المستخدمين التانيين
                 const superAdmin = {
                     username: 'admin',
                     password: hashedPassword,
@@ -1004,10 +1278,9 @@
                 };
                 
                 await db.collection('Users').add(superAdmin);
+                updateProgress(50);
                 
-                updateProgress(80);
-                
-                // إنشاء العدادات
+                // 2. إنشاء عدادات الطلبات
                 const counters = [
                     { id: 'complaints', year: new Date().getFullYear(), count: 0 },
                     { id: 'suggestions', year: new Date().getFullYear(), count: 0 }
@@ -1016,40 +1289,83 @@
                 for (const counter of counters) {
                     await db.collection('Counters').doc(counter.id).set(counter);
                 }
+                updateProgress(60);
                 
-                // إنشاء إعدادات النظام مع اللوجو الافتراضي
-                await db.collection('Settings').doc('system').set({
-                    logo: DEFAULT_LOGO,
-                    complaintPrefix: 'REQ',
-                    suggestionPrefix: 'REP',
-                    servicesUrl: 'https://services.egeng.org',
-                    servicesText: 'موقع تقديم خدمات النقابة',
-                    showServices: true,
-                    systemVersion: 'VR 2.05.2026',
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                // 3. إنشاء إعدادات النظام
+                await saveAllSettingsToFirebase(DEFAULT_SETTINGS);
+                updateProgress(70);
+                
+                // 4. إنشاء إحصائيات الزوار
+                await db.collection('Visitors').doc('stats').set({
+                    totalUniqueVisitors: 0,
+                    totalVisits: 0,
+                    totalServicesClicks: 0,
+                    lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                    dailyStats: {}
+                });
+                updateProgress(80);
+                
+                // 5. إنشاء مثال تجريبي لجهاز (للاختبار)
+                const testFingerprint = 'test_' + Date.now();
+                const testDevice = getDeviceInfo();
+                
+                await db.collection('Visitors').doc(testFingerprint).set({
+                    fingerprint: testFingerprint,
+                    firstVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
+                    visitCount: 1,
+                    totalTimeSpent: 0,
+                    deviceInfo: testDevice,
+                    visits: [{
+                        date: firebase.firestore.FieldValue.serverTimestamp(),
+                        duration: 0,
+                        pages: ['/setup']
+                    }]
+                });
+                
+                // 6. إنشاء إحصائيات نقرات الخدمات
+                await db.collection('ServicesClicks').doc('stats').set({
+                    totalClicks: 0,
+                    uniqueVisitors: 0,
+                    lastReset: firebase.firestore.FieldValue.serverTimestamp(),
+                    dailyStats: {}
+                });
+                
+                // 7. إنشاء مثال تجريبي لنقرة خدمات
+                const testClickId = 'click_' + Date.now();
+                await db.collection('ServicesClicks').doc(testClickId).set({
+                    id: testClickId,
+                    fingerprint: testFingerprint,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    date: new Date().toISOString().split('T')[0],
+                    deviceInfo: testDevice,
+                    userAgent: navigator.userAgent
                 });
                 
                 updateProgress(100);
                 
                 localStorage.setItem(STORAGE_KEYS.SYSTEM_RESET_DONE, 'true');
-                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_LOGO);
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
                 
                 showMessage('success', '✅ تم إنشاء قاعدة البيانات بنجاح');
                 
                 // تحديث الشاشة
                 await checkDatabase();
                 await updateLogo();
+                await displayCurrentSettings();
                 
                 Swal.fire({
                     icon: 'success',
-                    title: 'تم الإنشاء بنجاح',
+                    title: '🎉 تم الإنشاء بنجاح',
                     html: `
                         <div style="text-align: center;">
-                            <p style="color: #00ffff; font-size: 18px;">تم إنشاء قاعدة البيانات</p>
-                            <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 15px;">
-                                <p><strong>admin</strong> : <strong style="color: #00ffff;">keyatech@</strong></p>
-                                <p style="color: rgba(255,255,255,0.6);">رقم الهاتف: 01234567890</p>
+                            <p style="color: #00ffff; font-size: 22px; margin-bottom: 20px;">تم إنشاء قاعدة البيانات</p>
+                            <div style="background: rgba(0,255,255,0.1); padding: 25px; border-radius: 30px; margin-top: 15px;">
+                                <p style="font-size: 18px;"><strong>admin</strong> : <strong style="color: #00ffff; font-size: 20px;">keyatech@</strong></p>
+                                <p style="color: rgba(255,255,255,0.8); margin-top: 10px;">رقم الهاتف: 01234567890</p>
                             </div>
+                            <p style="color: var(--neon-green); margin-top: 20px;">✅ جميع الإعدادات مخزنة في Firebase</p>
+                            <p style="color: var(--neon-cyan); margin-top: 10px;">✅ نظام تتبع الزوار ونقرات الخدمات جاهز</p>
                         </div>
                     `,
                     background: '#030514',
@@ -1065,7 +1381,7 @@
         }
         
         // =====================================================================
-        // فحص قاعدة البيانات - بدون تعديل (هيعرض المستخدمين اللي عندك)
+        // فحص قاعدة البيانات
         // =====================================================================
         async function checkDatabase() {
             try {
@@ -1077,14 +1393,14 @@
                 
                 try {
                     await db.collection('_test_').doc('test').set({ timestamp: Date.now() });
-                    connectionStatus.textContent = 'متصل';
+                    connectionStatus.textContent = '🟢 متصل';
                     connectionStatus.style.color = '#10b981';
                     connectionBadge.textContent = 'نشط';
                     connectionBadge.style.background = 'rgba(16,185,129,0.15)';
                     connectionBadge.style.color = '#10b981';
                     connectionBadge.style.borderColor = '#10b981';
                 } catch (error) {
-                    connectionStatus.textContent = 'غير متصل';
+                    connectionStatus.textContent = '🔴 غير متصل';
                     connectionStatus.style.color = '#ef4444';
                     connectionBadge.textContent = 'معطل';
                     connectionBadge.style.background = 'rgba(239,68,68,0.15)';
@@ -1101,15 +1417,15 @@
                 const requestsSnapshot = await db.collection('Requests').get();
                 document.getElementById('requests-count').textContent = requestsSnapshot.size;
                 
-                // عرض المستخدمين في الجدول (كل المستخدمين اللي عندك)
+                // عرض المستخدمين في الجدول
                 let usersHTML = '';
                 
                 if (usersSnapshot.empty) {
                     usersHTML = `
                         <tr>
-                            <td colspan="5" style="text-align: center; padding: 30px;">
-                                <i class="fas fa-users-slash" style="color: rgba(255,255,255,0.3); font-size: 24px;"></i>
-                                <p style="margin-top: 10px;">لا يوجد مستخدمين</p>
+                            <td colspan="5" style="text-align: center; padding: 50px;">
+                                <i class="fas fa-users-slash" style="font-size: 50px; color: rgba(255,255,255,0.3);"></i>
+                                <p style="margin-top: 20px; font-size: 18px;">لا يوجد مستخدمين</p>
                             </td>
                         </tr>
                     `;
@@ -1126,11 +1442,11 @@
                         
                         usersHTML += `
                             <tr>
-                                <td><strong>${user.username}</strong></td>
+                                <td><strong style="font-size: 16px;">${user.username}</strong></td>
                                 <td>${user.name || '-'}</td>
                                 <td><span class="role-badge ${roleClass}">${roleName}</span></td>
-                                <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 5px 10px; border-radius: 20px;">${user.phone || '-'}</span></td>
-                                <td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">${user.isActive ? 'نشط' : 'غير نشط'}</span></td>
+                                <td><span style="font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px 15px; border-radius: 30px;">${user.phone || '-'}</span></td>
+                                <td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'}; font-weight: 700;">${user.isActive ? 'نشط' : 'غير نشط'}</span></td>
                             </tr>
                         `;
                     });
@@ -1138,8 +1454,9 @@
                 
                 document.getElementById('users-table-body').innerHTML = usersHTML;
                 
-                // تحديث اللوجو
+                // تحديث اللوجو والإعدادات
                 await updateLogo();
+                await displayCurrentSettings();
                 
                 showMessage('success', '✅ تم فحص قاعدة البيانات بنجاح');
                 
@@ -1150,15 +1467,15 @@
         }
         
         // =====================================================================
-        // إعادة تعيين قاعدة البيانات - بدون لمس المستخدمين
+        // إعادة تعيين قاعدة البيانات
         // =====================================================================
         async function resetDatabase() {
             const result = await Swal.fire({
                 title: '⚠️ تحذير شديد الخطورة',
                 html: `
-                    <p style="color: #ef4444; font-size: 18px; margin-bottom: 15px;">أنت على وشك حذف جميع البيانات!</p>
-                    <p style="color: rgba(255,255,255,0.8);">هذا الإجراء لا يمكن التراجع عنه</p>
-                    <p style="color: rgba(255,255,255,0.6); margin-top: 15px;">اكتب <strong style="color: #00ffff;">حذف</strong> للتأكيد</p>
+                    <p style="color: #ef4444; font-size: 20px; margin-bottom: 20px;">أنت على وشك حذف جميع البيانات!</p>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 16px;">هذا الإجراء لا يمكن التراجع عنه</p>
+                    <p style="color: rgba(255,255,255,0.6); margin-top: 20px;">اكتب <strong style="color: #00ffff; font-size: 18px;">حذف</strong> للتأكيد</p>
                 `,
                 icon: 'warning',
                 input: 'text',
@@ -1196,12 +1513,13 @@
             const container = document.getElementById('particles');
             if (!container) return;
             
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 60; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random() * 100 + '%';
-                p.style.animationDelay = Math.random() * 10 + 's';
-                p.style.animationDuration = 15 + Math.random() * 15 + 's';
+                p.style.animationDelay = Math.random() * 15 + 's';
+                p.style.animationDuration = 20 + Math.random() * 20 + 's';
+                p.style.background = `linear-gradient(135deg, ${i % 2 === 0 ? '#00ffff' : '#a855f7'}, ${i % 3 === 0 ? '#ec4899' : '#3b82f6'})`;
                 container.appendChild(p);
             }
         }
@@ -1214,6 +1532,9 @@
             
             // تحديث اللوجو من Firebase
             await updateLogo();
+            
+            // عرض الإعدادات الحالية
+            await displayCurrentSettings();
             
             // فحص قاعدة البيانات تلقائياً
             setTimeout(checkDatabase, 1000);
