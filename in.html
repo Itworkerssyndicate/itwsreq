@@ -1303,32 +1303,44 @@
                     lastReset: firebase.firestore.FieldValue.serverTimestamp(),
                     dailyStats: {}
                 });
-                updateProgress(80);
+                updateProgress(75);
                 
-                // 5. إنشاء مثال تجريبي لجهاز (للاختبار)
-                const testFingerprint = 'test_' + Date.now();
-                const testDevice = getDeviceInfo();
-                
-                await db.collection('Visitors').doc(testFingerprint).set({
-                    fingerprint: testFingerprint,
-                    firstVisit: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastVisit: firebase.firestore.FieldValue.serverTimestamp(),
-                    visitCount: 1,
-                    totalTimeSpent: 0,
-                    deviceInfo: testDevice,
-                    visits: [{
-                        date: firebase.firestore.FieldValue.serverTimestamp(),
-                        duration: 0,
-                        pages: ['/setup']
-                    }]
-                });
-                
-                // 6. إنشاء إحصائيات نقرات الخدمات
+                // 5. إنشاء إحصائيات نقرات الخدمات
                 await db.collection('ServicesClicks').doc('stats').set({
                     totalClicks: 0,
                     uniqueVisitors: 0,
                     lastReset: firebase.firestore.FieldValue.serverTimestamp(),
                     dailyStats: {}
+                });
+                updateProgress(80);
+                
+                // 6. إنشاء مثال تجريبي لجهاز (بدون serverTimestamp في الـ array)
+                const testFingerprint = 'test_' + Date.now();
+                const testDevice = getDeviceInfo();
+                const now = new Date();
+                const todayStr = now.toISOString().split('T')[0];
+                
+                // إنشاء جهاز تجريبي - استخدام تاريخ نصي بدلاً من serverTimestamp
+                await db.collection('Visitors').doc(testFingerprint).set({
+                    fingerprint: testFingerprint,
+                    firstVisit: firebase.firestore.FieldValue.serverTimestamp(), // هذا عادي لأنه مش في array
+                    lastVisit: firebase.firestore.FieldValue.serverTimestamp(), // هذا عادي لأنه مش في array
+                    visitCount: 1,
+                    totalTimeSpent: 0,
+                    deviceInfo: testDevice,
+                    visits: [{
+                        date: now.toISOString(), // استخدام نص تاريخ بدلاً من serverTimestamp
+                        duration: 0,
+                        pages: ['/setup']
+                    }]
+                });
+                
+                // تحديث إحصائيات الزوار
+                const visitorsStatsRef = db.collection('Visitors').doc('stats');
+                await visitorsStatsRef.update({
+                    totalUniqueVisitors: firebase.firestore.FieldValue.increment(1),
+                    totalVisits: firebase.firestore.FieldValue.increment(1),
+                    [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
                 });
                 
                 // 7. إنشاء مثال تجريبي لنقرة خدمات
@@ -1337,9 +1349,17 @@
                     id: testClickId,
                     fingerprint: testFingerprint,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    date: new Date().toISOString().split('T')[0],
+                    date: todayStr,
                     deviceInfo: testDevice,
                     userAgent: navigator.userAgent
+                });
+                
+                // تحديث إحصائيات النقرات
+                const clicksStatsRef = db.collection('ServicesClicks').doc('stats');
+                await clicksStatsRef.update({
+                    totalClicks: firebase.firestore.FieldValue.increment(1),
+                    uniqueVisitors: firebase.firestore.FieldValue.increment(1),
+                    [`dailyStats.${todayStr}`]: firebase.firestore.FieldValue.increment(1)
                 });
                 
                 updateProgress(100);
