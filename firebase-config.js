@@ -18,7 +18,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// تفعيل التخزين المؤقت والتسامح مع الأخطاء
+// تفعيل التخزين المؤقت
 db.settings({ 
     cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
     ignoreUndefinedProperties: true,
@@ -59,27 +59,284 @@ const USER_ROLES = {
     DATA_ENTRY: 'data_entry'
 };
 
-const REQUEST_STATUS = {
-    RECEIVED: 'تم الاستلام',
-    UNDER_REVIEW: 'قيد المراجعة',
-    IN_PROGRESS: 'جاري التنفيذ',
-    SOLVED: 'تم الحل',
-    FINAL_CLOSED: 'تم الإغلاق النهائي',
-    READ: 'تمت القراءة',
-    UNREAD: 'لم يقرأ'
-};
+// =====================================================================
+// نظام اللوجو المتكامل - حل مشكلة المزامنة بين الأجهزة
+// =====================================================================
 
-const REQUEST_TYPES = {
-    COMPLAINT: 'شكوى',
-    SUGGESTION: 'اقتراح'
-};
+/**
+ * تحميل اللوجو من Firebase (المصدر الرئيسي)
+ */
+async function loadLogoFromFirebase() {
+    try {
+        console.log('🔄 جاري تحميل اللوجو من Firebase...');
+        
+        // محاولة جلب اللوجو من Firebase
+        const settingsDoc = await db.collection('Settings').doc('system').get();
+        
+        if (settingsDoc.exists) {
+            const settings = settingsDoc.data();
+            
+            // إذا كان فيه لوجو في Firebase
+            if (settings.logo && settings.logo.trim() !== '') {
+                // حفظ في localStorage كنسخة احتياطية
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                console.log('✅ تم تحميل اللوجو من Firebase:', settings.logo);
+                return settings.logo;
+            }
+        }
+        
+        // لو مفيش لوجو في Firebase، نشوف localStorage
+        const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+        if (localLogo && localLogo.trim() !== '') {
+            console.log('✅ استخدام اللوجو من localStorage:', localLogo);
+            
+            // حفظ اللوجو المحلي في Firebase للمزامنة
+            await saveLogoToFirebase(localLogo, false);
+            
+            return localLogo;
+        }
+        
+        // استخدام اللوجو الافتراضي
+        console.log('✅ استخدام اللوجو الافتراضي');
+        localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
+        return DEFAULT_SETTINGS.LOGO_URL;
+        
+    } catch (error) {
+        console.error('❌ خطأ في تحميل اللوجو من Firebase:', error);
+        
+        // في حالة الخطأ، نستخدم المخزن المحلي أو الافتراضي
+        const localLogo = localStorage.getItem(STORAGE_KEYS.LOGO_URL);
+        if (localLogo && localLogo.trim() !== '') {
+            return localLogo;
+        }
+        
+        return DEFAULT_SETTINGS.LOGO_URL;
+    }
+}
 
-const MEMBERSHIP_TYPES = {
-    MEMBER: 'عضو نقابة',
-    NON_MEMBER: 'غير عضو'
-};
+/**
+ * حفظ اللوجو في Firebase (المصدر الرئيسي)
+ */
+async function saveLogoToFirebase(logoUrl, showLog = true) {
+    try {
+        // التحقق من صحة الرابط
+        if (!logoUrl || logoUrl.trim() === '') {
+            logoUrl = DEFAULT_SETTINGS.LOGO_URL;
+        }
+        
+        // حفظ في localStorage أولاً
+        localStorage.setItem(STORAGE_KEYS.LOGO_URL, logoUrl);
+        
+        // الحصول على اسم المستخدم الحالي
+        const currentUser = localStorage.getItem(STORAGE_KEYS.CURRENT_USER) || 'system';
+        
+        // حفظ في Firebase
+        await db.collection('Settings').doc('system').set({
+            logo: logoUrl,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedBy: currentUser
+        }, { merge: true });
+        
+        if (showLog) {
+            console.log('✅ تم حفظ اللوجو في Firebase:', logoUrl);
+        }
+        
+        return true;
+        
+    } catch (error) {
+        console.error('❌ خطأ في حفظ اللوجو في Firebase:', error);
+        return false;
+    }
+}
 
-// ------------------------------ دوال مساعدة ------------------------------
+/**
+ * الحصول على اللوجو (يحاول Firebase أولاً)
+ */
+async function getLogo() {
+    return await loadLogoFromFirebase();
+}
+
+/**
+ * تحديث جميع اللوجوهات في الصفحة
+ */
+async function updateAllLogos() {
+    const logo = await getLogo();
+    
+    // قائمة بكل العناصر التي تحمل اللوجو
+    const logoElements = [
+        'splash-logo',
+        'header-main-logo',
+        'sidebar-logo',
+        'admin-logo',
+        'setup-logo',
+        'sidebarLogo'
+    ];
+    
+    // تحديث كل العناصر
+    logoElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.src = logo;
+            element.onerror = function() {
+                console.warn(`⚠️ فشل تحميل اللوجو للمعرف: ${id}، استخدام الافتراضي`);
+                this.src = DEFAULT_SETTINGS.LOGO_URL;
+            };
+        }
+    });
+    
+    console.log('✅ تم تحديث جميع اللوجوهات في الصفحة');
+    return logo;
+}
+
+/**
+ * تغيير اللوجو (للإستخدام من صفحة الإعدادات)
+ */
+async function changeLogo(newLogoUrl) {
+    const result = await saveLogoToFirebase(newLogoUrl);
+    
+    if (result) {
+        await updateAllLogos();
+        return true;
+    }
+    
+    return false;
+}
+
+// =====================================================================
+// التحقق من وجود قاعدة البيانات وإنشاء المستخدم الأساسي فقط
+// =====================================================================
+async function checkDatabase() {
+    console.log('🔄 جاري التحقق من قاعدة البيانات...');
+    
+    try {
+        // التحقق من وجود مستخدم سوبر أدمن
+        const usersSnapshot = await db.collection('Users')
+            .where('role', '==', USER_ROLES.SUPER_ADMIN)
+            .limit(1)
+            .get();
+        
+        // إذا مفيش مستخدم سوبر أدمن، ننشئ واحد بس
+        if (usersSnapshot.empty) {
+            console.log('⚠️ لا يوجد مستخدم سوبر أدمن، جاري إنشاء مستخدم أساسي...');
+            
+            // تشفير كلمة المرور
+            const hashedPassword = await hashPassword('keyatech@');
+            
+            // إنشاء مستخدم سوبر أدمن فقط (بدون بيانات تجريبية)
+            const superAdmin = {
+                username: 'admin',
+                password: hashedPassword,
+                name: 'المشرف العام',
+                email: 'admin@itws.org',
+                phone: '01234567890',
+                role: USER_ROLES.SUPER_ADMIN,
+                isActive: true,
+                permissions: {
+                    all: true,
+                    users: { view: true, create: true, edit: true, delete: true },
+                    requests: { view: true, create: true, edit: true, delete: true },
+                    settings: { view: true, edit: true },
+                    reports: { view: true, export: true },
+                    system: { backup: true, restore: true, reset: true }
+                },
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastLogin: null,
+                lastLoginString: null,
+                createdBy: 'system'
+            };
+            
+            await db.collection('Users').add(superAdmin);
+            console.log('✅ تم إنشاء مستخدم سوبر أدمن');
+        }
+        
+        // التحقق من وجود العدادات
+        const countersSnapshot = await db.collection('Counters').get();
+        if (countersSnapshot.empty) {
+            console.log('⚠️ لا توجد عدادات، جاري إنشائها...');
+            
+            const counters = [
+                { 
+                    id: 'complaints', 
+                    year: new Date().getFullYear(), 
+                    count: 0, 
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
+                },
+                { 
+                    id: 'suggestions', 
+                    year: new Date().getFullYear(), 
+                    count: 0, 
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
+                }
+            ];
+            
+            for (const counter of counters) {
+                await db.collection('Counters').doc(counter.id).set(counter);
+            }
+            console.log('✅ تم إنشاء العدادات');
+        }
+        
+        // التحقق من وجود إعدادات النظام
+        const settingsDoc = await db.collection('Settings').doc('system').get();
+        if (!settingsDoc.exists) {
+            console.log('⚠️ لا توجد إعدادات للنظام، جاري إنشائها...');
+            
+            const settings = {
+                logo: DEFAULT_SETTINGS.LOGO_URL,
+                complaintPrefix: DEFAULT_SETTINGS.COMPLAINT_PREFIX,
+                suggestionPrefix: DEFAULT_SETTINGS.SUGGESTION_PREFIX,
+                servicesUrl: DEFAULT_SETTINGS.SERVICES_URL,
+                servicesText: DEFAULT_SETTINGS.SERVICES_TEXT,
+                showServices: DEFAULT_SETTINGS.SHOW_SERVICES,
+                systemVersion: DEFAULT_SETTINGS.SYSTEM_VERSION,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedBy: 'system'
+            };
+            
+            await db.collection('Settings').doc('system').set(settings);
+            console.log('✅ تم إنشاء إعدادات النظام');
+        } else {
+            // إذا كانت الإعدادات موجودة، نتأكد من تحميل اللوجو
+            const settings = settingsDoc.data();
+            if (settings.logo) {
+                localStorage.setItem(STORAGE_KEYS.LOGO_URL, settings.logo);
+                console.log('✅ تم تحميل اللوجو من الإعدادات');
+            }
+        }
+        
+        console.log('✅ قاعدة البيانات جاهزة للعمل');
+        
+        // جلب بيانات مستخدم سوبر أدمن للعرض
+        const adminSnapshot = await db.collection('Users')
+            .where('role', '==', USER_ROLES.SUPER_ADMIN)
+            .limit(1)
+            .get();
+        
+        const adminDoc = adminSnapshot.docs[0];
+        const adminData = adminDoc.data();
+        
+        return {
+            success: true,
+            message: 'قاعدة البيانات جاهزة',
+            admin: {
+                id: adminDoc.id,
+                username: adminData.username,
+                password: 'keyatech@'
+            }
+        };
+        
+    } catch (error) {
+        console.error('❌ خطأ في التحقق من قاعدة البيانات:', error);
+        return {
+            success: false,
+            message: 'حدث خطأ في التحقق من قاعدة البيانات',
+            error: error.message
+        };
+    }
+}
+
+// =====================================================================
+// دوال مساعدة
+// =====================================================================
 function getSetting(key, defaultValue) {
     try {
         const value = localStorage.getItem(key);
@@ -96,10 +353,6 @@ function setSetting(key, value) {
     } catch (error) {
         console.error('خطأ في حفظ الإعدادات:', error);
     }
-}
-
-function getSavedLogo() {
-    return getSetting(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
 }
 
 function getCurrentArabicDate() {
@@ -128,14 +381,12 @@ function validatePhone(phone) {
     return /^01[0-2,5]{1}[0-9]{8}$/.test(phone);
 }
 
-// ------------------------------ تشفير كلمة المرور باستخدام bcryptjs ------------------------------
+// ------------------------------ تشفير كلمة المرور ------------------------------
 async function hashPassword(password) {
-    // استخدام bcryptjs إذا كان متاحاً
     if (typeof bcrypt !== 'undefined') {
         const salt = await bcrypt.genSalt(10);
         return await bcrypt.hash(password, salt);
     }
-    // fallback للتشفير البسيط (للاختبار فقط)
     console.warn('⚠️ bcryptjs غير متاح، استخدام تشفير بسيط');
     return btoa(password);
 }
@@ -144,11 +395,12 @@ async function comparePassword(password, hash) {
     if (typeof bcrypt !== 'undefined') {
         return await bcrypt.compare(password, hash);
     }
-    // fallback للمقارنة البسيطة
     return btoa(password) === hash;
 }
 
-// ------------------------------ إنشاء قاعدة البيانات من الصفر ------------------------------
+// =====================================================================
+// إعادة تعيين قاعدة البيانات (بدون بيانات تجريبية)
+// =====================================================================
 async function resetDatabase() {
     console.log('🔄 جاري إعادة تعيين قاعدة البيانات...');
     
@@ -166,14 +418,13 @@ async function resetDatabase() {
                 await batch.commit();
                 console.log(`✅ تم حذف مجموعة ${collectionName}`);
             } catch (error) {
-                console.log(`⚠️ مجموعة ${collectionName} غير موجودة أو لا يمكن حذفها`);
+                console.log(`⚠️ مجموعة ${collectionName} غير موجودة`);
             }
         }
         
-        // إنشاء المجموعات من جديد
-        console.log('🔄 جاري إنشاء المجموعات الجديدة...');
+        console.log('🔄 جاري إنشاء الهيكل الأساسي...');
         
-        // 1. إنشاء مستخدم سوبر أدمن
+        // 1. إنشاء مستخدم سوبر أدمن فقط (بدون مستخدمين إضافيين)
         const hashedPassword = await hashPassword('keyatech@');
         
         const superAdmin = {
@@ -201,61 +452,20 @@ async function resetDatabase() {
         const adminRef = await db.collection('Users').add(superAdmin);
         console.log('✅ تم إنشاء مستخدم سوبر أدمن:', adminRef.id);
         
-        // 2. إنشاء مستخدمين إضافيين للاختبار
-        const testUsers = [
-            {
-                username: 'reviewer',
-                password: await hashPassword('review@2026'),
-                name: 'مراجع الطلبات',
-                email: 'reviewer@itws.org',
-                phone: '01234567891',
-                role: USER_ROLES.REVIEWER,
-                isActive: true,
-                permissions: {
-                    all: false,
-                    users: { view: false, create: false, edit: false, delete: false },
-                    requests: { view: true, create: false, edit: true, delete: false },
-                    settings: { view: false, edit: false },
-                    reports: { view: true, export: false },
-                    system: { backup: false, restore: false, reset: false }
-                },
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastLogin: null,
-                lastLoginString: null,
-                createdBy: 'system'
-            },
-            {
-                username: 'data_entry',
-                password: await hashPassword('data@2026'),
-                name: 'مدخل بيانات',
-                email: 'data@itws.org',
-                phone: '01234567892',
-                role: USER_ROLES.DATA_ENTRY,
-                isActive: true,
-                permissions: {
-                    all: false,
-                    users: { view: false, create: false, edit: false, delete: false },
-                    requests: { view: true, create: true, edit: false, delete: false },
-                    settings: { view: false, edit: false },
-                    reports: { view: false, export: false },
-                    system: { backup: false, restore: false, reset: false }
-                },
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                lastLogin: null,
-                lastLoginString: null,
-                createdBy: 'system'
-            }
-        ];
-        
-        for (const user of testUsers) {
-            const userRef = await db.collection('Users').add(user);
-            console.log(`✅ تم إنشاء مستخدم ${user.username}:`, userRef.id);
-        }
-        
-        // 3. إنشاء عدادات للطلبات
+        // 2. إنشاء عدادات
         const counters = [
-            { id: 'complaints', year: new Date().getFullYear(), count: 0, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() },
-            { id: 'suggestions', year: new Date().getFullYear(), count: 0, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }
+            { 
+                id: 'complaints', 
+                year: new Date().getFullYear(), 
+                count: 0, 
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
+            },
+            { 
+                id: 'suggestions', 
+                year: new Date().getFullYear(), 
+                count: 0, 
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp() 
+            }
         ];
         
         for (const counter of counters) {
@@ -263,7 +473,7 @@ async function resetDatabase() {
             console.log(`✅ تم إنشاء عداد ${counter.id}`);
         }
         
-        // 4. إنشاء إعدادات النظام
+        // 3. إنشاء إعدادات النظام - مع اللوجو الافتراضي
         const settings = {
             logo: DEFAULT_SETTINGS.LOGO_URL,
             complaintPrefix: DEFAULT_SETTINGS.COMPLAINT_PREFIX,
@@ -279,10 +489,10 @@ async function resetDatabase() {
         await db.collection('Settings').doc('system').set(settings);
         console.log('✅ تم إنشاء إعدادات النظام');
         
-        // 5. إنشاء سجل النظام
+        // 4. إنشاء سجل النظام
         const systemLog = {
             action: 'system_reset',
-            details: { message: 'تم إعادة تعيين قاعدة البيانات وإنشاء مستخدم سوبر أدمن' },
+            details: { message: 'تم إعادة تعيين قاعدة البيانات' },
             userId: adminRef.id,
             username: 'admin',
             timestamp: firebase.firestore.FieldValue.serverTimestamp(),
@@ -292,68 +502,22 @@ async function resetDatabase() {
         await db.collection('SystemLogs').add(systemLog);
         console.log('✅ تم إنشاء سجل النظام');
         
-        // 6. إنشاء بعض الطلبات التجريبية
-        const sampleRequests = [
-            {
-                refId: 'REQ-0001-2026',
-                name: 'أحمد محمد علي',
-                nid: '12345678901234',
-                phone: '01234567890',
-                gov: 'القاهرة',
-                address: '15 شارع النيل - مصر الجديدة',
-                job: 'مهندس برمجيات',
-                type: REQUEST_TYPES.COMPLAINT,
-                details: 'تأخر في صرف مستحقات مالية عن دورة تدريبية',
-                memberType: MEMBERSHIP_TYPES.MEMBER,
-                memberId: 'MEM12345',
-                status: REQUEST_STATUS.RECEIVED,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                tracking: [{
-                    status: REQUEST_STATUS.RECEIVED,
-                    comment: 'تم استلام الشكوى بنجاح',
-                    time: new Date().toLocaleString('ar-EG'),
-                    isFinal: false
-                }]
-            },
-            {
-                refId: 'REP-0001-2026',
-                name: 'سارة أحمد محمود',
-                nid: '22345678901234',
-                phone: '01234567891',
-                gov: 'الجيزة',
-                address: '23 شارع الهرم - فيصل',
-                job: 'محللة نظم',
-                type: REQUEST_TYPES.SUGGESTION,
-                details: 'اقتراح بإضافة دورات في مجال الذكاء الاصطناعي',
-                memberType: MEMBERSHIP_TYPES.MEMBER,
-                memberId: 'MEM67890',
-                status: REQUEST_STATUS.UNREAD,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                tracking: [{
-                    status: REQUEST_STATUS.UNREAD,
-                    comment: 'تم استلام الاقتراح',
-                    time: new Date().toLocaleString('ar-EG'),
-                    isFinal: false
-                }]
-            }
-        ];
-        
-        for (const request of sampleRequests) {
-            await db.collection('Requests').doc(request.refId).set(request);
-            console.log(`✅ تم إنشاء طلب تجريبي: ${request.refId}`);
-        }
-        
         // حفظ علامة أن النظام تمت إعادة تعيينه
         localStorage.setItem(STORAGE_KEYS.SYSTEM_RESET_DONE, 'true');
+        
+        // تحديث اللوجو في localStorage
+        localStorage.setItem(STORAGE_KEYS.LOGO_URL, DEFAULT_SETTINGS.LOGO_URL);
         
         console.log('🎉 تم إعادة تعيين قاعدة البيانات بنجاح!');
         
         return {
             success: true,
             message: 'تم إعادة تعيين قاعدة البيانات بنجاح',
-            adminId: adminRef.id,
-            adminUsername: 'admin',
-            adminPassword: 'keyatech@'
+            admin: {
+                id: adminRef.id,
+                username: 'admin',
+                password: 'keyatech@'
+            }
         };
         
     } catch (error) {
@@ -366,84 +530,9 @@ async function resetDatabase() {
     }
 }
 
-// ------------------------------ التحقق من وجود قاعدة البيانات ------------------------------
-async function checkDatabase() {
-    console.log('🔄 جاري التحقق من قاعدة البيانات...');
-    
-    try {
-        // التحقق من وجود مستخدم سوبر أدمن
-        const usersSnapshot = await db.collection('Users')
-            .where('role', '==', USER_ROLES.SUPER_ADMIN)
-            .limit(1)
-            .get();
-        
-        if (usersSnapshot.empty) {
-            console.log('⚠️ لا يوجد مستخدم سوبر أدمن، جاري إنشاء قاعدة البيانات...');
-            return await resetDatabase();
-        }
-        
-        // التحقق من وجود العدادات
-        const countersSnapshot = await db.collection('Counters').get();
-        if (countersSnapshot.empty) {
-            console.log('⚠️ لا توجد عدادات، جاري إنشائها...');
-            const counters = [
-                { id: 'complaints', year: new Date().getFullYear(), count: 0, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() },
-                { id: 'suggestions', year: new Date().getFullYear(), count: 0, lastUpdated: firebase.firestore.FieldValue.serverTimestamp() }
-            ];
-            
-            for (const counter of counters) {
-                await db.collection('Counters').doc(counter.id).set(counter);
-            }
-            console.log('✅ تم إنشاء العدادات');
-        }
-        
-        // التحقق من وجود إعدادات النظام
-        const settingsDoc = await db.collection('Settings').doc('system').get();
-        if (!settingsDoc.exists) {
-            console.log('⚠️ لا توجد إعدادات للنظام، جاري إنشائها...');
-            const settings = {
-                logo: DEFAULT_SETTINGS.LOGO_URL,
-                complaintPrefix: DEFAULT_SETTINGS.COMPLAINT_PREFIX,
-                suggestionPrefix: DEFAULT_SETTINGS.SUGGESTION_PREFIX,
-                servicesUrl: DEFAULT_SETTINGS.SERVICES_URL,
-                servicesText: DEFAULT_SETTINGS.SERVICES_TEXT,
-                showServices: DEFAULT_SETTINGS.SHOW_SERVICES,
-                systemVersion: DEFAULT_SETTINGS.SYSTEM_VERSION,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                updatedBy: 'system'
-            };
-            
-            await db.collection('Settings').doc('system').set(settings);
-            console.log('✅ تم إنشاء إعدادات النظام');
-        }
-        
-        console.log('✅ قاعدة البيانات موجودة وجاهزة للعمل');
-        
-        // جلب بيانات مستخدم سوبر أدمن للعرض
-        const adminDoc = usersSnapshot.docs[0];
-        const adminData = adminDoc.data();
-        
-        return {
-            success: true,
-            message: 'قاعدة البيانات جاهزة',
-            admin: {
-                id: adminDoc.id,
-                username: adminData.username,
-                password: 'keyatech@' // كلمة المرور الأصلية
-            }
-        };
-        
-    } catch (error) {
-        console.error('❌ خطأ في التحقق من قاعدة البيانات:', error);
-        return {
-            success: false,
-            message: 'حدث خطأ في التحقق من قاعدة البيانات',
-            error: error.message
-        };
-    }
-}
-
-// ------------------------------ دالة تسجيل الدخول المحسنة ------------------------------
+// =====================================================================
+// دوال تسجيل الدخول
+// =====================================================================
 async function loginUser(username, password) {
     try {
         console.log('🔍 محاولة تسجيل الدخول للمستخدم:', username);
@@ -515,17 +604,37 @@ async function loginUser(username, password) {
     }
 }
 
-// ------------------------------ دوال التصدير ------------------------------
+// =====================================================================
+// تهيئة النظام عند التحميل
+// =====================================================================
+async function initializeSystem() {
+    console.log('🔄 جاري تهيئة النظام...');
+    
+    // التحقق من قاعدة البيانات
+    const dbStatus = await checkDatabase();
+    
+    // تحميل اللوجو من Firebase
+    await loadLogoFromFirebase();
+    
+    // تحديث اللوجوهات في الصفحة إذا كانت موجودة
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        setTimeout(updateAllLogos, 500);
+    } else {
+        document.addEventListener('DOMContentLoaded', updateAllLogos);
+    }
+    
+    return dbStatus;
+}
+
+// =====================================================================
+// دوال التصدير
+// =====================================================================
 window.db = db;
 window.STORAGE_KEYS = STORAGE_KEYS;
 window.DEFAULT_SETTINGS = DEFAULT_SETTINGS;
 window.USER_ROLES = USER_ROLES;
-window.REQUEST_STATUS = REQUEST_STATUS;
-window.REQUEST_TYPES = REQUEST_TYPES;
-window.MEMBERSHIP_TYPES = MEMBERSHIP_TYPES;
 window.getSetting = getSetting;
 window.setSetting = setSetting;
-window.getSavedLogo = getSavedLogo;
 window.getCurrentArabicDate = getCurrentArabicDate;
 window.getCurrentArabicTime = getCurrentArabicTime;
 window.validateNationalID = validateNationalID;
@@ -535,25 +644,21 @@ window.comparePassword = comparePassword;
 window.resetDatabase = resetDatabase;
 window.checkDatabase = checkDatabase;
 window.loginUser = loginUser;
+window.loadLogoFromFirebase = loadLogoFromFirebase;
+window.saveLogoToFirebase = saveLogoToFirebase;
+window.getLogo = getLogo;
+window.updateAllLogos = updateAllLogos;
+window.changeLogo = changeLogo;
+window.initializeSystem = initializeSystem;
 
 console.log('✅ Firebase configuration loaded successfully');
 
-// التحقق التلقائي عند تحميل الصفحة
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', async () => {
-        const result = await checkDatabase();
-        if (result.success) {
-            console.log('ℹ️ معلومات تسجيل الدخول:');
-            console.log(`   👤 المستخدم: ${result.admin?.username || 'admin'}`);
-            console.log(`   🔑 كلمة المرور: keyatech@`);
-        }
-    });
-} else {
-    checkDatabase().then(result => {
-        if (result.success) {
-            console.log('ℹ️ معلومات تسجيل الدخول:');
-            console.log(`   👤 المستخدم: ${result.admin?.username || 'admin'}`);
-            console.log(`   🔑 كلمة المرور: keyatech@`);
-        }
-    });
-}
+// تهيئة النظام تلقائياً
+initializeSystem().then(result => {
+    if (result.success) {
+        console.log('ℹ️ معلومات تسجيل الدخول:');
+        console.log(`   👤 اسم المستخدم: admin`);
+        console.log(`   🔑 كلمة المرور: keyatech@`);
+        console.log(`   📞 رقم الهاتف: 01234567890`);
+    }
+});
