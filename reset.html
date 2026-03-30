@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>تغيير بيانات السوبر أدمن - نقابة تكنولوجيا المعلومات | VR 2.05.2026</title>
+    <title>إعادة تعيين كلمة مرور السوبر أدمن - نقابة تكنولوجيا المعلومات | VR 2.05.2026</title>
     
     <!-- الخطوط الأساسية -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,7 @@
     
     <style>
         /* =====================================================================
-           تصميم فخم لتغيير بيانات السوبر أدمن
+           تصميم فخم لإعادة تعيين كلمة مرور السوبر أدمن
            ===================================================================== */
         
         :root {
@@ -195,15 +195,15 @@
         }
         
         /* الحاوية الرئيسية */
-        .change-container {
-            max-width: 600px;
+        .reset-container {
+            max-width: 550px;
             margin: 40px auto;
             position: relative;
             z-index: 10;
         }
         
         /* الهيدر الفخم */
-        .change-header {
+        .reset-header {
             text-align: center;
             margin-bottom: 40px;
             animation: headerAppear 1.2s var(--ease-elastic);
@@ -251,8 +251,8 @@
             z-index: 2;
         }
         
-        .change-title {
-            font-size: 42px;
+        .reset-title {
+            font-size: 38px;
             font-weight: 900;
             background: linear-gradient(135deg, #fff, var(--neon-cyan), var(--neon-purple));
             -webkit-background-clip: text;
@@ -269,13 +269,13 @@
             100% { filter: drop-shadow(0 0 20px var(--neon-cyan)); }
         }
         
-        .change-subtitle {
-            font-size: 18px;
-            color: rgba(255, 255, 255, 0.8);
+        .reset-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
         }
         
         /* الكارت الفخم */
-        .change-card {
+        .reset-card {
             background: rgba(15, 23, 42, 0.35);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -288,7 +288,7 @@
             overflow: hidden;
         }
         
-        .change-card::before {
+        .reset-card::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -319,6 +319,68 @@
         
         .card-title i {
             font-size: 32px;
+        }
+        
+        /* اختبار الاتصال */
+        .test-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 30px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+        
+        .test-status {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .test-label {
+            color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-badge {
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        
+        .test-badge.connecting {
+            background: rgba(249, 115, 22, 0.2);
+            color: #f97316;
+            border: 1px solid #f97316;
+        }
+        
+        .test-badge.connected {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+        
+        .test-badge.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+        
+        .admin-info {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .admin-info p {
+            margin: 8px 0;
+            font-size: 14px;
         }
         
         /* الحقول */
@@ -361,44 +423,6 @@
         
         .neon-input:hover {
             border-color: var(--neon-purple);
-        }
-        
-        /* معلومات الأدمن الحالي */
-        .current-info {
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 30px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(0, 255, 255, 0.2);
-        }
-        
-        .current-info h3 {
-            color: var(--neon-cyan);
-            margin-bottom: 15px;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .info-row:last-child {
-            border-bottom: none;
-        }
-        
-        .info-label {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        
-        .info-value {
-            color: var(--neon-cyan);
-            font-weight: 700;
         }
         
         /* أزرار الإجراءات */
@@ -466,15 +490,15 @@
             transform: translateY(-3px);
         }
         
-        .btn-danger {
-            background: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
+        .btn-test {
+            background: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
             color: #fff;
-            box-shadow: 0 0 30px var(--neon-red);
+            box-shadow: 0 0 20px var(--neon-orange);
         }
         
-        .btn-danger:hover {
+        .btn-test:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 50px var(--neon-red);
+            box-shadow: 0 0 40px var(--neon-orange);
         }
         
         /* رسالة الحالة */
@@ -514,20 +538,6 @@
             color: var(--neon-orange);
         }
         
-        /* تذييل */
-        .change-footer {
-            text-align: center;
-            margin-top: 40px;
-            color: rgba(255, 255, 255, 0.4);
-            font-size: 14px;
-        }
-        
-        .version {
-            font-family: 'Orbitron', monospace;
-            color: var(--neon-cyan);
-            margin-top: 10px;
-        }
-        
         /* شريط التقدم */
         .progress-bar {
             width: 100%;
@@ -551,14 +561,28 @@
             transition: width 0.3s ease;
         }
         
+        /* تذييل */
+        .reset-footer {
+            text-align: center;
+            margin-top: 40px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+        }
+        
+        .version {
+            font-family: 'Orbitron', monospace;
+            color: var(--neon-cyan);
+            margin-top: 10px;
+        }
+        
         /* تحسينات الجوال */
         @media (max-width: 768px) {
-            .change-card {
+            .reset-card {
                 padding: 30px;
             }
             
-            .change-title {
-                font-size: 32px;
+            .reset-title {
+                font-size: 28px;
             }
             
             .actions {
@@ -569,9 +593,9 @@
                 width: 100%;
             }
             
-            .info-row {
+            .test-status {
                 flex-direction: column;
-                gap: 5px;
+                align-items: flex-start;
             }
         }
     </style>
@@ -580,76 +604,55 @@
     <!-- جزيئات متطايرة فاخرة -->
     <div class="particles" id="particles"></div>
     
-    <div class="change-container">
+    <div class="reset-container">
         <!-- الهيدر الفخم -->
-        <div class="change-header">
+        <div class="reset-header">
             <div class="logo-wrapper">
-                <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="change-logo">
+                <img src="https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo" alt="شعار النقابة" class="logo" id="reset-logo">
             </div>
-            <h1 class="change-title">تغيير بيانات السوبر أدمن</h1>
-            <p class="change-subtitle">نقابة تكنولوجيا المعلومات والبرمجيات</p>
+            <h1 class="reset-title">إعادة تعيين كلمة المرور</h1>
+            <p class="reset-subtitle">لسوبر أدمن النظام</p>
         </div>
         
-        <!-- كارت التغيير -->
-        <div class="change-card">
+        <!-- كارت إعادة التعيين -->
+        <div class="reset-card">
             <div class="card-title">
-                <i class="fas fa-user-shield"></i>
-                <span>بيانات الحساب</span>
+                <i class="fas fa-key"></i>
+                <span>تعيين كلمة مرور جديدة</span>
             </div>
             
-            <!-- معلومات الأدمن الحالي -->
-            <div class="current-info" id="current-info">
-                <h3><i class="fas fa-info-circle"></i> البيانات الحالية</h3>
-                <div class="info-row">
-                    <span class="info-label">اسم المستخدم:</span>
-                    <span class="info-value" id="current-username">جاري التحميل...</span>
+            <!-- قسم اختبار الاتصال وقاعدة البيانات -->
+            <div class="test-section">
+                <div class="test-status">
+                    <span class="test-label">
+                        <i class="fas fa-database"></i>
+                        حالة قاعدة البيانات:
+                    </span>
+                    <span class="test-badge" id="db-status">جاري الفحص...</span>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">الاسم الكامل:</span>
-                    <span class="info-value" id="current-name">جاري التحميل...</span>
+                <div class="test-status">
+                    <span class="test-label">
+                        <i class="fas fa-user-shield"></i>
+                        السوبر أدمن:
+                    </span>
+                    <span id="admin-status" style="color: var(--neon-cyan);">جاري البحث...</span>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">البريد الإلكتروني:</span>
-                    <span class="info-value" id="current-email">جاري التحميل...</span>
+                <div class="admin-info" id="admin-info" style="display: none;">
+                    <p><i class="fas fa-user"></i> <strong>اسم المستخدم:</strong> <span id="admin-username">-</span></p>
+                    <p><i class="fas fa-user-circle"></i> <strong>الاسم الكامل:</strong> <span id="admin-name">-</span></p>
+                    <p><i class="fas fa-phone"></i> <strong>رقم الهاتف:</strong> <span id="admin-phone">-</span></p>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">رقم الهاتف:</span>
-                    <span class="info-value" id="current-phone">جاري التحميل...</span>
+                <div style="margin-top: 15px;">
+                    <button class="btn-test" onclick="testConnection()" style="width: 100%;">
+                        <i class="fas fa-sync-alt"></i> اختبار الاتصال بقاعدة البيانات
+                    </button>
                 </div>
             </div>
             
-            <!-- حقل التحقق من الهوية -->
+            <!-- حقل كلمة المرور الجديدة -->
             <div class="input-group">
-                <label><i class="fas fa-lock"></i> كلمة المرور الحالية (للتأكيد)</label>
-                <input type="password" id="verify-password" class="neon-input" placeholder="أدخل كلمة المرور الحالية">
-            </div>
-            
-            <div style="height: 2px; background: rgba(0,255,255,0.2); margin: 25px 0;"></div>
-            
-            <!-- البيانات الجديدة -->
-            <div class="input-group">
-                <label><i class="fas fa-user"></i> اسم المستخدم الجديد</label>
-                <input type="text" id="new-username" class="neon-input" placeholder="أدخل اسم المستخدم الجديد">
-            </div>
-            
-            <div class="input-group">
-                <label><i class="fas fa-user-circle"></i> الاسم الكامل الجديد</label>
-                <input type="text" id="new-name" class="neon-input" placeholder="أدخل الاسم الكامل الجديد">
-            </div>
-            
-            <div class="input-group">
-                <label><i class="fas fa-envelope"></i> البريد الإلكتروني الجديد</label>
-                <input type="email" id="new-email" class="neon-input" placeholder="أدخل البريد الإلكتروني الجديد">
-            </div>
-            
-            <div class="input-group">
-                <label><i class="fas fa-phone"></i> رقم الهاتف الجديد</label>
-                <input type="tel" id="new-phone" class="neon-input" placeholder="أدخل رقم الهاتف الجديد">
-            </div>
-            
-            <div class="input-group">
-                <label><i class="fas fa-key"></i> كلمة المرور الجديدة</label>
-                <input type="password" id="new-password" class="neon-input" placeholder="أدخل كلمة المرور الجديدة (اتركها فارغة إذا لم ترد التغيير)">
+                <label><i class="fas fa-lock"></i> كلمة المرور الجديدة</label>
+                <input type="password" id="new-password" class="neon-input" placeholder="أدخل كلمة المرور الجديدة">
             </div>
             
             <div class="input-group">
@@ -664,8 +667,8 @@
             <div class="status-message" id="status-message"></div>
             
             <div class="actions">
-                <button class="btn btn-primary" onclick="updateAdminData()">
-                    <i class="fas fa-save"></i> حفظ التغييرات
+                <button class="btn btn-primary" onclick="resetPassword()">
+                    <i class="fas fa-save"></i> تعيين كلمة المرور
                 </button>
                 <button class="btn btn-secondary" onclick="goToLogin()">
                     <i class="fas fa-sign-in-alt"></i> الذهاب لتسجيل الدخول
@@ -674,7 +677,7 @@
         </div>
         
         <!-- تذييل -->
-        <div class="change-footer">
+        <div class="reset-footer">
             <p>نقابة تكنولوجيا المعلومات والبرمجيات © 2026</p>
             <p class="version">VR 2.05.2026 | جميع الحقوق محفوظة</p>
         </div>
@@ -711,6 +714,7 @@
         // الثوابت
         // =====================================================================
         const DEFAULT_LOGO = 'https://placehold.co/120x120/0a0f1f/00ffff/png?text=Logo';
+        let currentAdmin = null;
         
         // =====================================================================
         // دوال مساعدة
@@ -747,7 +751,7 @@
             try {
                 const settingsDoc = await db.collection('Settings').doc('system').get();
                 if (settingsDoc.exists && settingsDoc.data().logo) {
-                    document.getElementById('change-logo').src = settingsDoc.data().logo;
+                    document.getElementById('reset-logo').src = settingsDoc.data().logo;
                 }
             } catch (error) {
                 console.error('خطأ في تحميل اللوجو:', error);
@@ -755,43 +759,62 @@
         }
         
         // =====================================================================
-        // جلب بيانات السوبر أدمن الحالي
+        // اختبار الاتصال بقاعدة البيانات
         // =====================================================================
-        async function loadCurrentAdmin() {
+        window.testConnection = async function() {
+            const dbStatusEl = document.getElementById('db-status');
+            const adminStatusEl = document.getElementById('admin-status');
+            const adminInfoEl = document.getElementById('admin-info');
+            
+            dbStatusEl.textContent = 'جاري الاتصال...';
+            dbStatusEl.className = 'test-badge connecting';
+            adminStatusEl.textContent = 'جاري البحث...';
+            
             try {
+                // اختبار الاتصال
+                await db.collection('_test_').doc('test').set({ timestamp: Date.now() });
+                dbStatusEl.textContent = '🟢 متصل';
+                dbStatusEl.className = 'test-badge connected';
+                
+                // البحث عن السوبر أدمن
                 const snapshot = await db.collection('Users')
                     .where('role', '==', 'super_admin')
                     .limit(1)
                     .get();
                 
                 if (snapshot.empty) {
-                    document.getElementById('current-username').textContent = 'غير موجود';
-                    document.getElementById('current-name').textContent = 'غير موجود';
-                    document.getElementById('current-email').textContent = 'غير موجود';
-                    document.getElementById('current-phone').textContent = 'غير موجود';
+                    adminStatusEl.textContent = '❌ غير موجود';
+                    adminStatusEl.style.color = '#ef4444';
+                    adminInfoEl.style.display = 'none';
+                    currentAdmin = null;
                     showMessage('error', '❌ لا يوجد مستخدم سوبر أدمن في قاعدة البيانات');
-                    return null;
+                    return;
                 }
                 
                 const admin = snapshot.docs[0];
                 const data = admin.data();
+                currentAdmin = { id: admin.id, ...data };
                 
-                document.getElementById('current-username').textContent = data.username || 'admin';
-                document.getElementById('current-name').textContent = data.name || 'المشرف العام';
-                document.getElementById('current-email').textContent = data.email || 'admin@itws.org';
-                document.getElementById('current-phone').textContent = data.phone || '01234567890';
+                adminStatusEl.textContent = '✅ موجود';
+                adminStatusEl.style.color = '#10b981';
                 
-                return {
-                    id: admin.id,
-                    ...data
-                };
+                document.getElementById('admin-username').textContent = data.username || 'admin';
+                document.getElementById('admin-name').textContent = data.name || 'المشرف العام';
+                document.getElementById('admin-phone').textContent = data.phone || '01234567890';
+                adminInfoEl.style.display = 'block';
+                
+                showMessage('success', '✅ الاتصال بقاعدة البيانات ناجح وتم العثور على السوبر أدمن');
                 
             } catch (error) {
-                console.error('خطأ في جلب بيانات الأدمن:', error);
-                showMessage('error', '❌ ' + error.message);
-                return null;
+                console.error('خطأ في الاختبار:', error);
+                dbStatusEl.textContent = '🔴 غير متصل';
+                dbStatusEl.className = 'test-badge error';
+                adminStatusEl.textContent = 'خطأ';
+                adminStatusEl.style.color = '#ef4444';
+                showMessage('error', '❌ فشل الاتصال بقاعدة البيانات: ' + error.message);
+                currentAdmin = null;
             }
-        }
+        };
         
         // =====================================================================
         // تشفير كلمة المرور باستخدام bcrypt
@@ -806,79 +829,33 @@
         }
         
         // =====================================================================
-        // التحقق من كلمة المرور الحالية
+        // إعادة تعيين كلمة المرور
         // =====================================================================
-        async function verifyCurrentPassword(admin, enteredPassword) {
-            if (!enteredPassword) {
-                showMessage('error', '❌ يجب إدخال كلمة المرور الحالية للتأكيد');
-                return false;
-            }
-            
-            try {
-                // التحقق من كلمة المرور
-                if (typeof bcrypt !== 'undefined' && admin.password && admin.password.startsWith('$2')) {
-                    const isValid = await bcrypt.compare(enteredPassword, admin.password);
-                    if (!isValid) {
-                        showMessage('error', '❌ كلمة المرور الحالية غير صحيحة');
-                        return false;
-                    }
-                } else {
-                    // في حالة عدم وجود bcrypt، نستخدم المقارنة المباشرة
-                    const validPasswords = ['keyatech@', 'admin123'];
-                    if (!validPasswords.includes(enteredPassword) && btoa(enteredPassword) !== admin.password) {
-                        showMessage('error', '❌ كلمة المرور الحالية غير صحيحة');
-                        return false;
-                    }
-                }
-                
-                return true;
-                
-            } catch (error) {
-                console.error('خطأ في التحقق من كلمة المرور:', error);
-                showMessage('error', '❌ حدث خطأ في التحقق من كلمة المرور');
-                return false;
-            }
-        }
-        
-        // =====================================================================
-        // تحديث بيانات السوبر أدمن
-        // =====================================================================
-        window.updateAdminData = async function() {
-            const verifyPassword = document.getElementById('verify-password')?.value.trim();
-            const newUsername = document.getElementById('new-username')?.value.trim();
-            const newName = document.getElementById('new-name')?.value.trim();
-            const newEmail = document.getElementById('new-email')?.value.trim();
-            const newPhone = document.getElementById('new-phone')?.value.trim();
+        window.resetPassword = async function() {
             const newPassword = document.getElementById('new-password')?.value.trim();
             const confirmPassword = document.getElementById('confirm-password')?.value.trim();
             
-            // جلب الأدمن الحالي
-            const admin = await loadCurrentAdmin();
-            if (!admin) return;
-            
-            // التحقق من كلمة المرور الحالية
-            const isVerified = await verifyCurrentPassword(admin, verifyPassword);
-            if (!isVerified) return;
-            
-            // التحقق من تطابق كلمة المرور الجديدة إذا تم إدخالها
-            if (newPassword && newPassword !== confirmPassword) {
-                showMessage('error', '❌ كلمة المرور الجديدة غير متطابقة');
+            // التحقق من وجود السوبر أدمن
+            if (!currentAdmin) {
+                showMessage('error', '❌ لم يتم العثور على السوبر أدمن. قم باختبار الاتصال أولاً');
                 return;
             }
             
-            // تجهيز البيانات للتحديث
-            const updateData = {};
-            
-            if (newUsername) updateData.username = newUsername;
-            if (newName) updateData.name = newName;
-            if (newEmail) updateData.email = newEmail;
-            if (newPhone) updateData.phone = newPhone;
-            if (newPassword) {
-                updateData.password = await hashPassword(newPassword);
+            // التحقق من إدخال كلمة المرور
+            if (!newPassword) {
+                showMessage('error', '❌ الرجاء إدخال كلمة المرور الجديدة');
+                return;
             }
             
-            if (Object.keys(updateData).length === 0) {
-                showMessage('warning', '⚠️ لم تقم بإدخال أي تغييرات');
+            // التحقق من طول كلمة المرور
+            if (newPassword.length < 6) {
+                showMessage('error', '❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+                return;
+            }
+            
+            // التحقق من تطابق كلمة المرور
+            if (newPassword !== confirmPassword) {
+                showMessage('error', '❌ كلمة المرور غير متطابقة');
                 return;
             }
             
@@ -886,46 +863,36 @@
                 showProgress(true);
                 updateProgress(30);
                 
-                await db.collection('Users').doc(admin.id).update(updateData);
+                // تشفير كلمة المرور الجديدة
+                const hashedPassword = await hashPassword(newPassword);
                 
-                updateProgress(70);
+                updateProgress(60);
                 
-                // تحديث localStorage إذا كان المستخدم الحالي هو نفسه
-                const currentUserId = localStorage.getItem('currentUserId');
-                if (currentUserId === admin.id) {
-                    if (newUsername) localStorage.setItem('currentUser', newUsername);
-                    if (newName) localStorage.setItem('currentUserName', newName);
-                }
+                // تحديث كلمة المرور في قاعدة البيانات
+                await db.collection('Users').doc(currentAdmin.id).update({
+                    password: hashedPassword,
+                    passwordResetAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
                 
                 updateProgress(100);
                 showProgress(false);
                 
-                showMessage('success', '✅ تم تحديث بيانات السوبر أدمن بنجاح');
-                
-                // تحديث العرض
-                await loadCurrentAdmin();
+                showMessage('success', '✅ تم إعادة تعيين كلمة المرور بنجاح');
                 
                 // مسح الحقول
-                document.getElementById('verify-password').value = '';
-                document.getElementById('new-username').value = '';
-                document.getElementById('new-name').value = '';
-                document.getElementById('new-email').value = '';
-                document.getElementById('new-phone').value = '';
                 document.getElementById('new-password').value = '';
                 document.getElementById('confirm-password').value = '';
                 
                 Swal.fire({
                     icon: 'success',
-                    title: 'تم التحديث بنجاح',
+                    title: 'تم إعادة تعيين كلمة المرور',
                     html: `
                         <div style="text-align: center;">
-                            <p style="color: #00ffff; font-size: 18px;">تم تحديث بيانات السوبر أدمن</p>
-                            <div style="background: rgba(0,255,255,0.1); padding: 15px; border-radius: 15px; margin-top: 15px;">
-                                ${newUsername ? `<p><strong>اسم المستخدم الجديد:</strong> ${newUsername}</p>` : ''}
-                                ${newName ? `<p><strong>الاسم الجديد:</strong> ${newName}</p>` : ''}
-                                ${newPhone ? `<p><strong>رقم الهاتف الجديد:</strong> ${newPhone}</p>` : ''}
-                                ${newPassword ? `<p><strong>كلمة المرور:</strong> تم تغييرها</p>` : ''}
+                            <p style="color: #00ffff; font-size: 18px; margin-bottom: 15px;">كلمة المرور الجديدة:</p>
+                            <div style="background: rgba(0,255,255,0.1); padding: 20px; border-radius: 20px;">
+                                <code style="color: #00ffff; font-size: 20px; font-family: monospace;">${newPassword}</code>
                             </div>
+                            <p style="color: var(--neon-green); margin-top: 20px;">يمكنك الآن استخدامها لتسجيل الدخول</p>
                         </div>
                     `,
                     background: '#030514',
@@ -934,7 +901,7 @@
                 });
                 
             } catch (error) {
-                console.error('خطأ في تحديث البيانات:', error);
+                console.error('خطأ في إعادة تعيين كلمة المرور:', error);
                 showMessage('error', '❌ ' + error.message);
                 showProgress(false);
             }
@@ -970,7 +937,11 @@
         window.addEventListener('load', async function() {
             createParticles();
             await loadLogo();
-            await loadCurrentAdmin();
+            
+            // فحص تلقائي عند التحميل
+            setTimeout(() => {
+                testConnection();
+            }, 1000);
         });
     </script>
 </body>
