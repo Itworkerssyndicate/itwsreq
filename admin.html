@@ -34,7 +34,7 @@
     
     <style>
         /* =====================================================================
-           التصميم الأساسي للوحة التحكم - نسخة متكاملة مع نظام التتبع
+           التصميم الأساسي للوحة التحكم - نسخة متكاملة
            جميع الحقوق محفوظة لنقابة تكنولوجيا المعلومات والبرمجيات © 2026
            ===================================================================== */
         
@@ -74,12 +74,10 @@
             --gradient-danger: linear-gradient(135deg, var(--neon-red), var(--neon-orange));
             --gradient-success: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
             --gradient-warning: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
-            --gradient-services: linear-gradient(135deg, var(--neon-orange), var(--neon-pink));
             
             --shadow-card: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--border-color) inset;
             --shadow-neon: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-purple);
             --shadow-neon-red: 0 0 20px var(--neon-red), 0 0 40px var(--neon-red);
-            --shadow-neon-orange: 0 0 20px var(--neon-orange), 0 0 40px var(--neon-pink);
             
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             
@@ -724,17 +722,6 @@
         .btn-warning:hover {
             transform: translateY(-3px);
             box-shadow: 0 0 20px var(--neon-orange);
-        }
-        
-        .btn-services {
-            background: var(--gradient-services);
-            color: white;
-            box-shadow: 0 0 15px var(--neon-orange);
-        }
-        
-        .btn-services:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 30px var(--neon-orange), 0 0 40px var(--neon-pink);
         }
         
         .results-count {
@@ -1632,9 +1619,30 @@
         };
         
         // =====================================================================
+        // المتغيرات العامة
+        // =====================================================================
+        let allRequests = [];
+        let allUsers = [];
+        let allVisitors = [];
+        let allServicesClicks = [];
+        let allSessions = [];
+        let allActivities = [];
+        let currentView = 'dashboard';
+        let unsubscribeRequests = null;
+        let unsubscribeUsers = null;
+        let unsubscribeVisitors = null;
+        let unsubscribeServicesClicks = null;
+        let unsubscribeSessions = null;
+        let unsubscribeActivities = null;
+        let currentRequestId = null;
+        let currentUserId = null;
+        let currentUser = null;
+        let isSuperAdmin = false;
+        let charts = {};
+        
+        // =====================================================================
         // نظام الإعدادات المتكامل
         // =====================================================================
-        
         async function loadAllSettingsFromFirebase() {
             try {
                 const settingsDoc = await db.collection('Settings').doc('system').get();
@@ -1727,28 +1735,6 @@
                 Swal.fire({ icon: 'error', title: 'خطأ', text: 'حدث خطأ في حفظ الإعدادات', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' });
             }
         }
-        
-        // =====================================================================
-        // المتغيرات العامة
-        // =====================================================================
-        let allRequests = [];
-        let allUsers = [];
-        let allVisitors = [];
-        let allServicesClicks = [];
-        let allSessions = [];
-        let allActivities = [];
-        let currentView = 'dashboard';
-        let unsubscribeRequests = null;
-        let unsubscribeUsers = null;
-        let unsubscribeVisitors = null;
-        let unsubscribeServicesClicks = null;
-        let unsubscribeSessions = null;
-        let unsubscribeActivities = null;
-        let currentRequestId = null;
-        let currentUserId = null;
-        let currentUser = null;
-        let isSuperAdmin = false;
-        let charts = {};
         
         // =====================================================================
         // إنشاء الجزيئات
@@ -1906,7 +1892,7 @@
                 const clicksStatsDoc = await db.collection('ServicesClicks').doc('stats').get();
                 const clicksStats = clicksStatsDoc.exists ? clicksStatsDoc.data() : { totalClicks: 0 };
                 
-                // جلب الجلسات النشطة
+                // جلب الجلسات النشطة من ActiveSessions
                 const sessionsSnapshot = await db.collection('ActiveSessions').where('isActive', '==', true).get();
                 const activeSessions = sessionsSnapshot.size;
                 
@@ -1928,7 +1914,7 @@
                         case 'update_request': actionText = 'تحديث طلب'; actionColor = '#f97316'; break;
                         default: actionText = activity.action; actionColor = '#94a3b8';
                     }
-                    activitiesHTML += `<div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 5px; border-right: 3px solid ${actionColor};"><div style="display: flex; justify-content: space-between;"><span style="color: ${actionColor};">${actionText}</span><span style="color: var(--text-muted); font-size: 11px;">${time}</span></div><div style="margin-top: 5px; font-size: 12px;"><span style="color: var(--neon-cyan);">${activity.username || 'زائر'}</span><span style="color: var(--text-muted);"> - </span><span>${activity.details ? JSON.stringify(activity.details) : ''}</span></div></div>`;
+                    activitiesHTML += `<div style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 10px; margin-bottom: 5px; border-right: 3px solid ${actionColor};"><div style="display: flex; justify-content: space-between;"><span style="color: ${actionColor};">${actionText}</span><span style="color: var(--text-muted); font-size: 11px;">${time}</span></div><div style="margin-top: 5px; font-size: 12px;"><span style="color: var(--neon-cyan);">${activity.username || 'زائر'}</span><span style="color: var(--text-muted);"> - </span><span>${activity.details ? JSON.stringify(activity.details).substring(0, 50) : ''}</span></div></div>`;
                 });
                 
                 const html = `
@@ -1979,11 +1965,17 @@
         }
         
         // =====================================================================
-        // إدارة الطلبات
+        // إدارة الطلبات (كل الطلبات / شكاوى / مقترحات)
         // =====================================================================
         function loadRequests() {
             if (unsubscribeRequests) unsubscribeRequests();
-            document.getElementById('pageTitle').textContent = currentView === 'all' ? 'كل الطلبات' : (currentView === 'شكوى' ? 'سجل الشكاوى' : 'سجل المقترحات');
+            
+            let titleText = '';
+            if (currentView === 'all') titleText = 'كل الطلبات';
+            else if (currentView === 'شكوى') titleText = 'سجل الشكاوى';
+            else titleText = 'سجل المقترحات';
+            
+            document.getElementById('pageTitle').textContent = titleText;
             document.getElementById('pageIcon').className = 'fas fa-database';
             document.getElementById('contentArea').innerHTML = `<div class="table-card"><div style="text-align: center; padding: 50px;"><i class="fas fa-spinner fa-spin" style="font-size: 40px; color: var(--neon-cyan); margin-bottom: 15px;"></i><p style="color: var(--text-muted);">جاري تحميل الطلبات...</p></div></div>`;
             
@@ -1994,25 +1986,20 @@
                 allRequests = [];
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    data.createdAtDate = data.createdAt?.toDate ? data.createdAt.toDate() : (data.createdAt ? new Date(data.createdAt) : new Date());
+                    if (data.createdAt && data.createdAt.toDate) {
+                        data.createdAtDate = data.createdAt.toDate();
+                    } else if (data.createdAt) {
+                        data.createdAtDate = new Date(data.createdAt);
+                    } else {
+                        data.createdAtDate = new Date();
+                    }
                     allRequests.push({ id: doc.id, ...data });
                 });
-                updateStats();
                 createRequestsView();
             }, (error) => {
+                console.error("خطأ في تحميل الطلبات:", error);
                 document.getElementById('contentArea').innerHTML = `<div class="table-card"><div style="text-align: center; padding: 50px; color: var(--neon-red);"><i class="fas fa-exclamation-triangle" style="font-size: 50px; margin-bottom: 15px;"></i><h3 style="color: var(--neon-red);">حدث خطأ في تحميل البيانات</h3><p style="color: var(--text-muted);">${error.message}</p><button class="btn btn-primary" onclick="loadRequests()"><i class="fas fa-sync-alt"></i> إعادة المحاولة</button></div></div>`;
             });
-        }
-        
-        function updateStats() {
-            const total = allRequests.length;
-            const complaints = allRequests.filter(r => r.type === 'شكوى').length;
-            const suggestions = allRequests.filter(r => r.type === 'اقتراح').length;
-            const pending = allRequests.filter(r => r.status !== 'تم الحل' && r.status !== 'تم الإغلاق النهائي' && r.status !== 'تمت القراءة').length;
-            document.getElementById('totalCount').textContent = total;
-            document.getElementById('complaintsCount').textContent = complaints;
-            document.getElementById('suggestionsCount').textContent = suggestions;
-            document.getElementById('pendingCount').textContent = pending;
         }
         
         let searchFilters = { ref: '', name: '', nid: '', member: '', dateFrom: '', dateTo: '', type: 'all', status: 'all' };
@@ -2112,7 +2099,7 @@
                     tableHTML += `<tr><td><div style="font-weight: 600;">${dateStr}</div><div style="color: var(--text-muted); font-size: 11px;">${timeStr}</div></td><td style="color: var(--neon-cyan); font-weight: 700;">${request.refId || 'غير محدد'}</td><td><div style="font-weight: 600;">${request.name || 'غير محدد'}</div><div style="color: var(--text-muted); font-size: 11px;">${request.job || ''}</div><div style="color: var(--neon-cyan); font-size: 11px;">${request.phone || ''}</div></td><td>${memberType}</td><td>${request.gov || 'غير محدد'}</td><td><span class="type-badge ${typeClass}">${request.type}</span></td><td>${statusSpan}</td><td><button class="action-btn" onclick="manageRequest('${request.refId}')" title="إدارة الطلب"><i class="fas fa-cog"></i></button>${isSuperAdmin ? `<button class="action-btn delete" onclick="openDeleteModal('request', '${request.refId}')" title="حذف"><i class="fas fa-trash"></i></button>` : ''}</td></tr>`;
                 });
             }
-            tableHTML += `</tbody></table></div></div>`;
+            tableHTML += `</tbody>}</div></div>`;
             document.getElementById('contentArea').innerHTML = tableHTML;
         }
         
@@ -2255,14 +2242,23 @@
             if (unsubscribeSessions) unsubscribeSessions();
             unsubscribeSessions = db.collection("ActiveSessions").where("isActive", "==", true).orderBy("lastActivity", "desc").onSnapshot((snapshot) => {
                 allSessions = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.loginTime?.toDate) data.loginTimeDate = data.loginTime.toDate(); if (data.lastActivity?.toDate) data.lastActivityDate = data.lastActivity.toDate(); allSessions.push({ id: doc.id, ...data }); });
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.loginTime?.toDate) data.loginTimeDate = data.loginTime.toDate();
+                    if (data.lastActivity?.toDate) data.lastActivityDate = data.lastActivity.toDate();
+                    allSessions.push({ id: doc.id, ...data });
+                });
                 renderActivityDashboard();
             });
             
             if (unsubscribeActivities) unsubscribeActivities();
             unsubscribeActivities = db.collection("UserActivityLog").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
                 allActivities = [];
-                snapshot.forEach(doc => { const data = doc.data(); if (data.timestamp?.toDate) data.timestampDate = data.timestamp.toDate(); allActivities.push({ id: doc.id, ...data }); });
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.timestamp?.toDate) data.timestampDate = data.timestamp.toDate();
+                    allActivities.push({ id: doc.id, ...data });
+                });
                 renderActivityDashboard();
             });
         }
@@ -2282,7 +2278,7 @@
                 const lastActivity = session.lastActivityDate ? session.lastActivityDate.toLocaleTimeString('ar-EG') : 'الآن';
                 const userTypeClass = session.userType === 'visitor' ? 'visitor' : (session.role === 'super_admin' ? 'super_admin' : (session.role ? 'admin' : 'user'));
                 const userTypeText = session.userType === 'visitor' ? 'زائر' : (session.role === 'super_admin' ? 'سوبر أدمن' : (session.role === 'admin' ? 'أدمن' : (session.role === 'reviewer' ? 'مراجع' : (session.role === 'data_entry' ? 'مدخل بيانات' : 'مستخدم'))));
-                sessionsHTML += `<tr><td><span class="user-type-badge ${userTypeClass}">${userTypeText}</span></td><td><strong>${session.username || 'زائر'}</strong></td><td><i class="fas fa-${session.deviceInfo?.type === 'mobile' ? 'mobile-alt' : (session.deviceInfo?.type === 'tablet' ? 'tablet-alt' : 'desktop')}"></i> ${session.deviceInfo?.type || 'غير معروف'}</td><td>${session.deviceInfo?.os || 'غير معروف'}</td><td>${session.deviceInfo?.browser || 'غير معروف'}</td><td>${loginTime}</td><td>${lastActivity}</td><td><span style="color: #10b981;">نشط</span></td></tr>`;
+                sessionsHTML += `<tr><td style="white-space: nowrap;"><span class="user-type-badge ${userTypeClass}">${userTypeText}</span></td><td><strong>${session.username || 'زائر'}</strong></td><td><i class="fas fa-${session.deviceInfo?.type === 'mobile' ? 'mobile-alt' : (session.deviceInfo?.type === 'tablet' ? 'tablet-alt' : 'desktop')}"></i> ${session.deviceInfo?.type || 'غير معروف'}</td><td>${session.deviceInfo?.os || 'غير معروف'}</td><td>${session.deviceInfo?.browser || 'غير معروف'}</td><td>${loginTime}</td><td>${lastActivity}</td><td><span style="color: #10b981;">نشط</span></td></tr>`;
             });
             
             let activitiesHTML = '';
@@ -2299,22 +2295,24 @@
                     case 'mark_as_read': actionText = 'تمييز كمقروء'; actionColor = '#10b981'; break;
                     default: actionText = activity.action; actionColor = '#94a3b8';
                 }
-                activitiesHTML += `<tr><td><span style="color: ${actionColor};">${actionText}</span></td><td><strong>${activity.username || 'نظام'}</strong></td><td><span class="user-type-badge ${activity.role === 'super_admin' ? 'super_admin' : (activity.role ? 'admin' : 'visitor')}">${activity.role ? getRoleName(activity.role) : 'زائر'}</span></td><td>${activity.details ? JSON.stringify(activity.details).substring(0, 50) : '-'}</td><td>${time}</td></tr>`;
+                activitiesHTML += `<tr><td><span style="color: ${actionColor};">${actionText}</span></td><td><strong>${activity.username || 'نظام'}</strong></td><td><span class="user-type-badge ${activity.role === 'super_admin' ? 'super_admin' : (activity.role ? 'admin' : 'visitor')}">${activity.role ? getRoleName(activity.role) : 'زائر'}</span></td><td>${activity.details ? JSON.stringify(activity.details).substring(0, 50) : '-'}</td><td style="white-space: nowrap;">${time}</td></tr>`;
             });
             
             let userCountsHTML = '';
             userCounts.forEach(count => {
-                userCountsHTML += `<tr><td><strong>${count.username}</strong></td><td><span class="user-type-badge ${count.role === 'super_admin' ? 'super_admin' : 'admin'}">${getRoleName(count.role)}</span></td><td style="color: #00ffff;">${count.today?.views || 0}</td><td style="color: #f97316;">${count.today?.creates || 0}</td><td style="color: #3b82f6;">${count.today?.updates || 0}</td><td style="color: #ef4444;">${count.today?.deletes || 0}</td><td style="color: #10b981;">${count.today?.logins || 0}</td><td style="color: #a855f7;">${count.today?.total || 0}</td></tr>`;
+                userCountsHTML += `<tr><td><strong>${count.username}</strong></td><td><span class="role-badge ${count.role === 'super_admin' ? 'super_admin' : 'admin'}">${getRoleName(count.role)}</span></td><td style="color: #00ffff;">${count.today?.views || 0}</td><td style="color: #f97316;">${count.today?.creates || 0}</td><td style="color: #3b82f6;">${count.today?.updates || 0}</td><td style="color: #ef4444;">${count.today?.deletes || 0}</td><td style="color: #10b981;">${count.today?.logins || 0}</td><td style="color: #a855f7;">${count.today?.total || 0}</td></tr>`;
             });
             
             const html = `
-                <div class="stats-grid"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);"><i class="fas fa-users"></i></div><div class="stat-info"><h3>متصلين الآن</h3><p>${allSessions.length}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);"><i class="fas fa-eye"></i></div><div class="stat-info"><h3>زيارات اليوم</h3><p>${dailyStats.visitors?.total || 0}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>أنشطة اليوم</h3><p>${dailyStats.users?.actions || 0}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #a855f7);"><i class="fas fa-history"></i></div><div class="stat-info"><h3>آخر الأنشطة</h3><p>${allActivities.length}</p></div></div></div>
-                <div class="table-card" style="margin-bottom: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-plug"></i> الجلسات النشطة حالياً (${allSessions.length})</h3><table class="sessions-table"><thead><tr><th>النوع</th><th>المستخدم</th><th>الجهاز</th><th>نظام التشغيل</th><th>المتصفح</th><th>وقت الدخول</th><th>آخر نشاط</th><th>الحالة</th></tr></thead><tbody>${sessionsHTML || '<tr><td colspan="8" style="text-align: center;">لا توجد جلسات نشطة</td></tr>'}</tbody></table></div></div>
-                <div class="table-card" style="margin-bottom: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-history"></i> آخر 50 نشاط</h3><table class="activity-table"><thead><tr><th>الإجراء</th><th>المستخدم</th><th>النوع</th><th>التفاصيل</th><th>الوقت</th></tr></thead><tbody>${activitiesHTML || '<tr><td colspan="5" style="text-align: center;">لا توجد أنشطة</td></tr>'}</tbody></table></div></div>
-                <div class="table-card"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-chart-pie"></i> إحصائيات المستخدمين (اليوم)</h3><table class="users-table"><thead><tr><th>المستخدم</th><th>الدور</th><th>مشاهدات</th><th>إضافات</th><th>تحديثات</th><th>حذف</th><th>دخول</th><th>الإجمالي</th></tr></thead><tbody>${userCountsHTML || '<tr><td colspan="8" style="text-align: center;">لا توجد إحصائيات</td></tr>'}</tbody></table></div></div>`;
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);"><i class="fas fa-users"></i></div><div class="stat-info"><h3>متصلين الآن</h3><p>${allSessions.length}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);"><i class="fas fa-eye"></i></div><div class="stat-info"><h3>زيارات اليوم</h3><p>${dailyStats.visitors?.total || 0}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fas fa-chart-line"></i></div><div class="stat-info"><h3>أنشطة اليوم</h3><p>${dailyStats.users?.actions || 0}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #3b82f6, #a855f7);"><i class="fas fa-history"></i></div><div class="stat-info"><h3>آخر الأنشطة</h3><p>${allActivities.length}</p></div></div>
+                </div>
+                <div class="table-card" style="margin-bottom: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-plug"></i> الجلسات النشطة حالياً (${allSessions.length})</h3><table class="sessions-table"><thead><tr><th>النوع</th><th>المستخدم</th><th>الجهاز</th><th>نظام التشغيل</th><th>المتصفح</th><th>وقت الدخول</th><th>آخر نشاط</th><th>الحالة</th></tr></thead><tbody>${sessionsHTML || '<tr><td colspan="8" style="text-align: center;">لا توجد جلسات نشطة</td></tr>'}</tbody>}</div></div>
+                <div class="table-card" style="margin-bottom: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-history"></i> آخر 50 نشاط</h3><table class="activity-table"><thead><tr><th>الإجراء</th><th>المستخدم</th><th>النوع</th><th>التفاصيل</th><th>الوقت</th></tr></thead><tbody>${activitiesHTML || '<tr><td colspan="5" style="text-align: center;">لا توجد أنشطة</td></tr>'}</tbody>}</div></div>
+                <div class="table-card"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;"><i class="fas fa-chart-pie"></i> إحصائيات المستخدمين (اليوم)</h3><table class="users-table"><thead><tr><th>المستخدم</th><th>الدور</th><th>مشاهدات</th><th>إضافات</th><th>تحديثات</th><th>حذف</th><th>دخول</th><th>الإجمالي</th></tr></thead><tbody>${userCountsHTML || '<tr><td colspan="8" style="text-align: center;">لا توجد إحصائيات</td></tr>'}</tbody>}</div></div>`;
             document.getElementById('contentArea').innerHTML = html;
         }
         
@@ -2330,14 +2328,27 @@
             if (unsubscribeVisitors) unsubscribeVisitors();
             unsubscribeVisitors = db.collection("Visitors").onSnapshot((snapshot) => {
                 allVisitors = [];
-                snapshot.forEach(doc => { if (doc.id !== 'stats') { const data = doc.data(); if (data.firstVisit?.toDate) data.firstVisitDate = data.firstVisit.toDate(); if (data.lastVisit?.toDate) data.lastVisitDate = data.lastVisit.toDate(); allVisitors.push({ id: doc.id, ...data }); } });
+                snapshot.forEach(doc => {
+                    if (doc.id !== 'stats') {
+                        const data = doc.data();
+                        if (data.firstVisit?.toDate) data.firstVisitDate = data.firstVisit.toDate();
+                        if (data.lastVisit?.toDate) data.lastVisitDate = data.lastVisit.toDate();
+                        allVisitors.push({ id: doc.id, ...data });
+                    }
+                });
                 renderVisitorsStats();
             });
             
             if (unsubscribeServicesClicks) unsubscribeServicesClicks();
             unsubscribeServicesClicks = db.collection("ServicesClicks").orderBy("timestamp", "desc").limit(50).onSnapshot((snapshot) => {
                 allServicesClicks = [];
-                snapshot.forEach(doc => { if (doc.id !== 'stats') { const data = doc.data(); if (data.timestamp?.toDate) data.timestampDate = data.timestamp.toDate(); allServicesClicks.push({ id: doc.id, ...data }); } });
+                snapshot.forEach(doc => {
+                    if (doc.id !== 'stats') {
+                        const data = doc.data();
+                        if (data.timestamp?.toDate) data.timestampDate = data.timestamp.toDate();
+                        allServicesClicks.push({ id: doc.id, ...data });
+                    }
+                });
                 renderVisitorsStats();
             });
         }
@@ -2349,7 +2360,6 @@
             const clicksStats = clicksStatsDoc.exists ? clicksStatsDoc.data() : { totalClicks: 0, dailyStats: {} };
             const today = new Date().toISOString().split('T')[0];
             const todayVisitors = visitorsStats.dailyStats?.[today] || 0;
-            const todayClicks = clicksStats.dailyStats?.[today] || 0;
             
             const deviceStats = { mobile: allVisitors.filter(v => v.deviceInfo?.type === 'mobile').length, tablet: allVisitors.filter(v => v.deviceInfo?.type === 'tablet').length, desktop: allVisitors.filter(v => v.deviceInfo?.type === 'desktop').length };
             const countryStats = {};
@@ -2359,17 +2369,19 @@
             const sortedCountries = Object.entries(countryStats).sort((a, b) => b[1] - a[1]).slice(0, 5);
             
             let visitorsHTML = `
-                <div class="stats-grid"><div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #00ffff, #a855f7);"><i class="fas fa-users"></i></div><div class="stat-info"><h3>إجمالي الزوار</h3><p>${visitorsStats.totalUniqueVisitors || 0}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);"><i class="fas fa-eye"></i></div><div class="stat-info"><h3>إجمالي الزيارات</h3><p>${visitorsStats.totalVisits || 0}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);"><i class="fas fa-mouse-pointer"></i></div><div class="stat-info"><h3>نقرات الخدمات</h3><p>${clicksStats.totalClicks || 0}</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><h3>زوار اليوم</h3><p>${todayVisitors}</p></div></div></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #00ffff, #a855f7);"><i class="fas fa-users"></i></div><div class="stat-info"><h3>إجمالي الزوار</h3><p>${visitorsStats.totalUniqueVisitors || 0}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #f97316, #ec4899);"><i class="fas fa-eye"></i></div><div class="stat-info"><h3>إجمالي الزيارات</h3><p>${visitorsStats.totalVisits || 0}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #00ffff);"><i class="fas fa-mouse-pointer"></i></div><div class="stat-info"><h3>نقرات الخدمات</h3><p>${clicksStats.totalClicks || 0}</p></div></div>
+                    <div class="stat-card"><div class="stat-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);"><i class="fas fa-calendar-day"></i></div><div class="stat-info"><h3>زوار اليوم</h3><p>${todayVisitors}</p></div></div>
+                </div>
                 <div class="advanced-stats">
                     <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-pie"></i><span>توزيع الأجهزة</span></div><canvas id="deviceChart"></canvas></div>
                     <div class="chart-container"><div class="chart-title"><i class="fas fa-globe"></i><span>أكثر 5 بلدان</span></div><div style="max-height: 250px; overflow-y: auto;">${sortedCountries.map(([country, count]) => `<div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid var(--border-color);"><span><i class="fas fa-map-marker-alt" style="color: #f97316;"></i> ${country}</span><span style="color: #f97316; font-weight: 700;">${count}</span></div>`).join('') || '<p style="color: var(--text-muted);">لا توجد بيانات</p>'}</div></div>
                     <div class="chart-container"><div class="chart-title"><i class="fas fa-chart-bar"></i><span>المتصفحات</span></div><canvas id="browserChart"></canvas></div>
                 </div>
-                <div class="table-card" style="margin-top: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;">آخر الزوار</h3><table class="users-table"><thead><tr><th>البصمة</th><th>الجهاز</th><th>نظام التشغيل</th><th>المتصفح</th><th>البلد</th><th>أول زيارة</th><th>آخر زيارة</th><th>عدد الزيارات</th><th>نقرات الخدمات</th><th>الإجراءات</th></tr></thead><tbody>${allVisitors.slice(0, 10).map(visitor => { const firstVisit = visitor.firstVisitDate ? visitor.firstVisitDate.toLocaleString('ar-EG') : 'غير معروف'; const lastVisit = visitor.lastVisitDate ? visitor.lastVisitDate.toLocaleString('ar-EG') : 'غير معروف'; const deviceIcon = visitor.deviceInfo?.type === 'mobile' ? 'fa-mobile-alt' : (visitor.deviceInfo?.type === 'tablet' ? 'fa-tablet-alt' : 'fa-desktop'); const visitorClicks = allServicesClicks.filter(c => c.fingerprint === visitor.fingerprint).length; return `<tr><td><span style="font-family: monospace;">${visitor.fingerprint?.substring(0, 8)}...</span></td><td><i class="fas ${deviceIcon}"></i> ${visitor.deviceInfo?.type || 'غير معروف'}</td><td>${visitor.deviceInfo?.os || 'غير معروف'}</td><td>${visitor.deviceInfo?.browser || 'غير معروف'}</td><td><span style="color: #f97316;">${visitor.deviceInfo?.country || 'غير معروف'}</span></td><td>${firstVisit}</td><td>${lastVisit}</td><td style="color: #00ffff;">${visitor.visitCount || 0}</td><td style="color: #f97316;">${visitorClicks}</td><td><button class="action-btn" onclick="showVisitorDetails('${visitor.fingerprint}')" title="عرض التفاصيل"><i class="fas fa-eye"></i></button></td></tr>`; }).join('') || '<tr><td colspan="10" style="text-align: center;">لا يوجد زوار بعد</td></tr>'}</tbody></table></div></div>
-                <div class="table-card" style="margin-top: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;">آخر نقرات موقع الخدمات</h3><table class="users-table"><thead><tr><th>البصمة</th><th>الجهاز</th><th>البلد</th><th>الوقت</th><th>الصفحة</th></tr></thead><tbody>${allServicesClicks.slice(0, 10).map(click => { const time = click.timestampDate ? click.timestampDate.toLocaleString('ar-EG') : 'غير معروف'; return `<tr><td><span style="font-family: monospace;">${click.fingerprint?.substring(0, 8)}...</span></td><td><i class="fas fa-${click.deviceInfo?.type === 'mobile' ? 'mobile-alt' : (click.deviceInfo?.type === 'tablet' ? 'tablet-alt' : 'desktop')}"></i> ${click.deviceInfo?.type || 'غير معروف'}</td><td><span style="color: #f97316;">${click.deviceInfo?.country || 'غير معروف'}</span></td><td>${time}</td><td>${click.page || '/'}</td></tr>`; }).join('') || '<tr><td colspan="5" style="text-align: center;">لا توجد نقرات بعد</td></tr>'}</tbody></table></div></div>`;
+                <div class="table-card" style="margin-top: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;">آخر الزوار</h3><table class="users-table"><thead><tr><th>البصمة</th><th>الجهاز</th><th>نظام التشغيل</th><th>المتصفح</th><th>البلد</th><th>أول زيارة</th><th>آخر زيارة</th><th>عدد الزيارات</th><th>نقرات الخدمات</th><th>الإجراءات</th></tr></thead><tbody>${allVisitors.slice(0, 10).map(visitor => { const firstVisit = visitor.firstVisitDate ? visitor.firstVisitDate.toLocaleString('ar-EG') : 'غير معروف'; const lastVisit = visitor.lastVisitDate ? visitor.lastVisitDate.toLocaleString('ar-EG') : 'غير معروف'; const deviceIcon = visitor.deviceInfo?.type === 'mobile' ? 'fa-mobile-alt' : (visitor.deviceInfo?.type === 'tablet' ? 'fa-tablet-alt' : 'fa-desktop'); const visitorClicks = allServicesClicks.filter(c => c.fingerprint === visitor.fingerprint).length; return `<td><span style="font-family: monospace; font-size: 11px;">${visitor.fingerprint?.substring(0, 10)}...</span></td><td><i class="fas ${deviceIcon}"></i> ${visitor.deviceInfo?.type || 'غير معروف'}</td><td>${visitor.deviceInfo?.os || 'غير معروف'}</td><td>${visitor.deviceInfo?.browser || 'غير معروف'}</td><td><span style="color: #f97316;">${visitor.deviceInfo?.country || 'غير معروف'}</span></td><td style="white-space: nowrap;">${firstVisit}</td><td style="white-space: nowrap;">${lastVisit}</td><td style="color: #00ffff;">${visitor.visitCount || 0}</td><td style="color: #f97316;">${visitorClicks}</td><td><button class="action-btn" onclick="showVisitorDetails('${visitor.fingerprint}')" title="عرض التفاصيل"><i class="fas fa-eye"></i></button></td>`; }).join('') || '<tr><td colspan="10" style="text-align: center;">لا يوجد زوار بعد</td></td>'}</tbody>}</div></div>
+                <div class="table-card" style="margin-top: 30px;"><div class="table-responsive"><h3 style="color: var(--neon-cyan); padding: 20px;">آخر نقرات موقع الخدمات</h3><table class="users-table"><thead><tr><th>البصمة</th><th>الجهاز</th><th>البلد</th><th>الوقت</th><th>الصفحة</th></tr></thead><tbody>${allServicesClicks.slice(0, 10).map(click => { const time = click.timestampDate ? click.timestampDate.toLocaleString('ar-EG') : 'غير معروف'; return `<td><span style="font-family: monospace; font-size: 11px;">${click.fingerprint?.substring(0, 10)}...</span></td><td><i class="fas fa-${click.deviceInfo?.type === 'mobile' ? 'mobile-alt' : (click.deviceInfo?.type === 'tablet' ? 'tablet-alt' : 'desktop')}"></i> ${click.deviceInfo?.type || 'غير معروف'}</td><td><span style="color: #f97316;">${click.deviceInfo?.country || 'غير معروف'}</span></td><td style="white-space: nowrap;">${time}</td><td>${click.page || '/'}</td>`; }).join('') || '<tr><td colspan="5" style="text-align: center;">لا توجد نقرات بعد</td></td>'}</tbody>}</div></div>`;
             
             document.getElementById('contentArea').innerHTML = visitorsHTML;
             
@@ -2412,9 +2424,14 @@
                     const data = doc.data();
                     let lastLoginStr = 'لم يسجل بعد';
                     if (data.lastLogin) {
-                        if (data.lastLogin.toDate) lastLoginStr = data.lastLogin.toDate().toLocaleString('ar-EG');
-                        else if (data.lastLoginString) lastLoginStr = data.lastLoginString;
-                    } else if (data.lastLoginString) lastLoginStr = data.lastLoginString;
+                        if (data.lastLogin.toDate) {
+                            lastLoginStr = data.lastLogin.toDate().toLocaleString('ar-EG');
+                        } else if (data.lastLoginString) {
+                            lastLoginStr = data.lastLoginString;
+                        }
+                    } else if (data.lastLoginString) {
+                        lastLoginStr = data.lastLoginString;
+                    }
                     allUsers.push({ id: doc.id, ...data, lastLoginDisplay: lastLoginStr });
                 });
                 renderUsers();
@@ -2433,10 +2450,10 @@
                 allUsers.forEach((user, index) => {
                     const createdDate = user.createdAt?.toDate ? user.createdAt.toDate().toLocaleDateString('ar-EG') : 'غير محدد';
                     const isCurrentUser = user.id === currentUser?.id;
-                    tableHTML += `<tr style="${isCurrentUser ? 'background: rgba(0, 255, 255, 0.1);' : ''}"><td>${index + 1}</td><td><strong>${user.username}</strong> ${isCurrentUser ? '<span style="color: var(--neon-cyan);">(أنت)</span>' : ''}</td><td>${user.name || '-'}</td><td>${user.email || '-'}</td><td>${user.phone || '-'}</td><td><span class="role-badge ${user.role || 'data_entry'}">${getRoleName(user.role)}</span></td><td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">${user.isActive ? 'نشط' : 'غير نشط'}</span></td><td>${user.lastLoginDisplay}</td><td>${createdDate}</td>${isSuperAdmin ? `<td><button class="action-btn" onclick="editUser('${user.id}')" title="تعديل"><i class="fas fa-edit"></i></button><button class="action-btn" onclick="changeUserPassword('${user.id}')" title="تغيير كلمة السر"><i class="fas fa-key"></i></button>${user.id !== currentUser?.id ? `<button class="action-btn delete" onclick="openDeleteModal('user', '${user.id}')" title="حذف"><i class="fas fa-trash"></i></button>` : ''}</td>` : ''}</tr>`;
+                    tableHTML += `<tr style="${isCurrentUser ? 'background: rgba(0, 255, 255, 0.1);' : ''}"><td>${index + 1}</td><td><strong>${user.username}</strong> ${isCurrentUser ? '<span style="color: var(--neon-cyan);">(أنت)</span>' : ''}</td><td>${user.name || '-'}</td><td>${user.email || '-'}</td><td>${user.phone || '-'}</td><td><span class="role-badge ${user.role || 'data_entry'}">${getRoleName(user.role)}</span></td><td><span style="color: ${user.isActive ? '#10b981' : '#ef4444'};">${user.isActive ? 'نشط' : 'غير نشط'}</span></td><td style="white-space: nowrap;">${user.lastLoginDisplay}</td><td>${createdDate}</td>${isSuperAdmin ? `<td><button class="action-btn" onclick="editUser('${user.id}')" title="تعديل"><i class="fas fa-edit"></i></button><button class="action-btn" onclick="changeUserPassword('${user.id}')" title="تغيير كلمة السر"><i class="fas fa-key"></i></button>${user.id !== currentUser?.id ? `<button class="action-btn delete" onclick="openDeleteModal('user', '${user.id}')" title="حذف"><i class="fas fa-trash"></i></button>` : ''}</td>` : ''}</tr>`;
                 });
             }
-            tableHTML += `</tbody></table></div></div>`;
+            tableHTML += `</tbody>}</div></div>`;
             document.getElementById('contentArea').innerHTML = tableHTML;
         }
         
@@ -2444,12 +2461,12 @@
             if (!isSuperAdmin) { Swal.fire({ icon: 'error', title: 'غير مصرح', text: 'أنت لا تملك صلاحية إضافة مستخدمين', background: '#030514', confirmButtonText: 'حسناً', confirmButtonColor: '#00ffff' }); return; }
             document.getElementById('addUserModalContent').innerHTML = `
                 <div style="padding: 10px;"><h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;"><i class="fas fa-user-plus"></i> إضافة مستخدم جديد</h3>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">اسم المستخدم</label><input type="text" id="newUsername" placeholder="اسم المستخدم" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">كلمة السر</label><input type="password" id="newPassword" placeholder="كلمة السر" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">الاسم الكامل</label><input type="text" id="newName" placeholder="الاسم الكامل" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">البريد الإلكتروني</label><input type="email" id="newEmail" placeholder="البريد الإلكتروني" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">رقم الهاتف</label><input type="text" id="newPhone" placeholder="رقم الهاتف" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
-                <div style="margin-bottom: 15px;"><label style="color: var(--text-muted);">الدور</label><select id="newRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"><option value="admin">أدمن</option><option value="reviewer">مراجع</option><option value="data_entry" selected>مدخل بيانات</option></select></div>
+                <div style="margin-bottom: 15px;"><label>اسم المستخدم</label><input type="text" id="newUsername" placeholder="اسم المستخدم" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
+                <div style="margin-bottom: 15px;"><label>كلمة السر</label><input type="password" id="newPassword" placeholder="كلمة السر" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
+                <div style="margin-bottom: 15px;"><label>الاسم الكامل</label><input type="text" id="newName" placeholder="الاسم الكامل" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
+                <div style="margin-bottom: 15px;"><label>البريد الإلكتروني</label><input type="email" id="newEmail" placeholder="البريد الإلكتروني" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
+                <div style="margin-bottom: 15px;"><label>رقم الهاتف</label><input type="text" id="newPhone" placeholder="رقم الهاتف" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
+                <div style="margin-bottom: 15px;"><label>الدور</label><select id="newRole" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"><option value="admin">أدمن</option><option value="reviewer">مراجع</option><option value="data_entry" selected>مدخل بيانات</option></select></div>
                 <div style="margin-bottom: 15px;"><label style="display: flex; align-items: center; gap: 10px;"><input type="checkbox" id="newIsActive" checked style="width: 18px; height: 18px;"><span>حساب نشط</span></label></div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;"><button class="btn btn-success" onclick="addUser()" style="flex: 2;"><i class="fas fa-save"></i> إضافة المستخدم</button><button class="btn btn-secondary" onclick="closeModal('addUserModal')" style="flex: 1;"><i class="fas fa-times"></i> إلغاء</button></div></div>`;
             document.getElementById('addUserModal').classList.add('show');
@@ -2514,7 +2531,7 @@
             const user = allUsers.find(u => u.id === userId);
             if (!user) return;
             document.getElementById('changePasswordModalContent').innerHTML = `
-                <div style="padding: 10px;"><h3 style="color: var(--neon-cyan); margin-bottom: 20px;"><i class="fas fa-key"></i> تغيير كلمة السر</h3>
+                <div style="padding: 10px;"><h3 style="color: var(--neon-cyan); margin-bottom: 20px; text-align: center;"><i class="fas fa-key"></i> تغيير كلمة السر</h3>
                 <p style="text-align: center; margin-bottom: 20px;">المستخدم: <strong style="color: var(--neon-cyan);">${user.username}</strong></p>
                 <div style="margin-bottom: 15px;"><label>كلمة السر الجديدة</label><input type="password" id="newUserPassword" placeholder="كلمة السر الجديدة" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
                 <div style="margin-bottom: 15px;"><label>تأكيد كلمة السر</label><input type="password" id="confirmUserPassword" placeholder="تأكيد كلمة السر" style="width: 100%; padding: 12px; background: rgba(0,0,0,0.5); border: 2px solid var(--border-color); border-radius: 10px; color: white;"></div>
